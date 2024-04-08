@@ -32,13 +32,11 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -79,11 +77,6 @@ class CodecBitSetTest{
 			}
 
 			@Override
-			public ByteOrder bitOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -110,13 +103,13 @@ class CodecBitSetTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bbb = BitSetHelper.changeBitOrder(encodedValue, ByteOrder.LITTLE_ENDIAN);
-		byte[] bb = bbb.toByteArray();
-		if(bb.length > randomBytes.length)
+		byte[] bb = encodedValue.toByteArray();
+		//NOTE: this is because, sometimes, the byte array ends with zero (and also because `BitSet` is little endian), and that's a problem with `toByteArray`
+		if(bb.length != randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
@@ -149,11 +142,6 @@ class CodecBitSetTest{
 			}
 
 			@Override
-			public ByteOrder bitOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -180,12 +168,13 @@ class CodecBitSetTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		if(bb.length > randomBytes.length)
+		//NOTE: this is because, sometimes, the byte array ends with zero (and also because `BitSet` is little endian), and that's a problem with `toByteArray`
+		if(bb.length != randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 

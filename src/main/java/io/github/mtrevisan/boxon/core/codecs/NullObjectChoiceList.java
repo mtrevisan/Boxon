@@ -35,7 +35,7 @@ final class NullObjectChoiceList implements ObjectChoicesList.ObjectChoiceList{
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
-		return Annotation.class;
+		return NullObjectChoiceList.class;
 	}
 
 	@Override
@@ -50,7 +50,7 @@ final class NullObjectChoiceList implements ObjectChoicesList.ObjectChoiceList{
 
 	@Override
 	public Class<?> type(){
-		return Object.class;
+		return Void.TYPE;
 	}
 
 }

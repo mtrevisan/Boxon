@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
@@ -53,8 +53,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -97,8 +95,9 @@ class CodecListTest{
 	@Test
 	void listOfSameObject() throws FieldException{
 		CodecList codec = new CodecList();
-		List<Version> encodedValue = new ArrayList<>(
-			Arrays.asList(new Version("2", "0", "1", "12"), new Version("2", "1", "2", "0")));
+		List<Version> encodedValue = List.of(
+			new Version("2", "0", "1", "12"),
+			new Version("2", "1", "2", "0"));
 		BindList annotation = new BindList(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -119,13 +118,13 @@ class CodecListTest{
 			public ObjectChoicesList selectFrom(){
 				return new ObjectChoicesList(){
 					@Override
-					public String charset(){
-						return StandardCharsets.US_ASCII.name();
+					public Class<? extends Annotation> annotationType(){
+						return ObjectChoicesList.class;
 					}
 
 					@Override
-					public Class<? extends Annotation> annotationType(){
-						return null;
+					public String charset(){
+						return StandardCharsets.US_ASCII.name();
 					}
 
 					@Override
@@ -192,8 +191,8 @@ class CodecListTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
-		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, templateParser);
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -227,7 +226,8 @@ class CodecListTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice6.class, response.getMessage().getClass());
 		TestChoice6 parsedMessage = (TestChoice6)response.getMessage();
 		List<TestType3> values = parsedMessage.value;

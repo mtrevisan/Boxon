@@ -48,9 +48,7 @@ public final class GenericHelper{
 	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();
 
 	private static final String ARRAY_VARIABLE = "[]";
-
-	/** An empty {@code Class} array. */
-	private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
+	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
 	/**
 	 * Primitive type name to class map.
@@ -82,101 +80,94 @@ public final class GenericHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
-	public static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
-		//if actual types are omitted, the type parameters will be used instead
-		if(actualArgs.length == 0)
-			actualArgs = offspring.getTypeParameters();
+	@SuppressWarnings("DataFlowIssue")
+	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... actualArgs){
+		//initialize list to store resolved types
+		final List<Type> types = new ArrayList<>(0);
 
-		final List<Class<?>> types = processAncestors(offspring, base, actualArgs);
+		final Queue<Class<?>> classStack = new ArrayDeque<>(1);
+		final Queue<Type[]> typesStack = new ArrayDeque<>(1);
+		classStack.add(offspring);
+		typesStack.add(actualArgs);
+		while(!classStack.isEmpty()){
+			final Class<?> currentOffspring = classStack.poll();
+			final Type[] currentTypes = typesStack.poll();
 
-		if(types.isEmpty() && offspring.equals(base))
-			types.addAll(processBase(actualArgs));
+			//find direct ancestors (superclass and interfaces)
+			final List<Type> ancestors = extractAncestors(currentOffspring);
+
+			//map type parameters into the actual types
+			final TypeVariable<? extends Class<?>>[] typeParameters = currentOffspring.getTypeParameters();
+			final Map<String, Type> typeVariables = mapParameterTypes(typeParameters);
+
+			//process ancestors
+			processAncestors(ancestors, typeVariables, base, classStack, typesStack);
+
+			//if there are no resolved types and offspring is equal to base (or the last class before `Object` if `base` is `Object`),
+			//process the base
+			if(base != Object.class && currentOffspring == base || base == Object.class && classStack.peek() == base){
+				processBase(currentOffspring, currentTypes, types);
+
+				//stop the search once reached the `base` class
+				break;
+			}
+		}
 
 		return types;
 	}
 
-	private static <T> List<Class<?>> processAncestors(final Class<? extends T> offspring, final Class<T> base, final Type[] actualArgs){
-		//map type parameters into the actual types
-		final Map<String, Type> typeVariables = mapParameterTypes(offspring, actualArgs);
-
-		//find direct ancestors (superclass and interfaces)
-		final Queue<Type> ancestorsQueue = extractAncestors(offspring);
-
-		//iterate over ancestors
-		final List<Class<?>> types = new ArrayList<>(0);
-		while(!ancestorsQueue.isEmpty()){
-			final Type ancestorType = ancestorsQueue.poll();
-			if(ancestorType instanceof final ParameterizedType t)
-				//ancestor is parameterized: process only if the raw type matches the base class
-				types.addAll(manageParameterizedAncestor(t, base, typeVariables));
-			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c))
-				//ancestor is non-parameterized: process only if it matches the base class
-				ancestorsQueue.add(ancestorType);
-		}
-		return types;
-	}
-
-	private static List<Class<?>> processBase(final Type[] actualArgs){
-		//there is a result if the base class is reached
-		final int length = actualArgs.length;
-		final List<Class<?>> types = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Class<?> cls = toClass(actualArgs[i].getTypeName());
-			if(cls != null)
-				types.add(cls);
-		}
-		return types;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T> List<Class<?>> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base,
-			final Map<String, Type> typeVariables){
-		final List<Class<?>> types = new ArrayList<>(0);
-		final Type rawType = ancestorType.getRawType();
-		if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
-			final Class<?>[] resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
-			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes);
-			types.addAll(result);
-		}
-		return types;
-	}
-
-	private static Class<?>[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
-		final Type[] types = ancestorType.getActualTypeArguments();
-		final int length = types.length;
-		final Collection<Class<?>> resolvedTypes = new ArrayList<>(length);
-		//loop through all type arguments and replace type variables with the actually known types
-		for(int i = 0; i < length; i ++){
-			final String typeName = resolveArgumentType(typeVariables, types[i])
-				.getTypeName();
-
-			final Class<?> cls = toClass(typeName);
-			if(cls != null)
-				resolvedTypes.add(cls);
-		}
-		return resolvedTypes.toArray(EMPTY_CLASS_ARRAY);
-	}
-
-	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
-		final int length = actualArgs.length;
+	private static Map<String, Type> mapParameterTypes(final Type[] actualTypes){
+		final int length = actualTypes.length;
 		final Map<String, Type> typeVariables = new HashMap<>(length);
-		final TypeVariable<? extends Class<? extends T>>[] typeParameters = offspring.getTypeParameters();
 		for(int i = 0; i < length; i ++){
-			final String key = typeParameters[i].getName();
-
-			typeVariables.put(key, actualArgs[i]);
+			final Type actualType = actualTypes[i];
+			final String key = ((TypeVariable<?>)actualType).getName();
+			typeVariables.put(key, actualType);
 		}
 		return typeVariables;
 	}
 
-	private static <T> Queue<Type> extractAncestors(final Class<? extends T> offspring){
+	private static List<Type> extractAncestors(final Class<?> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
-		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length);
-		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
+		final List<Type> ancestors = new ArrayList<>(genericInterfaces.length + 1);
+		for(int i = 0, length = genericInterfaces.length; i < length; i ++)
+			ancestors.add(genericInterfaces[i]);
 		final Type genericSuperclass = offspring.getGenericSuperclass();
 		if(genericSuperclass != null)
-			ancestorsQueue.add(genericSuperclass);
-		return ancestorsQueue;
+			ancestors.add(genericSuperclass);
+		return ancestors;
+	}
+
+	private static <T> void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<T> base,
+			final Collection<Class<?>> classStack, final Collection<Type[]> typesStack){
+		for(int i = 0, length = ancestors.size(); i < length; i ++){
+			final Type ancestorType = ancestors.get(i);
+
+			if(ancestorType instanceof final ParameterizedType pt){
+				//ancestor is parameterized: process only if the raw type matches the base class
+				final Type rawType = pt.getRawType();
+				if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
+					final Type[] resolvedTypes = populateResolvedTypes(pt, typeVariables);
+					classStack.add(c);
+					typesStack.add(resolvedTypes);
+				}
+			}
+			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c)){
+				//ancestor is non-parameterized: process only if it matches the base class
+				classStack.add(c);
+				typesStack.add(EMPTY_TYPE_ARRAY);
+			}
+		}
+	}
+
+	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
+		final Type[] actualTypeArguments = ancestorType.getActualTypeArguments();
+		final int length = actualTypeArguments.length;
+		final Type[] resolvedTypes = new Type[length];
+		//loop through all type arguments and replace type variables with the actually known types
+		for(int i = 0; i < length; i ++)
+			resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
+		return resolvedTypes;
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
@@ -186,13 +177,23 @@ public final class GenericHelper{
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
+	private static void processBase(final Type currentOffspring, final Type[] actualArgs, final Collection<Type> types){
+		//there is a result if the base class is reached
+		for(int i = 0, length = actualArgs.length; i < length; i ++)
+			types.add(actualArgs[i]);
+
+		if(types.isEmpty())
+			types.add(currentOffspring);
+	}
+
+
 	/**
-	 * Convert a given String into the appropriate Class.
+	 * Convert a given string into the appropriate class.
 	 *
 	 * @param name	Name of class.
 	 * @return	The class for the given name, {@code null} if some error happens.
 	 */
-	private static Class<?> toClass(final String name){
+	public static Class<?> toClass(final String name){
 		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
 		final String baseName = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
 

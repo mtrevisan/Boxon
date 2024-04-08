@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -45,7 +44,7 @@ import java.util.Objects;
 /**
  * Common data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
 
 	private final LoaderCodec loaderCodec;
@@ -98,8 +97,8 @@ public final class Core{
 	 * @param key	The key used to reference the value.
 	 * @param value	The value.
 	 */
-	void addToContext(final String key, final Object value){
-		evaluator.addToContext(key, value);
+	void putToContext(final String key, final Object value){
+		evaluator.putToContext(key, value);
 	}
 
 	/**
@@ -107,11 +106,11 @@ public final class Core{
 	 *
 	 * @param context	The context map.
 	 */
-	void addToContext(final Map<String, Object> context){
+	void putToContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
-			evaluator.addToContext(entry.getKey(), entry.getValue());
+			evaluator.putToContext(entry.getKey(), entry.getValue());
 	}
 
 	/**
@@ -119,8 +118,8 @@ public final class Core{
 	 *
 	 * @param method	The method.
 	 */
-	void addToContext(final Method method){
-		evaluator.addToContext(method);
+	void putToContext(final Method method){
+		evaluator.putToContext(method);
 	}
 
 	/**
@@ -197,8 +196,8 @@ public final class Core{
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
+		loaderCodec.injectFieldInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(evaluator);
 	}
 
 
@@ -247,10 +246,6 @@ public final class Core{
 		configurationParser.withConfiguration(configurationClass);
 	}
 
-
-	Evaluator getEvaluator(){
-		return evaluator;
-	}
 
 	TemplateParser getTemplateParser(){
 		return templateParser;

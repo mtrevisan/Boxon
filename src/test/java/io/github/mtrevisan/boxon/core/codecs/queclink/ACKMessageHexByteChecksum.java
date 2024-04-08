@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
-import io.github.mtrevisan.boxon.annotations.checksummers.BSD8;
+import io.github.mtrevisan.boxon.annotations.checksummers.BSD16;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
@@ -72,8 +72,8 @@ public class ACKMessageHexByteChecksum{
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
 
-	@Checksum(type = byte.class, skipStart = 4, skipEnd = 3, algorithm = BSD8.class, startValue = BSD8.START_VALUE_0x00)
-	private byte checksum;
+	@Checksum(skipStart = 4, skipEnd = 4, algorithm = BSD16.class)
+	private short checksum;
 
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;

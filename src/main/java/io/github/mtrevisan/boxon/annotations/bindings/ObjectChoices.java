@@ -43,19 +43,18 @@ public @interface ObjectChoices{
 
 	/**
 	 * The number of bits to be read for determining the header.
-	 * <p>It MUST BE in the range {@code [0, }{@link Integer#SIZE}{@code ]}.</p>
+	 * <p>It MUST BE in the range {@code [0, }{@link Long#SIZE}{@code ]}.</p>
 	 *
 	 * @return	The number of bits to be read for determining the header (defaults to {@code 0}).
 	 */
-	int prefixLength() default 0;
+	byte prefixLength() default 0;
 
 	/**
-	 * The bit order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header.
+	 * The type of endianness of the prefix: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
-	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a
-	 * 	header (defaults to {@link ByteOrder#BIG_ENDIAN}).
+	 * @return	The type of endianness of the prefix (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
-	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The choices to select from.
@@ -82,10 +81,11 @@ public @interface ObjectChoices{
 		/**
 		 * The header to be written when serializing the object.
 		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
+		 * <p>Can be a SpEL expression.</p>
 		 *
-		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).
+		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference.
 		 */
-		int prefix() default 0;
+		String prefix();
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.

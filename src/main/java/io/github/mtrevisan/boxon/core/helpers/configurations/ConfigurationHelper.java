@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.reflect.Array;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 /**
@@ -43,7 +42,7 @@ import java.util.regex.Pattern;
  */
 public final class ConfigurationHelper{
 
-	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+	private static final char PIPE = '|';
 
 
 	private ConfigurationHelper(){}
@@ -57,8 +56,8 @@ public final class ConfigurationHelper{
 	 * @param map	The map in which to load the key-value pair.
 	 * @throws ConfigurationException	If a duplicate is found.
 	 */
-	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
+	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, final Map<String, Object> map)
+			throws ConfigurationException{
 		if(isValidValue(value) && map.put(key.toString(), value) != null)
 			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}
@@ -84,9 +83,9 @@ public final class ConfigurationHelper{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final CharSequence value, final Class<T> enumeration){
+	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		final String[] defaultValues = splitMultipleEnumerations(value);
+		final String[] defaultValues = StringHelper.split(value, PIPE);
 		final int length = defaultValues.length;
 		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
 		for(int i = 0; i < length; i ++)
@@ -98,10 +97,6 @@ public final class ConfigurationHelper{
 	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
-	}
-
-	private static String[] splitMultipleEnumerations(final CharSequence value){
-		return PATTERN_PIPE.split(value);
 	}
 
 

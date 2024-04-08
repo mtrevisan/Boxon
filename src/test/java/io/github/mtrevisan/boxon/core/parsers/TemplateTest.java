@@ -39,7 +39,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
@@ -47,6 +47,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -125,7 +126,7 @@ class TemplateTest{
 		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class)
 		private byte[] protocolVersion;
 		@BindBitSet(size = "2")
-		private BitSet bits;
+		private BitSet bitmap;
 		@BindDouble
 		private double numberDouble;
 		@BindFloat
@@ -145,7 +146,7 @@ class TemplateTest{
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 
-		@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
+		@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class)
 		private short checksum;
 
 		@Evaluate("T(java.time.ZonedDateTime).now()")
@@ -160,7 +161,6 @@ class TemplateTest{
 	}
 
 	@Test
-	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -197,8 +197,8 @@ class TemplateTest{
 			}
 
 			@Override
-			public Class<?> type(){
-				return short.class;
+			public String condition(){
+				return JavaHelper.EMPTY_STRING;
 			}
 
 			@Override
@@ -213,12 +213,7 @@ class TemplateTest{
 
 			@Override
 			public Class<? extends Checksummer> algorithm(){
-				return CRC16CCITT.class;
-			}
-
-			@Override
-			public short startValue(){
-				return CRC16CCITT.START_VALUE_0xFFFF;
+				return CRC16CCITT_FALSE.class;
 			}
 
 			@Override

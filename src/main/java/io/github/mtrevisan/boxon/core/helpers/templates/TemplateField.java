@@ -25,8 +25,9 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.MethodHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -70,8 +71,9 @@ public final class TemplateField{
 
 		if(binding != null){
 			//pre-fetch condition method
-			final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-			condition = ReflectionHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
+			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(), CONDITION,
+				String.class);
+			condition = MethodHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 		}
 	}
 
@@ -102,11 +104,10 @@ public final class TemplateField{
 	 * The value of the field in the given object.
 	 *
 	 * @param obj	The object from which to retrieve the value.
-	 * @param <T>	The type of the value.
 	 * @return	The value of the field.
 	 */
-	public <T> T getFieldValue(final Object obj){
-		return ReflectionHelper.getValue(obj, field);
+	public Object getFieldValue(final Object obj){
+		return FieldMapper.getFieldValue(obj, field);
 	}
 
 	/**

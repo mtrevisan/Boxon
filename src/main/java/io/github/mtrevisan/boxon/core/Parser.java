@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.io.BitReader;
 
@@ -41,7 +42,6 @@ import java.util.List;
 /**
  * Declarative data binding parser for binary encoded data.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
 
 	private final TemplateParser templateParser;
@@ -104,29 +104,26 @@ public final class Parser{
 	 * Parse a message.
 	 *
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
-	 * @return	The parse response.
+	 * @return	The operation result.
 	 */
 	public List<Response<byte[], Object>> parse(final BitReader reader){
-		final List<Response<byte[], Object>> response = new ArrayList<>(0);
+		final List<Response<byte[], Object>> response = new ArrayList<>(1);
 
-		int start = 0;
 		while(reader.hasRemaining()){
-			start = reader.position();
-
 			//save state of the reader (restored upon a decoding error)
 			reader.createFallbackPoint();
 
-			if(parse(reader, start, response))
+			if(parse(reader, response))
 				break;
 		}
 
 		//check if there are unread bytes
-		assertNoLeftBytes(reader, start, response);
+		assertNoLeftBytes(reader, response);
 
 		return response;
 	}
 
-	private boolean parse(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
+	private boolean parse(final BitReader reader, final Collection<Response<byte[], Object>> response){
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
@@ -153,10 +150,10 @@ public final class Parser{
 		return false;
 	}
 
-	private static void assertNoLeftBytes(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
+	private static void assertNoLeftBytes(final BitReader reader, final Collection<Response<byte[], Object>> response){
 		if(reader.hasRemaining()){
 			final int position = reader.position();
-			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
+			final Exception error = DataException.create("There are remaining unread bytes");
 			final DecodeException pe = DecodeException.create(position, error);
 			response.add(Response.create(pe));
 		}

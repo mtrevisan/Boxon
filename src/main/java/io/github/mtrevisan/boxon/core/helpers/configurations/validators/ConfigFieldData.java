@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.configurations;
+package io.github.mtrevisan.boxon.core.helpers.configurations.validators;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 
 
 /** Data associated to an annotated field. */
-@SuppressWarnings({"ClassWithTooManyFields", "ClassWithTooManyMethods"})
+@SuppressWarnings("ClassWithTooManyFields")
 final class ConfigFieldData{
 
 	private final Field field;
@@ -173,7 +173,7 @@ final class ConfigFieldData{
 	 * @return	Whether the configuration field is an enumeration.
 	 */
 	boolean hasEnumeration(){
-		return hasEnumeration(enumeration);
+		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
 	/**
@@ -228,16 +228,6 @@ final class ConfigFieldData{
 	 */
 	void setRadix(final int radix){
 		this.radix = radix;
-	}
-
-	/**
-	 * Whether the given class is an enumeration.
-	 *
-	 * @param enumeration	The class to check.
-	 * @return	Whether the given class is an enumeration.
-	 */
-	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
-		return (enumeration != NullEnum.class);
 	}
 
 }

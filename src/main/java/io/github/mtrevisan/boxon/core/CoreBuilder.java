@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -44,6 +45,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Builder for the {@link Core common data} used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class CoreBuilder{
 
 	private enum ConfigurationStep{
@@ -101,7 +103,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final String key, final Object value){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(key, value));
 
 		return this;
 	}
@@ -113,7 +115,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(context));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(context));
 
 		return this;
 	}
@@ -124,11 +126,15 @@ public final class CoreBuilder{
 	 * @param type	The class containing the method.
 	 * @param methodName	The method name.
 	 * @return	This instance, used for chaining.
-	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws NullPointerException	If {@code methodName} is {@code null}.
+	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
-		return withContext(type.getDeclaredMethod(methodName));
+		final Method method = MethodHelper.getMethod(type, methodName, null);
+		if(method == null)
+			throw new NoSuchMethodException();
+
+		return withContext(method);
 	}
 
 	/**
@@ -142,7 +148,10 @@ public final class CoreBuilder{
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
-		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
+		final Method method = MethodHelper.getMethod(type, methodName, null, parameterTypes);
+		if(method == null)
+			throw new NoSuchMethodException();
+
 		return withContext(method);
 	}
 
@@ -153,7 +162,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(method));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(method));
 
 		return this;
 	}
@@ -284,7 +293,7 @@ public final class CoreBuilder{
 
 	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
 			ConfigurationException{
-		for(int i = 0, length = JavaHelper.lengthOrZero(executors); i < length; i ++){
+		for(int i = 0, length = JavaHelper.sizeOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 
 			executor.execute();

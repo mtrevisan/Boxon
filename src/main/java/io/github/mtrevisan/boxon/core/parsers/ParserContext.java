@@ -27,18 +27,14 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.DataException;
-import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
 final class ParserContext<T>{
-
-	private final Evaluator evaluator;
 
 	private Object rootObject;
 	private T currentObject;
@@ -49,14 +45,13 @@ final class ParserContext<T>{
 	private Annotation binding;
 
 
-	ParserContext(final Evaluator evaluator, final T currentObject){
-		this(evaluator, currentObject, null);
+	ParserContext(final T currentObject){
+		this(currentObject, null);
 	}
 
-	ParserContext(final Evaluator evaluator, final T currentObject, final Object parentObject){
-		this.evaluator = evaluator;
-
+	ParserContext(final T currentObject, final Object parentObject){
 		this.currentObject = currentObject;
+
 		setRootObject(parentObject);
 	}
 
@@ -80,13 +75,9 @@ final class ParserContext<T>{
 	 * @param value	The value.
 	 */
 	@SuppressWarnings("unchecked")
-	public void setFieldValue(final Field field, final Object value){
+	void setFieldValue(final Field field, final Object value){
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
-		currentObject = (T)ReflectionHelper.withValue(currentObject, field, value);
-	}
-
-	void addCurrentObjectToEvaluatorContext(){
-		evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
+		currentObject = (T)FieldAccessor.setFieldValue(currentObject, field, value);
 	}
 
 	String getClassName(){

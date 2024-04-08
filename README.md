@@ -97,7 +97,7 @@ Replace `x.y.z` below int the version tag with the latest [release number](https
 
 ### Pre-built JARs
 
-You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://oss.sonatype.org/#nexus-search;quick~io.github.mtrevisan).
+You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://oss.sonatype.org/#nexus-search;quick~io.github.mtrevisan).
 
 <br/>
 <br/>
@@ -147,26 +147,27 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.4.1](#changelog-3.4.1)
-    2. [version 3.4.0](#changelog-3.4.0)
-    3. [version 3.3.0](#changelog-3.3.0)
-    4. [version 3.2.0](#changelog-3.2.0)
-    5. [version 3.1.3](#changelog-3.1.3)
-    6. [version 3.1.2](#changelog-3.1.2)
-    7. [version 3.1.1](#changelog-3.1.1)
-    8. [version 3.1.0](#changelog-3.1.0)
-    9. [version 3.0.2](#changelog-3.0.2)
-    10. [version 3.0.1](#changelog-3.0.1)
-    11. [version 3.0.0](#changelog-3.0.0)
-    12. [version 2.1.2](#changelog-2.1.2)
-    13. [version 2.1.1](#changelog-2.1.1)
-    14. [version 2.1.0](#changelog-2.1.0)
-    15. [version 2.0.0](#changelog-2.0.0)
-    16. [version 1.1.0](#changelog-1.1.0)
-    17. [version 1.0.0](#changelog-1.0.0)
-    18. [version 0.0.2](#changelog-0.0.2)
-    19. [version 0.0.1](#changelog-0.0.1)
-    20. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.5.1](#changelog-3.5.1)
+    2. [version 3.5.0](#changelog-3.5.0)
+    3. [version 3.4.0](#changelog-3.4.0)
+    4. [version 3.3.0](#changelog-3.3.0)
+    5. [version 3.2.0](#changelog-3.2.0)
+    6. [version 3.1.3](#changelog-3.1.3)
+    7. [version 3.1.2](#changelog-3.1.2)
+    8. [version 3.1.1](#changelog-3.1.1)
+    9. [version 3.1.0](#changelog-3.1.0)
+    10. [version 3.0.2](#changelog-3.0.2)
+    11. [version 3.0.1](#changelog-3.0.1)
+    12. [version 3.0.0](#changelog-3.0.0)
+    13. [version 2.1.2](#changelog-2.1.2)
+    14. [version 2.1.1](#changelog-2.1.1)
+    15. [version 2.1.0](#changelog-2.1.0)
+    16. [version 2.0.0](#changelog-2.0.0)
+    17. [version 1.1.0](#changelog-1.1.0)
+    18. [version 1.0.0](#changelog-1.0.0)
+    19. [version 0.0.2](#changelog-0.0.2)
+    20. [version 0.0.1](#changelog-0.0.1)
+    21. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -185,30 +186,30 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
 
-|                      | condition |  type   | charset | terminator | consumeTerminator |  size   |     byteOrder      | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
-|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:------------------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
-| BindList             |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindList |
-| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
-| BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
-| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
+|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
+|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
+| BindList             |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindList |
+| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
+| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
+| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
+| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
+| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
+| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | valueDecode | valueEncode |                |
-|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|---------------:|
-| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |             |             | TemplateHeader |
-| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |             |             |           Skip |
-| Checksum         |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |       Checksum |
-| Evaluate         |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |             |             |       Evaluate |
-| PostProcessField |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            |         |   &#9745;   |   &#9745;   |   ProcessField |
+|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
+|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
+| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
+| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
+| Checksum         |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
+| Evaluate         |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
+| PostProcessField |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -303,10 +304,10 @@ private byte positionsCount;
 @BindArray(size = "positionsCount", type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
         alternatives = {
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = 0, type = PositionInvalid.class),
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = PositionAbsolute.class),
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = PositionRelative.class),
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 3", prefix = 3, type = PositionSameAsPrevious.class)
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = "0", type = PositionInvalid.class),
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = "1", type = PositionAbsolute.class),
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = "2", type = PositionRelative.class),
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 3", prefix = "3", type = PositionSameAsPrevious.class)
        }
     ),
    converter = PositionsConverter.class)
@@ -395,7 +396,6 @@ private List<TestType3> value;
 
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
- - `bitOrder`: the bit order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -412,7 +412,7 @@ This annotation is bounded to a variable.
 
 ```java
 @BindBitSet(size = "2")
-private BitSet bits;
+private BitSet bitmap;
 ```
 
 
@@ -741,18 +741,18 @@ public Void lastUnreadPlaceholder;
 
 #### parameters
 
- - `type`: the Class of variable to be read.
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
- - `startValue`: the starting value for the algorithm.
 
 #### description
 
 Reads a checksum.
 
 Compute the message checksum and compare it to the read variable once a message has been completely read.
+The amount of bytes read depends on the output size of the checksum algorithm.
 
 #### annotation type
 
@@ -761,7 +761,7 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
+@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class)
 private short checksum;
 ```
 
@@ -895,7 +895,7 @@ gives as output the following
    ],
    "context": {
       "headerLength": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength()",
-      "deviceTypes": "[QUECLINK_GB200S(0x46)]"
+      "deviceTypes": ["QUECLINK_GB200S(0x46)"]
    }
 }
 ```
@@ -1020,7 +1020,7 @@ public String text;
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `pattern`: regex pattern this field must obey, optional (alternative to `minValue`/`maxValue` and `enumeration`).
-- `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is a single enum, then each value of this enum is mutually exclusive.
+- `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is not an array, then each value of this enum is mutually exclusive.
 - `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 - `charset`: charset of the field (if string value), optional.
 - `radix`: radix of the number field when written to the message, optional.
@@ -1138,7 +1138,7 @@ public String downloadURL;
 - `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
-- `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
+- `enumeration`: enumeration for this field, optional. If the field is not an array, then each value of this enum is mutually exclusive.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description
@@ -1580,11 +1580,22 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-3.4.1"></a>
-### version 3.4.1 - 20240321
+<a name="changelog-3.5.1"></a>
+### version 3.5.1 - 202404??
 
+- Fix error while assessing size value.
+- Corrected `NullObjectChoice` and `NullObjectChoiceList` type value.
+- Fix error while putting numeric value in `NumberWriterManager`.
+- (minor) Fix missing field name in parser context in `TemplateParser.encode`.
+
+<a name="changelog-3.5.0"></a>
+### version 3.5.0 - 20240406
+
+- Added condition on `Checksum` annotation.
+- Removed `type` and `startValue` from `Checksum`: the same information can be retrieved from the algorithm used, plus, the start value can be embedded in the implemented class.
 - Fixed a problem while converting a numeric string to number.
 - Make record classes work with annotations.
+- Slightly reduced memory footprint and improved execution time.
 
 <a name="changelog-3.4.0"></a>
 ### version 3.4.0 - 20240318

@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -58,14 +57,6 @@ public @interface BindBitSet{
 	 * @return	The number of bits used to represent the numeric value.
 	 */
 	String size();
-
-	/**
-	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest if big-endian).</p>
-	 *
-	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
-	 */
-	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.

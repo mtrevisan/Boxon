@@ -24,10 +24,11 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
@@ -36,18 +37,18 @@ import java.util.BitSet;
 /**
  * Provide bit-level tools for reading bits, skipping bits, and performing fallback after a reading on a {@link ByteBuffer}.
  */
-@SuppressWarnings("WeakerAccess")
 abstract class BitReaderData{
 
-	private static final class State{
+	//FIXME try to reduce the number of instances of this class
+	private static final class Snapshot{
 		/** The position in the byte buffer of the cached value. */
 		private int position;
-		/** The <i>cache</i> used when reading bits. */
+		/** The cache used when reading bits. */
 		private byte cache;
-		/** The number of bits available (to read) within {@code cache}. */
+		/** The number of bits available (to read) within the cache. */
 		private int remaining;
 
-		State(final int position, final byte cache, final int remaining){
+		Snapshot(final int position, final byte cache, final int remaining){
 			set(position, cache, remaining);
 		}
 
@@ -62,12 +63,12 @@ abstract class BitReaderData{
 	/** The backing {@link ByteBuffer}. */
 	private final ByteBuffer buffer;
 
-	/** The <i>cache</i> used when reading bits. */
+	/** The cache used when reading bits. */
 	private byte cache;
-	/** The number of bits available (to read) within {@code cache}. */
+	/** The number of bits available (to read) within the cache. */
 	private int remaining;
 
-	private State fallbackPoint;
+	private Snapshot fallbackPoint;
 
 
 	BitReaderData(final ByteBuffer buffer){
@@ -78,22 +79,22 @@ abstract class BitReaderData{
 	/**
 	 * Create a fallback point that can later be restored (see {@link #restoreFallbackPoint()}).
 	 */
-	public final void createFallbackPoint(){
+	public final synchronized void createFallbackPoint(){
 		if(fallbackPoint != null)
 			//update current mark:
 			fallbackPoint.set(buffer.position(), cache, remaining);
 		else
 			//create new mark
-			fallbackPoint = createState();
+			fallbackPoint = createSnapshot();
 	}
 
 	/**
 	 * Restore a fallback point created with {@link #createFallbackPoint()}.
 	 */
-	public final void restoreFallbackPoint(){
+	public final synchronized void restoreFallbackPoint(){
 		if(fallbackPoint != null){
 			//a fallback point has been marked before
-			restoreState(fallbackPoint);
+			restoreSnapshot(fallbackPoint);
 
 			clearFallbackPoint();
 		}
@@ -103,86 +104,133 @@ abstract class BitReaderData{
 	 * Clear fallback point data.
 	 * <p>After calling this method, no restoring is possible (see {@link #restoreFallbackPoint()}).</p>
 	 */
-	public final void clearFallbackPoint(){
+	private synchronized void clearFallbackPoint(){
 		fallbackPoint = null;
 	}
 
-	private State createState(){
-		return new State(buffer.position(), cache, remaining);
+	private Snapshot createSnapshot(){
+		return new Snapshot(buffer.position(), cache, remaining);
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	private void restoreState(final State state){
-		buffer.position(state.position);
-		remaining = state.remaining;
-		cache = state.cache;
+	private void restoreSnapshot(final Snapshot snapshot){
+		buffer.position(snapshot.position);
+		remaining = snapshot.remaining;
+		cache = snapshot.cache;
 	}
 
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
+	 * Reads the next {@code length} bits and composes a long in little-endian notation.
 	 *
-	 * @param length	The amount of bits to read.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 * @param bitsToRead	The amount of bits to read.
+	 * @return	A long value at the {@link BitReader}'s current position.
 	 */
-	public final BitSet getBitSet(final int length, final ByteOrder bitOrder){
-		final BitSet bits = new BitSet(length);
-		int offset = 0;
-		while(offset < length){
-			//transfer the cache values
-			final int size = Math.min(length, remaining);
-			if(size > 0){
-				addCacheToBitSet(bits, offset, size);
+	final synchronized long getNumber(final int bitsToRead){
+		long bitmap = 0l;
 
-				offset += size;
-			}
-
+		int bitsRead = 0;
+		while(bitsRead < bitsToRead){
 			//if cache is empty and there are more bits to be read, fill it
-			if(offset < length){
-				cache = buffer.get();
+			if(remaining == 0)
+				fillCache();
 
-				remaining = Byte.SIZE;
-			}
-		}
-		return BitSetHelper.changeBitOrder(bits, bitOrder);
-	}
+			final int length = Math.min(bitsToRead - bitsRead, remaining);
+			//transfer the cache values
+			bitmap = readFromCache(bitmap, bitsRead, length);
+			bitsRead += length;
 
-	private Byte peekByte(){
-		//make a copy of internal variables
-		final State originalState = createState();
-
-		Byte b = null;
-		try{
-			b = getByte();
+			consumeCache(length);
 		}
-		catch(final BufferUnderflowException ignored){
-			//trap end-of-buffer
-		}
-		finally{
-			//restore original variables
-			restoreState(originalState);
-		}
-		return b;
+		return bitmap;
 	}
 
 	/**
 	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
 	 * with a given offset.
 	 *
-	 * @param bits	The bit set into which to transfer {@code size} bits from the cache.
+	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
 	 */
-	private void addCacheToBitSet(final BitSet bits, final int offset, final int size){
+	private long readFromCache(long bitmap, final int offset, final int size){
 		int skip;
 		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
-			bits.set(skip + offset);
+			bitmap |= 1l << (skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
+		return bitmap;
+	}
+
+	/**
+	 * Reads the next {@code length} bits and composes a {@link BitSet} in little-endian notation.
+	 *
+	 * @param bitsToRead	The amount of bits to read.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 */
+	public final synchronized BitSet getBitSet(final int bitsToRead){
+		final BitSet bitmap = BitSetHelper.createBitSet(bitsToRead);
+
+		int bitsRead = 0;
+		while(bitsRead < bitsToRead){
+			//if cache is empty and there are more bits to be read, fill it
+			if(remaining == 0)
+				fillCache();
+
+			//transfer the cache values
+			final int length = Math.min(bitsToRead - bitsRead, remaining);
+			readFromCache(bitmap, bitsRead, length);
+			bitsRead += length;
+
+			consumeCache(length);
+		}
+		return bitmap;
+	}
+
+	/**
+	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
+	 * with a given offset.
+	 *
+	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
+	 * @param offset	The offset for the indexes.
+	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
+	 */
+	private void readFromCache(final BitSet bitmap, final int offset, final int size){
+		int skip;
+		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+			bitmap.set(skip + offset);
+			cache ^= (byte)(1 << skip);
+		}
+	}
+
+	/**
+	 * Skips the next {@code length} bits.
+	 *
+	 * @param bitsToSkip	The amount of bits to skip.
+	 */
+	final synchronized void skipBits(final int bitsToSkip){
+		int bitsSkipped = 0;
+		while(bitsSkipped < bitsToSkip){
+			//if cache is empty and there are more bits to be read, fill it
+			if(remaining == 0)
+				fillCache();
+
+			final int length = Math.min(bitsToSkip - bitsSkipped, remaining);
+			bitsSkipped += length;
+
+			consumeCache(length);
+		}
+	}
+
+	private void consumeCache(final int size){
 		//remove read bits from the cache
 		cache >>= size;
 		remaining -= size;
+	}
+
+	private void fillCache(){
+		cache = buffer.get();
+		remaining = Byte.SIZE;
 	}
 
 	/**
@@ -195,36 +243,56 @@ abstract class BitReaderData{
 	/**
 	 * Retrieve text until a terminator (NOT consumed!) is found.
 	 *
-	 * @param os	The stream to write to.
+	 * @param baos	The stream to write to.
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
-		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
-			os.write(getByte());
-		os.flush();
+	final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
+		Byte byteRead;
+		while((byteRead = peekByte()) != null && byteRead != terminator)
+			baos.write(getByte());
+		baos.flush();
 	}
 
-	/**
-	 * Retrieve text until a terminator is found. Not bytes are consumed.
-	 *
-	 * @param os	The stream to write to.
-	 * @param terminator	The terminator.
-	 * @throws IOException	If an I/O error occurs.
-	 */
-	protected final void getTextUntilTerminatorWithoutConsuming(final OutputStreamWriter os, final byte terminator) throws IOException{
+	private Byte peekByte(){
 		//make a copy of internal variables
-		final State originalState = createState();
+		final Snapshot originalSnapshot = createSnapshot();
 
+		Byte b = null;
 		try{
-			getTextUntilTerminator(os, terminator);
+			b = getByte();
 		}
 		catch(final BufferUnderflowException ignored){
 			//trap end-of-buffer
 		}
 		finally{
 			//restore original variables
-			restoreState(originalState);
+			restoreSnapshot(originalSnapshot);
+		}
+		return b;
+	}
+
+	/**
+	 * Retrieve text until a terminator is found. Not bytes are consumed.
+	 *
+	 * @param baos	The stream to write to.
+	 * @param terminator	The terminator.
+	 * @throws IOException	If an I/O error occurs.
+	 */
+	final synchronized void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator)
+			throws IOException{
+		//make a copy of internal variables
+		final Snapshot originalSnapshot = createSnapshot();
+
+		try{
+			getTextUntilTerminator(baos, terminator);
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+		}
+		finally{
+			//restore original variables
+			restoreSnapshot(originalSnapshot);
 		}
 	}
 
@@ -234,7 +302,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	The array that backs this reader.
 	 */
-	public final byte[] array(){
+	public final synchronized byte[] array(){
 		return buffer.array();
 	}
 
@@ -243,7 +311,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
-	public final int position(){
+	public final synchronized int position(){
 		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
 	}
 
@@ -252,7 +320,7 @@ abstract class BitReaderData{
 	 *
 	 * @param newPosition	The position of the backing buffer in {@code byte}s.
 	 */
-	public final void position(final int newPosition){
+	public final synchronized void position(final int newPosition){
 		buffer.position(newPosition);
 
 		resetInnerVariables();
@@ -268,7 +336,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}.
 	 */
-	public final boolean hasRemaining(){
+	public final synchronized boolean hasRemaining(){
 		return buffer.hasRemaining();
 	}
 

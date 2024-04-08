@@ -37,18 +37,18 @@ import java.util.List;
 public class MessageExtractorBasicTemplate implements MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
 
 	@Override
-	public String getTypeName(final Template<?> message){
+	public final String getTypeName(final Template<?> message){
 		return message.getType()
 			.getName();
 	}
 
 	@Override
-	public TemplateHeader getHeader(final Template<?> message){
+	public final TemplateHeader getHeader(final Template<?> message){
 		return message.getHeader();
 	}
 
 	@Override
-	public List<TemplateField> getFields(final Template<?> message){
+	public final List<TemplateField> getFields(final Template<?> message){
 		return message.getTemplateFields();
 	}
 

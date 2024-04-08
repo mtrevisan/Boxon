@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -43,7 +42,6 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,7 +54,7 @@ import java.util.function.Function;
 /**
  * Loader for the templates.
  */
-public final class LoaderTemplate{
+final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -98,7 +96,8 @@ public final class LoaderTemplate{
 	 * @return	This instance, used for chaining.
 	 */
 	LoaderTemplate withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		if(eventListener != null)
+			this.eventListener = eventListener;
 
 		return this;
 	}
@@ -113,13 +112,17 @@ public final class LoaderTemplate{
 	void loadTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplatesFrom(basePackageClasses);
 
-		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link TemplateHeader}. */
-		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(TemplateHeader.class);
-		final List<Template<?>> templates = extractTemplates(annotatedClasses);
-		addTemplatesInner(templates);
+		final List<Class<?>> annotatedClasses = getAnnotatedClasses(basePackageClasses);
+		final List<Template<?>> templates = extractValidTemplates(annotatedClasses);
+		addTemplatesToMap(templates);
 
 		eventListener.loadedTemplates(templates.size());
+	}
+
+	/** Extract all classes annotated with {@link TemplateHeader}. */
+	private static List<Class<?>> getAnnotatedClasses(final Class<?>[] basePackageClasses){
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
+		return reflectiveClassLoader.extractClassesWithAnnotation(TemplateHeader.class);
 	}
 
 	/**
@@ -129,37 +132,41 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
 
 		if(templateClass.isAnnotationPresent(TemplateHeader.class)){
 			/** extract all classes annotated with {@link TemplateHeader}. */
 			final Template<?> template = extractTemplate(templateClass);
 			if(template.canBeCoded()){
-				addTemplateInner(template);
+				addTemplateToMap(template);
 
 				eventListener.loadedTemplates(templates.size());
 			}
 		}
 	}
 
-	private List<Template<?>> extractTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
+	private List<Template<?>> extractValidTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
 		final int size = annotatedClasses.size();
 		final List<Template<?>> templates = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
-			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
 			final Template<?> from = createTemplate(type);
-			if(from.canBeCoded())
-				//if the template is valid, add it to the list of templates...
-				templates.add(from);
-			else
-				//... otherwise throw exception
-				throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
-					type.getSimpleName());
+			addCodedTemplate(from, type, templates);
 		}
 		return templates;
+	}
+
+	private static void addCodedTemplate(final Template<?> from, final Class<?> type, final Collection<Template<?>> templates)
+			throws TemplateException{
+		if(from.canBeCoded())
+			//if the template is valid, add it to the list of templates...
+			templates.add(from);
+		else
+			//... otherwise throw exception
+			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
+				type.getSimpleName());
 	}
 
 	/**
@@ -170,7 +177,7 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+	Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
 		if(!from.canBeCoded())
 			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
@@ -192,13 +199,13 @@ public final class LoaderTemplate{
 		return (Template<T>)templateStore.apply(type);
 	}
 
-	private void addTemplatesInner(final List<Template<?>> templates) throws TemplateException{
+	private void addTemplatesToMap(final List<Template<?>> templates) throws TemplateException{
 		//load each template into the available templates list
 		for(int i = 0, length = templates.size(); i < length; i ++){
 			final Template<?> template = templates.get(i);
 
 			if(template != null && template.canBeCoded())
-				addTemplateInner(template);
+				addTemplateToMap(template);
 		}
 	}
 
@@ -208,13 +215,13 @@ public final class LoaderTemplate{
 	 * @param template	The template to add to the list of available templates.
 	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
 	 */
-	private void addTemplateInner(final Template<?> template) throws TemplateException{
+	private void addTemplateToMap(final Template<?> template) throws TemplateException{
 		try{
 			final TemplateHeader header = template.getHeader();
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final String[] starts = header.start();
 			for(int i = 0, length = starts.length; i < length; i ++)
-				loadTemplateInner(template, starts[i], charset);
+				processTemplate(template, starts[i], charset);
 		}
 		catch(final TemplateException e){
 			eventListener.cannotLoadTemplate(template.getType().getName(), e);
@@ -223,7 +230,7 @@ public final class LoaderTemplate{
 		}
 	}
 
-	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
+	private void processTemplate(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
 		final String key = calculateKey(headerStart, charset);
 		if(templates.containsKey(key))
 			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
@@ -248,15 +255,26 @@ public final class LoaderTemplate{
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
 
-			final byte[] templateHeader = StringHelper.hexToByteArray(header);
-
 			//verify if it's a valid message header
-			final int lastIndex = index + templateHeader.length;
-			if(lastIndex <= array.length && Arrays.equals(array, index, lastIndex, templateHeader, 0, templateHeader.length))
+			final int length = header.length() >> 1;
+			if(index + length <= array.length && byteArrayHexStringEquals(array, index, header, length))
 				return entry.getValue();
 		}
 
 		throw TemplateException.create("Cannot find any template for given raw message");
+	}
+
+	private static boolean byteArrayHexStringEquals(final byte[] byteArray, final int arrayFromIndex, final CharSequence hexString,
+			final int length){
+		for(int i = 0, j = arrayFromIndex, k = 0; i < length; i ++, j ++, k += 2){
+			final int byteValue = byteArray[j] & 0xFF;
+			final int highDigit = Character.digit(hexString.charAt(k), 16);
+			final int lowDigit = Character.digit(hexString.charAt(k + 1), 16);
+			final int hexValue = (highDigit << 4) | lowDigit;
+			if(byteValue != hexValue)
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -286,7 +304,7 @@ public final class LoaderTemplate{
 	 *
 	 * @return	Collection of templates.
 	 */
-	public Collection<Template<?>> getTemplates(){
+	Collection<Template<?>> getTemplates(){
 		return Collections.unmodifiableCollection(templates.values());
 	}
 

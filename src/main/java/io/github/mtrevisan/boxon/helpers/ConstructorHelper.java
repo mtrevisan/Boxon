@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -30,26 +30,27 @@ import org.springframework.objenesis.ObjenesisStd;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Objects;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.RecordComponent;
+import java.util.AbstractMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 
 /**
- * A collection of convenience methods for working with constructors.
+ * Provides static methods to extract creator functions for classes.
  */
 public final class ConstructorHelper{
 
 	private static final Function<Class<?>, Supplier<?>> EMPTY_CREATORS = Memoizer.memoize(ConstructorHelper::getEmptyCreatorInner);
-	private static final Function<NonEmptyConstructorTuple<?>, Function<Object[], ?>> NON_EMPTY_CREATORS
+	private static final Function<Map.Entry<Class<?>, Class<?>[]>, Function<Object[], ?>> NON_EMPTY_CREATORS
 		= Memoizer.memoize(ConstructorHelper::getNonEmptyCreatorInner);
 
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
 
 
 	private ConstructorHelper(){}
-
 
 	/**
 	 * Gets the creator function for the given class.
@@ -73,26 +74,13 @@ public final class ConstructorHelper{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> Function<Object[], T> getNonEmptyCreator(final Class<T> type, final Class<?>[] constructorClasses){
-		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new NonEmptyConstructorTuple<>(type, constructorClasses));
+		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new AbstractMap.SimpleEntry<>(type, constructorClasses));
 	}
 
 	private static <T> Supplier<T> getEmptyCreatorInner(final Class<T> type){
 		ObjectInstantiator<T> instantiator;
 		try{
-			final Constructor<T> constructor = type.getDeclaredConstructor();
-			ReflectionHelper.makeAccessible(constructor);
-
-			//try creating an instance
-			constructor.newInstance();
-
-			instantiator = () -> {
-				try{
-					return constructor.newInstance();
-				}
-				catch(final Exception e){
-					throw new ObjenesisException(e);
-				}
-			};
+			instantiator = getConstructor(type);
 		}
 		catch(final Exception ignored){
 			instantiator = OBJENESIS.getInstantiatorOf(type);
@@ -100,13 +88,31 @@ public final class ConstructorHelper{
 		return instantiator::newInstance;
 	}
 
-	private static <T> Function<Object[], T> getNonEmptyCreatorInner(final NonEmptyConstructorTuple<T> tuple){
-		Function<Object[], T> instantiator = null;
+	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws NoSuchMethodException, InstantiationException,
+			IllegalAccessException, InvocationTargetException{
+		final Constructor<T> constructor = type.getDeclaredConstructor();
+		FieldAccessor.makeAccessible(constructor);
+
+		//try creating an instance
+		constructor.newInstance();
+
+		return () -> {
+			try{
+				return constructor.newInstance();
+			}
+			catch(final Exception e){
+				throw new ObjenesisException(e);
+			}
+		};
+	}
+
+	private static Function<Object[], ?> getNonEmptyCreatorInner(final Map.Entry<Class<?>, Class<?>[]> tuple){
+		Function<Object[], ?> instantiator = null;
 		try{
-			final Class<T> type = tuple.type;
-			final Class<?>[] constructorClasses = tuple.constructorClasses;
-			final Constructor<T> constructor = type.getDeclaredConstructor(constructorClasses);
-			ReflectionHelper.makeAccessible(constructor);
+			final Class<?> type = tuple.getKey();
+			final Class<?>[] constructorClasses = tuple.getValue();
+			final Constructor<?> constructor = type.getDeclaredConstructor(constructorClasses);
+			FieldAccessor.makeAccessible(constructor);
 
 			instantiator = (final Object[] constructorValues) -> {
 				try{
@@ -122,20 +128,37 @@ public final class ConstructorHelper{
 	}
 
 
-	private record NonEmptyConstructorTuple<T>(Class<T> type, Class<?>[] constructorClasses){
-		@Override
-		public boolean equals(final Object obj){
-			if(this == obj)
-				return true;
-			if(obj == null || getClass() != obj.getClass())
-				return false;
-			final NonEmptyConstructorTuple<?> other = (NonEmptyConstructorTuple<?>)obj;
-			return (Objects.equals(type, other.type) && Arrays.equals(constructorClasses, other.constructorClasses));
-		}
+	static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
+			throws ReflectiveOperationException{
+		@SuppressWarnings("unchecked")
+		final Class<T> objClass = (Class<T>)obj.getClass();
+		final RecordComponent[] recordComponents = objClass.getRecordComponents();
 
-		@Override
-		public int hashCode(){
-			return 31 * Objects.hash(type) + Arrays.hashCode(constructorClasses);
-		}
+		//extract the current field values from the record class
+		final Object[] recordValues = FieldAccessor.retrieveCurrentFieldValues(obj, recordComponents);
+
+		//find the index of the field to update
+		FieldAccessor.updateFieldValue(fieldName, value, recordComponents, recordValues);
+
+		return createRecordInstance(recordComponents, objClass, recordValues);
 	}
+
+	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass,
+			final Object[] recordValues){
+		//extract the field types from the record class
+		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);
+
+		//creates a new instance of the record class with the updated values
+		return getNonEmptyCreator(objClass, constructorClasses)
+			.apply(recordValues);
+	}
+
+	private static Class<?>[] extractFieldTypes(final RecordComponent[] components){
+		final int length = components.length;
+		final Class<?>[] constructorClasses = new Class<?>[length];
+		for(int i = 0; i < length; i ++)
+			constructorClasses[i] = components[i].getType();
+		return constructorClasses;
+	}
+
 }

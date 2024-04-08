@@ -26,11 +26,14 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
@@ -41,6 +44,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
 final class PlainManager implements ConfigurationManagerInterface{
@@ -88,7 +93,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws CodecException,
+			ConfigurationException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -100,48 +106,56 @@ final class PlainManager implements ConfigurationManagerInterface{
 		return Collections.unmodifiableMap(fieldMap);
 	}
 
-	@SuppressWarnings("DuplicatedCode")
-	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException, CodecException{
-		final Map<String, Object> map = new HashMap<>(10);
+	private Map<String, Object> extractMap(final Class<?> fieldType) throws CodecException, ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(9);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getBigNumber(annotation.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getBigNumber(annotation.maxValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(annotation.minValue()), map);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(annotation.maxValue()), map);
+		putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		final Object defaultValue = ConfigurationHelper.convertValue(annotation.defaultValue(), fieldType, annotation.enumeration());
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
+		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
 		if(String.class.isAssignableFrom(fieldType))
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
+			putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
 
 		return map;
 	}
 
 	@Override
-	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws CodecException,
-			AnnotationException{
-		final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
-		ValidationHelper.validatePattern(configData, dataValue);
-		ValidationHelper.validateMinMaxValues(configData, dataValue);
+	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws CodecException, AnnotationException{
+		final Version minProtocolVersion = Version.of(annotation.minProtocol());
+		final Version maxProtocolVersion = Version.of(annotation.maxProtocol());
+		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(annotation.annotationType());
+		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException, CodecException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
+			EncodeException{
 		if(dataValue != null){
-			final Class<?> fieldType = field.getType();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			if(ConfigFieldData.hasEnumeration(enumeration))
+			if(hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 			else if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(fieldType, v);
+				dataValue = ParserDataType.getValue(field.getType(), v);
 		}
 		return dataValue;
+	}
+
+	/**
+	 * Whether the given class is a true enumeration.
+	 *
+	 * @param enumeration	The class to check.
+	 * @return	Whether the given class is a true enumeration.
+	 */
+	private static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,

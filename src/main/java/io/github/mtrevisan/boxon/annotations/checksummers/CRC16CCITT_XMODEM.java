@@ -24,28 +24,33 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
+/**
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT XMODEM algorithm.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ */
+public final class CRC16CCITT_XMODEM implements Checksummer{
+
+	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021 (reversed is 0x8408). */
+	private static final int POLYNOMIAL = 0x0000_1021;
 
 
-class CRC16CCITTTest{
+	@Override
+	public short calculateChecksum(final byte[] data, final int start, final int end){
+		int value = 0x0000;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
 
-	@Test
-	void test(){
-		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7, CRC16CCITT.START_VALUE_0xFFFF);
-
-		Assertions.assertEquals((short)0x763A, crc16.shortValue());
-	}
-
-	@Test
-	void oneToFour(){
-		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, CRC16CCITT.START_VALUE_0xFFFF);
-
-		Assertions.assertEquals((short)0x89C3, crc16.shortValue());
+			for(int j = Byte.SIZE - 1; j >= 0; j --){
+				final boolean bit = (((datum >> j) & 1) != 0);
+				final boolean c15 = ((value & 0x8000) != 0);
+				value <<= 1;
+				if(c15 ^ bit)
+					value ^= POLYNOMIAL;
+			}
+		}
+		return (short)(0xFFFF & value);
 	}
 
 }

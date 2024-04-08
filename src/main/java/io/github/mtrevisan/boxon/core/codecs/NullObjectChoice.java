@@ -35,7 +35,7 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
-		return Annotation.class;
+		return NullObjectChoice.class;
 	}
 
 	@Override
@@ -44,13 +44,13 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 	}
 
 	@Override
-	public int prefix(){
-		return 0;
+	public String prefix(){
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public Class<?> type(){
-		return Object.class;
+		return Void.TYPE;
 	}
 
 }

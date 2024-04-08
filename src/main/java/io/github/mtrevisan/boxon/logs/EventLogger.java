@@ -76,7 +76,7 @@ public final class EventLogger extends EventListener{
 	}
 
 	@Override
-	public void loadingCodec(final Class<?>[] codecClasses){
+	public void loadingCodec(final Class<?>... codecClasses){
 		if(LOGGER.isInfoEnabled()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(int i = 0, length = codecClasses.length; i < length; i ++)
@@ -211,7 +211,7 @@ public final class EventLogger extends EventListener{
 		return StringHelper.format(outputMessage, extractParameters(parameters));
 	}
 
-	private static Object[] extractParameters(final Object[] parameters){
+	private static Object extractParameters(final Object[] parameters){
 		if(parameters instanceof Class<?>[]){
 			final Collection<String> packages = collectPackages(parameters);
 
@@ -219,7 +219,7 @@ public final class EventLogger extends EventListener{
 			for(final String pkg : packages)
 				sj.add(pkg);
 
-			return new Object[]{sj.toString()};
+			return sj.toString();
 		}
 		return parameters;
 	}

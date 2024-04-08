@@ -35,7 +35,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,14 +54,21 @@ public final class Evaluator{
 
 		@Override
 		public void setVariable(final String name, final Object value){
+			handleVariableUpdate(name, value);
+		}
+
+
+		public void removeVariable(final String name){
+			handleVariableUpdate(name, null);
+		}
+
+		private void handleVariableUpdate(final String name, final Object value){
 			super.setVariable(name, value);
 
-			if(name != null){
-				if(value != null)
-					backupContext.put(name, value);
-				else
-					backupContext.remove(name);
-			}
+			if(value != null)
+				backupContext.put(name, value);
+			else
+				backupContext.remove(name);
 		}
 
 		@Override
@@ -117,8 +123,9 @@ public final class Evaluator{
 	 * @param key	The key used to reference the value.
 	 * @param value	The value (pass {@code null} to remove the {@code key} from the context).
 	 */
-	public void addToContext(final String key, final Object value){
+	public void putToContext(final String key, final Object value){
 		Objects.requireNonNull(key, "Key cannot be null");
+		Objects.requireNonNull(value, "Value cannot be null");
 
 		context.setVariable(key, value);
 	}
@@ -128,7 +135,9 @@ public final class Evaluator{
 	 *
 	 * @param method	The method.
 	 */
-	public void addToContext(final Method method){
+	public void putToContext(final Method method){
+		Objects.requireNonNull(method, "Method cannot be null");
+
 		context.registerFunction(method.getName(), method);
 	}
 
@@ -138,7 +147,9 @@ public final class Evaluator{
 	 * @param key	The key used to reference the value.
 	 */
 	public void removeFromContext(final String key){
-		addToContext(key, null);
+		Objects.requireNonNull(key, "Key cannot be null");
+
+		context.removeVariable(key);
 	}
 
 	/**
@@ -147,7 +158,9 @@ public final class Evaluator{
 	 * @param method	The method.
 	 */
 	public void removeFromContext(final Method method){
-		addToContext(method.getName(), null);
+		Objects.requireNonNull(method, "Method cannot be null");
+
+		removeFromContext(method.getName());
 	}
 
 	/**
@@ -164,6 +177,18 @@ public final class Evaluator{
 	 */
 	public Map<String, Object> getContext(){
 		return context.getContext();
+	}
+
+
+	/**
+	 * Adds the current object to the evaluator context.
+	 * <p>The current object is added with the key "self" in the context.</p>
+	 * <p>It allows referencing the current object using SpEL expressions.</p>
+	 *
+	 * @param currentObject	The current object.
+	 */
+	public void addCurrentObjectToEvaluatorContext(final Object currentObject){
+		putToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
 	/**
@@ -196,7 +221,7 @@ public final class Evaluator{
 	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
-	 * @param expression	The SpEL expression to evaluate.
+	 * @param expression	The SpEL expression to evaluate (empty string returns {@code -1}).
 	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
@@ -237,14 +262,10 @@ public final class Evaluator{
 			for(int i = 0, length = declaredFields.length; i < length; i ++){
 				final Field field = declaredFields[i];
 
-				if(field.getName().equals(name) && (!mustBeStatic || isStatic(field)))
+				if(field.getName().equals(name) && (!mustBeStatic || FieldAccessor.isStatic(field)))
 					return field;
 			}
 			return null;
-		}
-
-		private static boolean isStatic(final Field field){
-			return Modifier.isStatic(field.getModifiers());
 		}
 	}
 

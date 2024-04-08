@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -43,6 +44,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
 final class AlternativeManager implements ConfigurationManagerInterface{
@@ -118,7 +121,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws CodecException,
+			ConfigurationException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -135,7 +139,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	private Map<String, Object> extractConfigurationMapWithoutProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap)
-			throws ConfigurationException, CodecException{
+			throws CodecException, ConfigurationException{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		final int length = alternativeFields.length;
 		final Collection<Map<String, Object>> alternatives = new ArrayList<>(length);
@@ -144,33 +148,33 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
 
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
 			final Object defaultValue = ConfigurationHelper.convertValue(alternativeField.defaultValue(), fieldType, annotation.enumeration());
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
+			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
 
 			fieldMap.putAll(alternativeMap);
 
 			alternatives.add(fieldMap);
 		}
 		final Map<String, Object> alternativesMap = new HashMap<>(3);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.ALTERNATIVES, alternatives, alternativesMap);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
+		putIfNotEmpty(ConfigurationKey.ALTERNATIVES, alternatives, alternativesMap);
+		putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
+		putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
 		return alternativesMap;
 	}
 
 	private Map<String, Object> extractConfigurationMapWithProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap,
-			final Version protocol) throws ConfigurationException, CodecException{
+			final Version protocol) throws CodecException, ConfigurationException{
 		final Map<String, Object> alternativesMap;
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			alternativesMap = new HashMap<>(alternativeMap.size() + 6);
+			alternativesMap = new HashMap<>(alternativeMap.size() + 2);
 
 			alternativesMap.putAll(extractMap(fieldBinding, fieldType));
 
 			final Object defaultValue = ConfigurationHelper.convertValue(fieldBinding.defaultValue(), fieldType, annotation.enumeration());
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
+			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
 
 			alternativesMap.putAll(alternativeMap);
 		}
@@ -182,33 +186,30 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(4);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
 	}
 
-	@SuppressWarnings("DuplicatedCode")
 	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(7);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getBigNumber(binding.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getBigNumber(binding.maxValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(binding.minValue()), map);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(binding.maxValue()), map);
+		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), map);
+			putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), map);
 
 		return map;
 	}
@@ -228,17 +229,18 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final Field field, final String dataKey, final Object dataValue){}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
-			AnnotationException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws AnnotationException,
+			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			final Class<?> fieldType = field.getType();
 			if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(fieldType, v);
+				dataValue = ParserDataType.getValue(field.getType(), v);
 
-			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
-			ValidationHelper.validatePattern(configData, dataValue);
-			ValidationHelper.validateMinMaxValues(configData, dataValue);
+			final Version minProtocolVersion = Version.of(fieldBinding.minProtocol());
+			final Version maxProtocolVersion = Version.of(fieldBinding.maxProtocol());
+			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(
+				annotation.annotationType());
+			validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 		}
 		return dataValue;
 	}

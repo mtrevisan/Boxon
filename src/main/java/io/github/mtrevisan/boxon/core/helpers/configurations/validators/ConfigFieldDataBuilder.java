@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.configurations;
+package io.github.mtrevisan.boxon.core.helpers.configurations.validators;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
@@ -49,15 +49,15 @@ final class ConfigFieldDataBuilder{
 	 * @return	The created instance.
 	 */
 	static ConfigFieldData create(final Field field, final ConfigurationField annotation){
-		final ConfigFieldData data = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
-		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
-		data.setMinMaxValues(annotation.minValue(), annotation.maxValue());
-		data.setPattern(annotation.pattern());
-		data.setEnumeration(annotation.enumeration());
-		data.setDefaultValue(annotation.defaultValue());
-		data.setCharset(annotation.charset());
-		data.setRadix(annotation.radix());
-		return data;
+		final ConfigFieldData configData = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
+		configData.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		configData.setMinMaxValues(annotation.minValue(), annotation.maxValue());
+		configData.setPattern(annotation.pattern());
+		configData.setEnumeration(annotation.enumeration());
+		configData.setDefaultValue(annotation.defaultValue());
+		configData.setCharset(annotation.charset());
+		configData.setRadix(annotation.radix());
+		return configData;
 	}
 
 	/**
@@ -68,11 +68,11 @@ final class ConfigFieldDataBuilder{
 	 * @return	The created instance.
 	 */
 	static ConfigFieldData create(final Field field, final CompositeConfigurationField annotation){
-		final ConfigFieldData data = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
-		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
-		data.setPattern(annotation.pattern());
-		data.setCharset(annotation.charset());
-		return data;
+		final ConfigFieldData configData = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
+		configData.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		configData.setPattern(annotation.pattern());
+		configData.setCharset(annotation.charset());
+		return configData;
 	}
 
 	/**
@@ -83,10 +83,10 @@ final class ConfigFieldDataBuilder{
 	 * @return	The created instance.
 	 */
 	static ConfigFieldData create(final Field field, final CompositeSubField annotation){
-		final ConfigFieldData data = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
-		data.setPattern(annotation.pattern());
-		data.setDefaultValue(annotation.defaultValue());
-		return data;
+		final ConfigFieldData configData = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
+		configData.setPattern(annotation.pattern());
+		configData.setDefaultValue(annotation.defaultValue());
+		return configData;
 	}
 
 	/**
@@ -97,10 +97,10 @@ final class ConfigFieldDataBuilder{
 	 * @return	The created instance.
 	 */
 	static ConfigFieldData create(final Field field, final AlternativeConfigurationField annotation){
-		final ConfigFieldData data = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
-		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
-		data.setEnumeration(annotation.enumeration());
-		return data;
+		final ConfigFieldData configData = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
+		configData.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		configData.setEnumeration(annotation.enumeration());
+		return configData;
 	}
 
 	/**
@@ -111,14 +111,14 @@ final class ConfigFieldDataBuilder{
 	 * @return	The created instance.
 	 */
 	static ConfigFieldData create(final Field field, final AlternativeSubField annotation){
-		final ConfigFieldData data = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
-		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
-		data.setMinMaxValues(annotation.minValue(), annotation.maxValue());
-		data.setPattern(annotation.pattern());
-		data.setDefaultValue(annotation.defaultValue());
-		data.setCharset(annotation.charset());
-		data.setRadix(annotation.radix());
-		return data;
+		final ConfigFieldData configData = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
+		configData.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		configData.setMinMaxValues(annotation.minValue(), annotation.maxValue());
+		configData.setPattern(annotation.pattern());
+		configData.setDefaultValue(annotation.defaultValue());
+		configData.setCharset(annotation.charset());
+		configData.setRadix(annotation.radix());
+		return configData;
 	}
 
 }

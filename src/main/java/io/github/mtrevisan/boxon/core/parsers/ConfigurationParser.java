@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
@@ -53,9 +52,10 @@ import java.util.Map;
 public final class ConfigurationParser{
 
 	private final LoaderCodecInterface loaderCodec;
+
 	private final LoaderConfiguration loaderConfiguration;
 
-	private final ParserWriterHelper parserWriterHelper;
+	private EventListener eventListener;
 
 
 	/**
@@ -71,9 +71,10 @@ public final class ConfigurationParser{
 
 	private ConfigurationParser(final LoaderCodecInterface loaderCodec){
 		this.loaderCodec = loaderCodec;
+
 		loaderConfiguration = LoaderConfiguration.create();
 
-		parserWriterHelper = ParserWriterHelper.create();
+		withEventListener(EventListener.getNoOpInstance());
 	}
 
 
@@ -84,9 +85,11 @@ public final class ConfigurationParser{
 	 * @return	This instance, used for chaining.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){
-		loaderConfiguration.withEventListener(eventListener);
+		if(eventListener != null){
+			this.eventListener = eventListener;
 
-		parserWriterHelper.withEventListener(eventListener);
+			loaderConfiguration.withEventListener(eventListener);
+		}
 
 		return this;
 	}
@@ -130,12 +133,12 @@ public final class ConfigurationParser{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
-	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
 	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws EncodeException, CodecException, AnnotationException{
+			final Version protocol) throws AnnotationException, CodecException, EncodeException{
 		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}
 
@@ -154,17 +157,17 @@ public final class ConfigurationParser{
 	/**
 	 * Encode the configuration using the given writer with the given object that contains the values.
 	 *
-	 * @param configuration	The configuration to encode.
-	 * @param writer	The writer that holds the encoded template.
-	 * @param currentObject	The current object that holds the values.
-	 * @param evaluator	An evaluator.
-	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @param <T>	The class type of the current object.
-	 * @throws FieldException	If a codec is not found.
+	 * @param <T>           The class type of the current object.
+	 * @param configuration The configuration to encode.
+	 * @param writer        The writer that holds the encoded template.
+	 * @param currentObject The current object that holds the values.
+	 * @param protocol      The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @throws FieldException If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
-			final Evaluator evaluator, final Version protocol) throws FieldException{
-		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
+			final Version protocol) throws FieldException{
+		//FIXME is there a way to reduce the number of ParserContext objects?
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();
@@ -175,7 +178,8 @@ public final class ConfigurationParser{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() == Annotation.class)
 				continue;
@@ -185,15 +189,15 @@ public final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			parserContext.setRootObject(field.getFieldType());
-			parserContext.setFieldName(field.getFieldName());
 
 			//process value
 			parserContext.setField(field);
+			parserContext.setFieldName(field.getFieldName());
 			parserContext.setBinding(annotation);
-			parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
-			if(annotation != field.getBinding()){
-				parserContext.setBinding(field.getBinding());
-				parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
+			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			if(annotation != binding){
+				parserContext.setBinding(binding);
+				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}
 		}
 

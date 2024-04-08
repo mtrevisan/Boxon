@@ -43,11 +43,11 @@ import java.lang.annotation.Target;
 public @interface Checksum{
 
 	/**
-	 * The type of object to be inserted into the checksum field.
+	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The type of object to be inserted in the array.
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
-	Class<?> type();
+	String condition() default "";
 
 	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -76,12 +76,5 @@ public @interface Checksum{
 	 * @return	The class of a {@link Checksummer}.
 	 */
 	Class<? extends Checksummer> algorithm();
-
-	/**
-	 * The starting value of the CRC algorithm.
-	 *
-	 * @return	The starting value of the CRC algorithm.
-	 */
-	short startValue();
 
 }

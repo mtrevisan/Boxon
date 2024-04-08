@@ -47,7 +47,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -90,16 +90,16 @@ class CodecObjectTest{
 				return new ObjectChoices(){
 					@Override
 					public Class<? extends Annotation> annotationType(){
-						return null;
+						return ObjectChoices.class;
 					}
 
 					@Override
-					public int prefixLength(){
+					public byte prefixLength(){
 						return 0;
 					}
 
 					@Override
-					public ByteOrder bitOrder(){
+					public ByteOrder byteOrder(){
 						return ByteOrder.BIG_ENDIAN;
 					}
 
@@ -145,8 +145,8 @@ class CodecObjectTest{
 		loaderCodec.loadDefaultCodecs();
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, templateParser);
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -180,8 +180,8 @@ class CodecObjectTest{
 		String header;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = "1", type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = "2", type = TestType2.class)
 			}))
 		TestType0 value;
 	}
@@ -194,8 +194,8 @@ class CodecObjectTest{
 		byte[] index;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = "0", type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = "1", type = TestType2.class)
 			}))
 		TestType0 value;
 	}
@@ -207,8 +207,8 @@ class CodecObjectTest{
 		@BindString(size = "2")
 		String key;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(alternatives = {
-			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", type = TestType1.class),
-			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", type = TestType2.class)
+			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", prefix = "", type = TestType1.class),
+			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", prefix = "", type = TestType2.class)
 		}))
 		TestType0 value;
 	}
@@ -227,7 +227,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
 		TestChoice1 parsedMessage = (TestChoice1)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
@@ -240,7 +241,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice1)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
@@ -261,7 +263,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
 		TestChoice2 parsedMessage = (TestChoice2)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
@@ -274,7 +277,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice2)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
@@ -295,7 +299,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
 		TestChoice3 parsedMessage = (TestChoice3)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
@@ -308,7 +313,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice3)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;

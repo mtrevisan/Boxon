@@ -26,16 +26,39 @@ package io.github.mtrevisan.boxon.helpers;
  */
 public final class TextStatistics{
 
+	private static final int BYTE_MASK = 0xFF;
+	private static final int ASCII_START = 0x20;
+	private static final int ASCII_END = 0x80;
+	private static final int TAB_CHARACTER = '\t';
+	private static final int LINE_FEED = '\n';
+	private static final int CARRIAGE_RETURN = '\r';
+	private static final int NEW_PAGE_CHARACTER = 0x0C;
+	private static final int ESCAPE_CHARACTER = 0x1B;
+
 	private final int[] counts = new int[1 << Byte.SIZE];
 
 	/** Total number of bytes seen so far. */
 	private int total;
 
 
+	/**
+	 * Creates a new instance using the given byte array buffer.
+	 *
+	 * @param buffer	The byte array buffer.
+	 * @return	The created TextStatistics instance.
+	 */
 	public static TextStatistics create(final byte[] buffer){
 		return new TextStatistics(buffer, 0, buffer.length);
 	}
 
+	/**
+	 * Creates a new instance using the given byte array buffer, offset, and length values.
+	 *
+	 * @param buffer	The byte array buffer.
+	 * @param offset	The offset in the byte array.
+	 * @param length	The length of the bytes to be considered.
+	 * @return	The created TextStatistics instance.
+	 */
 	public static TextStatistics create(final byte[] buffer, final int offset, final int length){
 		return new TextStatistics(buffer, offset, length);
 	}
@@ -43,7 +66,7 @@ public final class TextStatistics{
 
 	private TextStatistics(final byte[] buffer, final int offset, final int length){
 		for(int i = 0; i < length; i ++){
-			counts[buffer[offset + i] & 0xFF] ++;
+			counts[buffer[offset + i] & BYTE_MASK] ++;
 			total ++;
 		}
 	}
@@ -59,8 +82,8 @@ public final class TextStatistics{
 	 * @see <a href="https://issues.apache.org/jira/browse/TIKA-688">TIKA-688</a>
 	 */
 	public boolean isMostlyAscii(){
-		final int control = count(0, 0x20);
-		final int ascii = count(0x20, 128);
+		final int control = count(0, ASCII_START);
+		final int ascii = count(ASCII_START, ASCII_END);
 		final int safe = countSafeControl();
 		return (total > 0
 			&& (control - safe) * 100 < total * 2
@@ -75,8 +98,8 @@ public final class TextStatistics{
 	 * @since	Apache Tika 1.3
 	 */
 	public boolean looksLikeUTF8(){
-		final int control = count(0, 0x20);
-		int utf8 = count(0x20, 0x80);
+		final int control = count(0, ASCII_START);
+		int utf8 = count(ASCII_START, ASCII_END);
 		final int safe = countSafeControl();
 
 		int expectedContinuation = 0;
@@ -88,7 +111,7 @@ public final class TextStatistics{
 			expectedContinuation += (i + 1) * chr;
 		}
 
-		final int continuation = count(0x80, 0xC0);
+		final int continuation = count(ASCII_END, 0xC0);
 		return (utf8 > 0
 			&& expectedContinuation - 3 <= continuation && continuation <= expectedContinuation
 			&& count(0xF8, 0x100) == 0
@@ -102,7 +125,7 @@ public final class TextStatistics{
 	 * @return	Count of the given byte.
 	 */
 	public int count(final int b){
-		return counts[b & 0xFF];
+		return counts[b & BYTE_MASK];
 	}
 
 	/**
@@ -126,7 +149,7 @@ public final class TextStatistics{
 	 * @see <a href="https://issues.apache.org/jira/browse/TIKA-154">TIKA-154</a>
 	 */
 	public int countControl(){
-		return (count(0, 0x20) - countSafeControl());
+		return (count(0, ASCII_START) - countSafeControl());
 	}
 
 	/**
@@ -136,7 +159,7 @@ public final class TextStatistics{
 	 * @see #countControl()
 	 */
 	public int countSafeAscii(){
-		return (count(0x20, 128) + countSafeControl());
+		return (count(ASCII_START, ASCII_END) + countSafeControl());
 	}
 
 	/**
@@ -145,7 +168,7 @@ public final class TextStatistics{
 	 * @return	Count of eight bit characters.
 	 */
 	public int countEightBit(){
-		return count(128, 256);
+		return count(ASCII_END, 256);
 	}
 
 	private int count(final int from, final int to){
@@ -158,10 +181,8 @@ public final class TextStatistics{
 	}
 
 	private int countSafeControl(){
-			//tab, LF, CR
-		return count('\t') + count('\n') + count('\r')
-			//new page, escape
-			+ count(0x0C) + count(0x1B);
+		return count(TAB_CHARACTER) + count(LINE_FEED) + count(CARRIAGE_RETURN)
+			+ count(NEW_PAGE_CHARACTER) + count(ESCAPE_CHARACTER);
 	}
 
 }

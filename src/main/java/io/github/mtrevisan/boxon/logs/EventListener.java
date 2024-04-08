@@ -63,7 +63,7 @@ public class EventListener{
 	 *
 	 * @param codecClasses	List of codec classes.
 	 */
-	public void loadingCodec(final Class<?>[] codecClasses){}
+	public void loadingCodec(final Class<?>... codecClasses){}
 
 	/**
 	 * Called when some codecs are loaded.

@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
@@ -52,7 +52,7 @@ class CodecStringTest{
 	void stringUS_ASCII() throws FieldException{
 		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABC";
-		Annotation annotation = new BindString(){
+		BindString annotation = new BindString(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
@@ -100,7 +100,7 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -116,7 +116,7 @@ class CodecStringTest{
 	void stringUTF_8() throws FieldException{
 		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
-		Annotation annotation = new BindString(){
+		BindString annotation = new BindString(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
@@ -169,7 +169,7 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -185,7 +185,7 @@ class CodecStringTest{
 	void stringTerminated() throws FieldException{
 		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
-		Annotation annotation = new BindStringTerminated(){
+		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindStringTerminated.class;
@@ -238,7 +238,6 @@ class CodecStringTest{
 		};
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
-		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals("123AB", decoded);
@@ -254,7 +253,7 @@ class CodecStringTest{
 	void stringTerminatedButEndOfStream() throws FieldException{
 		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
-		Annotation annotation = new BindStringTerminated(){
+		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindStringTerminated.class;

@@ -27,10 +27,9 @@ package io.github.mtrevisan.boxon.helpers;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -38,6 +37,10 @@ import java.util.Locale;
  * A collection of convenience methods for working with {@link String} objects.
  */
 public final class StringHelper{
+
+	/** An empty {@code String} array. */
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
 
 	private StringHelper(){}
 
@@ -93,26 +96,56 @@ public final class StringHelper{
 	 *
 	 * @param text	The text to parse.
 	 * @param separatorChar	The character used as the delimiter.
-	 * @return	An array of parsed strings.
+	 * @return	A list of parsed strings.
 	 */
 	public static String[] split(final String text, final char separatorChar){
+		return split(text, 0, separatorChar);
+	}
+
+	/**
+	 * Split the given text into an array, separator specified.
+	 * <p>
+	 * The separator is not included in the returned String array.
+	 * Adjacent separators are treated as one separator.
+	 * </p>
+	 *
+	 * @param text	The text to parse.
+	 * @param fromIndex	Index in text to start from.
+	 * @param separatorChar	The character used as the delimiter.
+	 * @return	A list of parsed strings.
+	 */
+	public static String[] split(final String text, final int fromIndex, final char separatorChar){
 		final int length = text.length();
 		if(length == 0)
-			return JavaHelper.EMPTY_STRING_ARRAY;
+			return EMPTY_STRING_ARRAY;
 
 		final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
-		final List<String> list = new ArrayList<>(length >> 1);
-		int start = 0;
-		for(int i = 0; i < length; i ++)
+		final String[] result = createSplitResult(bytes, fromIndex, separatorChar);
+
+		int currentIndex = 0;
+		int start = fromIndex;
+		for(int i = fromIndex; i < length; i ++)
 			if(bytes[i] == separatorChar){
 				if(start != i)
-					list.add(text.substring(start, i));
+					result[currentIndex ++] = text.substring(start, i);
+
 				start = i + 1;
 			}
 		if(start != length)
-			list.add(text.substring(start));
-		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
+			result[currentIndex] = text.substring(start);
+
+		return result;
 	}
+
+	private static String[] createSplitResult(final byte[] bytes, final int fromIndex, final char separatorChar){
+		final int length = bytes.length;
+		int count = (bytes[fromIndex] == separatorChar? 0: 1);
+		for(int i = fromIndex; i < length; i ++)
+			if(bytes[i] == separatorChar)
+				count ++;
+		return new String[count];
+	}
+
 
 	/**
 	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
@@ -131,7 +164,7 @@ public final class StringHelper{
 	 * @return	Whether the given text is {@code null}, empty or whitespace only.
 	 */
 	public static boolean isBlank(final String text){
-		final int length = JavaHelper.lengthOrZero(text);
+		final int length = JavaHelper.sizeOrZero(text);
 		if(length > 0){
 			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 			for(int i = 0; i < length; i ++)
@@ -165,13 +198,24 @@ public final class StringHelper{
 	}
 
 	/**
+	 * Converts a decimal value into the corresponding hexadecimal string.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final BigInteger value){
+		return value.toString(16)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
 	 *
 	 * @param array	Array to be converted to hexadecimal characters.
 	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
+		final int length = JavaHelper.sizeOrZero(array);
 		final char[] hexChars = new char[length << 1];
 		for(int i = 0; i < length; i ++){
 			final int elem = array[i] & 0xFF;
@@ -193,7 +237,7 @@ public final class StringHelper{
 	 * @throws DataException	If the input has an odd length.
 	 */
 	public static byte[] hexToByteArray(final String hexString){
-		final int length = JavaHelper.lengthOrZero(hexString);
+		final int length = JavaHelper.sizeOrZero(hexString);
 		if(length % 2 != 0)
 			throw DataException.create("Input should be of even length, was {}", length);
 
@@ -204,7 +248,7 @@ public final class StringHelper{
 				final int highDigit = Character.digit(bytes[i], 16);
 				final int lowDigit = Character.digit(bytes[i + 1], 16);
 
-				data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
+				data[i >>> 1] = (byte)((highDigit << 4) | lowDigit);
 			}
 		}
 		return data;
@@ -218,7 +262,7 @@ public final class StringHelper{
 	 * @return	The characters.
 	 */
 	public static String toASCIIString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
+		final int length = JavaHelper.sizeOrZero(array);
 		final char[] chars = new char[length];
 		for(int i = 0; i < length; i ++)
 			chars[i] = (char)(array[i] & 0xFF);
@@ -232,7 +276,7 @@ public final class StringHelper{
 	 * @return	Array of converted characters.
 	 */
 	public static byte[] asciiToByteArray(final String asciiString){
-		final int length = JavaHelper.lengthOrZero(asciiString);
+		final int length = JavaHelper.sizeOrZero(asciiString);
 		final byte[] data = new byte[length];
 		if(length > 0){
 			final byte[] bytes = asciiString.getBytes(StandardCharsets.US_ASCII);
@@ -249,7 +293,7 @@ public final class StringHelper{
 	 * @return	Whether the byte array starts with the ASCII string.
 	 */
 	public static boolean byteArrayStartsWith(final byte[] byteArray, final String asciiString){
-		if(JavaHelper.lengthOrZero(byteArray) < asciiString.length())
+		if(JavaHelper.sizeOrZero(byteArray) < asciiString.length())
 			return false;
 
 		final byte[] stringBytes = asciiString.getBytes(StandardCharsets.US_ASCII);

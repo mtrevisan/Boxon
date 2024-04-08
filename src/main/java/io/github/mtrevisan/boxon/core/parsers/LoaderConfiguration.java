@@ -35,19 +35,19 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -136,19 +136,24 @@ public final class LoaderConfiguration{
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
-			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
-			final ConfigurationMessage<?> from = createConfiguration(type);
-			if(from.canBeCoded()){
-				//if the configuration is valid, add it to the list of configurations...
-				final ConfigurationHeader header = from.getHeader();
-				configurations.put(header.shortDescription(), from);
-			}
-			else
-				//... otherwise throw exception
-				throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
-					type.getSimpleName());
+			extractConfigurationFromType(type, configurations);
 		}
 		return configurations;
+	}
+
+	private void extractConfigurationFromType(final Class<?> type, final Map<String, ConfigurationMessage<?>> configurations)
+			throws AnnotationException, ConfigurationException{
+		//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
+		final ConfigurationMessage<?> from = createConfiguration(type);
+		if(from.canBeCoded()){
+			//if the configuration is valid, add it to the list of configurations...
+			final ConfigurationHeader header = from.getHeader();
+			configurations.put(header.shortDescription(), from);
+		}
+		else
+			//... otherwise throw exception
+			throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
+				type.getSimpleName());
 	}
 
 	/**
@@ -230,11 +235,12 @@ public final class LoaderConfiguration{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
-	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws EncodeException, CodecException, AnnotationException{
+			final Version protocol) throws AnnotationException, CodecException, EncodeException{
 		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
@@ -257,7 +263,7 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
-			configurationObject = ReflectionHelper.withValue(configurationObject, foundField.getField(), dataValue);
+			configurationObject = FieldAccessor.setFieldValue(configurationObject, foundField.getField(), dataValue);
 
 			if(dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -285,7 +291,7 @@ public final class LoaderConfiguration{
 	}
 
 	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
-			throws EncodeException, CodecException, AnnotationException{
+			throws AnnotationException, CodecException, EncodeException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
@@ -293,14 +299,14 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
-			configurationObject = ReflectionHelper.withValue(configurationObject, field.getField(), dataValue);
+			configurationObject = FieldAccessor.setFieldValue(configurationObject, field.getField(), dataValue);
 		}
 		return configurationObject;
 	}
 
 	private static Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){
 		final int length = fields.size();
-		final Collection<ConfigurationField> mandatoryFields = new HashSet<>(length);
+		final Collection<ConfigurationField> mandatoryFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 

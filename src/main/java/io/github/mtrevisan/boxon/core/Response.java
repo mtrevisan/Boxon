@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.io.BitWriter;
  * @param <S>	The source class.
  * @param <M>	The message class.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings("WeakerAccess")
 public final class Response<S, M>{
 
 	/** The source data for the message. */

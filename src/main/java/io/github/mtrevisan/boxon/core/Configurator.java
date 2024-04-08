@@ -34,11 +34,11 @@ import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -51,15 +51,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
+
 
 /**
  * Declarative configurator for binary encoded configuration data.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Configurator{
 
 	private final ConfigurationParser configurationParser;
-	private final Evaluator evaluator;
 
 
 	/**
@@ -75,7 +76,6 @@ public final class Configurator{
 
 	private Configurator(final Core core){
 		configurationParser = core.getConfigurationParser();
-		evaluator = core.getEvaluator();
 	}
 
 
@@ -83,10 +83,10 @@ public final class Configurator{
 	 * Retrieve all the configuration regardless the protocol version.
 	 *
 	 * @return	The configuration messages regardless the protocol version.
-	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
+	public List<Map<String, Object>> getConfigurations() throws CodecException, ConfigurationException{
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		return extractConfigurations(configurationValues, Version.EMPTY);
 	}
@@ -115,12 +115,12 @@ public final class Configurator{
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
-	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws CodecException, ConfigurationException{
 		if(StringHelper.isBlank(protocol))
-			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
+			throw DataException.create("Invalid protocol: {}", protocol);
 
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		final Version currentProtocol = Version.of(protocol);
@@ -128,7 +128,7 @@ public final class Configurator{
 	}
 
 	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
-			final Version protocol) throws ConfigurationException, CodecException{
+			final Version protocol) throws CodecException, ConfigurationException{
 		final int length = configurationValues.size();
 		final List<Map<String, Object>> response = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -141,11 +141,11 @@ public final class Configurator{
 			final Map<String, Object> map = new HashMap<>(3);
 			final Map<String, Object> headerMap = extractMap(protocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.HEADER, headerMap, map);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELDS, fieldsMap, map);
+			putIfNotEmpty(ConfigurationKey.HEADER, headerMap, map);
+			putIfNotEmpty(ConfigurationKey.FIELDS, fieldsMap, map);
 			if(protocol.isEmpty()){
 				final List<String> protocolVersionBoundaries = configuration.getProtocolVersionBoundaries();
-				ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
+				putIfNotEmpty(ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
 			}
 			response.add(map);
 		}
@@ -153,18 +153,18 @@ public final class Configurator{
 	}
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(3);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
+		final Map<String, Object> map = new HashMap<>(4);
+		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, header.minProtocol(), map);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, header.maxProtocol(), map);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, header.minProtocol(), map);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, header.maxProtocol(), map);
 		}
 		return map;
 	}
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
-			throws ConfigurationException, CodecException{
+			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
 		final int length = fields.size();
 		final Map<String, Object> fieldsMap = new HashMap<>(length);
@@ -172,8 +172,9 @@ public final class Configurator{
 			final ConfigurationField field = fields.get(i);
 
 			final Annotation annotation = field.getBinding();
+			final Class<?> fieldType = field.getFieldType();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
+			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
 			if(!fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
@@ -191,7 +192,7 @@ public final class Configurator{
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
 			final Object template){
-		final Map<String, Object> data = ReflectionHelper.mapObject(template);
+		final Map<String, Object> data = FieldMapper.mapObject(template);
 		return composeConfiguration(protocolVersion, shortDescription, data);
 	}
 
@@ -225,7 +226,7 @@ public final class Configurator{
 		try{
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(shortDescription);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
-			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
+			configurationParser.encode(configuration, writer, configurationData, protocol);
 
 			return null;
 		}

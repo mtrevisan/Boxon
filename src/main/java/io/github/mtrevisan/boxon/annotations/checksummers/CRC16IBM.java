@@ -24,28 +24,34 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
+/**
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
+ * <p>Also known as CRC-16 and CRC-16-ANSI</p>
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ */
+public final class CRC16IBM implements Checksummer{
+
+	/** CCITT polynomial: x^16 + x^15 + x^2 + 1 -> 1000_0000_0000_0101 = 0x8005 (reversed is 0xA001). */
+	private static final int POLYNOMIAL_REVERSED = 0x0000_A001;
 
 
-class BSD8Test{
+	@Override
+	public short calculateChecksum(final byte[] data, final int start, final int end){
+		int value = 0;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
 
-	@Test
-	void test(){
-		BSD8 crc = new BSD8();
-		Number crc8 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7, BSD8.START_VALUE_0x00);
-
-		Assertions.assertEquals((byte)0xC5, crc8.byteValue());
-	}
-
-	@Test
-	void oneToFour(){
-		BSD8 crc = new BSD8();
-		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, BSD8.START_VALUE_0x00);
-
-		Assertions.assertEquals((byte)0x26, crc8.byteValue());
+			value ^= datum;
+			for(int j = 0; j < Byte.SIZE; j ++){
+				final boolean carry = ((value & 0x01) != 0);
+				value >>>= 1;
+				if(carry)
+					value ^= POLYNOMIAL_REVERSED;
+			}
+		}
+		return (short)value;
 	}
 
 }

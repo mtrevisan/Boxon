@@ -32,22 +32,15 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class BSD16 implements Checksummer{
 
-	/** Starting value 0x0000. */
-	public static final int START_VALUE_0x0000 = 0x0000;
-
 	private static final int LEFT_SHIFT = Short.SIZE - 1;
-	private static final int MASK = (1 << Short.SIZE) - 1;
-
-
-	BSD16(){}
 
 
 	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
-		int checksum = startValue;
+	public short calculateChecksum(final byte[] data, final int start, final int end){
+		int checksum = 0;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
 			//apply circular right shift and add new value
-			checksum = MASK & ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
+			checksum = ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
 		return (short)checksum;
 	}
 

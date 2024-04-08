@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import java.lang.annotation.Annotation;
 
 
-public class FieldExtractorPostProcessedField implements FieldExtractor<EvaluatedField<PostProcessField>, Annotation>{
+public final class FieldExtractorPostProcessedField implements FieldExtractor<EvaluatedField<PostProcessField>, Annotation>{
 
 	@Override
 	public Annotation[] getSkips(final EvaluatedField<PostProcessField> field){

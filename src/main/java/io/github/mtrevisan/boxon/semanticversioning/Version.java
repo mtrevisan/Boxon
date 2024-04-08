@@ -26,13 +26,11 @@ package io.github.mtrevisan.boxon.semanticversioning;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 
 /**
@@ -40,7 +38,6 @@ import java.util.regex.Pattern;
  *
  * @see <a href="https://semver.org/">Semantic Versioning</a>
  */
-@SuppressWarnings("WeakerAccess")
 public final class Version implements Comparable<Version>{
 
 	/** An empty {@code String} array. */
@@ -53,15 +50,11 @@ public final class Version implements Comparable<Version>{
 	/** An empty instance (see {@link #isEmpty()}). */
 	public static final Version EMPTY = of("");
 
-	private static final String DOT = ".";
+	private static final char DOT = '.';
 	/** A separator that separates the pre-release version from the normal version. */
 	private static final String PRE_RELEASE_PREFIX = "-";
 	/** A separator that separates the build metadata from the normal version or the pre-release version. */
 	private static final String BUILD_PREFIX = "+";
-
-	private static final Pattern PATTERN_DOT = Pattern.compile("\\.");
-	private static final Pattern PATTERN_PRE_RELEASE_PREFIX = Pattern.compile("-");
-	private static final Pattern PATTERN_BUILD_PREFIX = Pattern.compile("\\+");
 
 
 	private final Integer major;
@@ -158,9 +151,9 @@ public final class Version implements Comparable<Version>{
 			throws VersionException{
 		validateToken(KEY_MAJOR, String.valueOf(major));
 		if(minor != null)
-			validateToken(KEY_MINOR, String.valueOf(minor));
+			validateToken(KEY_MINOR, minor.toString());
 		if(patch != null)
-			validateToken(KEY_PATCH, String.valueOf(patch));
+			validateToken(KEY_PATCH, patch.toString());
 		if(preRelease != null)
 			validatePreRelease(preRelease);
 		if(build != null)
@@ -185,27 +178,27 @@ public final class Version implements Comparable<Version>{
 
 		version = version.trim();
 
-		if(version.contains(BUILD_PREFIX)){
-			final String[] metadata = PATTERN_BUILD_PREFIX.split(version, 2);
-			version = metadata[0];
-			build = PATTERN_DOT.split(metadata[1]);
+		final int buildIndex = version.indexOf(BUILD_PREFIX);
+		if(buildIndex >= 0){
+			build = StringHelper.split(version, buildIndex + 1, DOT);
+			version = version.substring(0, buildIndex);
 
 			validateBuild(build);
 		}
 		else
 			build = EMPTY_STRING_ARRAY;
 
-		if(version.contains(PRE_RELEASE_PREFIX)){
-			final String[] metadata = PATTERN_PRE_RELEASE_PREFIX.split(version, 2);
-			version = metadata[0];
-			preRelease = PATTERN_DOT.split(metadata[1]);
+		final int preReleaseIndex = version.indexOf(PRE_RELEASE_PREFIX);
+		if(preReleaseIndex >= 0){
+			preRelease = StringHelper.split(version, preReleaseIndex + 1, DOT);
+			version = version.substring(0, preReleaseIndex);
 
 			validatePreRelease(preRelease);
 		}
 		else
 			preRelease = EMPTY_STRING_ARRAY;
 
-		final String[] tokens = PATTERN_DOT.split(version);
+		final String[] tokens = StringHelper.split(version, DOT);
 		major = parseIdentifier(tokens, 0, KEY_MAJOR);
 		minor = parseIdentifier(tokens, 1, KEY_MINOR);
 		patch = parseIdentifier(tokens, 2, KEY_PATCH);
@@ -216,6 +209,7 @@ public final class Version implements Comparable<Version>{
 		Integer value = null;
 		if(tokens.length > index){
 			final String token = tokens[index];
+
 			validateToken(type, token);
 			value = Integer.valueOf(token);
 		}
@@ -239,7 +233,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validatePreRelease(final String pr){
-		final boolean numeric = ParserDataType.isDecimalNumber(pr);
+		final boolean numeric = JavaHelper.isDecimalIntegerNumber(pr);
 		if(numeric && pr.charAt(0) == '0')
 			throw VersionException.create("The pre-release identifier MUST NOT contain leading zeros");
 		if(!numeric && !containsOnlyValidChars(pr))
@@ -252,7 +246,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateBuild(final String b){
-		if(!ParserDataType.isDecimalNumber(b) && !containsOnlyValidChars(b))
+		if(!JavaHelper.isDecimalIntegerNumber(b) && !containsOnlyValidChars(b))
 			throw VersionException.create("Argument is not a valid build identifier");
 	}
 
@@ -311,7 +305,6 @@ public final class Version implements Comparable<Version>{
 	}
 
 	@Override
-	@SuppressWarnings("OverlyComplexBooleanExpression")
 	public boolean equals(final Object obj){
 		if(this == obj)
 			return true;
@@ -413,7 +406,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
-		return (ParserDataType.isDecimalNumber(identifier1) && ParserDataType.isDecimalNumber(identifier2)
+		return (JavaHelper.isDecimalIntegerNumber(identifier1) && JavaHelper.isDecimalIntegerNumber(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
 			: identifier1.compareTo(identifier2));
 	}
@@ -439,7 +432,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
 	private static boolean containsOnlyValidChars(final String text){
-		final int length = JavaHelper.lengthOrZero(text);
+		final int length = JavaHelper.sizeOrZero(text);
 		if(length == 0)
 			return true;
 
@@ -641,18 +634,23 @@ public final class Version implements Comparable<Version>{
 
 	@Override
 	public String toString(){
-		String message = JavaHelper.EMPTY_STRING;
+		final StringBuilder sb = new StringBuilder();
 		if(major != null)
-			message += major;
+			sb.append(major);
 		if(minor != null)
-			message += DOT + minor;
+			sb.append(DOT)
+				.append(minor);
 		if(patch != null)
-			message += DOT + patch;
+			sb.append(DOT)
+				.append(patch);
+		final String dot = String.valueOf(DOT);
 		if(preRelease != null && preRelease.length > 0)
-			message += PRE_RELEASE_PREFIX + String.join(DOT, preRelease);
+			sb.append(PRE_RELEASE_PREFIX)
+				.append(String.join(dot, preRelease));
 		if(build != null && build.length > 0)
-			message += BUILD_PREFIX + String.join(DOT, build);
-		return message;
+			sb.append(BUILD_PREFIX)
+				.append(String.join(dot, build));
+		return sb.toString();
 	}
 
 }

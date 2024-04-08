@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.codecs;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.math.BigDecimal;
@@ -37,7 +36,12 @@ final class NumberWriterManager implements WriterManagerInterface{
 	private int radix;
 
 
-	NumberWriterManager(final BitWriterInterface writer){
+	static NumberWriterManager create(final BitWriterInterface writer){
+		return new NumberWriterManager(writer);
+	}
+
+
+	private NumberWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 		radix = 10;
 	}
@@ -51,20 +55,14 @@ final class NumberWriterManager implements WriterManagerInterface{
 
 	@Override
 	public void put(final Object value){
-		if(value instanceof final BigDecimal v)
-			writer.putText(v.toPlainString());
-		else if(value instanceof final BigInteger v)
-			writer.putText(v.toString(radix));
-		else if(value instanceof Number){
-			final String text = String.valueOf(value);
-			if(radix == 10)
-				writer.putText(text);
-			else{
-				final BigInteger bi = new BigInteger(text);
-				writer.putText(radix == 16
-					? StringHelper.toHexString(bi.toByteArray())
-					: bi.toString(radix));
-			}
+		switch(value){
+			case final Byte v -> writer.putText(Long.toString(v & 0xFF, radix));
+			case final Short v -> writer.putText(Long.toString(v & 0xFFFF, radix));
+			case final Integer v -> writer.putText(Long.toString(v & 0xFFFF_FFFF, radix));
+			case final Long v -> writer.putText(Long.toString(v, radix));
+			case final BigDecimal v -> writer.putText(v.toPlainString());
+			case final BigInteger v -> writer.putText(v.toString(radix));
+			case null, default -> {}
 		}
 	}
 

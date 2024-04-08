@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.annotations.converters;
 
+import io.github.mtrevisan.boxon.helpers.BitSetHelper;
+
 import java.util.BitSet;
 
 
@@ -42,10 +44,10 @@ public final class BitSetToBooleanConverter implements Converter<BitSet, Boolean
 
 	@Override
 	public BitSet encode(final Boolean value){
-		final BitSet bs = new BitSet(1);
+		final BitSet bitmap = BitSetHelper.createBitSet(1);
 		if(value)
-			bs.set(0);
-		return bs;
+			bitmap.set(0);
+		return bitmap;
 	}
 
 }

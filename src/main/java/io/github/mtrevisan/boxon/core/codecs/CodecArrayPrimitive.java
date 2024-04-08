@@ -25,7 +25,9 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -40,19 +42,15 @@ import java.lang.reflect.Array;
 
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindArrayPrimitive binding = extractBinding(annotation);
+		final BindArrayPrimitive binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizeNonNegative(size);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
 		final Class<?> type = binding.type();
 		final ByteOrder byteOrder = binding.byteOrder();
@@ -62,22 +60,26 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		return CodecHelper.convertValue(bindingData, array);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, array, evaluator, rootObject);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindArrayPrimitive binding = extractBinding(annotation);
+		final BindArrayPrimitive binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-		bindingData.validate(value);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		CodecHelper.validate(value, binding.validator());
+
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
-
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizeNonNegative(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		final ByteOrder byteOrder = binding.byteOrder();

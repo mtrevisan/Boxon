@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
-import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -54,7 +53,7 @@ class CodecDoubleTest{
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindDouble.class;
 			}
 
 			@Override
@@ -114,7 +113,7 @@ class CodecDoubleTest{
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindDouble.class;
 			}
 
 			@Override
@@ -174,7 +173,7 @@ class CodecDoubleTest{
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindDouble.class;
 			}
 
 			@Override
@@ -233,7 +232,7 @@ class CodecDoubleTest{
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindDouble.class;
 			}
 
 			@Override

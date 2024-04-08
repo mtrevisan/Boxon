@@ -54,11 +54,10 @@ public interface BitWriterInterface{
 	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
-	 * @param bits	The value to write.
-	 * @param length	The amount of bits to use when writing {@code value}.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param bitmap	The value to write.
+	 * @param length	The amount of bits to use when writing the {@code bitmap}.
 	 */
-	void putBitSet(BitSet bits, int length, ByteOrder bitOrder);
+	void putBitSet(BitSet bitmap, int length);
 
 	/**
 	 * Writes a value using {@link Byte#SIZE} bits.

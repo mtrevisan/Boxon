@@ -25,12 +25,14 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -42,68 +44,42 @@ import java.util.BitSet;
 
 final class CodecInteger implements CodecInterface<BindInteger>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindInteger binding = extractBinding(annotation);
+		final BindInteger binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
-
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final BigInteger value = reader.getBigInteger(size, binding.byteOrder());
 
-		return CodecHelper.convertValue(bindingData, value);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, value, evaluator, rootObject);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindInteger binding = extractBinding(annotation);
+		final BindInteger binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-		bindingData.validate(value);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
+		CodecHelper.validate(value, binding.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BitSet bits = toBitSet(v, size, byteOrder);
+		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
-		writer.putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
-	}
-
-	/**
-	 * Converts a {@link BigInteger} into a byte array ignoring the sign of the {@link BigInteger}, according to SRP specification.
-	 *
-	 * @param value	the value, must not be {@code null}.
-	 * @param size	The size in bits of the value.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The bit set representing the given value.
-	 */
-	static BitSet toBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
-		byte[] array = value.toByteArray();
-		final int newSize = (size + Byte.SIZE - 1) >>> 3;
-		if(newSize != array.length){
-			final int offset = Math.max(array.length - newSize, 0);
-			final byte[] newArray = new byte[newSize];
-			final int newArrayOffset = Math.max(newArray.length - array.length, 0);
-			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
-			array = newArray;
-		}
-
-		//NOTE: need to reverse the bytes because {@link BigInteger} is big-endian and BitSet is little-endian
-		BitSetHelper.changeByteOrder(array, byteOrder);
-
-		return BitSet.valueOf(array);
+		writer.putBitSet(bitmap, size);
 	}
 
 }

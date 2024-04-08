@@ -25,9 +25,10 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.helpers.FieldMapper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -43,16 +44,19 @@ import java.util.regex.Pattern;
  */
 public final class JSONPath{
 
-	private static final Pattern PATTERN_HEX_URL_ENCODE = Pattern.compile("%x([0-9a-fA-F]{2})");
+	/**
+	 * Map containing replacement characters for the RFC6901 encoding of JSON paths, where "~0" is the encoding of a tilde, and "~1" of
+	 * a slash.
+	 */
+	private static final Map<Character, String> RFC6901_REPLACEMENT_MAP = Map.of(
+		'1', "/",
+		'0', "~"
+	);
 
-
-	private static final String SLASH = "/";
-	private static final char DECODED_TILDE = '~';
 	private static final char DECODED_SLASH = '/';
-	/** Encoding of a tilde. */
-	private static final String TILDE_ZERO = "~0";
-	/** Encoding of a slash. */
-	private static final String TILDE_ONE = "~1";
+	private static final String SLASH = String.valueOf(DECODED_SLASH);
+
+	private static final Pattern PATTERN_HEX_URL_ENCODE = Pattern.compile("%x([0-9a-fA-F]{2})");
 
 
 	private JSONPath(){}
@@ -83,71 +87,47 @@ public final class JSONPath{
 
 		final String[] components = StringHelper.split(path, DECODED_SLASH);
 		for(int i = 0, length = components.length; i < length; i ++){
-			String component = components[i];
-			if(!StringHelper.isBlank(component)){
-				//NOTE: the order here is important!
-				component = replace(component, TILDE_ONE, DECODED_SLASH);
-				component = replace(component, TILDE_ZERO, DECODED_TILDE);
+			final String component = components[i];
 
-				components[i] = urlDecode(component);
-			}
+			if(!StringHelper.isBlank(component))
+				components[i] = urlDecode(rfc6901Replace(component));
 		}
 		return components;
 	}
 
 	/**
+	 * Replaces occurrences of "~1" and "~0" in a string with replacement strings based on RFC6901.
+	 *
+	 * @param text	The string to be processed.
+	 * @return	The processed string.
+	 */
+	private static StringBuilder rfc6901Replace(final String text){
+		final StringBuilder sb = new StringBuilder(text);
+		for(int i = 0, length = text.length() - 1; i < length; i ++)
+			if(sb.charAt(i) == '~'){
+				final char nextChar = sb.charAt(i + 1);
+				final String replacement = RFC6901_REPLACEMENT_MAP.get(nextChar);
+				if(replacement != null){
+					sb.replace(i, i + 2, replacement);
+					length --;
+				}
+			}
+		return sb;
+	}
+
+	/**
 	 *	Percent-decode a text.
 	 *
-	 * @param text	The text to be URL decoded.
+	 * @param input	The text to be URL decoded.
 	 * @return	The URL-decoded text.
 	 *
 	 * @see <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC3986 - Uniform Resource Identifier (URI): Generic Syntax</a>
 	 */
-	private static String urlDecode(String text){
+	private static String urlDecode(final CharSequence input){
 		//convert (hexadecimal) %x?? to (decimal) %??:
-		text = PATTERN_HEX_URL_ENCODE.matcher(text)
+		final String text = PATTERN_HEX_URL_ENCODE.matcher(input)
 			.replaceAll(match -> Character.toString((char)Integer.parseInt(match.group(1), 16)));
 		return URLDecoder.decode(text, StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * Replaces all occurrences of a String within another String.
-	 * <p>A {@code null} reference passed to this method is a no-op.</p>
-	 *
-	 * <pre>
-	 * StringUtils.replace(null, *, *)        = null
-	 * StringUtils.replace("", *, *)          = ""
-	 * StringUtils.replace("any", null, *)    = "any"
-	 * StringUtils.replace("any", *, null)    = "any"
-	 * StringUtils.replace("any", "", *)      = "any"
-	 * StringUtils.replace("aba", "a", null)  = "aba"
-	 * StringUtils.replace("aba", "a", "")    = "b"
-	 * StringUtils.replace("aba", "a", "z")   = "zbz"
-	 * </pre>
-	 *
-	 * @param text	Text to search and replace in, may be {@code null}.
-	 * @param searchString	The String to search for, may be {@code null}.
-	 * @param replacement	The String to replace it with, may be {@code null}.
-	 * @return	The text with any replacements processed, {@code null} if {@code null} String input.
-	 */
-	private static String replace(final String text, final String searchString, final char replacement){
-		int start = 0;
-		int end = text.indexOf(searchString, start);
-		if(end < 0)
-			return text;
-
-		final int replacementLength = searchString.length();
-		final int length = text.length();
-		final StringBuilder sb = new StringBuilder(length);
-		while(end >= 0){
-			sb.append(text, start, end)
-				.append(replacement);
-
-			start = end + replacementLength;
-			end = text.indexOf(searchString, start);
-		}
-		sb.append(text, start, length);
-		return sb.toString();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -168,7 +148,7 @@ public final class JSONPath{
 	}
 
 	private static Integer extractIndex(final String currentPath){
-		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
+		return (JavaHelper.isDecimalIntegerNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
 			? Integer.valueOf(currentPath)
 			: null);
 	}
@@ -200,8 +180,8 @@ public final class JSONPath{
 			final Class<?> cls = data.getClass();
 			try{
 				final Field currentField = cls.getDeclaredField(currentPath);
-				ReflectionHelper.makeAccessible(currentField);
-				nextData = ReflectionHelper.getValue(data, currentField);
+				FieldAccessor.makeAccessible(currentField);
+				nextData = FieldMapper.getFieldValue(data, currentField);
 			}
 			catch(final NoSuchFieldException nsfe){
 				nextData = defaultValue;

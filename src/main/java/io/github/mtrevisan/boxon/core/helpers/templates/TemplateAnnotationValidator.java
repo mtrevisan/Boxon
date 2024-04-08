@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
+import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
@@ -41,10 +42,13 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.BitSet;
 import java.util.List;
@@ -56,7 +60,6 @@ import java.util.List;
 enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
-		@SuppressWarnings("DuplicatedCode")
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
@@ -88,7 +91,6 @@ enum TemplateAnnotationValidator{
 	},
 
 	ARRAY(BindArray.class){
-		@SuppressWarnings("DuplicatedCode")
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
@@ -157,13 +159,16 @@ enum TemplateAnnotationValidator{
 	CHECKSUM(Checksum.class){
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
-			final Class<?> type = ((Checksum)annotation).type();
-			final ParserDataType dataType = ParserDataType.fromType(type);
-			if(dataType != ParserDataType.BYTE && dataType != ParserDataType.SHORT)
-				throw AnnotationException.create("Unrecognized type, must be `byte` or `short`: {}", type.getSimpleName(),
-					type.getComponentType().getSimpleName());
+			final Class<? extends Checksummer> algorithmClass = ((Checksum)annotation).algorithm();
+			if(algorithmClass.isInterface() || Modifier.isAbstract(algorithmClass.getModifiers())
+					|| algorithmClass.isAssignableFrom(Checksummer.class))
+				throw AnnotationException.create("Unrecognized algorithm, must be a class implementing `"
+					+ Checksummer.class.getName() + "`: {}", algorithmClass.getSimpleName());
 
-			validateConverter(field, type, NullConverter.class);
+			final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
+			final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
+
+			validateConverter(field, interfaceReturnType, NullConverter.class);
 		}
 	};
 
@@ -231,7 +236,7 @@ enum TemplateAnnotationValidator{
 
 	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
-		final int prefixLength = selectFrom.prefixLength();
+		final byte prefixLength = selectFrom.prefixLength();
 		validatePrefixLength(prefixLength);
 
 
@@ -244,11 +249,11 @@ enum TemplateAnnotationValidator{
 		validateConverter(field, type, converter);
 	}
 
-	private static void validatePrefixLength(final int prefixSize) throws AnnotationException{
+	private static void validatePrefixLength(final byte prefixSize) throws AnnotationException{
 		if(prefixSize < 0)
 			throw AnnotationException.create("Prefix size must be a non-negative number");
-		if(prefixSize > Integer.SIZE)
-			throw AnnotationException.create("Prefix size cannot be greater than {} bits", Integer.SIZE);
+		if(prefixSize > Long.SIZE)
+			throw AnnotationException.create("Prefix size cannot be greater than {} (bits)", Long.SIZE);
 	}
 
 	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,

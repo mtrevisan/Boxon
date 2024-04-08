@@ -25,19 +25,18 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -46,7 +45,6 @@ import java.util.BitSet;
  *
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-@SuppressWarnings("WeakerAccess")
 public final class BitReader extends BitReaderData implements BitReaderInterface{
 
 	/**
@@ -115,7 +113,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public void skip(final int length){
-		getBitSet(length, ByteOrder.BIG_ENDIAN);
+		skipBits(length);
 	}
 
 	@Override
@@ -135,8 +133,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public byte getByte(){
-		return getBigInteger(Byte.SIZE, ByteOrder.LITTLE_ENDIAN)
-			.byteValue();
+		return (byte)getNumber(Byte.SIZE);
 	}
 
 	@Override
@@ -149,72 +146,26 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public short getShort(final ByteOrder byteOrder){
-		return getBigInteger(Short.SIZE, byteOrder)
-			.shortValue();
+		final short value = (short)getNumber(Short.SIZE);
+		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
 	public int getInt(final ByteOrder byteOrder){
-		return getBigInteger(Integer.SIZE, byteOrder)
-			.intValue();
+		final int value = (int)getNumber(Integer.SIZE);
+		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
 	public long getLong(final ByteOrder byteOrder){
-		return getBigInteger(Long.SIZE, byteOrder)
-			.longValue();
+		final long value = getNumber(Long.SIZE);
+		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
 	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
-		final BitSet bits = getBitSet(size, ByteOrder.BIG_ENDIAN);
-		return toBigInteger(bits, size, byteOrder);
-	}
-
-	/**
-	 * Convert this bit set to {@link BigInteger}.
-	 *
-	 * @param bits	The bit set.
-	 * @param size	The number of bits.
-	 * @param byteOrder	The byte order.
-	 * @return	The converted {@link BigInteger}.
-	 */
-	private static BigInteger toBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
-		byte[] array = bits.toByteArray();
-		final int expectedLength = size >>> 3;
-		if(array.length < expectedLength)
-			array = Arrays.copyOf(array, expectedLength);
-
-		//NOTE: need to reverse the bytes because `BigInteger` is big-endian and `BitSet` is little-endian
-		BitSetHelper.changeByteOrder(array, byteOrder);
-
-		return new BigInteger(extendSign(array));
-	}
-
-	/**
-	 * Convert the value to signed primitive.
-	 *
-	 * @param array	Field value.
-	 * @return	The 2-complement expressed as int.
-	 */
-	private static byte[] extendSign(byte[] array){
-		if((array[0] & 0x80) != 0x00){
-			array = leftExtendArray(array);
-			array[0] = -1;
-		}
-		return array;
-	}
-
-	/**
-	 * Extends an array leaving room for one more byte at the leftmost index.
-	 *
-	 * @param array	The array to extend.
-	 * @return	The extended array.
-	 */
-	private static byte[] leftExtendArray(final byte[] array){
-		final byte[] extendedArray = new byte[array.length + 1];
-		System.arraycopy(array, 0, extendedArray, 1, array.length);
-		return extendedArray;
+		final BitSet bitmap = getBitSet(size);
+		return BitSetHelper.toObjectiveType(bitmap, size, byteOrder);
 	}
 
 	@Override
@@ -245,10 +196,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	@Override
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
-		try(
-				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
-			getTextUntilTerminator(osw, terminator);
+		try(final ByteArrayOutputStream baos = new ByteArrayOutputStream()){
+			getTextUntilTerminator(baos, terminator);
 
 			text = baos.toString(charset);
 		}
@@ -259,10 +208,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	@Override
 	public String getTextUntilTerminatorWithoutConsuming(final byte terminator, final Charset charset){
 		String text = null;
-		try(
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
-			getTextUntilTerminatorWithoutConsuming(osw, terminator);
+		try(final ByteArrayOutputStream baos = new ByteArrayOutputStream()){
+			getTextUntilTerminatorWithoutConsuming(baos, terminator);
 
 			text = baos.toString(charset);
 		}

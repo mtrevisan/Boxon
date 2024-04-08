@@ -45,41 +45,63 @@ class BitWriterData{
 
 
 	/**
-	 * Skip {@code length} bits.
+	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
 	 *
-	 * @param length	The amount of bits to skip.
+	 * @param value	The value to write.
 	 */
-	public final void skipBits(final int length){
-		putBitSet(new BitSet(0), length, ByteOrder.BIG_ENDIAN);
+	final synchronized void putNumber(final byte value){
+		putNumber(value, Byte.SIZE);
 	}
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
+	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
 	 *
-	 * @param bits	The value to write.
-	 * @param size	The amount of bits to use when writing {@code value}.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param value	The value to write.
 	 */
-	public final void putBitSet(BitSet bits, final int size, final ByteOrder bitOrder){
-		bits = BitSetHelper.changeBitOrder(bits, bitOrder);
+	final synchronized void putNumber(final short value){
+		putNumber(value, Short.SIZE);
+	}
 
-		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
-		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
-		//place the rest in the cache
-		int offset = 0;
-		while(offset < size){
+	/**
+	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
+	 *
+	 * @param value	The value to write.
+	 */
+	final synchronized void putNumber(final int value){
+		putNumber(value, Integer.SIZE);
+	}
+
+	/**
+	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
+	 *
+	 * @param value	The value to write.
+	 */
+	final synchronized void putNumber(final long value){
+		putNumber(value, Long.SIZE);
+	}
+
+	/**
+	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
+	 *
+	 * @param value	The value to write.
+	 * @param bitsToWrite   The amount of bits to use when writing the {@code value}.
+	 */
+	private void putNumber(final long value, final int bitsToWrite){
+		int bitsWritten = 0;
+		while(bitsWritten < bitsToWrite){
 			//fill the cache one chunk of bits at a time
-			final int length = Math.min(size - offset, Byte.SIZE - remaining);
-			final byte nextCache = readNextByte(bits, offset, length);
+			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
+			final byte nextCache = getNextByte(value, bitsWritten, length);
 			cache = (byte)((cache << length) | nextCache);
+
 			remaining += length;
-			offset += length;
+			bitsWritten += length;
 
 			//if cache is full, write it
 			if(remaining == Byte.SIZE){
 				os.write(cache);
 
-				resetInnerVariables();
+				resetCache();
 			}
 		}
 	}
@@ -87,45 +109,102 @@ class BitWriterData{
 	/**
 	 * Returns a long of given length and starting at a given offset.
 	 *
-	 * @param bits	The bit set.
+	 * @param value	The value.
 	 * @param offset	The bit offset to start the extraction.
-	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!).
+	 * @param size	The amount of bits to use when writing the {@code value} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
-	private static byte readNextByte(final BitSet bits, final int offset, final int size){
-		byte value = 0;
-		int index = bits.nextSetBit(offset);
-		while(index >= 0 && index <= offset + size){
-			value |= (byte)(1 << (index - offset));
+	private static byte getNextByte(final long value, final int offset, final int size){
+		byte valueRead = 0;
+		int index = offset - 1;
+		while((index = nextSetBit(value, index + 1)) >= 0 && index <= offset + size)
+			valueRead |= (byte)(1 << (index - offset));
+		return valueRead;
+	}
 
-			index = bits.nextSetBit(index + 1);
-		}
-		return value;
+	private static int nextSetBit(final long value, final int fromIndex){
+		final long word = value >>> fromIndex;
+		return (word != 0? fromIndex + Long.numberOfTrailingZeros(word): -1);
 	}
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian format.
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
-	 * @param value	The value to write.
-	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
+	 * @param bitmap	The value to write.
+	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
 	 */
-	@SuppressWarnings("WeakerAccess")
-	public final void putValue(final long value, final int size){
-		final BitSet bits = BitSet.valueOf(new long[]{value});
-		putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
+	public final synchronized void putBitSet(final BitSet bitmap, final int bitsToWrite){
+		int bitsWritten = 0;
+		while(bitsWritten < bitsToWrite){
+			//fill the cache one chunk of bits at a time
+			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
+			final byte nextCache = getNextByte(bitmap, bitsWritten, length);
+			cache = (byte)((cache << length) | nextCache);
+
+			remaining += length;
+			bitsWritten += length;
+
+			//if cache is full, write it
+			if(remaining == Byte.SIZE){
+				os.write(cache);
+
+				resetCache();
+			}
+		}
+	}
+
+	/**
+	 * Returns a long of given length and starting at a given offset.
+	 *
+	 * @param bitmap	The bit set.
+	 * @param offset	The bit offset to start the extraction.
+	 * @param size	The amount of bits to use when writing the {@code bitmap} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
+	 * @return	A long starting at a given offset and of a given length.
+	 */
+	private static byte getNextByte(final BitSet bitmap, final int offset, final int size){
+		byte valueRead = 0;
+		int index = offset - 1;
+		while((index = bitmap.nextSetBit(index + 1)) >= 0 && index <= offset + size)
+			valueRead |= (byte)(1 << (index - offset));
+		return valueRead;
+	}
+
+	/**
+	 * Skip {@code length} bits.
+	 *
+	 * @param bitsToWrite	The amount of bits to skip.
+	 */
+	public final synchronized void skipBits(final int bitsToWrite){
+		int bitsWritten = 0;
+		while(bitsWritten < bitsToWrite){
+			//fill the cache one chunk of bits at a time
+			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
+			cache <<= length;
+
+			remaining += length;
+			bitsWritten += length;
+
+			//if cache is full, write it
+			if(remaining == Byte.SIZE){
+				os.write(cache);
+
+				resetCache();
+			}
+		}
 	}
 
 
 	/** Flush a minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
-	public final void flush(){
+	public final synchronized void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)
-			os.write(cache);
+			//align the remaining bits in the cache
+			os.write(cache << (Byte.SIZE - remaining));
 
-		resetInnerVariables();
+		resetCache();
 	}
 
-	private void resetInnerVariables(){
+	private void resetCache(){
 		remaining = 0;
 		cache = 0;
 	}
@@ -135,7 +214,7 @@ class BitWriterData{
 	 *
 	 * @return	The copy of the array that backs this buffer.
 	 */
-	public final byte[] array(){
+	public final synchronized byte[] array(){
 		return os.toByteArray();
 	}
 

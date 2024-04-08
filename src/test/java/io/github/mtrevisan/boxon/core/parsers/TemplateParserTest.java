@@ -72,10 +72,10 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
-		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
+		evaluator.putToContext("deviceTypes", deviceTypes);
+		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
-		evaluator.addToContext("deviceTypes", null);
+		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -86,7 +86,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
-		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012680d0a");
+		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -102,10 +102,10 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
-		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
+		evaluator.putToContext("deviceTypes", deviceTypes);
+		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
-		evaluator.addToContext("deviceTypes", null);
+		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -136,9 +136,9 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
-		evaluator.addToContext("deviceTypes", deviceTypes);
+		evaluator.putToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
-		evaluator.addToContext("deviceTypes", null);
+		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -339,8 +339,8 @@ class TemplateParserTest{
 		byte type;
 		@BindObject(type = TestSubCompositionBase.class, selectFrom = @ObjectChoices(
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "type == 1", type = TestSubComposition1.class),
-				@ObjectChoices.ObjectChoice(condition = "type == 2", type = TestSubComposition2.class)
+				@ObjectChoices.ObjectChoice(condition = "type == 1", prefix = "", type = TestSubComposition1.class),
+				@ObjectChoices.ObjectChoice(condition = "type == 2", prefix = "", type = TestSubComposition2.class)
 			}
 		))
 		private TestSubCompositionBase sub;
@@ -405,8 +405,8 @@ class TemplateParserTest{
 
 
 	private static void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
+		loaderCodec.injectFieldInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(evaluator);
 	}
 
 }

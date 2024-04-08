@@ -25,7 +25,9 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
@@ -40,38 +42,39 @@ import java.nio.charset.Charset;
 
 final class CodecString implements CodecInterface<BindString>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindString binding = extractBinding(annotation);
+		final BindString binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		return CodecHelper.convertValue(bindingData, text);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, text, evaluator, rootObject);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindString binding = extractBinding(annotation);
+		final BindString binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-		bindingData.validate(value);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		CodecHelper.validate(value, binding.validator());
+
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}
