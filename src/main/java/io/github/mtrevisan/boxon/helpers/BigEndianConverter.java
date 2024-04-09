@@ -32,7 +32,7 @@ final class BigEndianConverter implements BitSetConverter{
 
 	@Override
 	public BitSet createBitSet(final int bitmapSize, final BigInteger value){
-		final BitSet bitmap = BitSetHelper.createBitSet(bitmapSize);
+		final BitSet bitmap = new BitSet(bitmapSize);
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
 		for(int i = 0, length = (bitmapSize + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
 			final int byteIndex = length - 1 - i;
