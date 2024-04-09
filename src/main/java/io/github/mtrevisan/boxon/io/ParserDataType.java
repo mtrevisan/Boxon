@@ -314,7 +314,7 @@ public enum ParserDataType{
 	 * Read a specific data type from the reader, using the given byte order.
 	 *
 	 * @param reader	The reader from which to read the data from.
-	 * @param byteOrder	The byte order.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value.
 	 */
 	abstract Object read(BitReaderInterface reader, ByteOrder byteOrder);
@@ -323,7 +323,7 @@ public enum ParserDataType{
 	 * Write a specific data to the writer, using the given byte order.
 	 * @param writer	The writer used to write the data to.
 	 * @param value	The value to be written.
-	 * @param byteOrder	The byte order.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	abstract void write(BitWriterInterface writer, Object value, ByteOrder byteOrder);
 

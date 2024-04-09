@@ -97,7 +97,7 @@ public final class BitSetHelper{
 	 *
 	 * @param bitmap	The {@link BitSet}.
 	 * @param bitmapSize	The number of bits.
-	 * @param byteOrder	The byte order.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The converted {@link BigInteger}.
 	 */
 	public static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
