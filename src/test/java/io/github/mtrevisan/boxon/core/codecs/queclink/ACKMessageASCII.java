@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 
@@ -58,7 +59,7 @@ public class ACKMessageASCII{
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.HexStringToShortConverter.class)
 	private short correlationId;
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSConverter.class)
-	private ZonedDateTime eventTime;
+	private LocalDateTime eventTime;
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToShortConverter.class)
 	private short messageId;
 

@@ -549,7 +549,7 @@ This annotation is bounded to a variable.
 @BindInteger(size = "3")
 private BigInteger number;
 
-@BindInteger(size = "Long.SIZE+10")
+@BindInteger(size = "Long.SIZE + 10")
 private BigInteger number;
 ```
 
@@ -907,6 +907,9 @@ gives as output the following
 
 Configurations are mainly used to compose a message.
 
+Note that currently only composing in ASCII text format is supported.
+
+<br />
 Firstly, load the configuration as shown below:
 
 ```java
@@ -1289,19 +1292,19 @@ NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 
 ```java
-@BindLong(converter = DateTimeUnixConverter.class)
-private ZonedDateTime eventTime;
+@BindLong(converter = UnixTimestampConverter.class)
+private LocalDateTime eventTime;
 
-public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
-    @Override
-    public ZonedDateTime decode(final Long unixTimestamp){
-        return DateTimeUtils.createFrom(unixTimestamp);
-    }
+public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
+	@Override
+	public LocalDateTime decode(final Long unixTimestamp){
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneOffset.UTC);
+	}
 
-    @Override
-    public Long encode(final ZonedDateTime value){
-        return value.toEpochSecond();
-    }
+	@Override
+	public Long encode(final LocalDateTime value){
+		return value.toInstant(ZoneOffset.UTC).toEpochMilli();
+	}
 }
 ```
 

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
@@ -195,6 +196,24 @@ class ParserTest{
 		System.arraycopy(array1, 0, joinedArray, 0, array1.length);
 		System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
 		return joinedArray;
+	}
+
+
+
+	@Test
+	void parseTeltonika() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplatesFrom(MessageHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		byte[] payload = StringHelper.hexToByteArray("000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
+			Assertions.fail(result.getFirst().getError());
 	}
 
 }

@@ -29,10 +29,11 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT XMODEM algorithm.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
  */
 public final class CRC16CCITT_XMODEM implements Checksummer{
 
-	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021 (reversed is 0x8408). */
+	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021. */
 	private static final int POLYNOMIAL = 0x0000_1021;
 
 
@@ -45,15 +46,14 @@ public final class CRC16CCITT_XMODEM implements Checksummer{
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 
-			for(int j = Byte.SIZE - 1; j >= 0; j --){
-				final boolean bit = (((datum >> j) & 1) != 0);
-				final boolean c15 = ((value & 0x8000) != 0);
+			value ^= datum << Byte.SIZE;
+			for(int j = 0; j < Byte.SIZE; j ++){
 				value <<= 1;
-				if(c15 ^ bit)
+				if((value & 0x1_0000) != 0)
 					value ^= POLYNOMIAL;
 			}
 		}
-		return (short)(0xFFFF & value);
+		return (short)value;
 	}
 
 }

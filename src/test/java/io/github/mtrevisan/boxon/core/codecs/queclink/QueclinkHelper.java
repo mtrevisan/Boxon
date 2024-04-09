@@ -29,15 +29,11 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.nio.ByteBuffer;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 
 public class QueclinkHelper{
-
-	private static final ZoneId DATE_TIME_ZONE = ZoneId.of("UTC");
-
 
 	private QueclinkHelper(){}
 
@@ -105,9 +101,9 @@ public class QueclinkHelper{
 	}
 
 
-	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
+	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], LocalDateTime>{
 		@Override
-		public ZonedDateTime decode(final byte[] value){
+		public LocalDateTime decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
 			final int year = bb.getShort();
 			final int month = bb.get();
@@ -115,11 +111,11 @@ public class QueclinkHelper{
 			final int hour = bb.get();
 			final int minute = bb.get();
 			final int second = bb.get();
-			return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DATE_TIME_ZONE);
+			return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
 		}
 
 		@Override
-		public byte[] encode(final ZonedDateTime value){
+		public byte[] encode(final LocalDateTime value){
 			return ByteBuffer.allocate(7)
 				.putShort((short)value.getYear())
 				.put((byte)value.getMonthValue())
@@ -131,20 +127,20 @@ public class QueclinkHelper{
 		}
 	}
 
-	static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
+	static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, LocalDateTime>{
 		@Override
-		public ZonedDateTime decode(final String value){
+		public LocalDateTime decode(final String value){
 			final int year = Integer.parseInt(value.substring(0, 4));
 			final int month = Integer.parseInt(value.substring(4, 6));
 			final int dayOfMonth = Integer.parseInt(value.substring(6, 8));
 			final int hour = Integer.parseInt(value.substring(8, 10));
 			final int minute = Integer.parseInt(value.substring(10, 12));
 			final int second = Integer.parseInt(value.substring(12, 14));
-			return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DATE_TIME_ZONE);
+			return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
 		}
 
 		@Override
-		public String encode(final ZonedDateTime value){
+		public String encode(final LocalDateTime value){
 			return StringHelper.leftPad(Integer.toString(value.getYear()), 4, '0')
 				+ StringHelper.leftPad(Integer.toString(value.getMonthValue()), 2, '0')
 				+ StringHelper.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0')
