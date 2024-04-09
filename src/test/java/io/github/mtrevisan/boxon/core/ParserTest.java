@@ -211,8 +211,8 @@ class ParserTest{
 		byte[] payload = StringHelper.hexToByteArray("000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
-//		Assertions.assertEquals(1, result.size());
-//		if(result.getFirst().hasError())
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
 			Assertions.fail(result.getFirst().getError());
 	}
 
@@ -227,8 +227,8 @@ class ParserTest{
 		byte[] payload = StringHelper.hexToByteArray("000000000000002808010000016B40D9AD80010000000000000000000000000000000103021503010101425E100000010000F22A");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
-//		Assertions.assertEquals(1, result.size());
-//		if(result.getFirst().hasError())
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
 			Assertions.fail(result.getFirst().getError());
 	}
 
@@ -243,8 +243,8 @@ class ParserTest{
 		byte[] payload = StringHelper.hexToByteArray("000000000000004308020000016B40D57B480100000000000000000000000000000001010101000000000000016B40D5C198010000000000000000000000000000000101010101000000020000252C");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
-//		Assertions.assertEquals(1, result.size());
-//		if(result.getFirst().hasError())
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
 			Assertions.fail(result.getFirst().getError());
 	}
 

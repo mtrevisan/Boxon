@@ -277,8 +277,15 @@ public final class TemplateParser implements TemplateParserInterface{
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 		try{
+			//save current object (some annotations can overwrite it)
+			final T currentObject = parserContext.getCurrentObject();
+
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
+
+			//restore original current object
+			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
 

@@ -1584,11 +1584,13 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.5.1"></a>
-### version 3.5.1 - 202404??
+### version 3.5.1 - 20240409
 
 - Fix error while assessing size value.
 - Corrected `NullObjectChoice` and `NullObjectChoiceList` type value.
 - Fix error while putting numeric value in `NumberWriterManager`.
+- Removed the default on `Skip` size: it was intended to be mandatory.
+- Fixed bug on evaluating an expression on a deep nested object.
 - (minor) Fix missing field name in parser context in `TemplateParser.encode`.
 
 <a name="changelog-3.5.0"></a>

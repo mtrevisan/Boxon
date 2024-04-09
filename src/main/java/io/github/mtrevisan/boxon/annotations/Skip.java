@@ -80,9 +80,9 @@ public @interface Skip{
 	/**
 	 * The SpEL expression evaluating to the number of bits to be skipped.
 	 *
-	 * @return	The number of bits to be skipped (defaults to {@code 0}).
+	 * @return	The number of bits to be skipped.
 	 */
-	String size() default "0";
+	String size();
 
 	/**
 	 * The byte that terminates the skip.
