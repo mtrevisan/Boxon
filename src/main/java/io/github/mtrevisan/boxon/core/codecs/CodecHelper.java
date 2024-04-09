@@ -79,12 +79,12 @@ final class CodecHelper{
 	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
-	 * @throws EvaluationException   If an error occurs during the evaluation of an expression.
+	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	static int evaluateSize(final String size, final Evaluator evaluator, final Object rootObject) throws AnnotationException{
 		final int evaluatedSize = evaluator.evaluateSize(size, rootObject);
-		if(evaluatedSize <= 0)
-			throw AnnotationException.create("Size must be a positive integer, was {}", size);
+		if(evaluatedSize < 0)
+			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
 
 		return evaluatedSize;
 	}

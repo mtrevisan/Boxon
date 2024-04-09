@@ -50,7 +50,7 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 
 	@Override
 	public Class<?> type(){
-		return Object.class;
+		return Void.TYPE;
 	}
 
 }

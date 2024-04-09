@@ -56,17 +56,12 @@ final class NumberWriterManager implements WriterManagerInterface{
 	@Override
 	public void put(final Object value){
 		switch(value){
+			case final Byte v -> writer.putText(Integer.toString(v & 0xFF, radix));
+			case final Short v -> writer.putText(Integer.toString(v & 0xFFFF, radix));
+			case final Integer v -> writer.putText(Integer.toString(v, radix));
+			case final Long v -> writer.putText(Long.toString(v, radix));
 			case final BigDecimal v -> writer.putText(v.toPlainString());
 			case final BigInteger v -> writer.putText(v.toString(radix));
-			case final Number v -> {
-				final String text = v.toString();
-				if(radix == 10)
-					writer.putText(text);
-				else{
-					final BigInteger bi = new BigInteger(text);
-					writer.putText(bi.toString(radix));
-				}
-			}
 			case null, default -> {}
 		}
 	}

@@ -147,26 +147,27 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.5.0](#changelog-3.5.0)
-    2. [version 3.4.0](#changelog-3.4.0)
-    3. [version 3.3.0](#changelog-3.3.0)
-    4. [version 3.2.0](#changelog-3.2.0)
-    5. [version 3.1.3](#changelog-3.1.3)
-    6. [version 3.1.2](#changelog-3.1.2)
-    7. [version 3.1.1](#changelog-3.1.1)
-    8. [version 3.1.0](#changelog-3.1.0)
-    9. [version 3.0.2](#changelog-3.0.2)
-    10. [version 3.0.1](#changelog-3.0.1)
-    11. [version 3.0.0](#changelog-3.0.0)
-    12. [version 2.1.2](#changelog-2.1.2)
-    13. [version 2.1.1](#changelog-2.1.1)
-    14. [version 2.1.0](#changelog-2.1.0)
-    15. [version 2.0.0](#changelog-2.0.0)
-    16. [version 1.1.0](#changelog-1.1.0)
-    17. [version 1.0.0](#changelog-1.0.0)
-    18. [version 0.0.2](#changelog-0.0.2)
-    19. [version 0.0.1](#changelog-0.0.1)
-    20. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.5.1](#changelog-3.5.1)
+    2. [version 3.5.0](#changelog-3.5.0)
+    3. [version 3.4.0](#changelog-3.4.0)
+    4. [version 3.3.0](#changelog-3.3.0)
+    5. [version 3.2.0](#changelog-3.2.0)
+    6. [version 3.1.3](#changelog-3.1.3)
+    7. [version 3.1.2](#changelog-3.1.2)
+    8. [version 3.1.1](#changelog-3.1.1)
+    9. [version 3.1.0](#changelog-3.1.0)
+    10. [version 3.0.2](#changelog-3.0.2)
+    11. [version 3.0.1](#changelog-3.0.1)
+    12. [version 3.0.0](#changelog-3.0.0)
+    13. [version 2.1.2](#changelog-2.1.2)
+    14. [version 2.1.1](#changelog-2.1.1)
+    15. [version 2.1.0](#changelog-2.1.0)
+    16. [version 2.0.0](#changelog-2.0.0)
+    17. [version 1.1.0](#changelog-1.1.0)
+    18. [version 1.0.0](#changelog-1.0.0)
+    19. [version 0.0.2](#changelog-0.0.2)
+    20. [version 0.0.1](#changelog-0.0.1)
+    21. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -548,7 +549,7 @@ This annotation is bounded to a variable.
 @BindInteger(size = "3")
 private BigInteger number;
 
-@BindInteger(size = "Long.SIZE+10")
+@BindInteger(size = "Long.SIZE + 10")
 private BigInteger number;
 ```
 
@@ -894,7 +895,7 @@ gives as output the following
    ],
    "context": {
       "headerLength": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength()",
-      "deviceTypes": "[QUECLINK_GB200S(0x46)]"
+      "deviceTypes": ["QUECLINK_GB200S(0x46)"]
    }
 }
 ```
@@ -906,6 +907,9 @@ gives as output the following
 
 Configurations are mainly used to compose a message.
 
+Note that currently only composing in ASCII text format is supported.
+
+<br />
 Firstly, load the configuration as shown below:
 
 ```java
@@ -1288,19 +1292,19 @@ NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 
 ```java
-@BindLong(converter = DateTimeUnixConverter.class)
-private ZonedDateTime eventTime;
+@BindLong(converter = UnixTimestampConverter.class)
+private LocalDateTime eventTime;
 
-public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
-    @Override
-    public ZonedDateTime decode(final Long unixTimestamp){
-        return DateTimeUtils.createFrom(unixTimestamp);
-    }
+public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
+	@Override
+	public LocalDateTime decode(final Long unixTimestamp){
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneOffset.UTC);
+	}
 
-    @Override
-    public Long encode(final ZonedDateTime value){
-        return value.toEpochSecond();
-    }
+	@Override
+	public Long encode(final LocalDateTime value){
+		return value.toInstant(ZoneOffset.UTC).toEpochMilli();
+	}
 }
 ```
 
@@ -1579,8 +1583,18 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-3.5.1"></a>
+### version 3.5.1 - 20240409
+
+- Fix error while assessing size value.
+- Corrected `NullObjectChoice` and `NullObjectChoiceList` type value.
+- Fix error while putting numeric value in `NumberWriterManager`.
+- Removed the default on `Skip` size: it was intended to be mandatory.
+- Fixed bug on evaluating an expression on a deep nested object.
+- (minor) Fix missing field name in parser context in `TemplateParser.encode`.
+
 <a name="changelog-3.5.0"></a>
-### version 3.5.0 - 202403406
+### version 3.5.0 - 20240406
 
 - Added condition on `Checksum` annotation.
 - Removed `type` and `startValue` from `Checksum`: the same information can be retrieved from the algorithm used, plus, the start value can be embedded in the implemented class.

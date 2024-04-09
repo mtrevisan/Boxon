@@ -57,7 +57,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
-		evaluator.addCurrentObjectToEvaluatorContext(instance);
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -83,8 +82,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
 		}
 
-		evaluator.addCurrentObjectToEvaluatorContext(value);
-
 		final Template<?> template = templateParser.createTemplate(type);
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -102,7 +99,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
-	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
 	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final BindObject binding, final Object rootObject)
 			throws CodecException{

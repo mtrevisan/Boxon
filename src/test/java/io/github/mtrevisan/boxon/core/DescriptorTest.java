@@ -93,7 +93,7 @@ class DescriptorTest{
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.withConfigurationsFrom(REGConfigurationASCII.class)
+			.withConfiguration(REGConfigurationASCII.class)
 			.create();
 		Descriptor descriptor = Descriptor.create(core);
 

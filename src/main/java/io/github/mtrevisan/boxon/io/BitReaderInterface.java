@@ -73,7 +73,7 @@ public interface BitReaderInterface{
 	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java
 	 * 	(see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE},
 	 * 	and {@link Double#SIZE}).
-	 * @param byteOrder	The byte order used to read the bytes.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value of the given type.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */

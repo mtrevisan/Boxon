@@ -94,9 +94,9 @@ final class ValidationHelper{
 	/**
 	 * Validate the pattern.
 	 *
-	 * @param defaultValue  The field (default) value to check against.
-	 * @param configData The configuration field data.
-	 * @throws AnnotationException If a validation error occurs.
+	 * @param defaultValue	The field (default) value to check against.
+	 * @param configData	The configuration field data.
+	 * @throws AnnotationException	If a validation error occurs.
 	 */
 	static void validatePattern(final Object defaultValue, final ConfigFieldData configData) throws AnnotationException{
 		//valid pattern

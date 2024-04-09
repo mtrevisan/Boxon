@@ -60,9 +60,9 @@ public final class BitSetHelper{
 	/**
 	 * Creates a {@link BitSet} from a long value.
 	 *
-	 * @param bitmapSize  The size in bits of the resulting {@link BitSet}.
-	 * @param value The value to convert to {@link BitSet}.
-	 * @return The created {@link BitSet}.
+	 * @param bitmapSize	The size in bits of the resulting {@link BitSet}.
+	 * @param value	The value to convert to {@link BitSet}.
+	 * @return	The created {@link BitSet}.
 	 */
 	public static BitSet createBitSet(final int bitmapSize, long value){
 		final BitSet bitmap = createBitSet(bitmapSize);
@@ -81,10 +81,10 @@ public final class BitSetHelper{
 	/**
 	 * Converts a {@link BigInteger} into a {@link BitSet} ignoring the sign of the {@link BigInteger}, according to SRP specification.
 	 *
-	 * @param bitmapSize      The size in bits of the value.
-	 * @param value     The value, must not be {@code null}.
-	 * @param byteOrder The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return The {@link BitSet} representing the given value.
+	 * @param bitmapSize	The size in bits of the value.
+	 * @param value	The value, must not be {@code null}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The {@link BitSet} representing the given value.
 	 */
 	public static BitSet createBitSet(final int bitmapSize, final BigInteger value, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
@@ -97,7 +97,7 @@ public final class BitSetHelper{
 	 *
 	 * @param bitmap	The {@link BitSet}.
 	 * @param bitmapSize	The number of bits.
-	 * @param byteOrder	The byte order.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The converted {@link BigInteger}.
 	 */
 	public static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){

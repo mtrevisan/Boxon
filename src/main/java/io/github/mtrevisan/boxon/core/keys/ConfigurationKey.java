@@ -29,31 +29,56 @@ package io.github.mtrevisan.boxon.core.keys;
  * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
  */
 public enum ConfigurationKey{
+	/** Represents the header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	HEADER("header"),
+	/** Represents the start header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	HEADER_START("start"),
+	/** Represents the end header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	HEADER_END("end"),
+	/** Represents the charset header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	HEADER_CHARSET("charset"),
+	/** Represents the fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	FIELDS("fields"),
+	/** Represents the protocol version boundaries constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
+	/** Represents the composite fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	COMPOSITE_FIELDS("fields"),
 
+	/** Represents the alternatives constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	ALTERNATIVES("alternatives"),
+	/** Represents the field type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	FIELD_TYPE("fieldType"),
+	/** Represents the short description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	SHORT_DESCRIPTION("shortDescription"),
+	/** Represents the long description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	LONG_DESCRIPTION("longDescription"),
+	/** Represents the unit of measure constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	UNIT_OF_MEASURE("unitOfMeasure"),
+	/** Represents the minimum protocol constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MIN_PROTOCOL("minProtocol"),
+	/** Represents the maximum protocol constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MAX_PROTOCOL("maxProtocol"),
+	/** Represents the minimum value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MIN_VALUE("minValue"),
+	/** Represents the maximum value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MAX_VALUE("maxValue"),
+	/** Represents the value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	VALUE("value"),
-	PATTERN("pattern"),
-	ENUMERATION("enumeration"),
-	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
+	/** Represents the default value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	DEFAULT_VALUE("defaultValue"),
+	/** Represents the pattern constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
+	PATTERN("pattern"),
+	/** Represents the enumeration constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
+	ENUMERATION("enumeration"),
+	/** Represents the mutually exclusive constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
+	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
+	/** Represents the composition constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	COMPOSITION("composition"),
+	/** Represents the charset constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	CHARSET("charset"),
+	/** Represents the radix constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	RADIX("radix"),
+	/** Represents the terminator constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	TERMINATOR("terminator");
 
 

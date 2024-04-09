@@ -277,8 +277,15 @@ public final class TemplateParser implements TemplateParserInterface{
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 		try{
+			//save current object (some annotations can overwrite it)
+			final T currentObject = parserContext.getCurrentObject();
+
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
+
+			//restore original current object
+			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
 
@@ -393,6 +400,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			if(shouldProcessField){
 				//... and if so, process it
 				parserContext.setField(field);
+				parserContext.setFieldName(field.getFieldName());
 				parserContext.setBinding(field.getBinding());
 
 				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
@@ -447,7 +455,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
-	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final Object rootObject){
+	private void writeSkips(final Skip[] skips, final BitWriterInterface writer, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, rootObject);
 	}

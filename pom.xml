@@ -5,7 +5,7 @@
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>3.5.0-SNAPSHOT</version>
+	<version>3.5.1-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -244,6 +244,7 @@
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs.queclink=spring.core,spring.expression
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs.teltonika=spring.core,spring.expression
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.helpers=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.parsers=spring.core,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.parsers.matchers=ALL-UNNAMED

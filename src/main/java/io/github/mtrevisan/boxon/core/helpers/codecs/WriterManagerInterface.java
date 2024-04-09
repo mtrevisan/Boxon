@@ -29,6 +29,9 @@ public interface WriterManagerInterface{
 
 	/**
 	 * Writes a value.
+	 * <p>
+	 * NOTE: the object written is always in {@link io.github.mtrevisan.boxon.io.ByteOrder#BIG_ENDIAN}.
+	 * </p>
 	 *
 	 * @param value	The value to write.
 	 */

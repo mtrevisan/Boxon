@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,29 +22,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.checksummers;
+package io.github.mtrevisan.boxon.core.codecs.queclink;
+
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 
 
-/**
- * Calculates a 16 bit BSD checksum from a sequence of bytes.
- *
- * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
- */
-public final class BSD16 implements Checksummer{
+@ConfigurationHeader(shortDescription = "Heartbeat acknowledge", start = "+SACK:GTHBD", end = "$")
+public class HeartbeatAcknowledgeASCII{
 
-	private static final int LEFT_SHIFT = Short.SIZE - 1;
-
-
-	BSD16(){}
-
-
-	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end){
-		int checksum = 0;
-		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
-			//apply circular right shift and add new value
-			checksum = ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
-		return (short)checksum;
-	}
+	@ConfigurationSkip(terminator = ",")
+	@ConfigurationField(shortDescription = "Device type code", radix = 16, defaultValue = "0x87")
+	private byte deviceTypeCode;
+	@ConfigurationField(shortDescription = "Protocol version", pattern = "[0-9A-Fa-f]{4}", terminator = ",")
+	private String protocolVersion;
+	@ConfigurationField(shortDescription = "Message counter", pattern = "[0-9A-F]{4}")
+	private String messageCounter;
 
 }

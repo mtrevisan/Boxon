@@ -157,12 +157,12 @@ public final class ConfigurationParser{
 	/**
 	 * Encode the configuration using the given writer with the given object that contains the values.
 	 *
-	 * @param <T>           The class type of the current object.
-	 * @param configuration The configuration to encode.
-	 * @param writer        The writer that holds the encoded template.
-	 * @param currentObject The current object that holds the values.
-	 * @param protocol      The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @throws FieldException If a codec is not found.
+	 * @param <T>	The class type of the current object.
+	 * @param configuration	The configuration to encode.
+	 * @param writer	The writer that holds the encoded template.
+	 * @param currentObject	The current object that holds the values.
+	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @throws FieldException	If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
 			final Version protocol) throws FieldException{
@@ -189,10 +189,10 @@ public final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			parserContext.setRootObject(field.getFieldType());
-			parserContext.setFieldName(field.getFieldName());
 
 			//process value
 			parserContext.setField(field);
+			parserContext.setFieldName(field.getFieldName());
 			parserContext.setBinding(annotation);
 			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			if(annotation != binding){

@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,7 +136,7 @@ public class ACKMessageHex{
 	private short correlationId;
 	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte.class,
 		converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
-	private ZonedDateTime eventTime;
+	private LocalDateTime eventTime;
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
 

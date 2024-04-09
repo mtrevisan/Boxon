@@ -35,7 +35,7 @@ import java.math.BigDecimal;
  */
 public final class StringToBigDecimalConverter implements Converter<String, BigDecimal>{
 
-	StringToBigDecimalConverter(){}
+	private StringToBigDecimalConverter(){}
 
 
 	@Override
