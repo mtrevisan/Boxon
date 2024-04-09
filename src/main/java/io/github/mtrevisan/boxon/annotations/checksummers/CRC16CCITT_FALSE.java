@@ -36,6 +36,9 @@ public final class CRC16CCITT_FALSE implements Checksummer{
 	private static final int POLYNOMIAL = 0x0000_1021;
 
 
+	CRC16CCITT_FALSE(){}
+
+
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end){
 		int value = 0xFFFF;

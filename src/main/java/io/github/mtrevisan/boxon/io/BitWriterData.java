@@ -84,7 +84,7 @@ class BitWriterData{
 	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
 	 *
 	 * @param value	The value to write.
-	 * @param bitsToWrite   The amount of bits to use when writing the {@code value}.
+	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
 	 */
 	private void putNumber(final long value, final int bitsToWrite){
 		int bitsWritten = 0;

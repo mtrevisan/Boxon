@@ -41,6 +41,7 @@ import java.util.Map;
  */
 public enum ParserDataType{
 
+	/** Represents the byte data type. */
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
 		Object value(final String value){
@@ -63,6 +64,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the short data type. */
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
 		Object value(final String value){
@@ -85,6 +87,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the int/integer data type. */
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
 		Object value(final String value){
@@ -107,6 +110,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the long data type. */
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
 		Object value(final String value){
@@ -129,6 +133,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the float data type. */
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
 		Object value(final String value){
@@ -151,6 +156,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the double data type. */
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
 		@Override
 		Object value(final String value){

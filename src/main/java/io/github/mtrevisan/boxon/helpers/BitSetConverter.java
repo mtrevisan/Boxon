@@ -36,9 +36,9 @@ interface BitSetConverter{
 	/**
 	 * Creates a {@link BitSet} with the given {@link BigInteger} value and `bitmapSize`.
 	 *
-	 * @param bitmapSize The number of bits in the {@link BitSet}.
-	 * @param value      The {@link BigInteger} value used to initialize the {@link BitSet}.
-	 * @return A new {@link BitSet} initialized with the given value and `bitmapSize`.
+	 * @param bitmapSize	The number of bits in the {@link BitSet}.
+	 * @param value	The {@link BigInteger} value used to initialize the {@link BitSet}.
+	 * @return	A new {@link BitSet} initialized with the given value and `bitmapSize`.
 	 */
 	BitSet createBitSet(int bitmapSize, BigInteger value);
 

@@ -42,9 +42,9 @@ final class MinMaxDataValidator{
 	/**
 	 * Validate the minimum and maximum values.
 	 *
-	 * @param dataValue  The value to check against.
-	 * @param configData The configuration field data.
-	 * @throws AnnotationException If a validation error occurs.
+	 * @param dataValue	The value to check against.
+	 * @param configData	The configuration field data.
+	 * @throws AnnotationException	If a validation error occurs.
 	 */
 	static void validateMinMaxDataValues(final Object dataValue, final ConfigFieldData configData) throws AnnotationException{
 		if(isMinAndMaxValuesBlank(configData))

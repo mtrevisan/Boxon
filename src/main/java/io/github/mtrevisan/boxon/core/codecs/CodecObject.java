@@ -102,7 +102,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
-	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
 	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final BindObject binding, final Object rootObject)
 			throws CodecException{

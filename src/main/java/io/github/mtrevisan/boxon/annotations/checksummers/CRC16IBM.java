@@ -37,6 +37,9 @@ public final class CRC16IBM implements Checksummer{
 	private static final int POLYNOMIAL_REVERSED = 0x0000_A001;
 
 
+	CRC16IBM(){}
+
+
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end){
 		int value = 0;
