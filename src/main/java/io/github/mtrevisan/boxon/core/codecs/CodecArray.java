@@ -64,7 +64,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
 			decodeWithAlternatives(reader, array, binding, rootObject);
 		else
-			decodeWithoutAlternatives(reader, array, bindingType);
+			decodeWithoutAlternatives(reader, array, bindingType, rootObject);
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -91,12 +91,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object[] array, final Class<?> type)
-			throws FieldException{
+	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object[] array, final Class<?> type,
+			final Object rootObject) throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
 		for(int i = 0, length = array.length; i < length; i ++)
-			array[i] = templateParser.decode(template, reader, null);
+			array[i] = templateParser.decode(template, reader, rootObject);
 	}
 
 	@Override

@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16IBM;
 
@@ -44,6 +45,72 @@ import java.time.ZonedDateTime;
 @TemplateHeader(start = "\0\0\0\0")
 public class MessageHex{
 
+	public static final class AVLData{
+		@BindLong(converter = TeltonikaHelper.UnixTimestampConverter.class)
+		private LocalDateTime eventTime;
+		@BindByte
+		private byte priority;
+		@BindObject(type = GPSElement.class)
+		private GPSElement gpsElement;
+		@BindObject(type = IOElement.class)
+		private IOElement ioElement;
+	}
+
+	public static final class GPSElement{
+		@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
+		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
+		private BigDecimal longitude;
+		@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
+		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
+		private BigDecimal latitude;
+		//[m]
+		@BindShort
+		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
+		private Short altitude;
+		//Heading measured from magnetic north [°]
+		@BindShort
+		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
+		private Short heading;
+		@BindByte
+		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
+		private Byte satellitesCount;
+		@BindShort
+		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
+		private Short speed;
+		@Evaluate("#self.speed == 0")
+		private boolean invalidPosition;
+	}
+
+	public static final class IOElement{
+		//IO property that has changed, zero if it's not a record caused by an event
+		@BindByte
+		private int eventIOID;
+		//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
+		@BindByte
+		private int propertiesCount;
+		@BindByte
+		private int oneBytePropertiesCount;
+		@BindArray(size = "#self.oneBytePropertiesCount", type = TeltonikaHelper.OneByteProperty.class)
+//		@BindArray(size = "2", type = TeltonikaHelper.OneByteProperty.class)
+		private TeltonikaHelper.OneByteProperty[] oneByteProperties;
+		@BindByte
+		private int twoBytesPropertiesCount;
+		@BindArray(size = "#self.twoBytesPropertiesCount", type = TeltonikaHelper.TwoBytesProperty.class)
+//		@BindArray(size = "1", type = TeltonikaHelper.TwoBytesProperty.class)
+		private TeltonikaHelper.TwoBytesProperty[] twoBytesProperties;
+		@BindByte
+		private int fourBytesPropertiesCount;
+		@BindArray(size = "#self.fourBytesPropertiesCount", type = TeltonikaHelper.FourBytesProperty.class)
+//		@BindArray(size = "1", type = TeltonikaHelper.FourBytesProperty.class)
+		private TeltonikaHelper.FourBytesProperty[] fourBytesProperties;
+		@BindByte
+		private int eightBytesPropertiesCount;
+		@BindArray(size = "#self.eightBytesPropertiesCount", type = TeltonikaHelper.EightBytesProperty.class)
+//		@BindArray(size = "1", type = TeltonikaHelper.EightBytesProperty.class)
+		private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
+	}
+
+
 	@BindInt(validator = TeltonikaHelper.PreambleValidator.class)
 	private int preamble;
 	@BindInt
@@ -52,58 +119,9 @@ public class MessageHex{
 	private byte codecID;
 	@BindByte
 	private byte dataCount1;
-
-	@BindLong(converter = TeltonikaHelper.UnixTimestampConverter.class)
-	private LocalDateTime eventTime;
-	@BindByte
-	private byte priority;
-
-	@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
-	@PostProcessField(condition = "invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
-	private BigDecimal longitude;
-	@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
-	@PostProcessField(condition = "invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
-	private BigDecimal latitude;
-	//[m]
-	@BindShort
-	@PostProcessField(condition = "invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
-	private Short altitude;
-	//Heading measured from magnetic north [°]
-	@BindShort
-	@PostProcessField(condition = "invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
-	private Short heading;
-	@BindByte
-	@PostProcessField(condition = "invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
-	private Byte satellitesCount;
-	@BindShort
-	@PostProcessField(condition = "invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
-	private Short speed;
-	@Evaluate("speed == 0")
-	private boolean invalidPosition;
-
-	//IO property that has changed, zero if it's not a record caused by an event
-	@BindByte
-	private int eventIOID;
-	//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
-	@BindByte
-	private int propertiesCount;
-	@BindByte
-	private int oneBytePropertiesCount;
-	@BindArray(size = "oneBytePropertiesCount", type = TeltonikaHelper.OneByteProperty.class)
-	private TeltonikaHelper.OneByteProperty[] oneByteProperties;
-	@BindByte
-	private int twoBytesPropertiesCount;
-	@BindArray(size = "twoBytesPropertiesCount", type = TeltonikaHelper.TwoBytesProperty.class)
-	private TeltonikaHelper.TwoBytesProperty[] twoBytesProperties;
-	@BindByte
-	private int fourBytesPropertiesCount;
-	@BindArray(size = "fourBytesPropertiesCount", type = TeltonikaHelper.FourBytesProperty.class)
-	private TeltonikaHelper.FourBytesProperty[] fourBytesProperties;
-	@BindByte
-	private int eightBytesPropertiesCount;
-	@BindArray(size = "eightBytesPropertiesCount", type = TeltonikaHelper.EightBytesProperty.class)
-	private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
-
+	@BindArray(size = "dataCount1", type = AVLData.class)
+//	@BindArray(size = "1", type = AVLData.class)
+	private AVLData[] data;
 	@BindByte
 	//should be same as `dataCount1`
 	private byte dataCount2;
