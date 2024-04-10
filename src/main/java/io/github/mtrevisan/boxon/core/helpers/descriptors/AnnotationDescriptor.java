@@ -100,9 +100,9 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindObject binding = (BindObject)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type().getName(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault().getName(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
 			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);
@@ -117,7 +117,7 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type().getName(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
@@ -134,10 +134,10 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindArray binding = (BindArray)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type().getName(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault().getName(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
 			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);
@@ -152,7 +152,7 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindList binding = (BindList)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type().getName(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
@@ -404,7 +404,7 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(ConfigurationKey.MAX_VALUE, binding.maxValue(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), rootDescription);
 			if(binding.enumeration() != NullEnum.class)
-				putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
+				putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration().getName(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, binding.defaultValue(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.RADIX, binding.radix(), rootDescription);
@@ -446,7 +446,7 @@ public enum AnnotationDescriptor{
 			describeAlternatives(binding.value(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.VALUE, binding.value(), rootDescription);
 			if(binding.enumeration() != NullEnum.class)
-				putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
+				putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration().getName(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.TERMINATOR, binding.terminator(), rootDescription);
 		}
 	},
