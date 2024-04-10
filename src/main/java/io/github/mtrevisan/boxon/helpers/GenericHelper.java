@@ -24,15 +24,11 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import org.springframework.util.StringUtils;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -45,23 +41,7 @@ import java.util.Queue;
  */
 public final class GenericHelper{
 
-	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();
-
-	private static final String ARRAY_VARIABLE = "[]";
 	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
-
-	/**
-	 * Primitive type name to class map.
-	 */
-	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE = Map.of(
-		"boolean", Boolean.TYPE,
-		"byte", Byte.TYPE,
-		"char", Character.TYPE,
-		"short", Short.TYPE,
-		"int", Integer.TYPE,
-		"long", Long.TYPE,
-		"float", Float.TYPE,
-		"double", Double.TYPE);
 
 
 	private GenericHelper(){}
@@ -184,42 +164,6 @@ public final class GenericHelper{
 
 		if(types.isEmpty())
 			types.add(currentOffspring);
-	}
-
-
-	/**
-	 * Convert a given string into the appropriate class.
-	 *
-	 * @param name	Name of class.
-	 * @return	The class for the given name, {@code null} if some error happens.
-	 */
-	public static Class<?> toClass(final String name){
-		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
-		final String baseName = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
-
-		//check for a primitive type
-		Class<?> cls = PRIMITIVE_NAME_TO_TYPE.get(baseName);
-
-		if(cls == null){
-			//not a primitive, try to load it through the `ClassLoader`
-			try{
-				cls = CLASS_LOADER.loadClass(baseName);
-			}
-			catch(final ClassNotFoundException ignored){}
-		}
-
-		//if we have an array, get the array class
-		if(cls != null && arraysCount > 0)
-			cls = addArrayToType(cls, arraysCount);
-
-		return cls;
-	}
-
-	private static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
-		final int[] dimensions = new int[arraysCount];
-		Arrays.fill(dimensions, 1);
-		return Array.newInstance(cls, dimensions)
-			.getClass();
 	}
 
 }
