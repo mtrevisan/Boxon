@@ -101,7 +101,7 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindObject binding = (BindObject)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
@@ -118,7 +118,7 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
@@ -135,7 +135,7 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindArray binding = (BindArray)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
@@ -153,7 +153,7 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final BindList binding = (BindList)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
@@ -570,8 +570,12 @@ public enum AnnotationDescriptor{
 		final Map<String, Object> alternativeDescription = new HashMap<>(3);
 		putIfNotEmpty(DescriberKey.BIND_CONDITION, condition, alternativeDescription);
 		putIfNotEmpty(DescriberKey.BIND_PREFIX, prefix, alternativeDescription);
-		putIfNotEmpty(DescriberKey.BIND_TYPE, type, alternativeDescription);
+		describeType(type, alternativeDescription);
 		alternativesDescription.add(alternativeDescription);
+	}
+
+	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
+		putIfNotEmpty(DescriberKey.BIND_TYPE, type, rootDescription);
 	}
 
 	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
