@@ -186,7 +186,6 @@ class TemplateParserTest{
 	@TemplateHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
-
 			@Override
 			public String decode(final Byte value){
 				return "";
@@ -196,8 +195,8 @@ class TemplateParserTest{
 			public Byte encode(final String value){
 				return null;
 			}
-
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongOutputConverter.class)
@@ -226,7 +225,6 @@ class TemplateParserTest{
 	@TemplateHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
-
 			@Override
 			public Byte decode(final String value){
 				return null;
@@ -236,8 +234,8 @@ class TemplateParserTest{
 			public String encode(final Byte value){
 				return "";
 			}
-
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongInputConverter.class)
@@ -273,6 +271,7 @@ class TemplateParserTest{
 			@BindString(condition = "#self.subsubtype == 1", size = "1")
 			String field2;
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte
@@ -319,12 +318,14 @@ class TemplateParserTest{
 			byte subsubtype;
 
 		}
+
 		static class TestSubComposition1 extends TestSubCompositionBase{
 			@BindString(condition = "type == 1", size = "1")
 			String field1;
 			@BindString(condition = "type == 1 && #self.subsubtype == 1", size = "1")
 			String field2;
 		}
+
 		static class TestSubComposition2 extends TestSubCompositionBase{
 			@BindString(condition = "type == 2", size = "1")
 			String field1;
@@ -333,6 +334,7 @@ class TemplateParserTest{
 			@BindString(condition = "#self.field2 == 0x62", size = "1")
 			String field3;
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte

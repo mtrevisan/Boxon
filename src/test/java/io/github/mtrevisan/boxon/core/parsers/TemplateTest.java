@@ -65,7 +65,6 @@ import java.util.Map;
 class TemplateTest{
 
 	private record Mask(byte mask){
-
 			static class MaskConverter implements Converter<Byte, Mask>{
 				@Override
 				public Mask decode(final Byte value){
@@ -78,11 +77,9 @@ class TemplateTest{
 				}
 			}
 
-
 		boolean hasProtocolVersion(){
 				return TestHelper.hasBit(mask, 2);
 			}
-
 	}
 
 	private static class Version{
