@@ -62,6 +62,7 @@ import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
@@ -514,6 +515,15 @@ public enum AnnotationDescriptor{
 			annotationDescriptor.describe(skip, skipDescription);
 			rootDescription.add(skipDescription);
 		}
+	}
+
+	public static AnnotationDescriptor checkAndGetDescriptor(final Annotation binding) throws FieldException{
+		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
+		if(descriptor == null)
+			throw FieldException.create("Cannot extract descriptor for this annotation: {}",
+				binding.annotationType().getSimpleName());
+
+		return descriptor;
 	}
 
 	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){

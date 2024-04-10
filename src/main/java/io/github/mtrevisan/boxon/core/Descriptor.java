@@ -227,18 +227,24 @@ public final class Descriptor{
 			final MessageExtractor<M, ? extends Annotation, F> messageExtractor, final FieldExtractor<F, ? extends Annotation> fieldExtractor)
 			throws FieldException{
 		final Map<String, Object> description = new HashMap<>(6);
+		describeRawMessage(message, messageExtractor, fieldExtractor, description);
+		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
+		describeContext(description);
+		return Collections.unmodifiableMap(description);
+	}
+
+	private static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
+			final FieldExtractor<F, ? extends Annotation> fieldExtractor, final Map<String, Object> rootDescription) throws FieldException{
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);
-		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
-		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor), description);
+		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), rootDescription);
+
+		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor), rootDescription);
 		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(messageExtractor.getEvaluatedFields(message),
-			FIELD_EXTRACTOR_EVALUATED_FIELD), description);
+			FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
 		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(messageExtractor.getPostProcessedFields(message),
-			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), description);
-		describeContext(description);
-		return Collections.unmodifiableMap(description);
+			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
 	}
 
 	private static Map<String, Object> describeHeader(final Annotation header){
@@ -313,7 +319,7 @@ public final class Descriptor{
 			binding.annotationType());
 
 		//extract binding descriptor
-		final AnnotationDescriptor descriptor = checkAndGetDescriptor(binding);
+		final AnnotationDescriptor descriptor = AnnotationDescriptor.checkAndGetDescriptor(binding);
 		descriptor.describe(binding, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
@@ -326,15 +332,6 @@ public final class Descriptor{
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, name, fieldDescription);
 		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 		return fieldDescription;
-	}
-
-	private static AnnotationDescriptor checkAndGetDescriptor(final Annotation binding) throws FieldException{
-		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
-		if(descriptor == null)
-			throw FieldException.create("Cannot extract descriptor for this annotation: {}",
-				binding.annotationType().getSimpleName());
-
-		return descriptor;
 	}
 
 
