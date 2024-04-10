@@ -316,7 +316,6 @@ class TemplateParserTest{
 		static class TestSubCompositionBase{
 			@BindByte
 			byte subsubtype;
-
 		}
 
 		static class TestSubComposition1 extends TestSubCompositionBase{

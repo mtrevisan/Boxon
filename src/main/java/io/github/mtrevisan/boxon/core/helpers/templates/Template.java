@@ -49,8 +49,16 @@ import java.util.function.Function;
  */
 public final class Template<T>{
 
+	private static final String ANNOTATION_NAME_BIND = "Bind";
+	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = "ConverterChoices";
+	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
+	private static final String ANNOTATION_NAME_CHECKSUM = "Checksum";
+	private static final String ANNOTATION_NAME_EVALUATE = "Evaluate";
+	private static final String ANNOTATION_NAME_POST_PROCESS_FIELD = "PostProcessField";
+	private static final String ANNOTATION_NAME_SKIP = "Skip";
+
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
-			List<EvaluatedField<PostProcessField>> postProcessedFields){
+								  List<EvaluatedField<PostProcessField>> postProcessedFields){
 		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
 				final List<EvaluatedField<PostProcessField>> postProcessedFields){
 			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
@@ -121,12 +129,14 @@ public final class Template<T>{
 		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
 
+			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
+			validateAnnotationsOrder(declaredAnnotations);
+
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			loadChecksumField(checksum, type, field);
 
-			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
@@ -144,6 +154,71 @@ public final class Template<T>{
 			}
 		}
 		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
+	}
+
+	private void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+		boolean bindFound = false;
+		boolean checksumFound = false;
+		boolean evaluateFound = false;
+		boolean postProcessFound = false;
+		boolean skipFound = false;
+
+		for(int i = 0, length = annotations.length; i < length; i ++){
+			final Annotation annotation = annotations[i];
+
+			final String annotationName = annotation.annotationType().getName();
+			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
+					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+				if(bindFound)
+					throw AnnotationException.create("Wrong number of `Bind*`, `ConverterChoiches`, or `ObjectChoices*`: there must be at most one");
+				if(checksumFound)
+					throw AnnotationException.create("Incompatible annotations: `Bind*`, `ConverterChoiches`, or `ObjectChoices*` and `Checksum`");
+				if(skipFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Bind*`, `ConverterChoiches`, or `ObjectChoices*`");
+
+				bindFound = true;
+			}
+			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
+				if(bindFound)
+					throw AnnotationException.create("Incompatible annotations: `Checksum` and `Bind*`, `ConverterChoiches`, or `ObjectChoices*`");
+				if(checksumFound)
+					throw AnnotationException.create("Wrong number of `Checksum`: there must be at most one");
+				if(skipFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Checksum");
+
+				checksumFound = true;
+			}
+			else if(annotationName.equals(ANNOTATION_NAME_EVALUATE)){
+				if(checksumFound)
+					throw AnnotationException.create("Incompatible annotations: `Evaluate` and `Checksum`");
+				if(evaluateFound)
+					throw AnnotationException.create("Wrong number of `Evaluate`: there must be at most one");
+				if(skipFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Evaluate");
+
+				evaluateFound = true;
+			}
+			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS_FIELD)){
+				if(postProcessFound)
+					throw AnnotationException.create("Wrong number of `PostProcessField`: there must be at most one");
+				if(skipFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `PostProcessField`");
+
+				postProcessFound = true;
+			}
+			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP)){
+				if(bindFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Bind*`, `ConverterChoiches`, or `ObjectChoices*`");
+				if(checksumFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Checksum`");
+				if(evaluateFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Evaluate`");
+				if(postProcessFound)
+					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `PostProcessField`");
+
+				skipFound = true;
+			}
+		}
 	}
 
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
