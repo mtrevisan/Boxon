@@ -201,7 +201,7 @@ class ParserTest{
 
 
 	@Test
-	void parseTeltonika1() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_1() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -217,7 +217,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika2() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_2() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -233,7 +233,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika3() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_3() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -241,6 +241,22 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000004308020000016B40D57B480100000000000000000000000000000001010101000000000000016B40D5C198010000000000000000000000000000000101010101000000020000252C");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
+			Assertions.fail(result.getFirst().getError());
+	}
+
+	@Test
+	void parseTeltonika8E() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplatesFrom(MessageHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		byte[] payload = StringHelper.hexToByteArray("000000000000004A8E010000016B412CEE000100000000000000000000000000000000010005000100010100010011001D00010010015E2C880002000B000000003544C87A000E000000001DD7E06A00000100002994");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(1, result.size());
