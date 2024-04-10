@@ -1247,7 +1247,12 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) for the fields `condition`, and `size`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
+The root object is the outermost object.
+
+In order to evaluate a variable of a parent object the complete path should be used, from the root to the desired property, as in `object1.variable1`.
+
+In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`.<br />
+Note that the `#` prefix is intended to refer to the context (whether it is an object or a method), and the current object is stored in the context under the name `self`.
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 

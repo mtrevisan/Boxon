@@ -101,28 +101,28 @@ public class TeltonikaHelper{
 
 
 	public static class OneByteProperty{
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindByte
 		private int value;
 	}
 
 	public static class TwoBytesProperty{
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindShort
 		private int value;
 	}
 
 	public static class FourBytesProperty{
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindInt
 		private int value;
 	}
 
 	public static class EightBytesProperty{
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindLong
 		private long value;

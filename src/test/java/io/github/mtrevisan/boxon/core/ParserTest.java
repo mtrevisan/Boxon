@@ -65,7 +65,8 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		//213-223 µs/msg = 4.5-4.7 kHz
+		//20220301: 213-223 µs/msg = 4.5-4.7 kHz
+		//20240410: 86.6-92.9 µs/msg = 10.8-11.5 kHz (2.4×)
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 		//warm-up
@@ -257,6 +258,22 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000004A8E010000016B412CEE000100000000000000000000000000000000010005000100010100010011001D00010010015E2C880002000B000000003544C87A000E000000001DD7E06A00000100002994");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
+			Assertions.fail(result.getFirst().getError());
+	}
+
+	@Test
+	void parseTeltonika10() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplatesFrom(MessageHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		byte[] payload = StringHelper.hexToByteArray("000000000000005F10020000016BDBC7833000000000000000000000000000000000000B05040200010000030002000B00270042563A00000000016BDBC7871800000000000000000000000000000000000B05040200010000030002000B00260042563A00000200005FB3");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(1, result.size());
