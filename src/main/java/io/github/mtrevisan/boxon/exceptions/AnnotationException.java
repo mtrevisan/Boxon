@@ -30,7 +30,7 @@ import java.io.Serial;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * Thrown if an annotation has validation errors.
  */
 public final class AnnotationException extends FieldException{
 

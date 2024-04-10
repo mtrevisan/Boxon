@@ -106,7 +106,7 @@ public final class Descriptor{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeParsing() throws FieldException{
 		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
@@ -118,8 +118,8 @@ public final class Descriptor{
 	 *
 	 * @param templateClass	Template class to be described.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
 		return describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
@@ -131,8 +131,8 @@ public final class Descriptor{
 	 *
 	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
 		return describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
@@ -144,7 +144,7 @@ public final class Descriptor{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeTemplate() throws FieldException{
 		final Collection<Template<?>> configurations = new HashSet<>(templateParser.getTemplates());
@@ -157,8 +157,8 @@ public final class Descriptor{
 	 *
 	 * @param templateClass	Template class to be described.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
 		return describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
@@ -170,8 +170,8 @@ public final class Descriptor{
 	 *
 	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
 		return describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
@@ -183,7 +183,7 @@ public final class Descriptor{
 	 * Description of all the loaded configuration.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
@@ -196,8 +196,8 @@ public final class Descriptor{
 	 *
 	 * @param configurationClass	configuration class to be described.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
@@ -214,8 +214,8 @@ public final class Descriptor{
 	 *
 	 * @param configurationClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
 		return describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,

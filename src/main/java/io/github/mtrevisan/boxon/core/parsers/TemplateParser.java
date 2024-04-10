@@ -113,8 +113,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public TemplateParser withTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		loaderTemplate.loadTemplatesFrom(basePackageClasses);
@@ -127,8 +127,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws TemplateException	If the template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If the template error occurs.
 	 */
 	public TemplateParser withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		loaderTemplate.loadTemplate(templateClass);
@@ -143,7 +143,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @param <T>	The type of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
-	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	@Override
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
@@ -479,8 +479,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param type	The class type.
 	 * @return	A template.
-	 * @throws AnnotationException	If an annotation has validation problems.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		return loaderTemplate.extractTemplate(type);

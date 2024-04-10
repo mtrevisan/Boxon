@@ -106,7 +106,7 @@ final class LoaderTemplate{
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
 	 */
 	void loadTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
@@ -129,8 +129,8 @@ final class LoaderTemplate{
 	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
-	 * @throws AnnotationException	If an annotation has validation problems.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
@@ -174,8 +174,8 @@ final class LoaderTemplate{
 	 *
 	 * @param type	The class type.
 	 * @return	A template.
-	 * @throws AnnotationException	If an annotation has validation problems.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
@@ -192,7 +192,7 @@ final class LoaderTemplate{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @param <T>	The type of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
-	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	@SuppressWarnings("unchecked")
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{

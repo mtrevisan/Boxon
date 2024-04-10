@@ -30,7 +30,7 @@ import java.io.Serial;
 
 
 /**
- * Thrown if a configuration is not well formatted.
+ * Thrown if a configuration has validation errors.
  */
 public final class ConfigurationException extends FieldException{
 

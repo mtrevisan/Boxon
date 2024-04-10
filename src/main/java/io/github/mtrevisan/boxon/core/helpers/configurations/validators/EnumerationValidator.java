@@ -46,7 +46,7 @@ final class EnumerationValidator{
 	 * Validate the enumeration.
 	 *
 	 * @param configData	The configuration field data.
-	 * @throws AnnotationException	If a validation error occurs.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	static void validateEnumeration(final ConfigFieldData configData) throws AnnotationException{
 		if(!configData.hasEnumeration())

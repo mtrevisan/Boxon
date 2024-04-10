@@ -205,8 +205,8 @@ public final class Core{
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	void addTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.withTemplatesFrom(basePackageClasses);
@@ -216,8 +216,8 @@ public final class Core{
 	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws TemplateException	If the template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	void addTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		templateParser.withTemplate(templateClass);
@@ -228,8 +228,8 @@ public final class Core{
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void addConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		configurationParser.loadConfigurationsFrom(basePackageClasses);
@@ -239,8 +239,8 @@ public final class Core{
 	 * Load the specified protocol class annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param configurationClass	Configuration class.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void addConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		configurationParser.withConfiguration(configurationClass);

@@ -78,7 +78,7 @@ public final class Template<T>{
 	 * @param filterAnnotationsWithCodec	A function that filters the annotation that have a corresponding codec.
 	 * @param <T>	The class type of the template.
 	 * @return	An instance of a template.
-	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	public static <T> Template<T> create(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
@@ -182,6 +182,14 @@ public final class Template<T>{
 		return processed;
 	}
 
+	/**
+	 * Validates a field by filtering out skip annotations and returning the first valid binding annotation.
+	 *
+	 * @param field	The field to validate.
+	 * @param annotations	The list of annotations on the field.
+	 * @return	The first valid binding annotation, or null if none are found.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 */
 	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
 		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;

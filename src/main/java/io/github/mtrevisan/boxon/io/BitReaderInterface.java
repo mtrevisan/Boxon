@@ -75,7 +75,7 @@ public interface BitReaderInterface{
 	 * 	and {@link Double#SIZE}).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value of the given type.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 

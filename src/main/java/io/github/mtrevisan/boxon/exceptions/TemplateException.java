@@ -30,7 +30,7 @@ import java.io.Serial;
 
 
 /**
- * Thrown if a template is not well formatted.
+ * Thrown if a template has validation errors.
  */
 public final class TemplateException extends FieldException{
 
