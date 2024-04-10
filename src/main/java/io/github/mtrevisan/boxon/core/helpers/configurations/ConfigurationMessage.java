@@ -119,7 +119,7 @@ public final class ConfigurationMessage<T>{
 			validateAnnotationsOrder(declaredAnnotations);
 
 			try{
-				final Annotation validAnnotation = validateField(field, declaredAnnotations, minProtocolVersion, maxProtocolVersion);
+				final Annotation validAnnotation = extractAndValidateConfigurationAnnotation(field, declaredAnnotations, minProtocolVersion, maxProtocolVersion);
 
 				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
 
@@ -134,7 +134,7 @@ public final class ConfigurationMessage<T>{
 		return configurationFields;
 	}
 
-	private void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
 		boolean alternativeFieldFound = false;
 		boolean compositeFound = false;
 		boolean fieldFound = false;
@@ -201,9 +201,9 @@ public final class ConfigurationMessage<T>{
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
 
-	private static Annotation validateField(final Field field, final Annotation[] annotations, final Version minProtocolVersion,
-			final Version maxProtocolVersion) throws AnnotationException, CodecException{
-		/** filter out {@link ConfigurationSkip} annotations */
+	private static Annotation extractAndValidateConfigurationAnnotation(final Field field, final Annotation[] annotations,
+			final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException{
+		/** filter out {@link ConfigurationSkip} annotations and return the (first) valid configuration annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.length; foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations[i];

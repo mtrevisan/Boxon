@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
@@ -117,7 +118,7 @@ public final class Descriptor{
 	 * Description of a single template annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class to be described.
-	 * @return	The list of descriptions.
+	 * @return	The description.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
@@ -156,7 +157,7 @@ public final class Descriptor{
 	 * Description of a single template annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class to be described.
-	 * @return	The list of descriptions.
+	 * @return	The description.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
@@ -187,15 +188,15 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
-		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION,
+		return describeEntities(configurations, configuration -> describeMessage(configuration, MESSAGE_EXTRACTOR_CONFIGURATION,
 			FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
 	 * Description of a single configuration annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param configurationClass	configuration class to be described.
-	 * @return	The list of descriptions.
+	 * @param configurationClass	Configuration class to be described.
+	 * @return	The description.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
@@ -206,7 +207,7 @@ public final class Descriptor{
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};
 		return describeEntity(ConfigurationHeader.class, configurationClass, extractor,
-			template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
+			configuration -> describeMessage(configuration, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -219,7 +220,7 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
 		return describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
-			template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
+			configuration -> describeMessage(configuration, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 
@@ -230,6 +231,19 @@ public final class Descriptor{
 		describeRawMessage(message, messageExtractor, fieldExtractor, description);
 		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
 		describeContext(description);
+		return Collections.unmodifiableMap(description);
+	}
+
+	/**
+	 * Description of a single annotated class.
+	 *
+	 * @param boundClass	Generic bound class to be described.
+	 * @return	The description.
+	 */
+	Map<String, Object> describeRawMessage(final Class<?> boundClass) throws FieldException{
+		final Map<String, Object> description = new HashMap<>(6);
+		final Template<?> entity = Template.create(boundClass);
+		describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
 		return Collections.unmodifiableMap(description);
 	}
 

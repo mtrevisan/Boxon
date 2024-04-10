@@ -83,6 +83,18 @@ public final class Template<T>{
 	 * Create an instance of a template.
 	 *
 	 * @param type	The template class.
+	 * @param <T>	The class type of the template.
+	 * @return	An instance of a template.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 */
+	public static <T> Template<T> create(final Class<T> type) throws AnnotationException{
+		return new Template<>(type, List::of);
+	}
+
+	/**
+	 * Create an instance of a template.
+	 *
+	 * @param type	The template class.
 	 * @param filterAnnotationsWithCodec	A function that filters the annotation that have a corresponding codec.
 	 * @param <T>	The class type of the template.
 	 * @return	An instance of a template.
@@ -156,7 +168,7 @@ public final class Template<T>{
 		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
 	}
 
-	private void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
 		boolean bindFound = false;
 		boolean checksumFound = false;
 		boolean evaluateFound = false;
