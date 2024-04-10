@@ -63,6 +63,8 @@ public enum DescriberKey{
 	BIND_CONDITION("condition"),
 	/** Represents the bind type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	BIND_TYPE("type"),
+	/** Represents the bind subtypes constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	BIND_SUBTYPES("subtypes"),
 	/** Represents the bind select default constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	BIND_SELECT_DEFAULT("selectDefault"),
 	/** Represents the bind converter constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */

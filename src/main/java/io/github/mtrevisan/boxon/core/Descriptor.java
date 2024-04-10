@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
@@ -240,7 +239,7 @@ public final class Descriptor{
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
 	 */
-	Map<String, Object> describeRawMessage(final Class<?> boundClass) throws FieldException{
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws FieldException{
 		final Map<String, Object> description = new HashMap<>(6);
 		final Template<?> entity = Template.create(boundClass);
 		describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);

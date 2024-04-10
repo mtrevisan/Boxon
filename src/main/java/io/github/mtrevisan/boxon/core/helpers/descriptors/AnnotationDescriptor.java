@@ -58,10 +58,12 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -71,7 +73,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 //FIXME class too long, too cluttered, have too duplications... too anything
@@ -576,6 +581,33 @@ public enum AnnotationDescriptor{
 
 	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_TYPE, type, rootDescription);
+
+		if(isUserDefinedClass(type)){
+			try{
+				final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
+				final Set<Class<?>> processedTypes = new HashSet<>(1);
+				Class<?> parent = type;
+				while(parent != null && parent != Object.class && !processedTypes.contains(parent)){
+					typeDescription.addFirst(Descriptor.describeRawMessage(parent));
+
+					processedTypes.add(parent);
+
+					//go up to parent class
+					parent = parent.getSuperclass();
+				}
+				putIfNotEmpty(DescriberKey.BIND_SUBTYPES, typeDescription, rootDescription);
+			}
+			catch(final FieldException fe){
+				final Exception exception = ConfigurationException.create("Cannot handle this type of class: {}, please report to the developer",
+					type.getSimpleName(), fe.getMessage());
+				System.out.println("Boxon ERROR: " + exception.getMessage());
+			}
+		}
+	}
+
+	private static boolean isUserDefinedClass(final Class<?> cls){
+		//check if the class is not an interface, an anonymous class, or a primitive data type
+		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
 	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
