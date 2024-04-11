@@ -31,6 +31,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -254,6 +256,24 @@ abstract class BitReaderData{
 		baos.flush();
 	}
 
+	/**
+	 * Retrieve text until a terminator (NOT consumed!) is found.
+	 *
+	 * @param baos	The stream to write to.
+	 * @param terminator	The terminator.
+	 * @param charset	The charset.
+	 * @throws IOException	If an I/O error occurs.
+	 */
+	final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final String terminator, final Charset charset)
+			throws IOException{
+		final byte[] terminatorArray = terminator.getBytes(charset);
+		final byte[] peekBuffer = new byte[terminatorArray.length];
+
+		while(peekString(peekBuffer) != null && !Arrays.equals(terminatorArray, peekBuffer))
+			baos.write(getByte());
+		baos.flush();
+	}
+
 	private Byte peekByte(){
 		//make a copy of internal variables
 		final Snapshot originalSnapshot = createSnapshot();
@@ -270,6 +290,26 @@ abstract class BitReaderData{
 			restoreSnapshot(originalSnapshot);
 		}
 		return b;
+	}
+
+	private byte[] peekString(final byte[] peekBuffer){
+		//make a copy of internal variables
+		final Snapshot originalSnapshot = createSnapshot();
+
+		try{
+			for(int i = 0, length = peekBuffer.length; i < length; i ++)
+				peekBuffer[i] = getByte();
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+			return null;
+		}
+		finally{
+			//restore original variables
+			restoreSnapshot(originalSnapshot);
+		}
+
+		return peekBuffer;
 	}
 
 	/**
