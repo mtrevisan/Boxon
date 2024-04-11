@@ -79,7 +79,7 @@ public @interface Skip{
 
 	/**
 	 * The SpEL expression evaluating to the number of bits to be skipped (defaults to {@code 0}, one of `size` or `terminator` must be
-	 * specified).
+	 * specified -- if `size` is zero then `terminator` is used).
 	 *
 	 * @return	The number of bits to be skipped.
 	 */

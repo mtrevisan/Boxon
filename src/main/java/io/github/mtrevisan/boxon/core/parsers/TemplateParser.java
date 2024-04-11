@@ -253,7 +253,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			return;
 
 		final int size = evaluator.evaluateSize(skip.size(), rootObject);
-		if(size > 0)
+		//choose between skip-by-size and skip-by-terminator
+		if(skipBySize(size))
 			reader.skip(size);
 		else{
 			final byte terminator = skip.terminator();
@@ -263,6 +264,10 @@ public final class TemplateParser implements TemplateParserInterface{
 				reader.skip(length);
 			}
 		}
+	}
+
+	private static boolean skipBySize(final int size){
+		return (size > 0);
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
@@ -466,7 +471,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			return;
 
 		final int size = evaluator.evaluateSize(skip.size(), rootObject);
-		if(size > 0)
+		//choose between skip-by-size and skip-by-terminator
+		if(skipBySize(size))
 			writer.skipBits(size);
 		else if(skip.consumeTerminator())
 			//skip until terminator
