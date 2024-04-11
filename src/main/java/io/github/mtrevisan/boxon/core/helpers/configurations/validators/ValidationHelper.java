@@ -71,7 +71,7 @@ final class ValidationHelper{
 	}
 
 	private static void validateNonEnumerationType(final Class<?> fieldType, final String defaultValue, final ConfigFieldData configData)
-			throws CodecException, AnnotationException{
+			throws AnnotationException, CodecException{
 		if(ParserDataType.getValue(fieldType, defaultValue) == null)
 			throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 				configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());

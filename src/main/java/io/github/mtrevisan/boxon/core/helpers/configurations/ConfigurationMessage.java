@@ -201,9 +201,18 @@ public final class ConfigurationMessage<T>{
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
 
+	/**
+	 * Validates a configuration field and return the first valid configuration annotation.
+	 *
+	 * @param field	The configuration field to validate.
+	 * @param annotations	The list of annotations on the configuration field.
+	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @return	The first valid configuration annotation, or {@code null} if none are found.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 */
 	private static Annotation extractAndValidateConfigurationAnnotation(final Field field, final Annotation[] annotations,
 			final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException{
-		/** filter out {@link ConfigurationSkip} annotations and return the (first) valid configuration annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.length; foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations[i];

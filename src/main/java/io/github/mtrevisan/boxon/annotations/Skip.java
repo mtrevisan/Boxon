@@ -78,16 +78,17 @@ public @interface Skip{
 	String condition() default "";
 
 	/**
-	 * The SpEL expression evaluating to the number of bits to be skipped.
+	 * The SpEL expression evaluating to the number of bits to be skipped (defaults to {@code 0}, one of `size` or `terminator` must be
+	 * specified).
 	 *
 	 * @return	The number of bits to be skipped.
 	 */
-	String size();
+	String size() default "0";
 
 	/**
 	 * The byte that terminates the skip.
 	 *
-	 * @return	The terminator byte (defaults to {@code \0}).
+	 * @return	The terminator byte (defaults to {@code \0}, one of `size` or `terminator` must be specified).
 	 */
 	byte terminator() default '\0';
 

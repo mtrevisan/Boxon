@@ -145,6 +145,7 @@ public final class Template<T>{
 			validateAnnotationsOrder(declaredAnnotations);
 
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
+
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			loadChecksumField(checksum, type, field);
@@ -155,7 +156,7 @@ public final class Template<T>{
 			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
 
 			try{
-				final Annotation validAnnotation = validateField(field, boundedAnnotations);
+				final Annotation validAnnotation = extractAndValidateAnnotation(field, boundedAnnotations);
 
 				if(validAnnotation != null || skips.length > 0)
 					templateFields.add(TemplateField.create(field, validAnnotation, skips));
@@ -270,22 +271,18 @@ public final class Template<T>{
 	}
 
 	/**
-	 * Validates a field by filtering out skip annotations and returning the first valid binding annotation.
+	 * Validates a field and return the first valid binding annotation.
 	 *
 	 * @param field	The field to validate.
 	 * @param annotations	The list of annotations on the field.
-	 * @return	The first valid binding annotation, or null if none are found.
+	 * @return	The first valid binding annotation, or {@code null} if none are found.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
-		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
+	private static Annotation extractAndValidateAnnotation(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
+		/** return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
-
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
-				continue;
 
 			validateAnnotation(field, annotation);
 
