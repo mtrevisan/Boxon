@@ -424,21 +424,20 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
 			final Function<PostProcess, String> valueExtractor){
-		final String templateName = template.getType().getName();
+		final String templateName = template.getType()
+			.getName();
 		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
 		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
 			final EvaluatedField<PostProcess> field = postProcessedFields.get(i);
 
-			final PostProcess binding = field.getBinding();
-			final String condition = binding.condition();
-			final String expression = valueExtractor.apply(binding);
-
-			processField(condition, expression, parserContext, field, templateName);
+			processField(field, parserContext, templateName, valueExtractor);
 		}
 	}
 
-	private void processField(final String condition, final String expression, final ParserContext<?> parserContext,
-			final EvaluatedField<PostProcess> field, final String templateName){
+	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
+			final Function<PostProcess, String> valueExtractor){
+		final PostProcess binding = field.getBinding();
+		final String condition = binding.condition();
 		final Object rootObject = parserContext.getRootObject();
 		final boolean process = evaluator.evaluateBoolean(condition, rootObject);
 		if(!process)
@@ -447,6 +446,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final String fieldName = field.getFieldName();
 		eventListener.evaluatingField(templateName, fieldName);
 
+		final String expression = valueExtractor.apply(binding);
 		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
 		parserContext.setFieldValue(field.getField(), value);
 
