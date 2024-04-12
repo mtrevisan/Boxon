@@ -51,6 +51,10 @@ import java.util.List;
  */
 public final class ConfigurationMessage<T>{
 
+	private static final int ORDER_ALTERNATIVE_INDEX = 0;
+	private static final int ORDER_COMPOSITE_INDEX = 1;
+	private static final int ORDER_FIELD_INDEX = 2;
+
 	private static final String CONFIGURATION_NAME_ALTERNATIVE_CONFIGURATION_FIELD = "AlternativeConfigurationField";
 	private static final String CONFIGURATION_NAME_COMPOSITE_CONFIGURATION_FIELD = "CompositeConfigurationField";
 	private static final String CONFIGURATION_NAME_CONFIGURATION_FIELD = "ConfigurationField";
@@ -141,81 +145,65 @@ public final class ConfigurationMessage<T>{
 		if(length <= 1)
 			return;
 
-		boolean alternativeFound = false;
-		boolean compositeFound = false;
-		boolean fieldFound = false;
-		boolean skipFound = false;
-
+		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations[i];
 
-			final String annotationName = annotation.annotationType().getName();
+			final String annotationName = annotation.annotationType()
+				.getSimpleName();
 			if(annotationName.startsWith(CONFIGURATION_NAME_ALTERNATIVE_CONFIGURATION_FIELD)){
-				validateAlternativeAnnotationOrder(alternativeFound, compositeFound, fieldFound, skipFound);
+				validateAlternativeAnnotationOrder(annotationFound);
 
-				alternativeFound = true;
+				annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
 			}
 			else if(annotationName.equals(CONFIGURATION_NAME_COMPOSITE_CONFIGURATION_FIELD)){
-				validateCompositeAnnotationOrder(alternativeFound, compositeFound, fieldFound, skipFound);
+				validateCompositeAnnotationOrder(annotationFound);
 
-				compositeFound = true;
+				annotationFound[ORDER_COMPOSITE_INDEX] = true;
 			}
 			else if(annotationName.equals(CONFIGURATION_NAME_CONFIGURATION_FIELD)){
-				validateFieldAnnotationOrder(alternativeFound, compositeFound, fieldFound, skipFound);
+				validateFieldAnnotationOrder(annotationFound);
 
-				fieldFound = true;
+				annotationFound[ORDER_FIELD_INDEX] = true;
 			}
-			else if(annotationName.startsWith(CONFIGURATION_NAME_CONFIGURATION_SKIP)){
-				validateSkipAnnotationOrder(alternativeFound, compositeFound, fieldFound);
-
-				skipFound = true;
-			}
+			else if(annotationName.startsWith(CONFIGURATION_NAME_CONFIGURATION_SKIP))
+				validateSkipAnnotationOrder(annotationFound);
 		}
 	}
 
-	private static void validateAlternativeAnnotationOrder(final boolean alternativeFound, final boolean compositeFound,
-			final boolean fieldFound, final boolean skipFound) throws AnnotationException{
-		if(alternativeFound)
+	private static void validateAlternativeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create("Wrong number of `AlternativeConfigurationField`: there must be at most one");
-		if(compositeFound)
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create("Incompatible annotations: `AlternativeConfigurationField` and `CompositeConfigurationField`");
-		if(fieldFound)
+		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create("Incompatible annotations: `AlternativeConfigurationField` and `ConfigurationField`");
-		if(skipFound)
-			throw AnnotationException.create("Wrong order of annotation: a `ConfigurationSkip` must precede any `AlternativeConfigurationField`");
 	}
 
-	private static void validateCompositeAnnotationOrder(final boolean alternativeFound, final boolean compositeFound,
-			final boolean fieldFound, final boolean skipFound) throws AnnotationException{
-		if(alternativeFound)
+	private static void validateCompositeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create("Incompatible annotations: `CompositeConfigurationField` and `AlternativeConfigurationField`");
-		if(compositeFound)
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create("Wrong number of `CompositeConfigurationField`: there must be at most one");
-		if(fieldFound)
+		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create("Incompatible annotations: `CompositeConfigurationField` and `ConfigurationField`");
-		if(skipFound)
-			throw AnnotationException.create("Wrong order of annotation: a `ConfigurationSkip` must precede any `CompositeConfigurationField");
 	}
 
-	private static void validateFieldAnnotationOrder(final boolean alternativeFound, final boolean compositeFound, final boolean fieldFound,
-			final boolean skipFound) throws AnnotationException{
-		if(alternativeFound)
+	private static void validateFieldAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create("Incompatible annotations: `ConfigurationField` and `AlternativeConfigurationField`");
-		if(compositeFound)
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create("Incompatible annotations: `ConfigurationField` and `CompositeConfigurationField`");
-		if(fieldFound)
+		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create("Wrong number of `ConfigurationField`: there must be at most one");
-		if(skipFound)
-			throw AnnotationException.create("Wrong order of annotation: a `ConfigurationSkip` must precede any `ConfigurationField");
 	}
 
-	private static void validateSkipAnnotationOrder(final boolean alternativeFound, final boolean compositeFound, final boolean fieldFound)
-			throws AnnotationException{
-		if(alternativeFound)
+	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create("Wrong order of annotation: a `ConfigurationSkip` must precede any `AlternativeConfigurationField`");
-		if(compositeFound)
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create("Wrong order of annotation: a `ConfigurationSkip` must precede any `CompositeConfigurationField`");
-		if(fieldFound)
+		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create("Wrong order of annotation: a `ConfigurationSkip` must precede any `ConfigurationField`");
 	}
 
