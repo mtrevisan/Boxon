@@ -210,7 +210,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		readMessageTerminator(template, reader);
 
 		currentObject = parserContext.getCurrentObject();
-		verifyChecksum(template, currentObject, startPosition, reader, evaluator);
+		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
 	}
@@ -315,8 +315,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private static <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition,
-			final BitReaderInterface reader, final Evaluator evaluator){
+	private <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition, final BitReaderInterface reader){
 		if(template.isChecksumPresent()){
 			final TemplateField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
