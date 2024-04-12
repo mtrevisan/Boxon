@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs.teltonika;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
-import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
@@ -110,7 +110,8 @@ public class MessageHex{
 		private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
 		@BindShort(condition = "codecID == -114")
 		private int variableBytesPropertiesCount;
-		@BindArray(condition = "codecID == -114", size = "#self.variableBytesPropertiesCount", type = TeltonikaHelper.VariableBytesProperty.class)
+		@BindArray(condition = "codecID == -114", size = "#self.variableBytesPropertiesCount",
+			type = TeltonikaHelper.VariableBytesProperty.class)
 		private TeltonikaHelper.VariableBytesProperty[] variableBytesProperties;
 	}
 
@@ -129,7 +130,7 @@ public class MessageHex{
 	//should be same as `dataCount1`
 	private byte dataCount2;
 
-	@Skip(size = "16")
+	@SkipBits("16")
 	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class)
 	private short checksum;
 

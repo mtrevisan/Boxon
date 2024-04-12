@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 
-public class QueclinkHelper{
+public final class QueclinkHelper{
 
 	private QueclinkHelper(){}
 

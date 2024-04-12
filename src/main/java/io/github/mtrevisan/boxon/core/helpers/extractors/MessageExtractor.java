@@ -28,11 +28,10 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 
-public interface MessageExtractor<M, H extends Annotation, F>{
+public interface MessageExtractor<M, H, F>{
 
 	String getTypeName(M message);
 

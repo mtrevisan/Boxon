@@ -218,7 +218,7 @@ class TemplateTest{
 				return ByteOrder.BIG_ENDIAN;
 			}
 		};
-		Assertions.assertTrue(checksum.equals(cs));
+		Assertions.assertEquals(checksum, cs);
 	}
 
 	@Test

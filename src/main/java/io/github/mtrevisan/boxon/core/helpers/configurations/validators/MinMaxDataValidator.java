@@ -134,15 +134,15 @@ final class MinMaxDataValidator{
 		return max;
 	}
 
-	private static boolean isMinimumGraterThanMaximum(final BigDecimal min, final BigDecimal max){
+	private static boolean isMinimumGraterThanMaximum(final Comparable<BigDecimal> min, final BigDecimal max){
 		return (min != null && max != null && min.compareTo(max) > 0);
 	}
 
-	private static boolean isDefaultLessThanMinimum(final BigDecimal def, final BigDecimal min){
+	private static boolean isDefaultLessThanMinimum(final Comparable<BigDecimal> def, final BigDecimal min){
 		return (def != null && def.compareTo(min) < 0);
 	}
 
-	private static boolean isDefaultGreaterThanMaximum(final BigDecimal def, final BigDecimal max){
+	private static boolean isDefaultGreaterThanMaximum(final Comparable<BigDecimal> def, final BigDecimal max){
 		return (def != null && def.compareTo(max) > 0);
 	}
 

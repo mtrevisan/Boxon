@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
-import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
@@ -231,7 +231,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
-			final Skip[] skips = field.getSkips();
+			final SkipParams[] skips = field.getSkips();
 			readSkips(skips, reader, rootObject);
 
 			//check if field has to be processed...
@@ -242,20 +242,21 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private void readSkips(final Skip[] skips, final BitReaderInterface reader, final Object rootObject){
+	private void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			readSkip(skips[i], reader, rootObject);
 	}
 
-	private void readSkip(final Skip skip, final BitReaderInterface reader, final Object rootObject){
+	private void readSkip(final SkipParams skip, final BitReaderInterface reader, final Object rootObject){
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
 
-		final int size = evaluator.evaluateSize(skip.size(), rootObject);
 		//choose between skip-by-size and skip-by-terminator
-		if(skipBySize(size))
+		if(skip.isSkipBits()){
+			final int size = evaluator.evaluateSize(skip.size(), rootObject);
 			reader.skip(size);
+		}
 		else{
 			final byte terminator = skip.terminator();
 			reader.skipUntilTerminator(terminator);
@@ -264,10 +265,6 @@ public final class TemplateParser implements TemplateParserInterface{
 				reader.skip(length);
 			}
 		}
-	}
-
-	private static boolean skipBySize(final int size){
-		return (size > 0);
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
@@ -397,7 +394,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
-			final Skip[] skips = field.getSkips();
+			final SkipParams[] skips = field.getSkips();
 			writeSkips(skips, writer, rootObject);
 
 			//check if field has to be processed...
@@ -460,20 +457,21 @@ public final class TemplateParser implements TemplateParserInterface{
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
-	private void writeSkips(final Skip[] skips, final BitWriterInterface writer, final Object rootObject){
+	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, rootObject);
 	}
 
-	private void writeSkip(final Skip skip, final BitWriterInterface writer, final Object rootObject){
+	private void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
 
-		final int size = evaluator.evaluateSize(skip.size(), rootObject);
 		//choose between skip-by-size and skip-by-terminator
-		if(skipBySize(size))
+		if(skip.isSkipBits()){
+			final int size = evaluator.evaluateSize(skip.size(), rootObject);
 			writer.skipBits(size);
+		}
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());

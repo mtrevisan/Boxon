@@ -27,9 +27,9 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 import java.lang.annotation.Annotation;
 
 
-public interface FieldExtractor<F, S extends Annotation>{
+public interface FieldExtractor<F>{
 
-	S[] getSkips(F field);
+	SkipParams[] getSkips(F field);
 
 	Annotation getBinding(F field);
 

@@ -33,7 +33,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 
-public class DeviceTypes{
+public final class DeviceTypes{
 
 	private final Map<Byte, String> deviceTypes;
 

@@ -1592,6 +1592,7 @@ Pull requests are welcomed.
 <a name="changelog-3.6.0"></a>
 ### version 3.6.0 - 202404??
 
+- Specialized `Skip` annotation into `SkipBits` and `SkipUntilTerminator`.
 - Added subtypes descriptor on `BindObject`, `BindArray`, `BindList`, `ObjectChoices.ObjectChoice`, and `ObjectChoicesList.ObjectChoiceList`.
 
 <a name="changelog-3.5.1"></a>

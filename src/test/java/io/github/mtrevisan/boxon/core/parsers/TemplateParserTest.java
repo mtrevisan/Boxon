@@ -120,7 +120,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageASCII() throws FieldException{
-		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -177,7 +177,8 @@ class TemplateParserTest{
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
+		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class,
+			() -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type '"
 			+ TemplateParserTest.TestError1.class.getName() + "' - maybe not public or not valid?", exc.getMessage());
 	}

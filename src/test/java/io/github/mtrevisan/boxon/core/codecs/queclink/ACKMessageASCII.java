@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
@@ -58,6 +59,7 @@ public class ACKMessageASCII{
 	private String id;
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.HexStringToShortConverter.class)
 	private short correlationId;
+	@SkipUntilTerminator(',')
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSConverter.class)
 	private LocalDateTime eventTime;
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToShortConverter.class)

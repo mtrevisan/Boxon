@@ -119,7 +119,8 @@ public final class ConfigurationMessage<T>{
 			validateAnnotationsOrder(declaredAnnotations);
 
 			try{
-				final Annotation validAnnotation = extractAndValidateConfigurationAnnotation(field, declaredAnnotations, minProtocolVersion, maxProtocolVersion);
+				final Annotation validAnnotation = extractAndValidateConfigurationAnnotation(field, declaredAnnotations, minProtocolVersion,
+					maxProtocolVersion);
 
 				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
 
@@ -135,12 +136,16 @@ public final class ConfigurationMessage<T>{
 	}
 
 	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+		final int length = annotations.length;
+		if(length <= 1)
+			return;
+
 		boolean alternativeFieldFound = false;
 		boolean compositeFound = false;
 		boolean fieldFound = false;
 		boolean skipFound = false;
 
-		for(int i = 0, length = annotations.length; i < length; i ++){
+		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations[i];
 
 			final String annotationName = annotation.annotationType().getName();

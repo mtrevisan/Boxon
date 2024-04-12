@@ -121,7 +121,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -148,7 +148,7 @@ class ParserTest{
 		Composer composer = Composer.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -162,7 +162,8 @@ class ParserTest{
 		Response<Object, byte[]> compose = composer.compose(result.get(1).getMessage());
 		if(compose.hasError())
 			Assertions.fail(compose.getError());
-		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$", StringHelper.toASCIIString(compose.getMessage()));
+		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$",
+			StringHelper.toASCIIString(compose.getMessage()));
 	}
 
 	@Test
@@ -180,7 +181,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 

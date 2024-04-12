@@ -85,7 +85,7 @@ public final class GenericHelper{
 
 			//if there are no resolved types and offspring is equal to base (or the last class before `Object` if `base` is `Object`),
 			//process the base
-			if(base != Object.class && currentOffspring == base || base == Object.class && classStack.peek() == base){
+			if((base != Object.class? currentOffspring: classStack.peek()) == base){
 				processBase(currentOffspring, currentTypes, types);
 
 				//stop the search once reached the `base` class

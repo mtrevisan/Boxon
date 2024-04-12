@@ -223,9 +223,8 @@ public final class Descriptor{
 	}
 
 
-	private <M, F> Map<String, Object> describeMessage(final M message,
-			final MessageExtractor<M, ? extends Annotation, F> messageExtractor, final FieldExtractor<F, ? extends Annotation> fieldExtractor)
-			throws FieldException{
+	private <M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
+			final FieldExtractor<F> fieldExtractor) throws FieldException{
 		final Map<String, Object> description = new HashMap<>(6);
 		describeRawMessage(message, messageExtractor, fieldExtractor, description);
 		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
@@ -246,8 +245,8 @@ public final class Descriptor{
 		return Collections.unmodifiableMap(description);
 	}
 
-	private static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
-			final FieldExtractor<F, ? extends Annotation> fieldExtractor, final Map<String, Object> rootDescription) throws FieldException{
+	private static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
+			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription) throws FieldException{
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);
@@ -309,8 +308,8 @@ public final class Descriptor{
 		putIfNotEmpty(DescriberKey.CONTEXT, Collections.unmodifiableMap(ctx), description);
 	}
 
-	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields,
-			final FieldExtractor<F, ? extends Annotation> fieldExtractor) throws FieldException{
+	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
+			throws FieldException{
 		final int length = JavaHelper.sizeOrZero(fields);
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){

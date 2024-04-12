@@ -41,7 +41,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 
-public class TeltonikaHelper{
+public final class TeltonikaHelper{
 
 	private TeltonikaHelper(){}
 

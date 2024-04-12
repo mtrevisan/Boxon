@@ -27,8 +27,10 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
-import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
+import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
@@ -144,7 +146,7 @@ public final class Template<T>{
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			validateAnnotationsOrder(declaredAnnotations);
 
-			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
+			final List<SkipParams> skips = extractSkips(declaredAnnotations);
 
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
@@ -158,7 +160,7 @@ public final class Template<T>{
 			try{
 				final Annotation validAnnotation = extractAndValidateAnnotation(field, boundedAnnotations);
 
-				if(validAnnotation != null || skips.length > 0)
+				if(validAnnotation != null || !skips.isEmpty())
 					templateFields.add(TemplateField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException e){
@@ -170,13 +172,17 @@ public final class Template<T>{
 	}
 
 	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+		final int length = annotations.length;
+		if(length <= 1)
+			return;
+
 		boolean bindFound = false;
 		boolean checksumFound = false;
 		boolean evaluateFound = false;
 		boolean postProcessFound = false;
 		boolean skipFound = false;
 
-		for(int i = 0, length = annotations.length; i < length; i ++){
+		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations[i];
 
 			final String annotationName = annotation.annotationType().getName();
@@ -234,6 +240,20 @@ public final class Template<T>{
 		}
 	}
 
+	private static List<SkipParams> extractSkips(final Annotation[] annotations){
+		final int length = annotations.length;
+		final List<SkipParams> skips = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation annotation = annotations[i];
+
+			if(annotation instanceof SkipBits)
+				skips.add(SkipParams.create((SkipBits)annotation));
+			else if(annotation instanceof SkipUntilTerminator)
+				skips.add(SkipParams.create((SkipUntilTerminator)annotation));
+		}
+		return skips;
+	}
+
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
 		if(checksum != null){
 			if(this.checksum != null){
@@ -278,7 +298,8 @@ public final class Template<T>{
 	 * @return	The first valid binding annotation, or {@code null} if none are found.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	private static Annotation extractAndValidateAnnotation(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
+	private static Annotation extractAndValidateAnnotation(final Field field, final List<? extends Annotation> annotations)
+			throws AnnotationException{
 		/** return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
