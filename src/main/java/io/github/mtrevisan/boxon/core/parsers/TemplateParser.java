@@ -316,23 +316,35 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition, final BitReaderInterface reader){
-		if(template.isChecksumPresent()){
-			final TemplateField checksumData = template.getChecksum();
-			final Checksum checksum = (Checksum)checksumData.getBinding();
-			if(evaluator.evaluateBoolean(checksum.condition(), data)){
-				final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
-				final Number givenChecksum = (Number)checksumData.getFieldValue(data);
-				if(givenChecksum == null)
-					throw DataException.create("Something bad happened, cannot read message checksum");
-				if(calculatedChecksum != givenChecksum.shortValue()){
-					final int mask = ParserDataType.fromType(givenChecksum.getClass())
-						.getMask();
-					throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
-						StringHelper.toHexString(calculatedChecksum & mask),
-						StringHelper.toHexString(givenChecksum.shortValue() & mask));
-				}
-			}
-		}
+		if(!template.isChecksumPresent())
+			return;
+
+		final TemplateField checksumField = template.getChecksum();
+		final Checksum checksum = (Checksum)checksumField.getBinding();
+		if(!shouldCalculateChecksum(checksum, data))
+			return;
+
+		final Number givenChecksum = (Number)checksumField.getFieldValue(data);
+		if(givenChecksum == null)
+			throw DataException.create("Something bad happened, cannot read message checksum");
+
+		final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
+		final short givenChecksumValue = givenChecksum.shortValue();
+		if(calculatedChecksum != givenChecksumValue)
+			throwChecksumMismatchException(givenChecksum, calculatedChecksum, givenChecksumValue);
+	}
+
+	private <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
+		return evaluator.evaluateBoolean(checksum.condition(), data);
+	}
+
+	private static void throwChecksumMismatchException(final Number givenChecksum, final short calculatedChecksum,
+			final short givenChecksumValue){
+		final int mask = ParserDataType.fromType(givenChecksum.getClass())
+			.getMask();
+		throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
+			StringHelper.toHexString(calculatedChecksum & mask),
+			StringHelper.toHexString(givenChecksumValue & mask));
 	}
 
 	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
