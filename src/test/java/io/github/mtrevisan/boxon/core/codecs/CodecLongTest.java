@@ -270,7 +270,7 @@ class CodecLongTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Long.reverseBytes(encodedValue)), 16, '0');
+		String expected = StringHelper.toHexString(Long.reverseBytes(encodedValue));
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -503,7 +503,7 @@ class CodecLongTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(StringHelper.toHexString(encodedValue), 16, '0'), writer.toString());
+		Assertions.assertEquals(StringHelper.toHexString(encodedValue), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);

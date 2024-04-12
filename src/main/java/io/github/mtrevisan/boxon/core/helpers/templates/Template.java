@@ -74,7 +74,7 @@ public final class Template<T>{
 
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
-								  List<EvaluatedField<PostProcess>> postProcessedFields){
+			List<EvaluatedField<PostProcess>> postProcessedFields){
 		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
 				final List<EvaluatedField<PostProcess>> postProcessedFields){
 			return new Triplet(templateFields, evaluatedFields, postProcessedFields);

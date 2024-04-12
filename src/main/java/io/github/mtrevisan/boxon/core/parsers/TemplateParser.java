@@ -324,27 +324,17 @@ public final class TemplateParser implements TemplateParserInterface{
 		if(!shouldCalculateChecksum(checksum, data))
 			return;
 
-		final Number givenChecksum = (Number)checksumField.getFieldValue(data);
-		if(givenChecksum == null)
-			throw DataException.create("Something bad happened, cannot read message checksum");
-
 		final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
-		final short givenChecksumValue = givenChecksum.shortValue();
-		if(calculatedChecksum != givenChecksumValue)
-			throwChecksumMismatchException(givenChecksum, calculatedChecksum, givenChecksumValue);
+		final short givenChecksum = ((Number)checksumField.getFieldValue(data))
+			.shortValue();
+		if(calculatedChecksum != givenChecksum)
+			throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
+				StringHelper.toHexString(calculatedChecksum, Short.BYTES),
+				StringHelper.toHexString(givenChecksum, Short.BYTES));
 	}
 
 	private <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
 		return evaluator.evaluateBoolean(checksum.condition(), data);
-	}
-
-	private static void throwChecksumMismatchException(final Number givenChecksum, final short calculatedChecksum,
-			final short givenChecksumValue){
-		final int mask = ParserDataType.fromType(givenChecksum.getClass())
-			.getMask();
-		throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
-			StringHelper.toHexString(calculatedChecksum & mask),
-			StringHelper.toHexString(givenChecksumValue & mask));
 	}
 
 	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){

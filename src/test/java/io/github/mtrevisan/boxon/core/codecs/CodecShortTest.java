@@ -270,7 +270,7 @@ class CodecShortTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Short.reverseBytes(encodedValue) & 0x0000_FFFF), 4, '0');
+		String expected = StringHelper.toHexString(Short.reverseBytes(encodedValue), Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -503,7 +503,7 @@ class CodecShortTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(encodedValue & 0x0000_FFFF), 4, '0');
+		String expected = StringHelper.toHexString(encodedValue, Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
