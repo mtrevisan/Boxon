@@ -59,10 +59,19 @@ public final class Template<T>{
 	private static final String ANNOTATION_NAME_BIND = "Bind";
 	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = "ConverterChoices";
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
+	private static final String STAR = "*";
+	private static final String ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR = ANNOTATION_NAME_BIND + STAR + "`, `"
+		+ ANNOTATION_NAME_CONVERTER_CHOICES + "`, or `" + ANNOTATION_NAME_OBJECT_CHOICES + STAR;
 	private static final String ANNOTATION_NAME_CHECKSUM = "Checksum";
 	private static final String ANNOTATION_NAME_EVALUATE = "Evaluate";
 	private static final String ANNOTATION_NAME_POST_PROCESS = "PostProcess";
 	private static final String ANNOTATION_NAME_SKIP = "Skip";
+	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
+
+	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
+	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
+	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
 								  List<EvaluatedField<PostProcess>> postProcessedFields){
@@ -216,39 +225,50 @@ public final class Template<T>{
 
 	private static void validateBindAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_BIND_INDEX])
-			throw AnnotationException.create("Wrong number of `Bind*`, `ConverterChoices`, or `ObjectChoices*`: there must be at most one");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create("Incompatible annotations: `Bind*`, `ConverterChoices`, or `ObjectChoices*` and `Checksum`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, ANNOTATION_NAME_CHECKSUM);
 	}
 
 	private static void validateChecksumAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_BIND_INDEX])
-			throw AnnotationException.create("Incompatible annotations: `Checksum` and `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				ANNOTATION_NAME_CHECKSUM, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create("Wrong number of `Checksum`: there must be at most one");
-	}
-
-	private static void validatePostProcessAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
-		if(annotationFound[ORDER_POST_PROCESS_INDEX])
-			throw AnnotationException.create("Wrong number of `PostProcess`: there must be at most one");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_CHECKSUM);
 	}
 
 	private static void validateEvaluateAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create("Incompatible annotations: `Evaluate` and `Checksum`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				ANNOTATION_NAME_EVALUATE, ANNOTATION_NAME_CHECKSUM);
 		if(annotationFound[ORDER_EVALUATE_INDEX])
-			throw AnnotationException.create("Wrong number of `Evaluate`: there must be at most one");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_EVALUATE);
+	}
+
+	private static void validatePostProcessAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_POST_PROCESS_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_POST_PROCESS);
 	}
 
 	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_BIND_INDEX])
-			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_CHECKSUM);
 		if(annotationFound[ORDER_EVALUATE_INDEX])
-			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_EVALUATE);
 		if(annotationFound[ORDER_POST_PROCESS_INDEX])
-			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_POST_PROCESS);
 	}
 
 
