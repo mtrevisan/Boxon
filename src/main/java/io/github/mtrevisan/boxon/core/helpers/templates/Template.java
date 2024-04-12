@@ -171,6 +171,7 @@ public final class Template<T>{
 		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
 	}
 
+
 	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
 		final int length = annotations.length;
 		if(length <= 1)
@@ -188,57 +189,83 @@ public final class Template<T>{
 			final String annotationName = annotation.annotationType().getName();
 			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
 					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
-				if(bindFound)
-					throw AnnotationException.create("Wrong number of `Bind*`, `ConverterChoices`, or `ObjectChoices*`: there must be at most one");
-				if(checksumFound)
-					throw AnnotationException.create("Incompatible annotations: `Bind*`, `ConverterChoices`, or `ObjectChoices*` and `Checksum`");
-				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
+				validateBindAnnotationOrder(bindFound, checksumFound, skipFound);
 
 				bindFound = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
-				if(bindFound)
-					throw AnnotationException.create("Incompatible annotations: `Checksum` and `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
-				if(checksumFound)
-					throw AnnotationException.create("Wrong number of `Checksum`: there must be at most one");
-				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum");
+				validateChecksumAnnotationOrder(bindFound, checksumFound, skipFound);
 
 				checksumFound = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_EVALUATE)){
-				if(checksumFound)
-					throw AnnotationException.create("Incompatible annotations: `Evaluate` and `Checksum`");
-				if(evaluateFound)
-					throw AnnotationException.create("Wrong number of `Evaluate`: there must be at most one");
-				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate");
+				validateEvaluateAnnotationOrder(checksumFound, evaluateFound, skipFound);
 
 				evaluateFound = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS)){
-				if(postProcessFound)
-					throw AnnotationException.create("Wrong number of `PostProcess`: there must be at most one");
-				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
+				validatePostProcessAnnotationOrder(postProcessFound, skipFound);
 
 				postProcessFound = true;
 			}
 			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP)){
-				if(bindFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
-				if(checksumFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum`");
-				if(evaluateFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate`");
-				if(postProcessFound)
-					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
+				validateSkipAnnotationOrder(bindFound, checksumFound, evaluateFound, postProcessFound);
 
 				skipFound = true;
 			}
 		}
 	}
+
+	private static void validateBindAnnotationOrder(final boolean bindFound, final boolean checksumFound, final boolean skipFound)
+			throws AnnotationException{
+		if(bindFound)
+			throw AnnotationException.create("Wrong number of `Bind*`, `ConverterChoices`, or `ObjectChoices*`: there must be at most one");
+		if(checksumFound)
+			throw AnnotationException.create("Incompatible annotations: `Bind*`, `ConverterChoices`, or `ObjectChoices*` and `Checksum`");
+		if(skipFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
+	}
+
+	private static void validateChecksumAnnotationOrder(final boolean bindFound, final boolean checksumFound, final boolean skipFound)
+			throws AnnotationException{
+		if(bindFound)
+			throw AnnotationException.create("Incompatible annotations: `Checksum` and `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
+		if(checksumFound)
+			throw AnnotationException.create("Wrong number of `Checksum`: there must be at most one");
+		if(skipFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum");
+	}
+
+	private static void validatePostProcessAnnotationOrder(final boolean postProcessFound, final boolean skipFound)
+			throws AnnotationException{
+		if(postProcessFound)
+			throw AnnotationException.create("Wrong number of `PostProcess`: there must be at most one");
+		if(skipFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
+	}
+
+	private static void validateEvaluateAnnotationOrder(final boolean checksumFound, final boolean evaluateFound, final boolean skipFound)
+			throws AnnotationException{
+		if(checksumFound)
+			throw AnnotationException.create("Incompatible annotations: `Evaluate` and `Checksum`");
+		if(evaluateFound)
+			throw AnnotationException.create("Wrong number of `Evaluate`: there must be at most one");
+		if(skipFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate");
+	}
+
+	private static void validateSkipAnnotationOrder(final boolean bindFound, final boolean checksumFound, final boolean evaluateFound,
+		final boolean postProcessFound) throws AnnotationException{
+		if(bindFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
+		if(checksumFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum`");
+		if(evaluateFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate`");
+		if(postProcessFound)
+			throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
+	}
+
 
 	private static List<SkipParams> extractSkips(final Annotation[] annotations){
 		final int length = annotations.length;
