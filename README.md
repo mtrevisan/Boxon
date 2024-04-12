@@ -125,7 +125,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
-    5. [PostProcessField](#annotation-post-process-field)
+    5. [PostProcess](#annotation-post-process)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -204,13 +204,13 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
-|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
-| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
-| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
-| Checksum         |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
-| Evaluate         |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
-| PostProcessField |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
+|                | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
+|----------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
+| TemplateHeader |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
+| Skip           |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
+| Checksum       |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
+| Evaluate       |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
+| PostProcess    |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -806,8 +806,8 @@ private String deviceTypeName;
 ```
 
 
-<a name="annotation-post-process-field"></a>
-### PostProcessField
+<a name="annotation-post-process"></a>
+### PostProcess
 
 #### parameters
 
@@ -831,7 +831,7 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 //this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
 //requires the read value of `messageHeader`, and '+BCK' means a buffered message)
-@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
+@PostProcess(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
 private String messageHeader;
 ```
 

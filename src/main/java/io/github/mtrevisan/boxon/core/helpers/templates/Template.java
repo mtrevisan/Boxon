@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
@@ -56,13 +56,13 @@ public final class Template<T>{
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
 	private static final String ANNOTATION_NAME_CHECKSUM = "Checksum";
 	private static final String ANNOTATION_NAME_EVALUATE = "Evaluate";
-	private static final String ANNOTATION_NAME_POST_PROCESS_FIELD = "PostProcessField";
+	private static final String ANNOTATION_NAME_POST_PROCESS = "PostProcess";
 	private static final String ANNOTATION_NAME_SKIP = "Skip";
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
-								  List<EvaluatedField<PostProcessField>> postProcessedFields){
+								  List<EvaluatedField<PostProcess>> postProcessedFields){
 		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
-				final List<EvaluatedField<PostProcessField>> postProcessedFields){
+				final List<EvaluatedField<PostProcess>> postProcessedFields){
 			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
 		}
 	}
@@ -73,7 +73,7 @@ public final class Template<T>{
 	private final TemplateHeader header;
 	private final List<TemplateField> templateFields;
 	private final List<EvaluatedField<Evaluate>> evaluatedFields;
-	private final List<EvaluatedField<PostProcessField>> postProcessedFields;
+	private final List<EvaluatedField<PostProcess>> postProcessedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #templateFields}).
@@ -139,7 +139,7 @@ public final class Template<T>{
 		final int length = fields.size();
 		final List<TemplateField> templateFields = new ArrayList<>(length);
 		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
-		final List<EvaluatedField<PostProcessField>> postProcessedFields = new ArrayList<>(length);
+		final List<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
 
@@ -189,21 +189,21 @@ public final class Template<T>{
 			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
 					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
 				if(bindFound)
-					throw AnnotationException.create("Wrong number of `Bind*`, `ConverterChoiches`, or `ObjectChoices*`: there must be at most one");
+					throw AnnotationException.create("Wrong number of `Bind*`, `ConverterChoices`, or `ObjectChoices*`: there must be at most one");
 				if(checksumFound)
-					throw AnnotationException.create("Incompatible annotations: `Bind*`, `ConverterChoiches`, or `ObjectChoices*` and `Checksum`");
+					throw AnnotationException.create("Incompatible annotations: `Bind*`, `ConverterChoices`, or `ObjectChoices*` and `Checksum`");
 				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Bind*`, `ConverterChoiches`, or `ObjectChoices*`");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
 
 				bindFound = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
 				if(bindFound)
-					throw AnnotationException.create("Incompatible annotations: `Checksum` and `Bind*`, `ConverterChoiches`, or `ObjectChoices*`");
+					throw AnnotationException.create("Incompatible annotations: `Checksum` and `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
 				if(checksumFound)
 					throw AnnotationException.create("Wrong number of `Checksum`: there must be at most one");
 				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Checksum");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum");
 
 				checksumFound = true;
 			}
@@ -213,27 +213,27 @@ public final class Template<T>{
 				if(evaluateFound)
 					throw AnnotationException.create("Wrong number of `Evaluate`: there must be at most one");
 				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Evaluate");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate");
 
 				evaluateFound = true;
 			}
-			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS_FIELD)){
+			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS)){
 				if(postProcessFound)
-					throw AnnotationException.create("Wrong number of `PostProcessField`: there must be at most one");
+					throw AnnotationException.create("Wrong number of `PostProcess`: there must be at most one");
 				if(skipFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `PostProcessField`");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
 
 				postProcessFound = true;
 			}
 			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP)){
 				if(bindFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Bind*`, `ConverterChoiches`, or `ObjectChoices*`");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Bind*`, `ConverterChoices`, or `ObjectChoices*`");
 				if(checksumFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Checksum`");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Checksum`");
 				if(evaluateFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `Evaluate`");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `Evaluate`");
 				if(postProcessFound)
-					throw AnnotationException.create("Wrong order of annotation: a `BindSkip` must precede any `PostProcessField`");
+					throw AnnotationException.create("Wrong order of annotation: a `Skip*` must precede any `PostProcess`");
 
 				skipFound = true;
 			}
@@ -278,14 +278,14 @@ public final class Template<T>{
 		return evaluations;
 	}
 
-	private static List<EvaluatedField<PostProcessField>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
+	private static List<EvaluatedField<PostProcess>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
 		final int length = declaredAnnotations.length;
-		final List<EvaluatedField<PostProcessField>> processed = new ArrayList<>(length);
+		final List<EvaluatedField<PostProcess>> processed = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 
-			if(annotation.annotationType() == PostProcessField.class)
-				processed.add(EvaluatedField.create(field, (PostProcessField)annotation));
+			if(annotation.annotationType() == PostProcess.class)
+				processed.add(EvaluatedField.create(field, (PostProcess)annotation));
 		}
 		return processed;
 	}
@@ -359,7 +359,7 @@ public final class Template<T>{
 	 *
 	 * @return	List of processed fields.
 	 */
-	public List<EvaluatedField<PostProcessField>> getPostProcessedFields(){
+	public List<EvaluatedField<PostProcess>> getPostProcessedFields(){
 		return postProcessedFields;
 	}
 

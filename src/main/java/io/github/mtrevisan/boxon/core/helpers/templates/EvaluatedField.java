@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
 
 import java.lang.reflect.Field;
 
@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
 /**
  * Data associated to a directly evaluable field.
  *
- * @param <B>	One of {@link Evaluate} or {@link PostProcessField}.
+ * @param <B>	One of {@link Evaluate} or {@link PostProcess}.
  */
 public final class EvaluatedField<B>{
 

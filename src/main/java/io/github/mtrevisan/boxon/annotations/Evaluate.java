@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Annotate a variable of being valued according to a given formula.
+ * Annotate a variable to be evaluated according to a certain formula.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

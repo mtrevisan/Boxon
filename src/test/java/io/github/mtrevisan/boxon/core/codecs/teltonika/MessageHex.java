@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs.teltonika;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
@@ -59,24 +59,24 @@ public class MessageHex{
 
 	public static final class GPSElement{
 		@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
-		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
+		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal longitude;
 		@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
-		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
+		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal latitude;
 		//[m]
 		@BindShort
-		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
+		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short altitude;
 		//Heading measured from magnetic north [°]
 		@BindShort
-		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
+		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short heading;
 		@BindByte
-		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
+		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
 		private Byte satellitesCount;
 		@BindShort
-		@PostProcessField(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
+		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short speed;
 
 		@Evaluate("#self.speed == 0")

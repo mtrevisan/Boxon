@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
@@ -58,7 +58,7 @@ public class MessageExtractorBasicTemplate implements MessageExtractor<Template<
 	}
 
 	@Override
-	public List<EvaluatedField<PostProcessField>> getPostProcessedFields(final Template<?> message){
+	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final Template<?> message){
 		return null;
 	}
 

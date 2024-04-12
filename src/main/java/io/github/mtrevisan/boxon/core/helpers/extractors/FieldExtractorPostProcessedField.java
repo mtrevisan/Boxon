@@ -24,31 +24,31 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 
 import java.lang.annotation.Annotation;
 
 
-public final class FieldExtractorPostProcessedField implements FieldExtractor<EvaluatedField<PostProcessField>>{
+public final class FieldExtractorPostProcessedField implements FieldExtractor<EvaluatedField<PostProcess>>{
 
 	@Override
-	public SkipParams[] getSkips(final EvaluatedField<PostProcessField> field){
+	public SkipParams[] getSkips(final EvaluatedField<PostProcess> field){
 		return null;
 	}
 
 	@Override
-	public Annotation getBinding(final EvaluatedField<PostProcessField> field){
+	public Annotation getBinding(final EvaluatedField<PostProcess> field){
 		return field.getBinding();
 	}
 
 	@Override
-	public String getFieldName(final EvaluatedField<PostProcessField> field){
+	public String getFieldName(final EvaluatedField<PostProcess> field){
 		return field.getFieldName();
 	}
 
 	@Override
-	public Class<?> getFieldType(final EvaluatedField<PostProcessField> field){
+	public Class<?> getFieldType(final EvaluatedField<PostProcess> field){
 		return field.getFieldType();
 	}
 

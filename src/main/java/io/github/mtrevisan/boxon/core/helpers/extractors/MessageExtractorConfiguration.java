@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
@@ -59,7 +59,7 @@ public final class MessageExtractorConfiguration implements MessageExtractor<Con
 	}
 
 	@Override
-	public List<EvaluatedField<PostProcessField>> getPostProcessedFields(final ConfigurationMessage<?> message){
+	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final ConfigurationMessage<?> message){
 		return null;
 	}
 
