@@ -96,7 +96,7 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)));
+		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -155,7 +155,7 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)));
+		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -214,7 +214,7 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue));
+		String expected = StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -273,7 +273,7 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue));
+		String expected = StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

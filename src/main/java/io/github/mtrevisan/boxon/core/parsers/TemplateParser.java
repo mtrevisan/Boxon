@@ -307,7 +307,8 @@ public final class TemplateParser implements TemplateParserInterface{
 		final TemplateHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = CharsetHelper.lookup(header.charset());
-			final byte[] messageTerminator = header.end().getBytes(charset);
+			final byte[] messageTerminator = header.end()
+				.getBytes(charset);
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
