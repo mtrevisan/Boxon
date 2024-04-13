@@ -122,10 +122,11 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     15. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [TemplateHeader](#annotation-templateheader)
-    2. [Skip](#annotation-skip)
-    3. [Checksum](#annotation-checksum)
-    4. [Evaluate](#annotation-evaluate)
-    5. [PostProcess](#annotation-post-process)
+    2. [SkipBits](#annotation-skip-bits)
+    3. [SkipUntilTerminator](#annotation-skip-until-terminator)
+    4. [Checksum](#annotation-checksum)
+    5. [Evaluate](#annotation-evaluate)
+    6. [PostProcess](#annotation-post-process)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -204,13 +205,14 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
-|----------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
-| TemplateHeader |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
-| Skip           |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
-| Checksum       |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
-| Evaluate       |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
-| PostProcess    |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
+|                     | condition |  start  |   end   | charset |  value  | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                     |
+|---------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|--------------------:|
+| TemplateHeader      |           | &#9745; | &#9745; | &#9745; |         |                   |           |           |         |           |         |             |             |      TemplateHeader |
+| SkipBits            |  &#9745;  |         |         |         | &#9745; |                   |           |           |         |           |         |             |             |            SkipBits |
+| SkipUntilTerminator |  &#9745;  |         |         |         | &#9745; |      &#9745;      |           |           |         |           |         |             |             | SkipUntilTerminator |
+| Checksum            |  &#9745;  |         |         |         |         |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |            Checksum |
+| Evaluate            |  &#9745;  |         |         |         |         |                   |           |           |         |           | &#9745; |             |             |            Evaluate |
+| PostProcess         |  &#9745;  |         |         |         |         |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |        ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -699,19 +701,17 @@ private class Message{
 ```
 
 
-<a name="annotation-skip"></a>
-### Skip
+<a name="annotation-skip-bits"></a>
+### SkipBits
 
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `size`: the number of bits to be skipped (can be a SpEL expression).
- - `terminator`: the byte that terminates the skip (defaults to `\0`).
- - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
+ - `value`: the number of bits to be skipped (can be a SpEL expression).
 
 #### description
 
-Skips `size` bits, or until a terminator is found.
+Skips `size` bits.
 
 If this should be placed at the end of the message, then a placeholder variable (that WILL NOT be read, and thus can be of any type) should be added.
 
@@ -722,17 +722,44 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Skip(size = "3")
-@Skip(size = "1")
+@SkipBits("3")
+@SkipBits("1")
 @BindString(size = "4")
 public String text1;
 
-@Skip(terminator = 'x', consumeTerminator = false)
+@SkipBits("10")
+public Void lastUnreadPlaceholder;
+```
+
+
+<a name="annotation-skip-until-terminator"></a>
+### SkipUntilTerminator
+
+#### parameters
+
+- `condition`: The SpEL expression that determines if this field has to be read.
+- `value`: the byte that terminates the skip.
+- `consumeTerminator`: whether to consume the terminator (defaults to `true`).
+
+#### description
+
+Skips bits until a terminator is found.
+
+If this should be placed at the end of the message, then a placeholder variable (that WILL NOT be read, and thus can be of any type) should be added.
+
+#### annotation type
+
+This annotation is bounded to a variable.
+
+#### example
+
+```java
+@Skip(value = 'x')
 @BindString(size = "10")
 public String text2;
 
 
-@Skip(size = "10")
+@Skip(value = '\0', consumeTerminator = false)
 public Void lastUnreadPlaceholder;
 ```
 
