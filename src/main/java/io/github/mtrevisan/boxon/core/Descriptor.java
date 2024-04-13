@@ -237,8 +237,10 @@ public final class Descriptor{
 	 *
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
+	 * @throws AnnotationException	If an annotation error occurs and the template cannot be created.
+	 * @throws FieldException	If the descriptor of a field is not found.
 	 */
-	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws FieldException{
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws AnnotationException, FieldException{
 		final Map<String, Object> description = new HashMap<>(6);
 		final Template<?> entity = Template.create(boundClass);
 		describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
