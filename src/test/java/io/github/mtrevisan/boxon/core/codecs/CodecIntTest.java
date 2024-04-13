@@ -270,7 +270,7 @@ class CodecIntTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Integer.reverseBytes(encodedValue)), 8, '0');
+		String expected = StringHelper.toHexString(Integer.reverseBytes(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -503,8 +503,7 @@ class CodecIntTest{
 		codec.encode( writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(StringHelper.toHexString(encodedValue), 8, '0'),
-			writer.toString());
+		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Integer.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);

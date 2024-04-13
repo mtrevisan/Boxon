@@ -98,7 +98,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfigurationsFrom(basePackageClasses);
@@ -117,7 +117,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @param configurationClass	Configuration class.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void loadConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfiguration(configurationClass);
@@ -161,8 +161,8 @@ public final class LoaderConfiguration{
 	 *
 	 * @param type	The class type.
 	 * @return	A configuration.
-	 * @throws AnnotationException	If an annotation has validation problems.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public ConfigurationMessage<?> extractConfiguration(final Class<?> type) throws AnnotationException, ConfigurationException{
 		final ConfigurationMessage<?> from = createConfiguration(type);

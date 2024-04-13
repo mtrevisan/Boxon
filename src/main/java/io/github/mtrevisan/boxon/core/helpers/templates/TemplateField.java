@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
-import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
@@ -32,6 +32,8 @@ import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -41,33 +43,33 @@ public final class TemplateField{
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 	private static final String CONDITION = "condition";
 
-	/** An empty {@code Skip} array. */
-	private static final Skip[] EMPTY_SKIP_ARRAY = new Skip[0];
+	/** An empty {@code SkipCore} array. */
+	private static final SkipParams[] EMPTY_SKIP_ARRAY = new SkipParams[0];
 
 
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
-	private final Skip[] skips;
+	private final SkipParams[] skips;
 	private final Annotation binding;
 
 	private String condition;
 
 
 	static TemplateField create(final Field field, final Annotation binding){
-		return new TemplateField(field, binding, EMPTY_SKIP_ARRAY);
+		return new TemplateField(field, binding, Collections.emptyList());
 	}
 
-	static TemplateField create(final Field field, final Annotation binding, final Skip[] skips){
+	static TemplateField create(final Field field, final Annotation binding, final List<SkipParams> skips){
 		return new TemplateField(field, binding, skips);
 	}
 
 
-	private TemplateField(final Field field, final Annotation binding, final Skip[] skips){
+	private TemplateField(final Field field, final Annotation binding, final List<SkipParams> skips){
 		Objects.requireNonNull(skips, "Skips must not be null");
 
 		this.field = field;
 		this.binding = binding;
-		this.skips = (skips.length > 0? skips.clone(): EMPTY_SKIP_ARRAY);
+		this.skips = (!skips.isEmpty()? skips.toArray(EMPTY_SKIP_ARRAY): EMPTY_SKIP_ARRAY);
 
 		if(binding != null){
 			//pre-fetch condition method
@@ -115,7 +117,7 @@ public final class TemplateField{
 	 *
 	 * @return	The annotations of the skips that must be made before reading the field value.
 	 */
-	public Skip[] getSkips(){
+	public SkipParams[] getSkips(){
 		return skips.clone();
 	}
 

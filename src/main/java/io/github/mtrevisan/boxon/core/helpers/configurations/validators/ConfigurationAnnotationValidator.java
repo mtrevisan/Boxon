@@ -72,7 +72,7 @@ public enum ConfigurationAnnotationValidator{
 	FIELD(ConfigurationField.class){
 		@Override
 		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
-				final Version maxProtocolVersion) throws CodecException, AnnotationException{
+				final Version maxProtocolVersion) throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (ConfigurationField)annotation);
 
 			final ConfigurationField binding = (ConfigurationField)annotation;
@@ -261,11 +261,11 @@ public enum ConfigurationAnnotationValidator{
 	 * @param annotation	The annotation.
 	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
-	 * @throws AnnotationException	If an error is detected.
 	 */
 	public abstract void validate(Field field, Annotation annotation, Version minProtocolVersion, Version maxProtocolVersion)
-		throws CodecException, AnnotationException;
+		throws AnnotationException, CodecException;
 
 	private static void ensureShortDescriptionIsPresent(final String shortDescription) throws AnnotationException{
 		if(StringHelper.isBlank(shortDescription))

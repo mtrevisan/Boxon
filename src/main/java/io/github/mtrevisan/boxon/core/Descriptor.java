@@ -106,7 +106,7 @@ public final class Descriptor{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeParsing() throws FieldException{
 		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
@@ -117,9 +117,9 @@ public final class Descriptor{
 	 * Description of a single template annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class to be described.
-	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @return	The description.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
 		return describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
@@ -131,8 +131,8 @@ public final class Descriptor{
 	 *
 	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
 		return describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
@@ -144,7 +144,7 @@ public final class Descriptor{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeTemplate() throws FieldException{
 		final Collection<Template<?>> configurations = new HashSet<>(templateParser.getTemplates());
@@ -156,9 +156,9 @@ public final class Descriptor{
 	 * Description of a single template annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class to be described.
-	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @return	The description.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
 		return describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
@@ -170,8 +170,8 @@ public final class Descriptor{
 	 *
 	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
 		return describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
@@ -183,21 +183,21 @@ public final class Descriptor{
 	 * Description of all the loaded configuration.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
-		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION,
+		return describeEntities(configurations, configuration -> describeMessage(configuration, MESSAGE_EXTRACTOR_CONFIGURATION,
 			FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
 	 * Description of a single configuration annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param configurationClass	configuration class to be described.
-	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @param configurationClass	Configuration class to be described.
+	 * @return	The description.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
@@ -206,7 +206,7 @@ public final class Descriptor{
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};
 		return describeEntity(ConfigurationHeader.class, configurationClass, extractor,
-			template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
+			configuration -> describeMessage(configuration, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -214,31 +214,49 @@ public final class Descriptor{
 	 *
 	 * @param configurationClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
 		return describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
-			template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
+			configuration -> describeMessage(configuration, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 
-	private <M, F> Map<String, Object> describeMessage(final M message,
-			final MessageExtractor<M, ? extends Annotation, F> messageExtractor, final FieldExtractor<F, ? extends Annotation> fieldExtractor)
-			throws FieldException{
+	private <M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
+			final FieldExtractor<F> fieldExtractor) throws FieldException{
 		final Map<String, Object> description = new HashMap<>(6);
+		describeRawMessage(message, messageExtractor, fieldExtractor, description);
+		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
+		describeContext(description);
+		return Collections.unmodifiableMap(description);
+	}
+
+	/**
+	 * Description of a single annotated class.
+	 *
+	 * @param boundClass	Generic bound class to be described.
+	 * @return	The description.
+	 */
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws FieldException{
+		final Map<String, Object> description = new HashMap<>(6);
+		final Template<?> entity = Template.create(boundClass);
+		describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
+		return Collections.unmodifiableMap(description);
+	}
+
+	private static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
+			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription) throws FieldException{
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);
-		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
-		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor), description);
+		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), rootDescription);
+
+		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor), rootDescription);
 		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(messageExtractor.getEvaluatedFields(message),
-			FIELD_EXTRACTOR_EVALUATED_FIELD), description);
+			FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
 		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(messageExtractor.getPostProcessedFields(message),
-			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), description);
-		describeContext(description);
-		return Collections.unmodifiableMap(description);
+			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
 	}
 
 	private static Map<String, Object> describeHeader(final Annotation header){
@@ -290,8 +308,8 @@ public final class Descriptor{
 		putIfNotEmpty(DescriberKey.CONTEXT, Collections.unmodifiableMap(ctx), description);
 	}
 
-	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields,
-			final FieldExtractor<F, ? extends Annotation> fieldExtractor) throws FieldException{
+	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
+			throws FieldException{
 		final int length = JavaHelper.sizeOrZero(fields);
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -313,7 +331,7 @@ public final class Descriptor{
 			binding.annotationType());
 
 		//extract binding descriptor
-		final AnnotationDescriptor descriptor = checkAndGetDescriptor(binding);
+		final AnnotationDescriptor descriptor = AnnotationDescriptor.checkAndGetDescriptor(binding);
 		descriptor.describe(binding, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
@@ -326,15 +344,6 @@ public final class Descriptor{
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, name, fieldDescription);
 		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 		return fieldDescription;
-	}
-
-	private static AnnotationDescriptor checkAndGetDescriptor(final Annotation binding) throws FieldException{
-		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
-		if(descriptor == null)
-			throw FieldException.create("Cannot extract descriptor for this annotation: {}",
-				binding.annotationType().getSimpleName());
-
-		return descriptor;
 	}
 
 

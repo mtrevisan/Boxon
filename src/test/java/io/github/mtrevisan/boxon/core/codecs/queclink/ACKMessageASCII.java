@@ -25,7 +25,8 @@
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
@@ -42,7 +43,7 @@ import java.time.ZonedDateTime;
 public class ACKMessageASCII{
 
 	@BindStringTerminated(terminator = ':')
-	@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
+	@PostProcess(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
 	private String messageHeader;
 	@BindStringTerminated(terminator = ',')
 	private String messageType;
@@ -58,6 +59,7 @@ public class ACKMessageASCII{
 	private String id;
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.HexStringToShortConverter.class)
 	private short correlationId;
+	@SkipUntilTerminator(',')
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSConverter.class)
 	private LocalDateTime eventTime;
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToShortConverter.class)

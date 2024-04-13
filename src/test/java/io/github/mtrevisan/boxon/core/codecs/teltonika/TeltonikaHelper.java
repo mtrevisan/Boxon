@@ -24,21 +24,24 @@
  */
 package io.github.mtrevisan.boxon.core.codecs.teltonika;
 
+import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 
-public class TeltonikaHelper{
+public final class TeltonikaHelper{
 
 	private TeltonikaHelper(){}
 
@@ -83,32 +86,53 @@ public class TeltonikaHelper{
 	}
 
 
+	public static class BigIntegerToIntConverter implements Converter<BigInteger, Integer>{
+
+		@Override
+		public Integer decode(final BigInteger value){
+			return value.intValue();
+		}
+
+		@Override
+		public BigInteger encode(final Integer value){
+			return BigInteger.valueOf(value);
+		}
+	}
+
+
 	public static class OneByteProperty{
-		@BindByte
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindByte
 		private int value;
 	}
 
 	public static class TwoBytesProperty{
-		@BindByte
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindShort
 		private int value;
 	}
 
 	public static class FourBytesProperty{
-		@BindByte
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindInt
 		private int value;
 	}
 
 	public static class EightBytesProperty{
-		@BindByte
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
 		@BindLong
 		private long value;
+	}
+
+	public static class VariableBytesProperty{
+		@BindShort
+		private int length;
+		@BindArrayPrimitive(size = "#self.length", type = byte.class)
+		private byte[] value;
 	}
 
 }

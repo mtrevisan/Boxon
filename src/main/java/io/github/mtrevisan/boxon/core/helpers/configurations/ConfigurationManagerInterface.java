@@ -97,11 +97,11 @@ public interface ConfigurationManagerInterface{
 	 * @param field	The field.
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
-	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	void validateValue(Field field, String dataKey, Object dataValue) throws CodecException, AnnotationException, EncodeException;
+	void validateValue(Field field, String dataKey, Object dataValue) throws AnnotationException, CodecException, EncodeException;
 
 	/**
 	 * Convert the given value to the type accepted by the field.
@@ -111,7 +111,7 @@ public interface ConfigurationManagerInterface{
 	 * @param dataValue	The value to check against.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The converted value.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */

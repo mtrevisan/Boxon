@@ -287,15 +287,6 @@ public enum ParserDataType{
 	}
 
 	/**
-	 * The bit mask for the given type.
-	 *
-	 * @return	The bit mask for the given type.
-	 */
-	public int getMask(){
-		return (size == 0? 0: (1 << size) - 1);
-	}
-
-	/**
 	 * Describe the data types handled by this class.
 	 *
 	 * @return	A list of data types.

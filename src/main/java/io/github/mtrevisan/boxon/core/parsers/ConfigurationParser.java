@@ -100,7 +100,7 @@ public final class ConfigurationParser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfigurationsFrom(basePackageClasses);
@@ -111,7 +111,7 @@ public final class ConfigurationParser{
 	 *
 	 * @param configurationClass	Configuration class.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public void withConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfiguration(configurationClass);
@@ -133,7 +133,7 @@ public final class ConfigurationParser{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */

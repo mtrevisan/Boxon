@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-class StringHelperTest{
+final class StringHelperTest{
 
 	private StringHelperTest(){}
 

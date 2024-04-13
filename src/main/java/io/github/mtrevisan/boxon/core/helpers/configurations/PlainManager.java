@@ -128,7 +128,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws CodecException, AnnotationException{
+	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws AnnotationException, CodecException{
 		final Version minProtocolVersion = Version.of(annotation.minProtocol());
 		final Version maxProtocolVersion = Version.of(annotation.maxProtocol());
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(annotation.annotationType());

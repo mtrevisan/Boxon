@@ -65,7 +65,8 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		//213-223 µs/msg = 4.5-4.7 kHz
+		//20220301: 213-223 µs/msg = 4.5-4.7 kHz
+		//20240410: 86.6-92.9 µs/msg = 10.8-11.5 kHz (2.4×)
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 		//warm-up
@@ -120,7 +121,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -147,7 +148,7 @@ class ParserTest{
 		Composer composer = Composer.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -161,7 +162,8 @@ class ParserTest{
 		Response<Object, byte[]> compose = composer.compose(result.get(1).getMessage());
 		if(compose.hasError())
 			Assertions.fail(compose.getError());
-		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$", StringHelper.toASCIIString(compose.getMessage()));
+		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$",
+			StringHelper.toASCIIString(compose.getMessage()));
 	}
 
 	@Test
@@ -179,7 +181,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -201,7 +203,7 @@ class ParserTest{
 
 
 	@Test
-	void parseTeltonika1() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_1() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -217,7 +219,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika2() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_2() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -233,7 +235,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika3() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_3() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -241,6 +243,38 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000004308020000016B40D57B480100000000000000000000000000000001010101000000000000016B40D5C198010000000000000000000000000000000101010101000000020000252C");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
+			Assertions.fail(result.getFirst().getError());
+	}
+
+	@Test
+	void parseTeltonika8E() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplatesFrom(MessageHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		byte[] payload = StringHelper.hexToByteArray("000000000000004A8E010000016B412CEE000100000000000000000000000000000000010005000100010100010011001D00010010015E2C880002000B000000003544C87A000E000000001DD7E06A00000100002994");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		if(result.getFirst().hasError())
+			Assertions.fail(result.getFirst().getError());
+	}
+
+	@Test
+	void parseTeltonika10() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplatesFrom(MessageHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		byte[] payload = StringHelper.hexToByteArray("000000000000005F10020000016BDBC7833000000000000000000000000000000000000B05040200010000030002000B00270042563A00000000016BDBC7871800000000000000000000000000000000000B05040200010000030002000B00260042563A00000200005FB3");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(1, result.size());

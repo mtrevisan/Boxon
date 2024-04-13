@@ -33,27 +33,27 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages the skipping of a certain amount of bits, or until a given terminator is found.
+ * Manages the skipping of a certain amount of bits.
  * <p>Since this annotation is bound to a field, if it is necessary to skip some amounts of bits from the end, it is necessary
  * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
  * <pre>{@code
- * &#x40;Skip(size = "3")
- * &#x40;Skip(size = "1")
+ * &#x40;SkipBits("3")
+ * &#x40;SkipBits("1")
  * &#x40;BindString(size = "4")
  * public String text;
  *
- * &#x40;Skip(size = "10")
+ * &#x40;SkipBits("10")
  * private int unused;
  * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(Skip.Skips.class)
+@Repeatable(SkipBits.Skips.class)
 @Documented
-public @interface Skip{
+public @interface SkipBits{
 
 	/**
-	 * Manages multiple {@link Skip} annotations.
+	 * Manages multiple {@link SkipBits} annotations.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
@@ -65,7 +65,7 @@ public @interface Skip{
 		 *
 		 * @return	The array of Skip annotations.
 		 */
-		Skip[] value();
+		SkipBits[] value();
 
 	}
 
@@ -82,20 +82,6 @@ public @interface Skip{
 	 *
 	 * @return	The number of bits to be skipped.
 	 */
-	String size();
-
-	/**
-	 * The byte that terminates the skip.
-	 *
-	 * @return	The terminator byte (defaults to {@code \0}).
-	 */
-	byte terminator() default '\0';
-
-	/**
-	 * Whether to consume the terminator.
-	 *
-	 * @return	Whether to consume the terminator (defaults to {@code true}).
-	 */
-	boolean consumeTerminator() default true;
+	String value();
 
 }

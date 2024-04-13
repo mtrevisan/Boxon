@@ -32,12 +32,13 @@ import java.lang.annotation.Target;
 
 
 /**
- * Annotate a variable to be evaluated according to a certain formula.
+ * Defines a variable to be evaluated at the end of all other annotations, with the possibility of indicating the decoding or encoding
+ * phase.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface Evaluate{
+public @interface PostProcess{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -47,12 +48,21 @@ public @interface Evaluate{
 	String condition() default "";
 
 	/**
-	 * The expression to be evaluated.
+	 * The SpEL expression to be evaluated in the decode phase.
 	 *
 	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
 	 *
-	 * @return	The expression to be evaluated.
+	 * @return	The SpEL expression to be evaluated.
 	 */
-	String value();
+	String valueDecode();
+
+	/**
+	 * The SpEL expression to be evaluated in the encode phase.
+	 *
+	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
+	 *
+	 * @return	The SpEL expression to be evaluated.
+	 */
+	String valueEncode();
 
 }

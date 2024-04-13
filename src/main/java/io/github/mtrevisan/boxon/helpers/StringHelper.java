@@ -181,20 +181,23 @@ public final class StringHelper{
 	 * @param value	Value to be converted to hexadecimal characters.
 	 * @return	The hexadecimal characters.
 	 */
-	public static String toHexString(final int value){
-		return Integer.toHexString(value)
-			.toUpperCase(Locale.ROOT);
-	}
-
-	/**
-	 * Converts a decimal value into the corresponding hexadecimal string.
-	 *
-	 * @param value	Value to be converted to hexadecimal characters.
-	 * @return	The hexadecimal characters.
-	 */
 	public static String toHexString(final long value){
 		return Long.toHexString(value)
 			.toUpperCase(Locale.ROOT);
+	}
+
+
+	/**
+	 * Converts a decimal value into the corresponding hexadecimal string, padded to `size` bytes.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @param size	Number of bytes used to pad the final hexadecimal value.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final long value, final int size){
+		final long mask = (size >= 8? -1L: (1l << (size << 3)) - 1);
+		final String hex = toHexString(value & mask);
+		return leftPad(hex, size << 1, '0');
 	}
 
 	/**

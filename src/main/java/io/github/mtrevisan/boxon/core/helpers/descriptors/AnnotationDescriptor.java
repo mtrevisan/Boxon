@@ -26,8 +26,9 @@ package io.github.mtrevisan.boxon.core.helpers.descriptors;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
-import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
+import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
@@ -58,10 +59,14 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
+import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
@@ -70,6 +75,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 
@@ -84,7 +91,7 @@ public enum AnnotationDescriptor{
 	 */
 	TEMPLATE_HEADER(TemplateHeader.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final TemplateHeader binding = (TemplateHeader)annotation;
 			putIfNotEmpty(DescriberKey.HEADER_START, Arrays.toString(binding.start()), rootDescription);
 			putIfNotEmpty(DescriberKey.HEADER_END, binding.end(), rootDescription);
@@ -97,10 +104,10 @@ public enum AnnotationDescriptor{
 	 */
 	OBJECT(BindObject.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindObject binding = (BindObject)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
@@ -114,10 +121,10 @@ public enum AnnotationDescriptor{
 	 */
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
@@ -131,10 +138,10 @@ public enum AnnotationDescriptor{
 	 */
 	ARRAY(BindArray.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindArray binding = (BindArray)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
@@ -149,10 +156,10 @@ public enum AnnotationDescriptor{
 	 */
 	LIST_SEPARATED(BindList.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindList binding = (BindList)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
+			describeType(binding.type(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
@@ -165,7 +172,7 @@ public enum AnnotationDescriptor{
 	 */
 	BIT_SET(BindBitSet.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindBitSet binding = (BindBitSet)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
@@ -180,7 +187,7 @@ public enum AnnotationDescriptor{
 	 */
 	BYTE(BindByte.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindByte binding = (BindByte)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
@@ -194,7 +201,7 @@ public enum AnnotationDescriptor{
 	 */
 	SHORT(BindShort.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindShort binding = (BindShort)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
@@ -209,7 +216,7 @@ public enum AnnotationDescriptor{
 	 */
 	INT(BindInt.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindInt binding = (BindInt)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
@@ -224,7 +231,7 @@ public enum AnnotationDescriptor{
 	 */
 	INTEGER(BindInteger.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindInteger binding = (BindInteger)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
@@ -240,7 +247,7 @@ public enum AnnotationDescriptor{
 	 */
 	LONG(BindLong.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindLong binding = (BindLong)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
@@ -255,7 +262,7 @@ public enum AnnotationDescriptor{
 	 */
 	FLOAT(BindFloat.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindFloat binding = (BindFloat)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
@@ -270,7 +277,7 @@ public enum AnnotationDescriptor{
 	 */
 	DOUBLE(BindDouble.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindDouble binding = (BindDouble)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
@@ -285,7 +292,7 @@ public enum AnnotationDescriptor{
 	 */
 	STRING(BindString.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindString binding = (BindString)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_CHARSET, binding.charset(), rootDescription);
@@ -301,7 +308,7 @@ public enum AnnotationDescriptor{
 	 */
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_CHARSET, binding.charset(), rootDescription);
@@ -314,17 +321,20 @@ public enum AnnotationDescriptor{
 	},
 
 	/**
-	 * Descriptor of the {@link Skip} annotation.
+	 * Descriptor of the {@link SkipBits} and {@link SkipUntilTerminator} annotation.
 	 */
-	SKIP(Skip.class){
+	SKIP(SkipParams.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
-			final Skip binding = (Skip)annotation;
-			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, Skip.class, rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, binding.terminator(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_CONSUME_TERMINATOR, binding.consumeTerminator(), rootDescription);
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
+			final SkipParams skipParams = (SkipParams)annotation;
+			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, (skipParams.isSkipBits()? SkipBits.class: SkipUntilTerminator.class), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_CONDITION, skipParams.condition(), rootDescription);
+			if(skipParams.isSkipBits())
+				putIfNotEmpty(DescriberKey.BIND_SIZE, skipParams.size(), rootDescription);
+			else{
+				putIfNotEmpty(DescriberKey.BIND_TERMINATOR, skipParams.terminator(), rootDescription);
+				putIfNotEmpty(DescriberKey.BIND_CONSUME_TERMINATOR, skipParams.consumeTerminator(), rootDescription);
+			}
 		}
 	},
 
@@ -334,13 +344,13 @@ public enum AnnotationDescriptor{
 	 */
 	CHECKSUM(Checksum.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final Checksum binding = (Checksum)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_START, binding.skipStart(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_END, binding.skipEnd(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_ALGORITHM, binding.algorithm().getName(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_ALGORITHM, binding.algorithm(), rootDescription);
 		}
 	},
 
@@ -350,7 +360,7 @@ public enum AnnotationDescriptor{
 	 */
 	EVALUATE(Evaluate.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final Evaluate binding = (Evaluate)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_VALUE, binding.value(), rootDescription);
@@ -358,12 +368,12 @@ public enum AnnotationDescriptor{
 	},
 
 	/**
-	 * Descriptor of the {@link PostProcessField} annotation.
+	 * Descriptor of the {@link PostProcess} annotation.
 	 */
-	POST_PROCESS_FIELD(PostProcessField.class){
+	POST_PROCESS_FIELD(PostProcess.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
-			final PostProcessField binding = (PostProcessField)annotation;
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
+			final PostProcess binding = (PostProcess)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_VALUE_DECODE, binding.valueDecode(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_VALUE_ENCODE, binding.valueEncode(), rootDescription);
@@ -376,7 +386,7 @@ public enum AnnotationDescriptor{
 	 */
 	CONFIG_HEADER(ConfigurationHeader.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
@@ -393,7 +403,7 @@ public enum AnnotationDescriptor{
 	 */
 	CONFIG_FIELD(ConfigurationField.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final ConfigurationField binding = (ConfigurationField)annotation;
 			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
@@ -417,7 +427,7 @@ public enum AnnotationDescriptor{
 	 */
 	COMPOSITE_CONFIG_FIELD(CompositeConfigurationField.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
@@ -436,7 +446,7 @@ public enum AnnotationDescriptor{
 	 */
 	ALTERNATIVE_CONFIG_FIELD(AlternativeConfigurationField.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
@@ -456,7 +466,7 @@ public enum AnnotationDescriptor{
 	 */
 	CONFIG_SKIP(ConfigurationSkip.class){
 		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final ConfigurationSkip binding = (ConfigurationSkip)annotation;
 			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, ConfigurationSkip.class, rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_MIN_PROTOCOL, binding.minProtocol(), rootDescription);
@@ -466,11 +476,11 @@ public enum AnnotationDescriptor{
 	};
 
 
-	private static final ValueOf<AnnotationDescriptor, Class<? extends Annotation>> DESCRIPTORS
+	private static final ValueOf<AnnotationDescriptor, Class<?>> DESCRIPTORS
 		= ValueOf.create(AnnotationDescriptor.class, validator -> validator.annotationType);
 
 
-	private final Class<? extends Annotation> annotationType;
+	private final Class<?> annotationType;
 
 
 	/**
@@ -483,8 +493,18 @@ public enum AnnotationDescriptor{
 		return DESCRIPTORS.get(annotation.annotationType());
 	}
 
+	/**
+	 * Create annotation descriptor from annotation.
+	 *
+	 * @param skip	The skip annotation.
+	 * @return	The instance.
+	 */
+	private static AnnotationDescriptor fromAnnotation(final SkipParams skip){
+		return DESCRIPTORS.get(skip.getClass());
+	}
 
-	AnnotationDescriptor(final Class<? extends Annotation> type){
+
+	AnnotationDescriptor(final Class<?> type){
 		annotationType = type;
 	}
 
@@ -495,7 +515,7 @@ public enum AnnotationDescriptor{
 	 * @param annotation	The annotation from which to extract the description.
 	 * @param rootDescription	The map in which to load the description.
 	 */
-	public abstract void describe(Annotation annotation, Map<String, Object> rootDescription);
+	public abstract <S> void describe(S annotation, Map<String, Object> rootDescription);
 
 	/**
 	 * Load a description of the given skip/configuration skip annotations in the given map.
@@ -503,17 +523,26 @@ public enum AnnotationDescriptor{
 	 * @param field	The field.
 	 * @param rootDescription	The map in which to load the descriptions.
 	 */
-	public static <F, S extends Annotation> void describeSkips(final F field, final FieldExtractor<F, S> extractor,
+	public static <F> void describeSkips(final F field, final FieldExtractor<F> extractor,
 			final Collection<Map<String, Object>> rootDescription){
-		final S[] skips = extractor.getSkips(field);
+		final SkipParams[] skips = extractor.getSkips(field);
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
-			final S skip = skips[i];
+			final SkipParams skip = skips[i];
 
 			final Map<String, Object> skipDescription = new HashMap<>(1);
 			final AnnotationDescriptor annotationDescriptor = fromAnnotation(skip);
 			annotationDescriptor.describe(skip, skipDescription);
 			rootDescription.add(skipDescription);
 		}
+	}
+
+	public static AnnotationDescriptor checkAndGetDescriptor(final Annotation binding) throws FieldException{
+		final AnnotationDescriptor descriptor = fromAnnotation(binding);
+		if(descriptor == null)
+			throw FieldException.create("Cannot extract descriptor for this annotation: {}",
+				binding.annotationType().getSimpleName());
+
+		return descriptor;
 	}
 
 	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
@@ -531,7 +560,7 @@ public enum AnnotationDescriptor{
 
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
-			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
 
@@ -551,7 +580,7 @@ public enum AnnotationDescriptor{
 
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
-			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
 
@@ -560,18 +589,49 @@ public enum AnnotationDescriptor{
 		final Map<String, Object> alternativeDescription = new HashMap<>(3);
 		putIfNotEmpty(DescriberKey.BIND_CONDITION, condition, alternativeDescription);
 		putIfNotEmpty(DescriberKey.BIND_PREFIX, prefix, alternativeDescription);
-		putIfNotEmpty(DescriberKey.BIND_TYPE, type, alternativeDescription);
+		describeType(type, alternativeDescription);
 		alternativesDescription.add(alternativeDescription);
+	}
+
+	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
+		putIfNotEmpty(DescriberKey.BIND_TYPE, type, rootDescription);
+
+		if(isUserDefinedClass(type)){
+			try{
+				final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
+				final Collection<Class<?>> processedTypes = new HashSet<>(1);
+				Class<?> parent = type;
+				while(parent != null && parent != Object.class && !processedTypes.contains(parent)){
+					typeDescription.addFirst(Descriptor.describeRawMessage(parent));
+
+					processedTypes.add(parent);
+
+					//go up to parent class
+					parent = parent.getSuperclass();
+				}
+				putIfNotEmpty(DescriberKey.BIND_SUBTYPES, typeDescription, rootDescription);
+			}
+			catch(final FieldException fe){
+				final Exception exception = ConfigurationException.create("Cannot handle this type of class: {}, please report to the developer",
+					type.getSimpleName(), fe.getMessage());
+				System.out.println("Boxon ERROR: " + exception.getMessage());
+			}
+		}
+	}
+
+	private static boolean isUserDefinedClass(final Class<?> cls){
+		//check if the class is not an interface, an anonymous class, or a primitive data type
+		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
 	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
 		if(validator != NullValidator.class)
-			rootDescription.put(DescriberKey.BIND_VALIDATOR.toString(), validator.getName());
+			putIfNotEmpty(DescriberKey.BIND_VALIDATOR, validator, rootDescription);
 	}
 
 	private static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
 		if(converter != NullConverter.class)
-			rootDescription.put(DescriberKey.BIND_CONVERTER.toString(), converter.getName());
+			putIfNotEmpty(DescriberKey.BIND_CONVERTER, converter, rootDescription);
 	}
 
 	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
@@ -587,7 +647,7 @@ public enum AnnotationDescriptor{
 				describeConverter(alternative.converter(), alternativeDescription);
 				alternativesDescription.add(alternativeDescription);
 			}
-			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
 
@@ -601,7 +661,7 @@ public enum AnnotationDescriptor{
 
 				describeObjectChoicesAlternatives(alternative, alternativesDescription);
 			}
-			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
 
@@ -630,7 +690,7 @@ public enum AnnotationDescriptor{
 
 				describeFieldComposite(composite, alternativesDescription);
 			}
-			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
 
@@ -657,19 +717,7 @@ public enum AnnotationDescriptor{
 				&& !(value instanceof final String v && StringHelper.isBlank(v))
 				&& !(value instanceof final Collection<?> c && c.isEmpty())
 			)
-			map.put(key.toString(), value);
-	}
-
-	/**
-	 * Put the pair key-value into the given map if the value is not {@code null}.
-	 *
-	 * @param key	The key.
-	 * @param type	The class whose simple name will be the value.
-	 * @param map	The map in which to load the key-value pair.
-	 */
-	private static void putIfNotEmpty(final Enum<?> key, final Class<?> type, final Map<String, Object> map){
-		if(type != null)
-			map.put(key.toString(), type.getSimpleName());
+			map.put(key.toString(), (value instanceof final Class<?> cls? cls.getName(): value));
 	}
 
 }

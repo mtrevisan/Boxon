@@ -108,7 +108,8 @@ class CodecBitSetTest{
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		//NOTE: this is because, sometimes, the byte array ends with zero (and also because `BitSet` is little endian), and that's a problem with `toByteArray`
+		//NOTE: this is because, sometimes, the byte array ends with zero (and also because `BitSet` is little endian), and that's a problem
+		// with `toByteArray`
 		if(bb.length != randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
@@ -173,7 +174,8 @@ class CodecBitSetTest{
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		//NOTE: this is because, sometimes, the byte array ends with zero (and also because `BitSet` is little endian), and that's a problem with `toByteArray`
+		//NOTE: this is because, sometimes, the byte array ends with zero (and also because `BitSet` is little endian), and that's a problem
+		// with `toByteArray`
 		if(bb.length != randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());

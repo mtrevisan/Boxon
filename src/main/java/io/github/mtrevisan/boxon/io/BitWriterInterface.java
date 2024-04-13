@@ -40,7 +40,7 @@ public interface BitWriterInterface{
 	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE},
 	 * 	{@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
 

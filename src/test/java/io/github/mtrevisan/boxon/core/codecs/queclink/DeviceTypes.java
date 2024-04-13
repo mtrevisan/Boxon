@@ -33,7 +33,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 
-public class DeviceTypes{
+public final class DeviceTypes{
 
 	private final Map<Byte, String> deviceTypes;
 
@@ -79,10 +79,10 @@ public class DeviceTypes{
 		final String deviceTypeName = deviceTypes.get(deviceTypeCode);
 
 		if(deviceTypeName == null){
-			final String actualCode = StringHelper.toHexString(deviceTypeCode & 0x0000_00FF);
+			final String actualCode = StringHelper.toHexString(deviceTypeCode, Byte.BYTES);
 			final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
 			for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
-				sj.add(StringHelper.toHexString(deviceType.getKey() & 0x0000_00FF));
+				sj.add(StringHelper.toHexString(deviceType.getKey(), Byte.BYTES));
 			throw DataException.create("Cannot decode message from another device, device type is 0x{}, should be one of {}",
 				actualCode, sj);
 		}
@@ -93,7 +93,7 @@ public class DeviceTypes{
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getValue() + " (0x" + StringHelper.toHexString(deviceType.getKey() & 0x0000_00FF) + ")");
+			sj.add(deviceType.getValue() + " (0x" + StringHelper.toHexString(deviceType.getKey(), Byte.BYTES) + ")");
 		return sj.toString();
 	}
 

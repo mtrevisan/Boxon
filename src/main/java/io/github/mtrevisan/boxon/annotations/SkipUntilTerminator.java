@@ -26,18 +26,49 @@ package io.github.mtrevisan.boxon.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
 /**
- * Annotate a variable of being valued according to a given formula.
+ * Manages the skipping of a certain amount of bits, until a given terminator is found.
+ * <p>Since this annotation is bound to a field, if it is necessary to skip some amounts of bits from the end, it is necessary
+ * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
+ * <pre>{@code
+ * &#x40;SkipUntilTerminator("3")
+ * &#x40;SkipUntilTerminator("1")
+ * &#x40;BindString(size = "4")
+ * public String text;
+ *
+ * &#x40;SkipUntilTerminator(value = "\0", consumeTerminator = false)
+ * private int unused;
+ * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Repeatable(SkipUntilTerminator.Skips.class)
 @Documented
-public @interface PostProcessField{
+public @interface SkipUntilTerminator{
+
+	/**
+	 * Manages multiple {@link SkipUntilTerminator} annotations.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Documented
+	@interface Skips{
+
+		/**
+		 * The array holding the Skip annotations.
+		 *
+		 * @return	The array of Skip annotations.
+		 */
+		SkipUntilTerminator[] value();
+
+	}
+
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -47,21 +78,17 @@ public @interface PostProcessField{
 	String condition() default "";
 
 	/**
-	 * The expression to be evaluated in the decode phase.
+	 * The byte that terminates the skip.
 	 *
-	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
-	 *
-	 * @return	The expression to be evaluated.
+	 * @return	The terminator byte.
 	 */
-	String valueDecode();
+	byte value();
 
 	/**
-	 * The expression to be evaluated in the encode phase.
+	 * Whether to consume the terminator.
 	 *
-	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
-	 *
-	 * @return	The expression to be evaluated.
+	 * @return	Whether to consume the terminator (defaults to {@code true}).
 	 */
-	String valueEncode();
+	boolean consumeTerminator() default true;
 
 }

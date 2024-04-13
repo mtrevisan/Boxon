@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 
-public class QueclinkHelper{
+public final class QueclinkHelper{
 
 	private QueclinkHelper(){}
 
@@ -65,9 +65,9 @@ public class QueclinkHelper{
 
 			final Integer major = value.getMajor();
 			final Integer minor = value.getMinor();
-			final String maj = StringHelper.toHexString(major);
-			final String min = StringHelper.toHexString(minor);
-			return (major < 10? "0": "") + maj + (minor < 10? "0": "") + min;
+			final String maj = StringHelper.toHexString(major, Byte.BYTES);
+			final String min = StringHelper.toHexString(minor, Byte.BYTES);
+			return maj + min;
 		}
 	}
 
@@ -159,7 +159,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Byte value){
-			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFF), 2, '0');
+			return StringHelper.toHexString(value, Byte.BYTES);
 		}
 	}
 
@@ -172,7 +172,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Short value){
-			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFFFF), 4, '0');
+			return StringHelper.toHexString(value, Short.BYTES);
 		}
 	}
 

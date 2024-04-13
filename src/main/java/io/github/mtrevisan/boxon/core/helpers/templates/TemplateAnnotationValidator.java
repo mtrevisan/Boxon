@@ -270,6 +270,8 @@ enum TemplateAnnotationValidator{
 
 			validateConverter(field, alternative.type(), converter);
 		}
+
+		validateConverter(field, type, converter);
 	}
 
 
@@ -280,27 +282,8 @@ enum TemplateAnnotationValidator{
 		if(length == 0)
 			throw AnnotationException.create("All alternatives must be non-empty");
 
-		int minHeaderLength = Integer.MAX_VALUE;
-		for(int i = 0; i < length; i ++){
-			final int headerLength = alternatives[i].prefix()
-				.length();
-			if(headerLength < minHeaderLength)
-				minHeaderLength = headerLength;
-		}
-		validateObjectListAlternatives(field, converter, alternatives, type, minHeaderLength);
-
-
-		validateConverterToList(field, type, converter, type);
-	}
-
-	private static void validateObjectListAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectChoicesList.ObjectChoiceList[] alternatives, final Class<?> type, final int prefixLength)
-			throws AnnotationException{
-		final boolean hasPrefix = (prefixLength > 0);
-		final int length = alternatives.length;
-		if(hasPrefix && length == 0)
-			throw AnnotationException.create("No alternatives present");
-
+		final int minHeaderLength = calculateMinHeaderLength(alternatives);
+		final boolean hasPrefix = (minHeaderLength > 0);
 		for(int i = 0; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 
@@ -308,18 +291,32 @@ enum TemplateAnnotationValidator{
 
 			validateConverterToList(field, alternative.type(), converter, type);
 		}
+
+
+		validateConverterToList(field, type, converter, type);
+	}
+
+	private static int calculateMinHeaderLength(final ObjectChoicesList.ObjectChoiceList[] alternatives){
+		int minHeaderLength = Integer.MAX_VALUE;
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final int headerLength = alternatives[i].prefix()
+				.length();
+			if(headerLength < minHeaderLength)
+				minHeaderLength = headerLength;
+		}
+		return minHeaderLength;
 	}
 
 	private static void validateAlternative(final Class<?> alternativeType, final CharSequence alternativeCondition, final Class<?> type,
-			final boolean hasPrefixLength) throws AnnotationException{
+			final boolean hasPrefix) throws AnnotationException{
 		if(!type.isAssignableFrom(alternativeType))
 			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");
 
 		if(alternativeCondition.isEmpty())
 			throw AnnotationException.create("All conditions must be non-empty");
-		if(hasPrefixLength ^ ContextHelper.containsHeaderReference(alternativeCondition))
+		if(hasPrefix ^ ContextHelper.containsHeaderReference(alternativeCondition))
 			throw AnnotationException.create("All conditions must {}contain a reference to the prefix",
-				(hasPrefixLength? JavaHelper.EMPTY_STRING: "not "));
+				(hasPrefix? JavaHelper.EMPTY_STRING: "not "));
 	}
 
 

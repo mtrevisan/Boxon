@@ -120,7 +120,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageASCII() throws FieldException{
-		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -177,7 +177,8 @@ class TemplateParserTest{
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
+		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class,
+			() -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type '"
 			+ TemplateParserTest.TestError1.class.getName() + "' - maybe not public or not valid?", exc.getMessage());
 	}
@@ -186,7 +187,6 @@ class TemplateParserTest{
 	@TemplateHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
-
 			@Override
 			public String decode(final Byte value){
 				return "";
@@ -196,8 +196,8 @@ class TemplateParserTest{
 			public Byte encode(final String value){
 				return null;
 			}
-
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongOutputConverter.class)
@@ -226,7 +226,6 @@ class TemplateParserTest{
 	@TemplateHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
-
 			@Override
 			public Byte decode(final String value){
 				return null;
@@ -236,8 +235,8 @@ class TemplateParserTest{
 			public String encode(final Byte value){
 				return "";
 			}
-
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongInputConverter.class)
@@ -273,6 +272,7 @@ class TemplateParserTest{
 			@BindString(condition = "#self.subsubtype == 1", size = "1")
 			String field2;
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte
@@ -317,14 +317,15 @@ class TemplateParserTest{
 		static class TestSubCompositionBase{
 			@BindByte
 			byte subsubtype;
-
 		}
+
 		static class TestSubComposition1 extends TestSubCompositionBase{
 			@BindString(condition = "type == 1", size = "1")
 			String field1;
 			@BindString(condition = "type == 1 && #self.subsubtype == 1", size = "1")
 			String field2;
 		}
+
 		static class TestSubComposition2 extends TestSubCompositionBase{
 			@BindString(condition = "type == 2", size = "1")
 			String field1;
@@ -333,6 +334,7 @@ class TemplateParserTest{
 			@BindString(condition = "#self.field2 == 0x62", size = "1")
 			String field3;
 		}
+
 		@BindString(size = "3")
 		String header;
 		@BindByte

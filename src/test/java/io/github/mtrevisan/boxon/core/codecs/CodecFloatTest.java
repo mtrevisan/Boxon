@@ -96,8 +96,7 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))),
-			8, '0');
+		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -156,8 +155,7 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))),
-			8, '0');
+		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -216,7 +214,7 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Float.floatToRawIntBits(encodedValue)), 8, '0');
+		String expected = StringHelper.toHexString(Float.floatToRawIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -275,7 +273,7 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Float.floatToRawIntBits(encodedValue)), 8, '0');
+		String expected = StringHelper.toHexString(Float.floatToRawIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

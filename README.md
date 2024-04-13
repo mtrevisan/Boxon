@@ -125,7 +125,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
-    5. [PostProcessField](#annotation-post-process-field)
+    5. [PostProcess](#annotation-post-process)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -147,27 +147,28 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.5.1](#changelog-3.5.1)
-    2. [version 3.5.0](#changelog-3.5.0)
-    3. [version 3.4.0](#changelog-3.4.0)
-    4. [version 3.3.0](#changelog-3.3.0)
-    5. [version 3.2.0](#changelog-3.2.0)
-    6. [version 3.1.3](#changelog-3.1.3)
-    7. [version 3.1.2](#changelog-3.1.2)
-    8. [version 3.1.1](#changelog-3.1.1)
-    9. [version 3.1.0](#changelog-3.1.0)
-    10. [version 3.0.2](#changelog-3.0.2)
-    11. [version 3.0.1](#changelog-3.0.1)
-    12. [version 3.0.0](#changelog-3.0.0)
-    13. [version 2.1.2](#changelog-2.1.2)
-    14. [version 2.1.1](#changelog-2.1.1)
-    15. [version 2.1.0](#changelog-2.1.0)
-    16. [version 2.0.0](#changelog-2.0.0)
-    17. [version 1.1.0](#changelog-1.1.0)
-    18. [version 1.0.0](#changelog-1.0.0)
-    19. [version 0.0.2](#changelog-0.0.2)
-    20. [version 0.0.1](#changelog-0.0.1)
-    21. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.6.0](#changelog-3.6.0)
+    2. [version 3.5.1](#changelog-3.5.1)
+    3. [version 3.5.0](#changelog-3.5.0)
+    4. [version 3.4.0](#changelog-3.4.0)
+    5. [version 3.3.0](#changelog-3.3.0)
+    6. [version 3.2.0](#changelog-3.2.0)
+    7. [version 3.1.3](#changelog-3.1.3)
+    8. [version 3.1.2](#changelog-3.1.2)
+    9. [version 3.1.1](#changelog-3.1.1)
+    10. [version 3.1.0](#changelog-3.1.0)
+    11. [version 3.0.2](#changelog-3.0.2)
+    12. [version 3.0.1](#changelog-3.0.1)
+    13. [version 3.0.0](#changelog-3.0.0)
+    14. [version 2.1.2](#changelog-2.1.2)
+    15. [version 2.1.1](#changelog-2.1.1)
+    16. [version 2.1.0](#changelog-2.1.0)
+    17. [version 2.0.0](#changelog-2.0.0)
+    18. [version 1.1.0](#changelog-1.1.0)
+    19. [version 1.0.0](#changelog-1.0.0)
+    20. [version 0.0.2](#changelog-0.0.2)
+    21. [version 0.0.1](#changelog-0.0.1)
+    22. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -203,13 +204,13 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
-|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
-| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
-| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
-| Checksum         |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
-| Evaluate         |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
-| PostProcessField |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
+|                | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
+|----------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
+| TemplateHeader |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
+| Skip           |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
+| Checksum       |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
+| Evaluate       |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
+| PostProcess    |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -805,8 +806,8 @@ private String deviceTypeName;
 ```
 
 
-<a name="annotation-post-process-field"></a>
-### PostProcessField
+<a name="annotation-post-process"></a>
+### PostProcess
 
 #### parameters
 
@@ -830,7 +831,7 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 //this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
 //requires the read value of `messageHeader`, and '+BCK' means a buffered message)
-@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
+@PostProcess(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
 private String messageHeader;
 ```
 
@@ -1247,7 +1248,12 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) for the fields `condition`, and `size`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
+The root object is the outermost object.
+
+In order to evaluate a variable of a parent object the complete path should be used, from the root to the desired property, as in `object1.variable1`.
+
+In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`.<br />
+Note that the `#` prefix is intended to refer to the context (whether it is an object or a method), and the current object is stored in the context under the name `self`.
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
@@ -1582,6 +1588,12 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.6.0"></a>
+### version 3.6.0 - 202404??
+
+- Specialized `Skip` annotation into `SkipBits` and `SkipUntilTerminator`.
+- Added subtypes descriptor on `BindObject`, `BindArray`, `BindList`, `ObjectChoices.ObjectChoice`, and `ObjectChoicesList.ObjectChoiceList`.
 
 <a name="changelog-3.5.1"></a>
 ### version 3.5.1 - 20240409

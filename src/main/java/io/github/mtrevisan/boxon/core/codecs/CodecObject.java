@@ -61,7 +61,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, instance, evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
+		return CodecHelper.decodeValue(converterType, validator, instance);
 	}
 
 	@Override
