@@ -59,7 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor.putIfNotEmpty;
+import static io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptorHelper.putIfNotEmpty;
 
 
 /**

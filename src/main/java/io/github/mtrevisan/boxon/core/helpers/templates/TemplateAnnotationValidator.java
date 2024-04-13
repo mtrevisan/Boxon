@@ -39,9 +39,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
@@ -49,7 +46,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.BitSet;
 import java.util.List;
 
@@ -64,7 +60,7 @@ enum TemplateAnnotationValidator{
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
 			final Class<?> type = binding.type();
-			validateType(type, BindObject.class);
+			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
@@ -72,7 +68,7 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			validateObjectChoice(field, converter, selectFrom, selectDefault, type);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, selectFrom, selectDefault, type);
 		}
 	},
 
@@ -86,7 +82,7 @@ enum TemplateAnnotationValidator{
 					BindArray.class.getSimpleName(), type.getSimpleName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, type, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, type, converter);
 		}
 	},
 
@@ -95,7 +91,7 @@ enum TemplateAnnotationValidator{
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
 			final Class<?> type = binding.type();
-			validateType(type, BindArray.class);
+			TemplateAnnotationValidatorHelper.validateType(type, BindArray.class);
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
 					BindArray.class.getSimpleName(), type.getSimpleName());
@@ -103,7 +99,7 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			validateObjectChoice(field, converter, selectFrom, selectDefault, type);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, selectFrom, selectDefault, type);
 		}
 	},
 
@@ -119,7 +115,7 @@ enum TemplateAnnotationValidator{
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoicesList selectFrom = binding.selectFrom();
-			validateObjectChoiceList(field, converter, selectFrom, type);
+			TemplateAnnotationValidatorHelper.validateObjectChoiceList(field, converter, selectFrom, type);
 		}
 	},
 
@@ -129,7 +125,7 @@ enum TemplateAnnotationValidator{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, BitSet.class, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, BitSet.class, converter);
 		}
 	},
 
@@ -137,10 +133,10 @@ enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
-			validateCharset(binding.charset());
+			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, String.class, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, String.class, converter);
 		}
 	},
 
@@ -148,10 +144,10 @@ enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
-			validateCharset(binding.charset());
+			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, String.class, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, String.class, converter);
 		}
 	},
 
@@ -168,7 +164,7 @@ enum TemplateAnnotationValidator{
 			final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
 			final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
 
-			validateConverter(field, interfaceReturnType, NullConverter.class);
+			TemplateAnnotationValidatorHelper.validateConverter(field, interfaceReturnType, NullConverter.class);
 		}
 	};
 
@@ -202,139 +198,5 @@ enum TemplateAnnotationValidator{
 	 * @throws AnnotationException	If an error is detected.
 	 */
 	abstract void validate(Field field, Annotation annotation) throws AnnotationException;
-
-
-	private static void validateType(final Class<?> bindingType, final Class<? extends Annotation> annotation) throws AnnotationException{
-		if(bindingType == Object.class)
-			throw AnnotationException.create("Field `type` in {} must not be `Object.class`",
-				annotation.getSimpleName());
-	}
-
-	private static void validateConverter(final Field field, final Class<?> bindingType, final Class<? extends Converter<?, ?>> converter)
-			throws AnnotationException{
-		if(converter == NullConverter.class && bindingType != Object.class){
-			Class<?> fieldType = field.getType();
-			if(fieldType.isArray())
-				fieldType = fieldType.getComponentType();
-
-			if(!fieldType.isAssignableFrom(bindingType))
-				throw AnnotationException.create("Bad annotation used for type {}: {}",
-					fieldType.getSimpleName(), bindingType.getSimpleName());
-		}
-	}
-
-	private static void validateConverterToList(final Field field, final Class<?> bindingType,
-			final Class<? extends Converter<?, ?>> converter, final Class<?> type) throws AnnotationException{
-		if(converter == NullConverter.class && bindingType != Object.class){
-			final Class<?> fieldType = field.getType();
-
-			if(!type.isAssignableFrom(bindingType))
-				throw AnnotationException.create("Bad annotation used for type {}: {}",
-					fieldType.getSimpleName(), bindingType.getSimpleName());
-		}
-	}
-
-	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
-		final byte prefixLength = selectFrom.prefixLength();
-		validatePrefixLength(prefixLength);
-
-
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		validateObjectAlternatives(field, converter, alternatives, type, prefixLength);
-
-
-		validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
-
-		validateConverter(field, type, converter);
-	}
-
-	private static void validatePrefixLength(final byte prefixSize) throws AnnotationException{
-		if(prefixSize < 0)
-			throw AnnotationException.create("Prefix size must be a non-negative number");
-		if(prefixSize > Long.SIZE)
-			throw AnnotationException.create("Prefix size cannot be greater than {} (bits)", Long.SIZE);
-	}
-
-	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixLength) throws AnnotationException{
-		final boolean hasPrefix = (prefixLength > 0);
-		final int length = alternatives.length;
-		if(hasPrefix && length == 0)
-			throw AnnotationException.create("No alternatives present");
-
-		for(int i = 0; i < length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-
-			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
-
-			validateConverter(field, alternative.type(), converter);
-		}
-
-		validateConverter(field, type, converter);
-	}
-
-
-	private static void validateObjectChoiceList(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectChoicesList selectFrom, final Class<?> type) throws AnnotationException{
-		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectFrom.alternatives();
-		final int length = alternatives.length;
-		if(length == 0)
-			throw AnnotationException.create("All alternatives must be non-empty");
-
-		final int minHeaderLength = calculateMinHeaderLength(alternatives);
-		final boolean hasPrefix = (minHeaderLength > 0);
-		for(int i = 0; i < length; i ++){
-			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
-
-			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
-
-			validateConverterToList(field, alternative.type(), converter, type);
-		}
-
-
-		validateConverterToList(field, type, converter, type);
-	}
-
-	private static int calculateMinHeaderLength(final ObjectChoicesList.ObjectChoiceList[] alternatives){
-		int minHeaderLength = Integer.MAX_VALUE;
-		for(int i = 0, length = alternatives.length; i < length; i ++){
-			final int headerLength = alternatives[i].prefix()
-				.length();
-			if(headerLength < minHeaderLength)
-				minHeaderLength = headerLength;
-		}
-		return minHeaderLength;
-	}
-
-	private static void validateAlternative(final Class<?> alternativeType, final CharSequence alternativeCondition, final Class<?> type,
-			final boolean hasPrefix) throws AnnotationException{
-		if(!type.isAssignableFrom(alternativeType))
-			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");
-
-		if(alternativeCondition.isEmpty())
-			throw AnnotationException.create("All conditions must be non-empty");
-		if(hasPrefix ^ ContextHelper.containsHeaderReference(alternativeCondition))
-			throw AnnotationException.create("All conditions must {}contain a reference to the prefix",
-				(hasPrefix? JavaHelper.EMPTY_STRING: "not "));
-	}
-
-
-	private static void validateObjectDefaultAlternative(final int alternativesCount, final Class<?> type,
-			final Class<?> selectDefault) throws AnnotationException{
-		if(selectDefault != void.class && alternativesCount == 0)
-			throw AnnotationException.create("Useless empty alternative");
-		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
-			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
-	}
-
-	private static void validateCharset(final String charsetName) throws AnnotationException{
-		try{
-			CharsetHelper.lookup(charsetName);
-		}
-		catch(final UnsupportedCharsetException ignored){
-			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
-		}
-	}
 
 }
