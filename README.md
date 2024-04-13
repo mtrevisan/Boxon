@@ -727,6 +727,7 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 public String text1;
 
+
 @SkipBits("10")
 public Void lastUnreadPlaceholder;
 ```
@@ -754,12 +755,12 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Skip(value = 'x')
+@SkipUntilTerminator('x')
 @BindString(size = "10")
 public String text2;
 
 
-@Skip(value = '\0', consumeTerminator = false)
+@SkipUntilTerminator(value = '\0', consumeTerminator = false)
 public Void lastUnreadPlaceholder;
 ```
 
