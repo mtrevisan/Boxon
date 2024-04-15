@@ -154,6 +154,7 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			describeType(binding.type(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
 			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);

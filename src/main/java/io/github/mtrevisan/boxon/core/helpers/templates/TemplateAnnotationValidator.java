@@ -115,7 +115,8 @@ enum TemplateAnnotationValidator{
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoicesList selectFrom = binding.selectFrom();
-			TemplateAnnotationValidatorHelper.validateObjectChoiceList(field, converter, selectFrom, type);
+			final Class<?> selectDefault = binding.selectDefault();
+			TemplateAnnotationValidatorHelper.validateObjectChoiceList(field, converter, selectFrom, selectDefault, type);
 		}
 	},
 

@@ -369,6 +369,7 @@ private BigDecimal[][] crashData;
 - `condition`: The SpEL expression that determines if this field has to be read.
 - `type`: the Class of primitive of the single element of the array.
 - `selectFrom`: the selection from which to choose the instance type.
+- `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
 - `validator`: the Class of a validator (applied BEFORE the converter).
 - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
 - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -386,8 +387,8 @@ This annotation is bounded to a variable.
 ```java
 @BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
     alternatives = {
-        @ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
-        @ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
+        @ObjectChoices.ObjectChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+        @ObjectChoices.ObjectChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
     }))
 private List<TestType3> value;
 ```

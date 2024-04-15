@@ -118,8 +118,8 @@ final class TemplateAnnotationValidatorHelper{
 
 
 	static void validateObjectChoiceList(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectChoicesList selectFrom, final Class<?> type) throws AnnotationException{
-		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectFrom.alternatives();
+			final ObjectChoicesList selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		final int length = alternatives.length;
 		if(length == 0)
 			throw AnnotationException.create("All alternatives must be non-empty");
@@ -127,7 +127,7 @@ final class TemplateAnnotationValidatorHelper{
 		final int minHeaderLength = calculateMinHeaderLength(alternatives);
 		final boolean hasPrefix = (minHeaderLength > 0);
 		for(int i = 0; i < length; i ++){
-			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
@@ -136,9 +136,11 @@ final class TemplateAnnotationValidatorHelper{
 
 
 		validateConverterToList(field, type, converter, type);
+
+		validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
 	}
 
-	private static int calculateMinHeaderLength(final ObjectChoicesList.ObjectChoiceList[] alternatives){
+	private static int calculateMinHeaderLength(final ObjectChoices.ObjectChoice[] alternatives){
 		int minHeaderLength = Integer.MAX_VALUE;
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final int headerLength = alternatives[i].prefix()

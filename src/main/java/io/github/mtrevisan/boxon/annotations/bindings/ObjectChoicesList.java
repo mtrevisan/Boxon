@@ -58,38 +58,6 @@ public @interface ObjectChoicesList{
 	 *
 	 * @return	The choices to select from (defaults to no alternatives).
 	 */
-	ObjectChoiceList[] alternatives() default {};
-
-
-	/** The annotation holding a single choice. */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.ANNOTATION_TYPE)
-	@Documented
-	@interface ObjectChoiceList{
-
-		/**
-		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
-		 *
-		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 */
-		String condition();
-
-		/**
-		 * The prefix to be written when serializing the object.
-		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
-		 *
-		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference.
-		 */
-		String prefix();
-
-		/**
-		 * The type to decode in case the {@link #condition()} holds.
-		 *
-		 * @return	The type to decode in case the {@link #condition()} holds.
-		 */
-		Class<?> type();
-
-	}
+	ObjectChoices.ObjectChoice[] alternatives() default {};
 
 }

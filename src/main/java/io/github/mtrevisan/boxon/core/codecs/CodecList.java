@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
@@ -49,9 +50,6 @@ import java.util.List;
 
 
 final class CodecList implements CodecInterface<BindList>{
-
-	private static final ObjectChoicesList.ObjectChoiceList EMPTY_CHOICE_LIST = new NullObjectChoiceList();
-
 
 	@Injected
 	private Evaluator evaluator;
@@ -130,7 +128,7 @@ final class CodecList implements CodecInterface<BindList>{
 	 */
 	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindList binding, final Object rootObject){
 		final ObjectChoicesList objectChoicesList = binding.selectFrom();
-		final ObjectChoicesList.ObjectChoiceList[] alternatives = objectChoicesList.alternatives();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoicesList.alternatives();
 		if(!CodecHelper.hasSelectAlternatives((alternatives)))
 			return binding.type();
 
@@ -138,10 +136,10 @@ final class CodecList implements CodecInterface<BindList>{
 		if(!hasHeader)
 			return null;
 
-		final ObjectChoicesList.ObjectChoiceList chosenAlternative = chooseAlternative(alternatives, rootObject);
+		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
 		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
-			: void.class);
+			: binding.selectDefault());
 
 		return (chosenAlternativeType != void.class? chosenAlternativeType: null);
 	}
@@ -158,18 +156,6 @@ final class CodecList implements CodecInterface<BindList>{
 		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
 		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
-	}
-
-	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
-			final Object rootObject){
-		for(int i = 0, length = alternatives.length; i < length; i ++){
-			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
-
-			final String condition = alternative.condition();
-			if(evaluator.evaluateBoolean(condition, rootObject))
-				return alternative;
-		}
-		return EMPTY_CHOICE_LIST;
 	}
 
 }

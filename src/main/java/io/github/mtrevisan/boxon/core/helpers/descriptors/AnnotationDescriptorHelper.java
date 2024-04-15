@@ -58,29 +58,17 @@ public final class AnnotationDescriptorHelper{
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 
-	private static void describeAlternatives(final ObjectChoices.ObjectChoice[] alternatives,
-			final Map<String, Object> rootDescription){
-		final int length = alternatives.length;
-		if(length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final ObjectChoices.ObjectChoice alternative : alternatives)
-				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
-			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
-		}
-	}
-
 	static void describeChoices(final ObjectChoicesList choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_CHARSET, choices.charset(), rootDescription);
 		putIfNotEmpty(DescriberKey.BIND_TERMINATOR, choices.terminator(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 
-	private static void describeAlternatives(final ObjectChoicesList.ObjectChoiceList[] alternatives,
-		final Map<String, Object> rootDescription){
+	private static void describeAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final ObjectChoicesList.ObjectChoiceList alternative : alternatives)
+			for(final ObjectChoices.ObjectChoice alternative : alternatives)
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}

@@ -78,7 +78,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 		Class<?> type = binding.type();
 		if(CodecHelper.hasSelectAlternatives(alternatives)){
 			type = value.getClass();
-
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(objectChoices.alternatives(), type);
 
 			CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
