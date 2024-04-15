@@ -323,7 +323,7 @@ public enum AnnotationDescriptor{
 			final SkipParams skipParams = (SkipParams)annotation;
 			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, skipParams.annotationType(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, skipParams.condition(), rootDescription);
-			if(skipParams.isSkipBits())
+			if(skipParams.annotationType() == SkipBits.class)
 				putIfNotEmpty(DescriberKey.BIND_SIZE, skipParams.size(), rootDescription);
 			else{
 				putIfNotEmpty(DescriberKey.BIND_TERMINATOR, skipParams.terminator(), rootDescription);

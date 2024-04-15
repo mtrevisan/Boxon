@@ -53,12 +53,12 @@ public final class AnnotationDescriptorHelper{
 	private AnnotationDescriptorHelper(){}
 
 
-	static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
+	public static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_PREFIX_LENGTH, choices.prefixLength(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 
-	static void describeChoices(final ObjectChoicesList choices, final Map<String, Object> rootDescription){
+	public static void describeChoices(final ObjectChoicesList choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_CHARSET, choices.charset(), rootDescription);
 		putIfNotEmpty(DescriberKey.BIND_TERMINATOR, choices.terminator(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
@@ -114,17 +114,18 @@ public final class AnnotationDescriptorHelper{
 		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
-	public static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
+	static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
 		if(validator != NullValidator.class)
 			putIfNotEmpty(DescriberKey.BIND_VALIDATOR, validator, rootDescription);
 	}
 
-	public static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
+	static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
 		if(converter != NullConverter.class)
 			putIfNotEmpty(DescriberKey.BIND_CONVERTER, converter, rootDescription);
 	}
 
-	static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives, final Map<String, Object> rootDescription){
+	public static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
+			final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
@@ -138,8 +139,7 @@ public final class AnnotationDescriptorHelper{
 		}
 	}
 
-	static void describeAlternatives(final AlternativeSubField[] alternatives,
-		final Map<String, Object> rootDescription){
+	public static void describeAlternatives(final AlternativeSubField[] alternatives, final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
@@ -165,7 +165,7 @@ public final class AnnotationDescriptorHelper{
 		alternativesDescription.add(alternativeDescription);
 	}
 
-	static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){
+	public static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){
 		final int length = composites.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);

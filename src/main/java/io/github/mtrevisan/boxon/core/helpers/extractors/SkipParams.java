@@ -67,12 +67,8 @@ public final class SkipParams{
 	}
 
 
-	public boolean isSkipBits(){
-		return !StringHelper.isBlank(size);
-	}
-
 	public Class<? extends Annotation> annotationType(){
-		return (isSkipBits()? SkipBits.class: SkipUntilTerminator.class);
+		return (StringHelper.isBlank(size)? SkipUntilTerminator.class: SkipBits.class);
 	}
 
 	public String condition(){
