@@ -63,11 +63,8 @@ public final class AnnotationDescriptorHelper{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int i = 0; i < length; i ++){
-				final ObjectChoices.ObjectChoice alternative = alternatives[i];
-
+			for(final ObjectChoices.ObjectChoice alternative : alternatives)
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
-			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
@@ -83,11 +80,8 @@ public final class AnnotationDescriptorHelper{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int i = 0; i < length; i ++){
-				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
-
+			for(final ObjectChoicesList.ObjectChoiceList alternative : alternatives)
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
-			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
@@ -146,9 +140,7 @@ public final class AnnotationDescriptorHelper{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int i = 0; i < length; i ++){
-				final ConverterChoices.ConverterChoice alternative = alternatives[i];
-
+			for(final ConverterChoices.ConverterChoice alternative : alternatives){
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
 				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
 				describeConverter(alternative.converter(), alternativeDescription);
@@ -163,11 +155,8 @@ public final class AnnotationDescriptorHelper{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int i = 0; i < length; i ++){
-				final AlternativeSubField alternative = alternatives[i];
-
+			for(final AlternativeSubField alternative : alternatives)
 				describeObjectChoicesAlternatives(alternative, alternativesDescription);
-			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
@@ -192,11 +181,8 @@ public final class AnnotationDescriptorHelper{
 		final int length = composites.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int i = 0; i < length; i ++){
-				final CompositeSubField composite = composites[i];
-
+			for(final CompositeSubField composite : composites)
 				describeFieldComposite(composite, alternativesDescription);
-			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}

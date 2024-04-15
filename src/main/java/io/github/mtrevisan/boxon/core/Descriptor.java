@@ -279,16 +279,12 @@ public final class Descriptor{
 	private static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
-		final int length = entitiesClass.length;
-		final List<Map<String, Object>> description = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Class<?> entityClass = entitiesClass[i];
-
+		final List<Map<String, Object>> description = new ArrayList<>(entitiesClass.length);
+		for(final Class<?> entityClass : entitiesClass)
 			if(entityClass.isAnnotationPresent(annotationClass)){
 				final T entity = extractor.apply(entityClass);
 				description.add(mapper.apply(entity));
 			}
-		}
 		return Collections.unmodifiableList(description);
 	}
 

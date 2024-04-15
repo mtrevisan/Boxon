@@ -41,9 +41,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 
@@ -157,9 +155,7 @@ public final class Template<T>{
 		final List<TemplateField> templateFields = new ArrayList<>(length);
 		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
 		final List<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Field field = fields.get(i);
-
+		for(final Field field : fields){
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			validateAnnotationsOrder(declaredAnnotations);
 
@@ -177,7 +173,7 @@ public final class Template<T>{
 			try{
 				final Annotation validAnnotation = extractAndValidateAnnotation(field, boundedAnnotations);
 
-				if(validAnnotation != null || !skips.isEmpty())
+				if(validAnnotation != null || ! skips.isEmpty())
 					templateFields.add(TemplateField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException e){
@@ -195,13 +191,10 @@ public final class Template<T>{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_POST_PROCESS_INDEX + 1];
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = annotations[i];
-
+		for(final Annotation annotation : annotations){
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
-			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
-					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
@@ -276,23 +269,16 @@ public final class Template<T>{
 
 
 	private static List<SkipParams> extractSkips(final Annotation[] annotations){
-		final int length = annotations.length;
-		final List<SkipParams> skips = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = annotations[i];
-
+		final List<SkipParams> skips = new ArrayList<>(annotations.length);
+		for(final Annotation annotation : annotations){
 			if(annotation instanceof final SkipBits sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipBits.Skips sk)
-				Arrays.stream(sk.value())
-					.map(SkipParams::create)
-					.forEachOrdered(skips::add);
+				Arrays.stream(sk.value()).map(SkipParams::create).forEachOrdered(skips::add);
 			else if(annotation instanceof final SkipUntilTerminator sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipUntilTerminator.Skips sk)
-				Arrays.stream(sk.value())
-					.map(SkipParams::create)
-					.forEachOrdered(skips::add);
+				Arrays.stream(sk.value()).map(SkipParams::create).forEachOrdered(skips::add);
 		}
 		return skips;
 	}
@@ -310,26 +296,18 @@ public final class Template<T>{
 	}
 
 	private static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final int length = declaredAnnotations.length;
-		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
-
+		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
-		}
 		return evaluations;
 	}
 
 	private static List<EvaluatedField<PostProcess>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
-		final int length = declaredAnnotations.length;
-		final List<EvaluatedField<PostProcess>> processed = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
-
+		final List<EvaluatedField<PostProcess>> processed = new ArrayList<>(declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
 			if(annotation.annotationType() == PostProcess.class)
 				processed.add(EvaluatedField.create(field, (PostProcess)annotation));
-		}
 		return processed;
 	}
 

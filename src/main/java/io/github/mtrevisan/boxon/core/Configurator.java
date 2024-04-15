@@ -99,13 +99,9 @@ public final class Configurator{
 	 */
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final int length = configurationValues.size();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final ConfigurationMessage<?> configuration = configurationValues.get(i);
-
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		}
 		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
@@ -129,13 +125,10 @@ public final class Configurator{
 
 	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws CodecException, ConfigurationException{
-		final int length = configurationValues.size();
-		final List<Map<String, Object>> response = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final ConfigurationMessage<?> configuration = configurationValues.get(i);
-
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
+			if(! ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> map = new HashMap<>(3);
@@ -166,16 +159,13 @@ public final class Configurator{
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
-		final int length = fields.size();
-		final Map<String, Object> fieldsMap = new HashMap<>(length);
-		for(int i = 0; i < length; i ++){
-			final ConfigurationField field = fields.get(i);
-
+		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
+		for(final ConfigurationField field : fields){
 			final Annotation annotation = field.getBinding();
 			final Class<?> fieldType = field.getFieldType();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
-			if(!fieldMap.isEmpty())
+			if(! fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;
