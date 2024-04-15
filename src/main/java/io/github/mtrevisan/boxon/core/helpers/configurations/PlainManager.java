@@ -141,7 +141,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		if(dataValue != null){
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 			if(hasEnumeration(enumeration))
-				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
+				dataValue = extractEnumerationValue(dataKey, dataValue, field.getType(), enumeration);
 			else if(dataValue instanceof final String v)
 				dataValue = ParserDataType.getValue(field.getType(), v);
 		}
@@ -158,10 +158,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
-	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
+	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Class<?> fieldType,
 			final Class<? extends ConfigurationEnum> enumeration) throws EncodeException{
-		final Class<?> fieldType = field.getType();
-
 		//convert `or` between enumerations
 		if(dataValue instanceof final String v)
 			dataValue = ConfigurationHelper.extractEnumerationValue(fieldType, v, enumeration);

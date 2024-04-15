@@ -163,6 +163,7 @@ public final class Configurator{
 		for(final ConfigurationField field : fields){
 			final Annotation annotation = field.getBinding();
 			final Class<?> fieldType = field.getFieldType();
+
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
 			if(! fieldMap.isEmpty())

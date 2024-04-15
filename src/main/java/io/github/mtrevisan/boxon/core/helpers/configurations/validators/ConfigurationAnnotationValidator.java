@@ -174,7 +174,7 @@ public enum ConfigurationAnnotationValidator{
 			if(!configData.hasEnumeration() && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 
-			validateMinimumParameters(field, configData);
+			validateMinimumParameters(field.getType(), configData);
 
 			EnumerationValidator.validateEnumeration(configData);
 
@@ -187,8 +187,7 @@ public enum ConfigurationAnnotationValidator{
 			}
 		}
 
-		private static void validateMinimumParameters(final Field field, final ConfigFieldData configData) throws AnnotationException{
-			final Class<?> fieldType = field.getType();
+		private static void validateMinimumParameters(final Class<?> fieldType, final ConfigFieldData configData) throws AnnotationException{
 			if(fieldType.isArray() && !configData.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
