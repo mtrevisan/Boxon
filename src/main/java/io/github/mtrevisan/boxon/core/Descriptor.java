@@ -25,9 +25,17 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
+import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptorHelper;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorConfiguration;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorEvaluatedField;
@@ -37,6 +45,7 @@ import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorBasicTemplate;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorConfiguration;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorFullTemplate;
+import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
@@ -49,8 +58,10 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -310,8 +321,12 @@ public final class Descriptor{
 			throws FieldException{
 		final int length = JavaHelper.sizeOrZero(fields);
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		final Collection<Map<String, Object>> fieldsDescription2 = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);
+
+//FIXME
+extractAnnotationParameters(field, fieldExtractor, fieldsDescription2);
 
 			AnnotationDescriptor.describeSkips(field, fieldExtractor, fieldsDescription);
 
@@ -321,6 +336,91 @@ public final class Descriptor{
 			describeField(binding, fieldName, fieldType, fieldsDescription);
 		}
 		return Collections.unmodifiableCollection(fieldsDescription);
+	}
+
+	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
+			final Collection<Map<String, Object>> fieldsDescription){
+		final SkipParams[] skips = fieldExtractor.getSkips(field);
+		final Annotation binding = fieldExtractor.getBinding(field);
+		final String fieldName = fieldExtractor.getFieldName(field);
+		final Class<?> fieldType = fieldExtractor.getFieldType(field);
+
+		final Map<String, Object> fieldDescription = new HashMap<>(3);
+		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
+		putIfNotEmpty(DescriberKey.FIELD_TYPE, fieldType.getName(), fieldDescription);
+		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getName(), fieldDescription);
+
+		final Map<String, Object> bindingDescription = extracted(binding, binding.annotationType());
+		putIfNotEmpty(DescriberKey.BINDING, bindingDescription, fieldDescription);
+
+		final int skipsLength = skips.length;
+		final Collection<Map<String, Object>> skipsDescription = new ArrayList<>(skipsLength);
+		for(int i = 0; i < skipsLength; i ++){
+			final SkipParams skip = skips[i];
+
+			final Map<String, Object> skipDescription = extracted(skip, skip.getClass());
+			if(!skipDescription.isEmpty())
+				skipsDescription.add(skipDescription);
+		}
+		putIfNotEmpty(DescriberKey.SKIPS, skipsDescription, fieldDescription);
+
+		if(!fieldDescription.isEmpty())
+			fieldsDescription.add(fieldDescription);
+	}
+
+	private static Map<String, Object> extracted(final Object obj, final Class<?> objType){
+		final Method[] methods = objType.getDeclaredMethods();
+		final int methodsLength = methods.length;
+		final Map<String, Object> fieldDescription = new HashMap<>(methodsLength);
+		for(int i = 0; i < methodsLength; i ++){
+			final Method method = methods[i];
+
+			try{
+				final Object value = method.invoke(obj);
+
+				putIfNotEmpty2(method.getName(), value, fieldDescription);
+			}
+			catch(final Exception e){
+				e.printStackTrace();
+			}
+		}
+
+		return fieldDescription;
+	}
+
+	/**
+	 * Put the pair key-value into the given map if the value is not {@code null} or empty string.
+	 *
+	 * @param key	The key.
+	 * @param value	The value.
+	 * @param rootDescription	The map in which to load the key-value pair.
+	 */
+	public static void putIfNotEmpty2(final String key, final Object value, final Map<String, Object> rootDescription){
+		if(value == null)
+			return;
+
+		if(value instanceof final Validator<?> validator){
+			AnnotationDescriptorHelper.describeValidator((Class<? extends Validator<?>>)validator.getClass(), rootDescription);
+		}
+		else if(value instanceof final Converter<?, ?> converter){
+			AnnotationDescriptorHelper.describeConverter((Class<? extends Converter<?, ?>>)converter.getClass(), rootDescription);
+		}
+		else if(!(value instanceof final String v && StringHelper.isBlank(v))
+			&& !(value instanceof final Collection<?> c && c.isEmpty())
+			&& !(value instanceof ObjectChoices)
+			&& !(value instanceof ObjectChoicesList)
+			&& !(value instanceof ConverterChoices)
+		)
+			rootDescription.put(key, (value instanceof final Class<?> cls? cls.getName(): value));
+		else if(value instanceof ObjectChoices){
+			System.out.println();
+		}
+		else if(value instanceof ObjectChoicesList){
+			System.out.println();
+		}
+		else if(value instanceof ConverterChoices){
+			System.out.println();
+		}
 	}
 
 	private static void describeField(final Annotation binding, final String fieldName, final Class<?> fieldType,

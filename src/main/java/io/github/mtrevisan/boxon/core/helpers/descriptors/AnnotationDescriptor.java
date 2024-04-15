@@ -321,7 +321,7 @@ public enum AnnotationDescriptor{
 		@Override
 		public <S> void describe(final S annotation, final Map<String, Object> rootDescription){
 			final SkipParams skipParams = (SkipParams)annotation;
-			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, (skipParams.isSkipBits()? SkipBits.class: SkipUntilTerminator.class), rootDescription);
+			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, skipParams.annotationType(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, skipParams.condition(), rootDescription);
 			if(skipParams.isSkipBits())
 				putIfNotEmpty(DescriberKey.BIND_SIZE, skipParams.size(), rootDescription);

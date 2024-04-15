@@ -114,12 +114,12 @@ public final class AnnotationDescriptorHelper{
 		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
-	static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
+	public static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
 		if(validator != NullValidator.class)
 			putIfNotEmpty(DescriberKey.BIND_VALIDATOR, validator, rootDescription);
 	}
 
-	static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
+	public static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
 		if(converter != NullConverter.class)
 			putIfNotEmpty(DescriberKey.BIND_CONVERTER, converter, rootDescription);
 	}

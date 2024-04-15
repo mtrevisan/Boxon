@@ -52,6 +52,10 @@ public enum DescriberKey{
 	EVALUATED_FIELDS("evaluatedFields"),
 	/** Represents the post-processed constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	POST_PROCESSED_FIELDS("postProcessedFields"),
+	/** Represents the binding constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	BINDING("binding"),
+	/** Represents the skips constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	SKIPS("skips"),
 	/** Represents the name constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	FIELD_NAME("name"),
 	/** Represents the field type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
