@@ -61,8 +61,7 @@ final class ValidationHelper{
 			validateObjectiveType(fieldType, configData);
 		else{
 			//`defaultValue` compatible with variable type
-			final boolean hasEnumeration = configData.hasEnumeration();
-			if(hasEnumeration)
+			if(configData.hasEnumeration())
 				validateEnumerationType(fieldType, defaultValue, configData);
 			else
 				validateNonEnumerationType(fieldType, defaultValue, configData);
