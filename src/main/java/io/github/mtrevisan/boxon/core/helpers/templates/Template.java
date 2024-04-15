@@ -39,8 +39,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 
@@ -278,10 +281,18 @@ public final class Template<T>{
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations[i];
 
-			if(annotation instanceof SkipBits)
-				skips.add(SkipParams.create((SkipBits)annotation));
-			else if(annotation instanceof SkipUntilTerminator)
-				skips.add(SkipParams.create((SkipUntilTerminator)annotation));
+			if(annotation instanceof final SkipBits sk)
+				skips.add(SkipParams.create(sk));
+			else if(annotation instanceof final SkipBits.Skips sk)
+				Arrays.stream(sk.value())
+					.map(SkipParams::create)
+					.forEachOrdered(skips::add);
+			else if(annotation instanceof final SkipUntilTerminator sk)
+				skips.add(SkipParams.create(sk));
+			else if(annotation instanceof final SkipUntilTerminator.Skips sk)
+				Arrays.stream(sk.value())
+					.map(SkipParams::create)
+					.forEachOrdered(skips::add);
 		}
 		return skips;
 	}

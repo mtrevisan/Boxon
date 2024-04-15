@@ -60,6 +60,7 @@ public class ACKMessageASCII{
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.HexStringToShortConverter.class)
 	private short correlationId;
 	@SkipUntilTerminator(',')
+	@SkipUntilTerminator(',')
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSConverter.class)
 	private LocalDateTime eventTime;
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToShortConverter.class)
