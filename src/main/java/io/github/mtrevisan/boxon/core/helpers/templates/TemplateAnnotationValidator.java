@@ -68,7 +68,7 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, selectFrom, selectDefault, type);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, type, selectFrom, selectDefault);
 		}
 	},
 
@@ -82,7 +82,7 @@ enum TemplateAnnotationValidator{
 					BindArray.class.getSimpleName(), type.getSimpleName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, type, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, converter, type);
 		}
 	},
 
@@ -99,7 +99,7 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, selectFrom, selectDefault, type);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, type, selectFrom, selectDefault);
 		}
 	},
 
@@ -116,7 +116,7 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoicesList selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoiceList(field, converter, selectFrom, selectDefault, type);
+			TemplateAnnotationValidatorHelper.validateObjectChoiceList(field, converter, type, selectFrom, selectDefault);
 		}
 	},
 
@@ -126,7 +126,7 @@ enum TemplateAnnotationValidator{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, BitSet.class, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, converter, BitSet.class);
 		}
 	},
 
@@ -137,7 +137,7 @@ enum TemplateAnnotationValidator{
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, String.class, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, converter, String.class);
 		}
 	},
 
@@ -148,7 +148,7 @@ enum TemplateAnnotationValidator{
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, String.class, converter);
+			TemplateAnnotationValidatorHelper.validateConverter(field, converter, String.class);
 		}
 	},
 
@@ -165,7 +165,7 @@ enum TemplateAnnotationValidator{
 			final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
 			final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
 
-			TemplateAnnotationValidatorHelper.validateConverter(field, interfaceReturnType, NullConverter.class);
+			TemplateAnnotationValidatorHelper.validateConverter(field, NullConverter.class, interfaceReturnType);
 		}
 	};
 
