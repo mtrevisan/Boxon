@@ -163,7 +163,7 @@ public enum ConfigurationAnnotationValidator{
 	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
 		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
-				final Version maxProtocolVersion) throws AnnotationException{
+				final Version maxProtocolVersion) throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeConfigurationField)annotation);
 
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
@@ -180,8 +180,10 @@ public enum ConfigurationAnnotationValidator{
 
 			final AlternativeSubField[] alternatives = binding.value();
 			for(int i = 0, length = JavaHelper.sizeOrZero(alternatives); i < length; i ++){
-				final ConfigFieldData alternativeConfigData = ConfigFieldDataBuilder.create(field, alternatives[i]);
-				ProtocolValidator.validateProtocol(minProtocolVersion, maxProtocolVersion, alternativeConfigData);
+				final AlternativeSubField alternative = alternatives[i];
+
+				final ConfigurationAnnotationValidator validator = fromAnnotationType(alternative.annotationType());
+				validator.validate(field, alternative, minProtocolVersion, maxProtocolVersion);
 			}
 		}
 	},
