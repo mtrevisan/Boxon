@@ -83,7 +83,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol) throws EncodeException{
+	public Object getDefaultValue(final Class<?> fieldType, final Version protocol) throws EncodeException{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();

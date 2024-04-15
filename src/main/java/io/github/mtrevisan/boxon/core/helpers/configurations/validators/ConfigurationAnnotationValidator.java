@@ -78,9 +78,10 @@ public enum ConfigurationAnnotationValidator{
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
 			ensureShortDescriptionIsPresent(binding.shortDescription());
-			if(!configData.hasEnumeration() && field.getType().isEnum())
+			final Class<?> fieldType = field.getType();
+			if(!configData.hasEnumeration() && fieldType.isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
-			if(String.class.isAssignableFrom(field.getType()))
+			if(String.class.isAssignableFrom(fieldType))
 				validateCharset(configData.getCharset());
 			ValidationHelper.validateRadix(configData.getRadix());
 

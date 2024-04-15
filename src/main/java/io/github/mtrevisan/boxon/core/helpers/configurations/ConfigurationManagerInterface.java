@@ -49,13 +49,13 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * The default value of the given field assuming the given protocol number.
 	 *
-	 * @param field	The field from which to extract the default value.
+	 * @param fieldType	The field class from which to extract the default value.
 	 * @param protocol	The protocol number, used to select the right {@link AlternativeSubField}.
 	 * @return	The default value.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	Object getDefaultValue(Field field, Version protocol) throws CodecException, EncodeException;
+	Object getDefaultValue(Class<?> fieldType, Version protocol) throws CodecException, EncodeException;
 
 	/**
 	 * Add the minimum and maximum protocol versions to the collection.

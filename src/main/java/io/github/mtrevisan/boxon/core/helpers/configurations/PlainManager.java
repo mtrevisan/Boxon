@@ -69,10 +69,10 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
+	public Object getDefaultValue(final Class<?> fieldType, final Version protocol) throws CodecException{
 		final String value = annotation.defaultValue();
 		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-		return ConfigurationHelper.convertValue(value, field.getType(), enumeration);
+		return ConfigurationHelper.convertValue(value, fieldType, enumeration);
 	}
 
 	@Override

@@ -44,6 +44,7 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -297,9 +298,10 @@ public final class LoaderConfiguration{
 
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
-			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
-			configurationObject = FieldAccessor.setFieldValue(configurationObject, field.getField(), dataValue);
+			final Field f = field.getField();
+			Object dataValue = manager.getDefaultValue(f.getType(), protocol);
+			dataValue = manager.convertValue(f, manager.getShortDescription(), dataValue, protocol);
+			configurationObject = FieldAccessor.setFieldValue(configurationObject, f, dataValue);
 		}
 		return configurationObject;
 	}

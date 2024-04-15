@@ -67,12 +67,12 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
+	public Object getDefaultValue(final Class<?> fieldType, final Version protocol) throws CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			return ConfigurationHelper.convertValue(value, field.getType(), enumeration);
+			return ConfigurationHelper.convertValue(value, fieldType, enumeration);
 		}
 		return JavaHelper.EMPTY_STRING;
 	}
