@@ -100,19 +100,12 @@ public enum ConfigurationAnnotationValidator{
 
 		private static void validateMinimumParameters(final ConfigFieldData configData) throws AnnotationException{
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
-			final boolean hasPattern = !configData.getPattern().isEmpty();
-			final boolean hasMinMaxValues = (!configData.getMinValue().isEmpty() || !configData.getMaxValue().isEmpty());
-			if(moreThanOneSet(hasPattern, hasMinMaxValues, configData.hasEnumeration()))
+			if(configData.hasIncompatibleInputs())
 				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
 
 			final Class<?> fieldType = configData.getFieldType();
 			validateArrayWithEnumeration(fieldType, configData);
-		}
-
-		private static boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
-			return (hasPattern && (hasMinMaxValues || hasEnumeration)
-				|| hasMinMaxValues && hasEnumeration);
 		}
 	},
 

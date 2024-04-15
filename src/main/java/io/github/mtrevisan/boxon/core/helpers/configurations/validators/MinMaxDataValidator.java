@@ -54,7 +54,7 @@ final class MinMaxDataValidator{
 		if(isMinAndMaxValuesBlank(configData))
 			return;
 
-		validateArrayFieldType(configData);
+		validateArrayFieldType(configData.getFieldType());
 
 		final BigDecimal min = validateMinValue(configData);
 		final BigDecimal max = validateMaxValue(configData);
@@ -69,8 +69,7 @@ final class MinMaxDataValidator{
 		return (StringHelper.isBlank(configData.getMinValue()) && StringHelper.isBlank(configData.getMaxValue()));
 	}
 
-	private static void validateArrayFieldType(final ConfigFieldData configData) throws AnnotationException{
-		final Class<?> fieldType = configData.getFieldType();
+	private static void validateArrayFieldType(final Class<?> fieldType) throws AnnotationException{
 		if(fieldType.isArray())
 			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 	}

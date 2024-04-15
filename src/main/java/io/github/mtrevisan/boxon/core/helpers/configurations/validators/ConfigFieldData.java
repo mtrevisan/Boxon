@@ -150,6 +150,18 @@ final class ConfigFieldData{
 	}
 
 	/**
+	 * Whether the configuration field has more than one input type.
+	 *
+	 * @return	Whether the configuration field has more than one input type.
+	 */
+	boolean hasIncompatibleInputs(){
+		final boolean hasPattern = !pattern.isEmpty();
+		final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());;
+		final boolean hasEnumeration = hasEnumeration();
+		return (hasPattern && (hasMinMaxValues || hasEnumeration)
+			|| hasMinMaxValues && hasEnumeration);
+	}
+	/**
 	 * The enumeration for the configuration field.
 	 *
 	 * @return	The enumeration for the configuration field.
