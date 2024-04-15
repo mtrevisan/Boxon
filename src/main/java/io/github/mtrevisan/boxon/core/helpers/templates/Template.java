@@ -171,7 +171,7 @@ public final class Template<T>{
 			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
 
 			try{
-				final Annotation validAnnotation = extractAndValidateAnnotation(field, boundedAnnotations);
+				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 
 				if(validAnnotation != null || ! skips.isEmpty())
 					templateFields.add(TemplateField.create(field, validAnnotation, skips));
@@ -316,29 +316,29 @@ public final class Template<T>{
 	/**
 	 * Validates a field and return the first valid binding annotation.
 	 *
-	 * @param field	The field to validate.
+	 * @param fieldType	The field class to validate.
 	 * @param annotations	The list of annotations on the field.
 	 * @return	The first valid binding annotation, or {@code null} if none are found.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	private static Annotation extractAndValidateAnnotation(final Field field, final List<? extends Annotation> annotations)
+	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType, final List<? extends Annotation> annotations)
 			throws AnnotationException{
 		/** return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
-			validateAnnotation(field, annotation);
+			validateAnnotation(fieldType, annotation);
 
 			foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
 
-	private static void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
+	private static void validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation.annotationType());
 		if(validator != null)
-			validator.validate(field, annotation);
+			validator.validate(fieldType, annotation);
 	}
 
 	/**

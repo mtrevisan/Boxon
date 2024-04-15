@@ -43,7 +43,6 @@ import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.BitSet;
@@ -57,7 +56,7 @@ enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
 			final Class<?> type = binding.type();
 			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
@@ -68,13 +67,13 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, type, selectFrom, selectDefault);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, converter, type, selectFrom, selectDefault);
 		}
 	},
 
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
@@ -82,13 +81,13 @@ enum TemplateAnnotationValidator{
 					BindArray.class.getSimpleName(), type.getSimpleName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, converter, type);
+			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, type);
 		}
 	},
 
 	ARRAY(BindArray.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
 			final Class<?> type = binding.type();
 			TemplateAnnotationValidatorHelper.validateType(type, BindArray.class);
@@ -99,16 +98,15 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoice(field, converter, type, selectFrom, selectDefault);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, converter, type, selectFrom, selectDefault);
 		}
 	},
 
 	LIST_SEPARATED(BindList.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindList binding = (BindList)annotation;
 			final Class<?> type = binding.type();
-			final Class<?> fieldType = field.getType();
 			if(!List.class.isAssignableFrom(fieldType))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `List<{}>.class`",
 					BindList.class.getSimpleName(), type.getName());
@@ -116,46 +114,46 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoicesList selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoiceList(field, converter, type, selectFrom, selectDefault);
+			TemplateAnnotationValidatorHelper.validateObjectChoiceList(fieldType, converter, type, selectFrom, selectDefault);
 		}
 	},
 
 	BIT_SET(BindBitSet.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, converter, BitSet.class);
+			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, BitSet.class);
 		}
 	},
 
 	STRING(BindString.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, converter, String.class);
+			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, String.class);
 		}
 	},
 
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(field, converter, String.class);
+			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, String.class);
 		}
 	},
 
 
 	CHECKSUM(Checksum.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final Class<? extends Checksummer> algorithmClass = ((Checksum)annotation).algorithm();
 			if(algorithmClass.isInterface() || Modifier.isAbstract(algorithmClass.getModifiers())
 					|| algorithmClass.isAssignableFrom(Checksummer.class))
@@ -165,7 +163,7 @@ enum TemplateAnnotationValidator{
 			final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
 			final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
 
-			TemplateAnnotationValidatorHelper.validateConverter(field, NullConverter.class, interfaceReturnType);
+			TemplateAnnotationValidatorHelper.validateConverter(fieldType, NullConverter.class, interfaceReturnType);
 		}
 	};
 
@@ -194,10 +192,10 @@ enum TemplateAnnotationValidator{
 	/**
 	 * Validate field and annotation.
 	 *
-	 * @param field	The field associated to the annotation.
+	 * @param fieldType	The field class associated to the annotation.
 	 * @param annotation	The annotation.
 	 * @throws AnnotationException	If an error is detected.
 	 */
-	abstract void validate(Field field, Annotation annotation) throws AnnotationException;
+	abstract void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
 
 }

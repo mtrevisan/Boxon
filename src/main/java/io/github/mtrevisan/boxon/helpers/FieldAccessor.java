@@ -52,6 +52,13 @@ public final class FieldAccessor{
 	private FieldAccessor(){}
 
 
+	public static Class<?> extractFieldType(final Class<?> fieldType){
+		return (fieldType.isArray()
+			? fieldType.getComponentType()
+			: fieldType);
+	}
+
+
 	/**
 	 * Sets the field represented by this {@code Field} object on the specified object argument to the specified value.
 	 * <p>The new value is automatically unwrapped if the underlying field has a primitive type.</p>
