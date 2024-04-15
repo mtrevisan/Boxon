@@ -55,14 +55,19 @@ final class TemplateAnnotationValidatorHelper{
 	static void validateConverter(final Field field, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 			throws AnnotationException{
 		if(converter == NullConverter.class && bindingType != Object.class){
-			Class<?> fieldType = field.getType();
-			if(fieldType.isArray())
-				fieldType = fieldType.getComponentType();
+			final Class<?> fieldType = extractFieldType(field);
 
 			if(!fieldType.isAssignableFrom(bindingType))
 				throw AnnotationException.create("Bad annotation used for type {}: {}",
 					fieldType.getSimpleName(), bindingType.getSimpleName());
 		}
+	}
+
+	private static Class<?> extractFieldType(final Field field){
+		final Class<?> fieldType = field.getType();
+		return (fieldType.isArray()
+			? fieldType.getComponentType()
+			: fieldType);
 	}
 
 	private static void validateConverterToList(final Field field, final Class<?> bindingType,

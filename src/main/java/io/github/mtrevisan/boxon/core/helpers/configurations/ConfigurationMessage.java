@@ -151,11 +151,10 @@ public final class ConfigurationMessage<T>{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = annotations[i];
-
+		for(final Annotation annotation : annotations){
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
+
 			if(annotationName.startsWith(CONFIGURATION_NAME_ALTERNATIVE)){
 				validateAlternativeAnnotationOrder(annotationFound);
 

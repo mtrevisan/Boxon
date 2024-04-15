@@ -194,7 +194,9 @@ public final class Template<T>{
 		for(final Annotation annotation : annotations){
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
-			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+
+			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
+					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
