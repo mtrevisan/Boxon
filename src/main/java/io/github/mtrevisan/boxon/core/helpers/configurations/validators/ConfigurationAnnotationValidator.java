@@ -128,16 +128,16 @@ public enum ConfigurationAnnotationValidator{
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
 
-			final CompositeSubField[] subfields = binding.value();
-			final int length = subfields.length;
-			if(length == 0)
-				throw AnnotationException.create("Composite fields must have at least one sub-field");
 			validateCharset(binding.charset());
 
 			ValidationHelper.validatePattern(null, configData);
 
 			ProtocolValidator.validateProtocol(minProtocolVersion, maxProtocolVersion, configData);
 
+			final CompositeSubField[] subfields = binding.value();
+			final int length = JavaHelper.sizeOrZero(subfields);
+			if(length == 0)
+				throw AnnotationException.create("Composite fields must have at least one sub-field");
 
 			for(int i = 0; i < length; i ++)
 				SUB_FIELD.validate(field, subfields[i], minProtocolVersion, maxProtocolVersion);
@@ -179,12 +179,12 @@ public enum ConfigurationAnnotationValidator{
 			ProtocolValidator.validateProtocol(minProtocolVersion, maxProtocolVersion, configData);
 
 			final AlternativeSubField[] alternatives = binding.value();
-			for(int i = 0, length = JavaHelper.sizeOrZero(alternatives); i < length; i ++){
-				final AlternativeSubField alternative = alternatives[i];
+			final int length = JavaHelper.sizeOrZero(alternatives);
+			if(length == 0)
+				throw AnnotationException.create("Alternative fields must have at least one sub-field");
 
-				final ConfigurationAnnotationValidator validator = fromAnnotationType(alternative.annotationType());
-				validator.validate(field, alternative, minProtocolVersion, maxProtocolVersion);
-			}
+			for(int i = 0; i < length; i ++)
+				ALTERNATIVE_FIELD.validate(field, alternatives[i], minProtocolVersion, maxProtocolVersion);
 		}
 	},
 
