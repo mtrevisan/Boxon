@@ -50,7 +50,6 @@ import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorConfigu
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorFullTemplate;
 import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
@@ -239,7 +238,7 @@ public final class Descriptor{
 
 
 	private <M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
-			final FieldExtractor<F> fieldExtractor) throws FieldException{
+			final FieldExtractor<F> fieldExtractor){
 		final Map<String, Object> description = new HashMap<>(6);
 		describeRawMessage(message, messageExtractor, fieldExtractor, description);
 		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
@@ -263,7 +262,7 @@ public final class Descriptor{
 	}
 
 	private static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
-			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription) throws FieldException{
+			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription){
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);
@@ -321,23 +320,13 @@ public final class Descriptor{
 		putIfNotEmpty(DescriberKey.CONTEXT, Collections.unmodifiableMap(ctx), description);
 	}
 
-	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
-			throws FieldException{
+	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor){
 		final int length = JavaHelper.sizeOrZero(fields);
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
-//		final Collection<Map<String, Object>> fieldsDescription2 = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);
 
-//FIXME
-extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
-
-//			AnnotationDescriptor.describeSkips(field, fieldExtractor, fieldsDescription);
-//
-//			final Annotation binding = fieldExtractor.getBinding(field);
-//			final String fieldName = fieldExtractor.getFieldName(field);
-//			final Class<?> fieldType = fieldExtractor.getFieldType(field);
-//			describeField(binding, fieldName, fieldType, fieldsDescription);
+			extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 		}
 		return Collections.unmodifiableCollection(fieldsDescription);
 	}
@@ -346,13 +335,14 @@ extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 			final Collection<Map<String, Object>> fieldsDescription){
 		final SkipParams[] skips = fieldExtractor.getSkips(field);
 		final Annotation binding = fieldExtractor.getBinding(field);
+		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final String fieldName = fieldExtractor.getFieldName(field);
 		final Class<?> fieldType = fieldExtractor.getFieldType(field);
 
 		final Map<String, Object> fieldDescription = new HashMap<>(3);
 		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, fieldType.getName(), fieldDescription);
-		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getName(), fieldDescription);
+		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final SkipParams skip = skips[i];
@@ -361,7 +351,7 @@ extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 			fieldsDescription.add(skipDescription);
 		}
 
-		extractObjectParameters(binding, binding.annotationType(), fieldDescription);
+		extractObjectParameters(binding, annotationType, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
@@ -404,11 +394,11 @@ extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 		if(value instanceof final Class<?> cls){
 			if(Validator.class.isAssignableFrom(cls)){
 				if(cls != NullValidator.class)
-					rootDescription.put(key, cls);
+					rootDescription.put(key, cls.getName());
 			}
 			else if(Converter.class.isAssignableFrom(cls)){
 				if(cls != NullConverter.class)
-					rootDescription.put(key, cls);
+					rootDescription.put(key, cls.getName());
 			}
 			else if(!cls.isEnum() || cls != NullEnum.class)
 				rootDescription.put(key, cls.getName());
@@ -420,8 +410,6 @@ extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 				AnnotationDescriptorHelper.describeAlternatives((AlternativeSubField[])value, rootDescription);
 			else if(componentType == CompositeSubField.class)
 				AnnotationDescriptorHelper.describeComposite((CompositeSubField[])value, rootDescription);
-			else
-				System.out.println();
 		}
 		else if(value instanceof final ObjectChoices choices)
 			AnnotationDescriptorHelper.describeChoices(choices, rootDescription);
@@ -433,27 +421,6 @@ extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 			&& !(value instanceof final Collection<?> c && c.isEmpty())
 		)
 			rootDescription.put(key, value);
-	}
-
-	private static void describeField(final Annotation binding, final String fieldName, final Class<?> fieldType,
-			final Collection<Map<String, Object>> fieldsDescription) throws FieldException{
-		final Map<String, Object> fieldDescription = createFieldDescription(fieldName, fieldType.getName(),
-			binding.annotationType());
-
-		//extract binding descriptor
-		final AnnotationDescriptor descriptor = AnnotationDescriptor.checkAndGetDescriptor(binding);
-		descriptor.describe(binding, fieldDescription);
-
-		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
-	}
-
-	private static Map<String, Object> createFieldDescription(final String fieldName, final String name,
-			final Class<? extends Annotation> annotationType){
-		final Map<String, Object> fieldDescription = new HashMap<>(3);
-		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
-		putIfNotEmpty(DescriberKey.FIELD_TYPE, name, fieldDescription);
-		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
-		return fieldDescription;
 	}
 
 

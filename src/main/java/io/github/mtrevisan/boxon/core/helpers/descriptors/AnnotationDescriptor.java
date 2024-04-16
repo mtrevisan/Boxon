@@ -487,16 +487,6 @@ public enum AnnotationDescriptor{
 		return DESCRIPTORS.get(annotation.annotationType());
 	}
 
-	/**
-	 * Create annotation descriptor from annotation.
-	 *
-	 * @param skip	The skip annotation.
-	 * @return	The instance.
-	 */
-	private static AnnotationDescriptor fromAnnotation(final SkipParams skip){
-		return DESCRIPTORS.get(skip.getClass());
-	}
-
 
 	AnnotationDescriptor(final Class<?> type){
 		annotationType = type;
@@ -510,33 +500,5 @@ public enum AnnotationDescriptor{
 	 * @param rootDescription	The map in which to load the description.
 	 */
 	public abstract <S> void describe(S annotation, Map<String, Object> rootDescription);
-
-	/**
-	 * Load a description of the given skip/configuration skip annotations in the given map.
-	 *
-	 * @param field	The field.
-	 * @param rootDescription	The map in which to load the descriptions.
-	 */
-	public static <F> void describeSkips(final F field, final FieldExtractor<F> extractor,
-			final Collection<Map<String, Object>> rootDescription){
-		final SkipParams[] skips = extractor.getSkips(field);
-		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
-			final SkipParams skip = skips[i];
-
-			final Map<String, Object> skipDescription = new HashMap<>(1);
-			final AnnotationDescriptor annotationDescriptor = fromAnnotation(skip);
-			annotationDescriptor.describe(skip, skipDescription);
-			rootDescription.add(skipDescription);
-		}
-	}
-
-	public static AnnotationDescriptor checkAndGetDescriptor(final Annotation binding) throws FieldException{
-		final AnnotationDescriptor descriptor = fromAnnotation(binding);
-		if(descriptor == null)
-			throw FieldException.create("Cannot extract descriptor for this annotation: {}",
-				binding.annotationType().getSimpleName());
-
-		return descriptor;
-	}
 
 }
