@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
@@ -253,7 +254,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			return;
 
 		//choose between skip-by-size and skip-by-terminator
-		if(skip.isSkipBits()){
+		if(skip.annotationType() == SkipBits.class){
 			final int size = evaluator.evaluateSize(skip.size(), rootObject);
 			reader.skip(size);
 		}
@@ -470,7 +471,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			return;
 
 		//choose between skip-by-size and skip-by-terminator
-		if(skip.isSkipBits()){
+		if(skip.annotationType() == SkipBits.class){
 			final int size = evaluator.evaluateSize(skip.size(), rootObject);
 			writer.skipBits(size);
 		}

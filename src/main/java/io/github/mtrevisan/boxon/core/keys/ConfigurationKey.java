@@ -31,12 +31,6 @@ package io.github.mtrevisan.boxon.core.keys;
 public enum ConfigurationKey{
 	/** Represents the header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	HEADER("header"),
-	/** Represents the start header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	HEADER_START("start"),
-	/** Represents the end header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	HEADER_END("end"),
-	/** Represents the charset header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	HEADER_CHARSET("charset"),
 	/** Represents the fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	FIELDS("fields"),
 	/** Represents the protocol version boundaries constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
@@ -51,6 +45,7 @@ public enum ConfigurationKey{
 	/** Represents the short description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	SHORT_DESCRIPTION("shortDescription"),
 	/** Represents the long description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
+	/** Represents the long description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	LONG_DESCRIPTION("longDescription"),
 	/** Represents the unit of measure constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	UNIT_OF_MEASURE("unitOfMeasure"),
@@ -62,8 +57,6 @@ public enum ConfigurationKey{
 	MIN_VALUE("minValue"),
 	/** Represents the maximum value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MAX_VALUE("maxValue"),
-	/** Represents the value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	VALUE("value"),
 	/** Represents the default value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	DEFAULT_VALUE("defaultValue"),
 	/** Represents the pattern constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
@@ -72,14 +65,8 @@ public enum ConfigurationKey{
 	ENUMERATION("enumeration"),
 	/** Represents the mutually exclusive constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
-	/** Represents the composition constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	COMPOSITION("composition"),
 	/** Represents the charset constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	CHARSET("charset"),
-	/** Represents the radix constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	RADIX("radix"),
-	/** Represents the terminator constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	TERMINATOR("terminator");
+	CHARSET("charset");
 
 
 	private final String name;

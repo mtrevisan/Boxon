@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
-import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
+import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptorHelper;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorConfiguration;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorEvaluatedField;
@@ -48,7 +48,6 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -223,12 +222,26 @@ public final class Descriptor{
 	}
 
 
+	/**
+	 * Returns a description of a message.
+	 *
+	 * @param message	The message to describe.
+	 * @param messageExtractor	The message extractor to use.
+	 * @param fieldExtractor	The field extractor to use.
+	 * @return	A map containing the description of the message.
+	 * @param <M>	The type of the message.
+	 * @param <F>	The type of the message.
+	 */
 	private <M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
-			final FieldExtractor<F> fieldExtractor) throws FieldException{
+			final FieldExtractor<F> fieldExtractor){
 		final Map<String, Object> description = new HashMap<>(6);
-		describeRawMessage(message, messageExtractor, fieldExtractor, description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
+
 		describeContext(description);
+
+		final Annotation header = messageExtractor.getHeader(message);
+		AnnotationDescriptorHelper.extractObjectParameters(header, header.annotationType(), description, DescriberKey.HEADER.toString());
+
+		describeRawMessage(message, messageExtractor, fieldExtractor, description);
 		return Collections.unmodifiableMap(description);
 	}
 
@@ -237,37 +250,56 @@ public final class Descriptor{
 	 *
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
-	 * @throws AnnotationException	If an annotation error occurs and the template cannot be created.
-	 * @throws FieldException	If the descriptor of a field is not found.
 	 */
-	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws AnnotationException, FieldException{
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass){
 		final Map<String, Object> description = new HashMap<>(6);
-		final Template<?> entity = Template.create(boundClass);
-		describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
+		try{
+			final Template<?> entity = Template.create(boundClass);
+			describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
+		}
+		catch(final AnnotationException ignored){
+			description.put(DescriberKey.TEMPLATE.toString(), boundClass.getName());
+		}
 		return Collections.unmodifiableMap(description);
 	}
 
+	/**
+	 * Describes a raw message by extracting various information from it and creating a description map.
+	 * <p>The description includes the message type name, fields, evaluated fields, and post-processed fields.</p>
+	 *
+	 * @param message	The message to describe.
+	 * @param messageExtractor	The message extractor to use.
+	 * @param fieldExtractor	The field extractor to use.
+	 * @param rootDescription	The map where the description will be populated.
+	 * @param <M>	The type of the message.
+	 * @param <F>	The type of the message.
+	 */
 	private static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
-			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription) throws FieldException{
+			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription){
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);
 		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), rootDescription);
 
-		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor), rootDescription);
-		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(messageExtractor.getEvaluatedFields(message),
+		putIfNotEmpty(DescriberKey.FIELDS, AnnotationDescriptorHelper.describeFields(messageExtractor.getFields(message), fieldExtractor),
+			rootDescription);
+		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, AnnotationDescriptorHelper.describeFields(messageExtractor.getEvaluatedFields(message),
 			FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
-		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(messageExtractor.getPostProcessedFields(message),
-			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
+		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, AnnotationDescriptorHelper.describeFields(
+			messageExtractor.getPostProcessedFields(message), FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
 	}
 
-	private static Map<String, Object> describeHeader(final Annotation header){
-		final Map<String, Object> headerDescription = new HashMap<>(1);
-		final AnnotationDescriptor annotationDescriptor = AnnotationDescriptor.fromAnnotation(header);
-		annotationDescriptor.describe(header, headerDescription);
-		return Collections.unmodifiableMap(headerDescription);
-	}
-
+	/**
+	 * Describes the entities by mapping them to a list of maps using the provided mapper function.
+	 * <p>Each entity is transformed into a map representation where the keys are the field names and the values are the corresponding field
+	 * values.</p>
+	 *
+	 * @param entities	The collection of entities to be described.
+	 * @param mapper	A function that takes an entity of type T and returns its corresponding map representation.
+	 * @return	The list of descriptions for the entities.
+	 * @throws FieldException	If a field exception occurs during the mapping process.
+	 * @param <T>	The type of the entities.
+	 */
 	private static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException{
 		final List<Map<String, Object>> descriptions = new ArrayList<>(entities.size());
@@ -276,6 +308,19 @@ public final class Descriptor{
 		return Collections.unmodifiableList(descriptions);
 	}
 
+	/**
+	 * Describes the entities by mapping them to a list of maps using the provided mapper function.
+	 *
+	 * @param <T>	The type of the entities.
+	 * @param <E>	The type of the exception.
+	 * @param annotationClass	The annotation class to check for annotated entities.
+	 * @param entitiesClass	The array of entity classes to be described.
+	 * @param extractor	The function to extract the entity.
+	 * @param mapper	The function that maps the entity to its corresponding map representation.
+	 * @return	The list of descriptions for the entities.
+	 * @throws FieldException	If a field exception occurs during the mapping process.
+	 * @throws E	If any other exception occurs during the extraction or mapping process.
+	 */
 	private static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
@@ -288,6 +333,19 @@ public final class Descriptor{
 		return Collections.unmodifiableList(description);
 	}
 
+	/**
+	 * Describes an entity by mapping it to a map representation using the provided mapper function.
+	 *
+	 * @param annotationClass	The annotation class to check for the entity.
+	 * @param entityClass	The entity class to be described.
+	 * @param extractor	The function to extract the entity.
+	 * @param mapper	The function that maps the entity to its corresponding map representation.
+	 * @return	The map representation of the entity.
+	 * @throws FieldException	If a field exception occurs during the mapping process.
+	 * @throws E	If any other exception occurs during the extraction or mapping process.
+	 * @param <T>	The type of the entity.
+	 * @param <E>	The type of the exception.
+	 */
 	private static <T, E extends Exception> Map<String, Object> describeEntity(final Class<? extends Annotation> annotationClass,
 			final Class<?> entityClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
@@ -299,49 +357,16 @@ public final class Descriptor{
 		return Collections.unmodifiableMap(mapper.apply(entity));
 	}
 
+	/**
+	 * Describes the context by populating the given map with the context information.
+	 *
+	 * @param description	The map where the context description will be populated.
+	 */
 	private void describeContext(final Map<String, Object> description){
 		final Map<String, Object> ctx = new HashMap<>(core.getContext());
 		ctx.remove(ContextHelper.CONTEXT_SELF);
 		ctx.remove(ContextHelper.CONTEXT_CHOICE_PREFIX);
 		putIfNotEmpty(DescriberKey.CONTEXT, Collections.unmodifiableMap(ctx), description);
-	}
-
-	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
-			throws FieldException{
-		final int length = JavaHelper.sizeOrZero(fields);
-		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final F field = fields.get(i);
-
-			AnnotationDescriptor.describeSkips(field, fieldExtractor, fieldsDescription);
-
-			final Annotation binding = fieldExtractor.getBinding(field);
-			final String fieldName = fieldExtractor.getFieldName(field);
-			final Class<?> fieldType = fieldExtractor.getFieldType(field);
-			describeField(binding, fieldName, fieldType, fieldsDescription);
-		}
-		return Collections.unmodifiableCollection(fieldsDescription);
-	}
-
-	private static void describeField(final Annotation binding, final String fieldName, final Class<?> fieldType,
-			final Collection<Map<String, Object>> fieldsDescription) throws FieldException{
-		final Map<String, Object> fieldDescription = createFieldDescription(fieldName, fieldType.getName(),
-			binding.annotationType());
-
-		//extract binding descriptor
-		final AnnotationDescriptor descriptor = AnnotationDescriptor.checkAndGetDescriptor(binding);
-		descriptor.describe(binding, fieldDescription);
-
-		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
-	}
-
-	private static Map<String, Object> createFieldDescription(final String fieldName, final String name,
-			final Class<? extends Annotation> annotationType){
-		final Map<String, Object> fieldDescription = new HashMap<>(3);
-		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
-		putIfNotEmpty(DescriberKey.FIELD_TYPE, name, fieldDescription);
-		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
-		return fieldDescription;
 	}
 
 

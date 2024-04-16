@@ -28,6 +28,8 @@ import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.lang.annotation.Annotation;
+
 
 public final class SkipParams{
 
@@ -65,8 +67,8 @@ public final class SkipParams{
 	}
 
 
-	public boolean isSkipBits(){
-		return !StringHelper.isBlank(size);
+	public Class<? extends Annotation> annotationType(){
+		return (StringHelper.isBlank(size)? SkipUntilTerminator.class: SkipBits.class);
 	}
 
 	public String condition(){

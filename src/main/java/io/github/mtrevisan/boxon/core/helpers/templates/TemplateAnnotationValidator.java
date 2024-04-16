@@ -39,6 +39,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
@@ -109,7 +110,7 @@ enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			if(!List.class.isAssignableFrom(fieldType))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `List<{}>.class`",
-					BindList.class.getSimpleName(), type.getName());
+					BindList.class.getSimpleName(), JavaHelper.prettyPrintClassName(type));
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoicesList selectFrom = binding.selectFrom();

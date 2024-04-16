@@ -123,6 +123,15 @@ public final class Configurator{
 		return extractConfigurations(configurationValues, currentProtocol);
 	}
 
+	/**
+	 * Extracts the configurations from a list of {@link ConfigurationMessage} objects based on the specified protocol version.
+	 *
+	 * @param configurationValues	The list of {@link ConfigurationMessage} objects containing the configurations.
+	 * @param protocol	The protocol version used to extract the configurations.
+	 * @return	A list of maps representing the extracted configurations. Each map contains the header and fields of a configuration message.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 */
 	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws CodecException, ConfigurationException{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
@@ -145,6 +154,15 @@ public final class Configurator{
 		return Collections.unmodifiableList(response);
 	}
 
+	/**
+	 * Extracts a map of fields from a configuration header based on the specified protocol version.
+	 *
+	 * @param protocol	The version of the protocol.
+	 * @param header	The configuration header.
+	 * @return	A map of fields extracted from the configuration header, with the short description of each field as the key and the
+	 * 	configuration map as the value.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 */
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(4);
 		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
@@ -156,6 +174,16 @@ public final class Configurator{
 		return map;
 	}
 
+	/**
+	 * Extracts a map of fields from a configuration message, based on the specified version of the protocol.
+	 *
+	 * @param protocol	The version of the protocol.
+	 * @param configuration	The configuration message.
+	 * @return	A map of fields extracted from the configuration message, with the short description of each field as the key and the
+	 * 	configuration map as the value.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 */
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();

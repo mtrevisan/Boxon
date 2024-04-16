@@ -156,7 +156,7 @@ final class ConfigFieldData{
 	 */
 	boolean hasIncompatibleInputs(){
 		final boolean hasPattern = !pattern.isEmpty();
-		final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());;
+		final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());
 		final boolean hasEnumeration = hasEnumeration();
 		return (hasPattern && (hasMinMaxValues || hasEnumeration)
 			|| hasMinMaxValues && hasEnumeration);
