@@ -230,9 +230,7 @@ public final class Descriptor{
 		describeContext(description);
 
 		final Annotation header = messageExtractor.getHeader(message);
-		final Map<String, Object> headerDescription = new HashMap<>(7);
-		AnnotationDescriptorHelper.extractObjectParameters(header, header.annotationType(), headerDescription);
-		description.put(DescriberKey.HEADER.toString(), headerDescription);
+		AnnotationDescriptorHelper.extractObjectParameters(DescriberKey.HEADER.toString(), header, header.annotationType(), description);
 
 		describeRawMessage(message, messageExtractor, fieldExtractor, description);
 		return Collections.unmodifiableMap(description);

@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
-import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -57,11 +56,14 @@ import java.util.Map;
 
 public final class AnnotationDescriptorHelper{
 
+	private static final String ROOT = null;
+
+
 	private AnnotationDescriptorHelper(){}
 
 
-	public static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor, final Collection<Map<String, Object>> fieldsDescription){
-		final SkipParams[] skips = fieldExtractor.getSkips(field);
+	public static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
+			final Collection<Map<String, Object>> fieldsDescription){
 		final Annotation binding = fieldExtractor.getBinding(field);
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final String fieldName = fieldExtractor.getFieldName(field);
@@ -72,23 +74,30 @@ public final class AnnotationDescriptorHelper{
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), fieldDescription);
 		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 
-		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
-			final SkipParams skip = skips[i];
+		extractSkipParameters(field, fieldExtractor, fieldsDescription);
 
-			final Map<String, Object> skipDescription = extractObjectParameters(skip, skip.getClass(), null);
-			fieldsDescription.add(skipDescription);
-		}
-
-		extractObjectParameters(binding, annotationType, fieldDescription);
+		extractObjectParameters(ROOT, binding, annotationType, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
 
-	public static Map<String, Object> extractObjectParameters(final Object obj, final Class<?> objType, Map<String, Object> fieldDescription){
+	private static <F> void extractSkipParameters(final F field, final FieldExtractor<F> fieldExtractor,
+			final Collection<Map<String, Object>> fieldsDescription){
+		final SkipParams[] skips = fieldExtractor.getSkips(field);
+		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
+			final SkipParams skip = skips[i];
+
+			final Map<String, Object> skipDescription = new HashMap<>(4);
+			extractObjectParameters(ROOT, skip, skip.getClass(), skipDescription);
+			fieldsDescription.add(skipDescription);
+		}
+	}
+
+	public static void extractObjectParameters(final String key, final Object obj, final Class<?> objType,
+			final Map<String, Object> fieldDescription){
 		final Method[] methods = objType.getDeclaredMethods();
 		final int methodsLength = methods.length;
-		if(fieldDescription == null)
-			fieldDescription = new HashMap<>(methodsLength);
+		final Map<String, Object> description = new HashMap<>(methodsLength);
 		for(int i = 0; i < methodsLength; i ++){
 			final Method method = methods[i];
 			if(method.getParameters().length > 0)
@@ -97,14 +106,19 @@ public final class AnnotationDescriptorHelper{
 			try{
 				final Object value = method.invoke(obj);
 
-				putIfNotEmpty(method.getName(), value, fieldDescription);
+				putIfNotEmpty(method.getName(), value, description);
 			}
 			catch(final Exception ignored){
 				//cannot happen
 			}
 		}
 
-		return Collections.unmodifiableMap(fieldDescription);
+		if(!description.isEmpty()){
+			if(key != ROOT)
+				fieldDescription.put(key, Collections.unmodifiableMap(description));
+			else
+				fieldDescription.putAll(description);
+		}
 	}
 
 	/**
@@ -120,13 +134,13 @@ public final class AnnotationDescriptorHelper{
 
 		switch(value){
 			case final Class<?> cls -> handleClassValue(key, cls, rootDescription);
-			case final ObjectChoices choices -> extractObjectParameters(choices, choices.annotationType(), rootDescription);
-			case final ObjectChoicesList choices -> extractObjectParameters(choices, choices.annotationType(), rootDescription);
-			case final ConverterChoices converter -> extractObjectParameters(converter, converter.annotationType(), rootDescription);
+			case final ObjectChoices choices -> extractObjectParameters(key, choices, choices.annotationType(), rootDescription);
+			case final ObjectChoicesList choices -> extractObjectParameters(key, choices, choices.annotationType(), rootDescription);
+			case final ConverterChoices converter -> extractObjectParameters(key, converter, converter.annotationType(), rootDescription);
 			default -> {
 				if(value.getClass().isArray())
 					handleArrayValue(key, value, rootDescription);
-				else if(!isEmptyStringOrCollection(value))
+				else if(!isEmptyStringOrCollectionOrVoid(value))
 					rootDescription.put(key, value);
 			}
 		}
@@ -148,42 +162,39 @@ public final class AnnotationDescriptorHelper{
 	private static void handleArrayValue(final String key, final Object value, final Map<String, Object> rootDescription){
 		final Class<?> componentType = value.getClass()
 			.getComponentType();
-		if(componentType == ObjectChoices.ObjectChoice.class)
-			describeAlternatives((ObjectChoices.ObjectChoice[])value, rootDescription);
-		else if(componentType == ConverterChoices.ConverterChoice.class)
-			describeAlternatives((ConverterChoices.ConverterChoice[])value, rootDescription);
-		else if(componentType == AlternativeSubField.class)
-			describeAlternatives((AlternativeSubField[])value, rootDescription);
-		else if(componentType == CompositeSubField.class)
-			describeComposite((CompositeSubField[])value, rootDescription);
-		else if(componentType == String.class)
+		if(componentType == String.class)
 			rootDescription.put(key, value);
+		else if(componentType == ObjectChoices.ObjectChoice.class)
+			describeAlternatives(key, (ObjectChoices.ObjectChoice[])value, rootDescription);
+		else if(componentType == ConverterChoices.ConverterChoice.class || componentType == AlternativeSubField.class
+				|| componentType == CompositeSubField.class)
+			describeAlternatives(key, (Annotation[])value, rootDescription);
 	}
 
-	private static boolean isEmptyStringOrCollection(final Object value){
+	private static boolean isEmptyStringOrCollectionOrVoid(final Object value){
 		return ((value instanceof final String v && StringHelper.isBlank(v))
-			|| (value instanceof final Collection<?> c && c.isEmpty()));
+			|| (value instanceof final Collection<?> c && c.isEmpty())
+			|| value == void.class);
 	}
 
-	private static void describeAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Map<String, Object> rootDescription){
+	private static void describeAlternatives(final String key, final ObjectChoices.ObjectChoice[] alternatives,
+			final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
 			for(final ObjectChoices.ObjectChoice alternative : alternatives){
 				final Map<String, Object> alternativeDescription = new HashMap<>(3);
 
-				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+				extractObjectParameters(ROOT, alternative, alternative.annotationType(), alternativeDescription);
 				describeType(alternative.type(), alternativeDescription);
 
 				alternativesDescription.add(alternativeDescription);
 			}
-			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
+			putIfNotEmpty(key, alternativesDescription, rootDescription);
 		}
 	}
 
 	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
-		putIfNotEmpty(DescriberKey.BIND_TYPE, type, rootDescription);
-
 		if(isUserDefinedClass(type)){
 			try{
 				final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
@@ -212,56 +223,20 @@ public final class AnnotationDescriptorHelper{
 		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
-	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
+	private static <T extends Annotation> void describeAlternatives(final String key, final T[] alternatives,
 			final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final ConverterChoices.ConverterChoice alternative : alternatives){
+			for(final T alternative : alternatives){
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
 
-				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+				extractObjectParameters(ROOT, alternative, alternative.annotationType(), alternativeDescription);
 
 				alternativesDescription.add(alternativeDescription);
 			}
-			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
+			putIfNotEmpty(key, alternativesDescription, rootDescription);
 		}
-	}
-
-	private static void describeAlternatives(final AlternativeSubField[] alternatives, final Map<String, Object> rootDescription){
-		final int length = alternatives.length;
-		if(length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final AlternativeSubField alternative : alternatives){
-				final Map<String, Object> alternativeDescription = new HashMap<>(2);
-
-				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
-
-				alternativesDescription.add(alternativeDescription);
-			}
-			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
-		}
-	}
-
-	private static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){
-		final int length = composites.length;
-		if(length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final CompositeSubField composite : composites)
-				describeFieldComposite(composite, alternativesDescription);
-			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
-		}
-	}
-
-	private static void describeFieldComposite(final CompositeSubField composite,
-			final Collection<Map<String, Object>> alternativesDescription){
-		final Map<String, Object> alternativeDescription = new HashMap<>(5);
-		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, composite.shortDescription(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, composite.longDescription(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, composite.unitOfMeasure(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.PATTERN, composite.pattern(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, composite.defaultValue(), alternativeDescription);
-		alternativesDescription.add(alternativeDescription);
 	}
 
 	/**
