@@ -196,8 +196,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
-		T currentObject = ConstructorHelper.getEmptyCreator(template.getType())
-			.get();
+		T currentObject = createEmptyObject(template);
 
 		final ParserContext<T> parserContext = prepareParserContext(parentObject, currentObject);
 
@@ -214,6 +213,11 @@ public final class TemplateParser implements TemplateParserInterface{
 		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
+	}
+
+	private static <T> T createEmptyObject(final Template<T> template){
+		return ConstructorHelper.getEmptyCreator(template.getType())
+			.get();
 	}
 
 	private <T> ParserContext<T> prepareParserContext(final Object parentObject, final T currentObject){
@@ -249,7 +253,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void readSkip(final SkipParams skip, final BitReaderInterface reader, final Object rootObject){
-		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
+		final boolean process = shouldProcessField(skip.condition(), rootObject);
 		if(!process)
 			return;
 
@@ -336,7 +340,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
-		return evaluator.evaluateBoolean(checksum.condition(), data);
+		return shouldProcessField(checksum.condition(), data);
 	}
 
 	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
@@ -358,7 +362,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final EvaluatedField<Evaluate> field = evaluatedFields.get(i);
 
 			final Evaluate binding = field.getBinding();
-			final boolean process = evaluator.evaluateBoolean(binding.condition(), rootObject);
+			final boolean process = shouldProcessField(binding.condition(), rootObject);
 			if(!process)
 				continue;
 
@@ -392,25 +396,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final Object rootObject = parserContext.getRootObject();
 
 		//encode message fields:
-		final List<TemplateField> fields = template.getTemplateFields();
-		for(int i = 0, length = fields.size(); i < length; i ++){
-			final TemplateField field = fields.get(i);
-
-			//process skip annotations:
-			final SkipParams[] skips = field.getSkips();
-			writeSkips(skips, writer, rootObject);
-
-			//check if field has to be processed...
-			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
-			if(shouldProcessField){
-				//... and if so, process it
-				parserContext.setField(field);
-				parserContext.setFieldName(field.getFieldName());
-				parserContext.setBinding(field.getBinding());
-
-				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
-			}
-		}
+		encodeMessageFields(template, writer, rootObject, parserContext);
 
 		final TemplateHeader header = template.getHeader();
 		if(header != null)
@@ -442,7 +428,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final PostProcess binding = field.getBinding();
 		final String condition = binding.condition();
 		final Object rootObject = parserContext.getRootObject();
-		final boolean process = evaluator.evaluateBoolean(condition, rootObject);
+		final boolean process = shouldProcessField(condition, rootObject);
 		if(!process)
 			return;
 
@@ -456,6 +442,29 @@ public final class TemplateParser implements TemplateParserInterface{
 		eventListener.evaluatedField(templateName, fieldName, value);
 	}
 
+	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
+		final ParserContext<T> parserContext) throws FieldException{
+		final List<TemplateField> fields = template.getTemplateFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final TemplateField field = fields.get(i);
+
+			//process skip annotations:
+			final SkipParams[] skips = field.getSkips();
+			writeSkips(skips, writer, rootObject);
+
+			//check if field has to be processed...
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
+			if(shouldProcessField){
+				//... and if so, process it
+				parserContext.setField(field);
+				parserContext.setFieldName(field.getFieldName());
+				parserContext.setBinding(field.getBinding());
+
+				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			}
+		}
+	}
+
 	private boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
@@ -466,7 +475,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
-		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
+		final boolean process = shouldProcessField(skip.condition(), rootObject);
 		if(!process)
 			return;
 
