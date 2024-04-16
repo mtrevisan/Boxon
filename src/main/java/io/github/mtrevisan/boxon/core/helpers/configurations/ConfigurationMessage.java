@@ -374,7 +374,8 @@ public final class ConfigurationMessage<T>{
 
 	@Override
 	public int hashCode(){
-		return type.getName().hashCode();
+		return type.getName()
+			.hashCode();
 	}
 
 }

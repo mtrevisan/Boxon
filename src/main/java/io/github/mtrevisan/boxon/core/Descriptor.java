@@ -25,17 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
-import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptorHelper;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
@@ -47,7 +37,6 @@ import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorBasicTemplate;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorConfiguration;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorFullTemplate;
-import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
@@ -60,10 +49,8 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -244,7 +231,7 @@ public final class Descriptor{
 
 		final Annotation header = messageExtractor.getHeader(message);
 		final Map<String, Object> headerDescription = new HashMap<>(7);
-		extractObjectParameters(header, header.annotationType(), headerDescription);
+		AnnotationDescriptorHelper.extractObjectParameters(header, header.annotationType(), headerDescription);
 		description.put(DescriberKey.HEADER.toString(), headerDescription);
 
 		describeRawMessage(message, messageExtractor, fieldExtractor, description);
@@ -261,8 +248,13 @@ public final class Descriptor{
 	 */
 	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws AnnotationException, FieldException{
 		final Map<String, Object> description = new HashMap<>(6);
-		final Template<?> entity = Template.create(boundClass);
-		describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
+		try{
+			final Template<?> entity = Template.create(boundClass);
+			describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE, description);
+		}
+		catch(final AnnotationException ignored){
+			description.put(DescriberKey.TEMPLATE.toString(), boundClass.getName());
+		}
 		return Collections.unmodifiableMap(description);
 	}
 
@@ -324,103 +316,9 @@ public final class Descriptor{
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);
 
-			extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
+			AnnotationDescriptorHelper.extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 		}
 		return Collections.unmodifiableCollection(fieldsDescription);
-	}
-
-	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
-			final Collection<Map<String, Object>> fieldsDescription){
-		final SkipParams[] skips = fieldExtractor.getSkips(field);
-		final Annotation binding = fieldExtractor.getBinding(field);
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final String fieldName = fieldExtractor.getFieldName(field);
-		final Class<?> fieldType = fieldExtractor.getFieldType(field);
-
-		final Map<String, Object> fieldDescription = new HashMap<>(3);
-		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
-		putIfNotEmpty(DescriberKey.FIELD_TYPE, fieldType.getName(), fieldDescription);
-		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
-
-		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
-			final SkipParams skip = skips[i];
-
-			final Map<String, Object> skipDescription = extractObjectParameters(skip, skip.getClass(), null);
-			fieldsDescription.add(skipDescription);
-		}
-
-		extractObjectParameters(binding, annotationType, fieldDescription);
-
-		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
-	}
-
-	private static Map<String, Object> extractObjectParameters(final Object obj, final Class<?> objType,
-			Map<String, Object> fieldDescription){
-		final Method[] methods = objType.getDeclaredMethods();
-		final int methodsLength = methods.length;
-		if(fieldDescription == null)
-			fieldDescription = new HashMap<>(methodsLength);
-		for(int i = 0; i < methodsLength; i ++){
-			final Method method = methods[i];
-			if(method.getParameters().length > 0)
-				continue;
-
-			try{
-				final Object value = method.invoke(obj);
-
-				putIfNotEmpty2(method.getName(), value, fieldDescription);
-			}
-			catch(final Exception e){
-				e.printStackTrace();
-			}
-		}
-
-		return Collections.unmodifiableMap(fieldDescription);
-	}
-
-	/**
-	 * Put the pair key-value into the given map if the value is not {@code null} or empty string.
-	 *
-	 * @param key	The key.
-	 * @param value	The value.
-	 * @param rootDescription	The map in which to load the key-value pair.
-	 */
-	public static void putIfNotEmpty2(final String key, final Object value, final Map<String, Object> rootDescription){
-		if(value == null)
-			return;
-
-		if(value instanceof final Class<?> cls){
-			if(Validator.class.isAssignableFrom(cls)){
-				if(cls != NullValidator.class)
-					rootDescription.put(key, cls.getName());
-			}
-			else if(Converter.class.isAssignableFrom(cls)){
-				if(cls != NullConverter.class)
-					rootDescription.put(key, cls.getName());
-			}
-			else if(!cls.isEnum() || cls != NullEnum.class)
-				rootDescription.put(key, cls.getName());
-		}
-		else if(value.getClass().isArray()){
-			final Class<?> componentType = value.getClass()
-				.getComponentType();
-			if(componentType == AlternativeSubField.class)
-				AnnotationDescriptorHelper.describeAlternatives((AlternativeSubField[])value, rootDescription);
-			else if(componentType == CompositeSubField.class)
-				AnnotationDescriptorHelper.describeComposite((CompositeSubField[])value, rootDescription);
-			else if(componentType == String.class)
-				rootDescription.put(key, value);
-		}
-		else if(value instanceof final ObjectChoices choices)
-			AnnotationDescriptorHelper.describeChoices(choices, rootDescription);
-		else if(value instanceof final ObjectChoicesList choices)
-			AnnotationDescriptorHelper.describeChoices(choices, rootDescription);
-		else if(value instanceof final ConverterChoices converter)
-			AnnotationDescriptorHelper.describeAlternatives(converter.alternatives(), rootDescription);
-		else if(!(value instanceof final String v && StringHelper.isBlank(v))
-			&& !(value instanceof final Collection<?> c && c.isEmpty())
-		)
-			rootDescription.put(key, value);
 	}
 
 

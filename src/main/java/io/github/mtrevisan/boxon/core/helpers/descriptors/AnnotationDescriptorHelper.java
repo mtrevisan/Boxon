@@ -29,17 +29,26 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Descriptor;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
+import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,15 +60,108 @@ public final class AnnotationDescriptorHelper{
 	private AnnotationDescriptorHelper(){}
 
 
-	public static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
-		putIfNotEmpty(DescriberKey.BIND_PREFIX_LENGTH, choices.prefixLength(), rootDescription);
-		describeAlternatives(choices.alternatives(), rootDescription);
+	public static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor, final Collection<Map<String, Object>> fieldsDescription){
+		final SkipParams[] skips = fieldExtractor.getSkips(field);
+		final Annotation binding = fieldExtractor.getBinding(field);
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		final String fieldName = fieldExtractor.getFieldName(field);
+		final Class<?> fieldType = fieldExtractor.getFieldType(field);
+
+		final Map<String, Object> fieldDescription = new HashMap<>(3);
+		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
+		putIfNotEmpty(DescriberKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), fieldDescription);
+		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
+
+		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
+			final SkipParams skip = skips[i];
+
+			final Map<String, Object> skipDescription = extractObjectParameters(skip, skip.getClass(), null);
+			fieldsDescription.add(skipDescription);
+		}
+
+		extractObjectParameters(binding, annotationType, fieldDescription);
+
+		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
 
-	public static void describeChoices(final ObjectChoicesList choices, final Map<String, Object> rootDescription){
-		putIfNotEmpty(DescriberKey.BIND_CHARSET, choices.charset(), rootDescription);
-		putIfNotEmpty(DescriberKey.BIND_TERMINATOR, choices.terminator(), rootDescription);
-		describeAlternatives(choices.alternatives(), rootDescription);
+	public static Map<String, Object> extractObjectParameters(final Object obj, final Class<?> objType, Map<String, Object> fieldDescription){
+		final Method[] methods = objType.getDeclaredMethods();
+		final int methodsLength = methods.length;
+		if(fieldDescription == null)
+			fieldDescription = new HashMap<>(methodsLength);
+		for(int i = 0; i < methodsLength; i ++){
+			final Method method = methods[i];
+			if(method.getParameters().length > 0)
+				continue;
+
+			try{
+				final Object value = method.invoke(obj);
+
+				putIfNotEmpty(method.getName(), value, fieldDescription);
+			}
+			catch(final Exception ignored){
+				//cannot happen
+			}
+		}
+
+		return Collections.unmodifiableMap(fieldDescription);
+	}
+
+	/**
+	 * Put the pair key-value into the given map if the value is not {@code null} or empty string.
+	 *
+	 * @param key	The key.
+	 * @param value	The value.
+	 * @param rootDescription	The map in which to load the key-value pair.
+	 */
+	private static void putIfNotEmpty(final String key, final Object value, final Map<String, Object> rootDescription){
+		if(value == null)
+			return;
+
+		switch(value){
+			case final Class<?> cls -> handleClassValue(key, cls, rootDescription);
+			case final ObjectChoices choices -> extractObjectParameters(choices, ObjectChoices.class, rootDescription);
+			case final ObjectChoicesList choices -> extractObjectParameters(choices, ObjectChoicesList.class, rootDescription);
+			case final ConverterChoices converter -> describeAlternatives(converter.alternatives(),
+				rootDescription);
+			default -> {
+				if(value.getClass().isArray())
+					handleArrayValue(key, value, rootDescription);
+				else if(!isEmptyStringOrCollection(value))
+					rootDescription.put(key, value);
+			}
+		}
+	}
+
+	private static void handleClassValue(final String key, final Class<?> cls, final Map<String, Object> rootDescription){
+		if(Validator.class.isAssignableFrom(cls)){
+			if(cls != NullValidator.class)
+				rootDescription.put(key, cls.getName());
+		}
+		else if(Converter.class.isAssignableFrom(cls)){
+			if(cls != NullConverter.class)
+				rootDescription.put(key, cls.getName());
+		}
+		else if(!cls.isEnum() || cls != NullEnum.class)
+			rootDescription.put(key, JavaHelper.prettyPrintClassName(cls));
+	}
+
+	private static void handleArrayValue(final String key, final Object value, final Map<String, Object> rootDescription){
+		final Class<?> componentType = value.getClass()
+			.getComponentType();
+		if(componentType == ObjectChoices.ObjectChoice.class)
+			describeAlternatives((ObjectChoices.ObjectChoice[])value, rootDescription);
+		else if(componentType == AlternativeSubField.class)
+			describeAlternatives((AlternativeSubField[])value, rootDescription);
+		else if(componentType == CompositeSubField.class)
+			describeComposite((CompositeSubField[])value, rootDescription);
+		else if(componentType == String.class)
+			rootDescription.put(key, value);
+	}
+
+	private static boolean isEmptyStringOrCollection(final Object value){
+		return ((value instanceof final String v && StringHelper.isBlank(v))
+			|| (value instanceof final Collection<?> c && c.isEmpty()));
 	}
 
 	private static void describeAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Map<String, Object> rootDescription){
@@ -81,7 +183,7 @@ public final class AnnotationDescriptorHelper{
 		alternativesDescription.add(alternativeDescription);
 	}
 
-	static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
+	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_TYPE, type, rootDescription);
 
 		if(isUserDefinedClass(type)){
@@ -112,12 +214,7 @@ public final class AnnotationDescriptorHelper{
 		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
-	static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
-		if(converter != NullConverter.class)
-			putIfNotEmpty(DescriberKey.BIND_CONVERTER, converter, rootDescription);
-	}
-
-	public static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
+	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
 			final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
@@ -132,7 +229,12 @@ public final class AnnotationDescriptorHelper{
 		}
 	}
 
-	public static void describeAlternatives(final AlternativeSubField[] alternatives, final Map<String, Object> rootDescription){
+	private static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
+		if(converter != NullConverter.class)
+			putIfNotEmpty(DescriberKey.BIND_CONVERTER, converter, rootDescription);
+	}
+
+	private static void describeAlternatives(final AlternativeSubField[] alternatives, final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
@@ -158,7 +260,7 @@ public final class AnnotationDescriptorHelper{
 		alternativesDescription.add(alternativeDescription);
 	}
 
-	public static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){
+	private static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){
 		final int length = composites.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
@@ -191,7 +293,7 @@ public final class AnnotationDescriptorHelper{
 				&& !(value instanceof final String v && StringHelper.isBlank(v))
 				&& !(value instanceof final Collection<?> c && c.isEmpty())
 			)
-			map.put(key.toString(), (value instanceof final Class<?> cls? cls.getName(): value));
+			map.put(key.toString(), (value instanceof final Class<?> cls? JavaHelper.prettyPrintClassName(cls): value));
 	}
 
 }

@@ -38,6 +38,8 @@ public final class JavaHelper{
 	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
 
+	private static final String ARRAY_VARIABLE = "[]";
+
 	private static final String HEXADECIMAL_PREFIX = "0x";
 
 
@@ -192,6 +194,34 @@ public final class JavaHelper{
 		catch(final NumberFormatException ignored){
 			return null;
 		}
+	}
+
+
+	public static String prettyPrintClassName(Class<?> cls){
+		final int count = countLeadingSquareBrackets(cls.getName());
+		if(count > 0){
+			final StringBuilder sb = new StringBuilder(cls.getName());
+			sb.deleteCharAt(sb.length() - 1);
+			sb.delete(0, count + 1);
+			sb.append(ARRAY_VARIABLE.repeat(count));
+			return sb.toString();
+		}
+		return cls.getName();
+	}
+
+	private static int countLeadingSquareBrackets(final String str){
+		int count = 0;
+		final char[] array = str.toCharArray();
+		for(int i = 0, length = array.length; i < length; i ++){
+			if(array[i] == '[')
+				count ++;
+			else{
+				if(array[i] != 'L')
+					count = 0;
+				break;
+			}
+		}
+		return count;
 	}
 
 }
