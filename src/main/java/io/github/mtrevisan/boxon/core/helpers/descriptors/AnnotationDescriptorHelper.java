@@ -31,8 +31,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
-import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
@@ -112,11 +110,6 @@ public final class AnnotationDescriptorHelper{
 	private static boolean isUserDefinedClass(final Class<?> cls){
 		//check if the class is not an interface, an anonymous class, or a primitive data type
 		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
-	}
-
-	static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
-		if(validator != NullValidator.class)
-			putIfNotEmpty(DescriberKey.BIND_VALIDATOR, validator, rootDescription);
 	}
 
 	static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){

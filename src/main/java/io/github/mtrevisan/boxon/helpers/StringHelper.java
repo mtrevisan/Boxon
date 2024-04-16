@@ -168,7 +168,7 @@ public final class StringHelper{
 		if(length > 0){
 			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 			for(int i = 0; i < length; i ++)
-				if(!Character.isWhitespace(bytes[i]))
+				if(!Character.isWhitespace(bytes[i]) || bytes[i] == '\r' || bytes[i] == '\n')
 					return false;
 		}
 		return true;

@@ -503,7 +503,7 @@ class CodecLongTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.toHexString(encodedValue), writer.toString());
+		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Long.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);

@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
-import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptorHelper;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorConfiguration;
@@ -240,9 +239,15 @@ public final class Descriptor{
 	private <M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
 			final FieldExtractor<F> fieldExtractor){
 		final Map<String, Object> description = new HashMap<>(6);
-		describeRawMessage(message, messageExtractor, fieldExtractor, description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
+
 		describeContext(description);
+
+		final Annotation header = messageExtractor.getHeader(message);
+		final Map<String, Object> headerDescription = new HashMap<>(7);
+		extractObjectParameters(header, header.annotationType(), headerDescription);
+		description.put(DescriberKey.HEADER.toString(), headerDescription);
+
+		describeRawMessage(message, messageExtractor, fieldExtractor, description);
 		return Collections.unmodifiableMap(description);
 	}
 
@@ -273,13 +278,6 @@ public final class Descriptor{
 			FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
 		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(messageExtractor.getPostProcessedFields(message),
 			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
-	}
-
-	private static Map<String, Object> describeHeader(final Annotation header){
-		final Map<String, Object> headerDescription = new HashMap<>(1);
-		final AnnotationDescriptor annotationDescriptor = AnnotationDescriptor.fromAnnotation(header);
-		annotationDescriptor.describe(header, headerDescription);
-		return Collections.unmodifiableMap(headerDescription);
 	}
 
 	private static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
@@ -410,6 +408,8 @@ public final class Descriptor{
 				AnnotationDescriptorHelper.describeAlternatives((AlternativeSubField[])value, rootDescription);
 			else if(componentType == CompositeSubField.class)
 				AnnotationDescriptorHelper.describeComposite((CompositeSubField[])value, rootDescription);
+			else if(componentType == String.class)
+				rootDescription.put(key, value);
 		}
 		else if(value instanceof final ObjectChoices choices)
 			AnnotationDescriptorHelper.describeChoices(choices, rootDescription);
