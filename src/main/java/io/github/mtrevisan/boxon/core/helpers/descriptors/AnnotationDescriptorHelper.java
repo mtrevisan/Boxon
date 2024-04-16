@@ -38,8 +38,6 @@ import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
@@ -56,13 +54,21 @@ import java.util.Map;
 
 public final class AnnotationDescriptorHelper{
 
-	private static final String ROOT = null;
-
-
 	private AnnotationDescriptorHelper(){}
 
 
-	public static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
+	public static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor){
+		final int length = JavaHelper.sizeOrZero(fields);
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final F field = fields.get(i);
+
+			extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
+		}
+		return Collections.unmodifiableCollection(fieldsDescription);
+	}
+
+	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
 			final Collection<Map<String, Object>> fieldsDescription){
 		final Annotation binding = fieldExtractor.getBinding(field);
 		final Class<? extends Annotation> annotationType = binding.annotationType();
@@ -76,7 +82,7 @@ public final class AnnotationDescriptorHelper{
 
 		extractSkipParameters(field, fieldExtractor, fieldsDescription);
 
-		extractObjectParameters(ROOT, binding, annotationType, fieldDescription);
+		extractObjectParameters(binding, annotationType, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
@@ -88,17 +94,29 @@ public final class AnnotationDescriptorHelper{
 			final SkipParams skip = skips[i];
 
 			final Map<String, Object> skipDescription = new HashMap<>(4);
-			extractObjectParameters(ROOT, skip, skip.getClass(), skipDescription);
+			extractObjectParameters(skip, skip.getClass(), skipDescription);
 			fieldsDescription.add(skipDescription);
 		}
 	}
 
-	public static void extractObjectParameters(final String key, final Object obj, final Class<?> objType,
-			final Map<String, Object> fieldDescription){
+	public static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription,
+			final String key){
 		final Method[] methods = objType.getDeclaredMethods();
-		final int methodsLength = methods.length;
-		final Map<String, Object> description = new HashMap<>(methodsLength);
-		for(int i = 0; i < methodsLength; i ++){
+
+		final Map<String, Object> description = new HashMap<>(methods.length);
+		extractObjectParameters(obj, methods, description);
+		if(!description.isEmpty())
+			rootDescription.put(key, Collections.unmodifiableMap(description));
+	}
+
+	public static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription){
+		final Method[] methods = objType.getDeclaredMethods();
+
+		extractObjectParameters(obj, methods, rootDescription);
+	}
+
+	private static void extractObjectParameters(final Object obj, final Method[] methods, final Map<String, Object> rootDescription){
+		for(int i = 0, length = methods.length; i < length; i ++){
 			final Method method = methods[i];
 			if(method.getParameters().length > 0)
 				continue;
@@ -106,18 +124,11 @@ public final class AnnotationDescriptorHelper{
 			try{
 				final Object value = method.invoke(obj);
 
-				putIfNotEmpty(method.getName(), value, description);
+				putIfNotEmpty(method.getName(), value, rootDescription);
 			}
 			catch(final Exception ignored){
 				//cannot happen
 			}
-		}
-
-		if(!description.isEmpty()){
-			if(key != ROOT)
-				fieldDescription.put(key, Collections.unmodifiableMap(description));
-			else
-				fieldDescription.putAll(description);
 		}
 	}
 
@@ -134,9 +145,9 @@ public final class AnnotationDescriptorHelper{
 
 		switch(value){
 			case final Class<?> cls -> handleClassValue(key, cls, rootDescription);
-			case final ObjectChoices choices -> extractObjectParameters(key, choices, choices.annotationType(), rootDescription);
-			case final ObjectChoicesList choices -> extractObjectParameters(key, choices, choices.annotationType(), rootDescription);
-			case final ConverterChoices converter -> extractObjectParameters(key, converter, converter.annotationType(), rootDescription);
+			case final ObjectChoices choices -> extractObjectParameters(choices, choices.annotationType(), rootDescription, key);
+			case final ObjectChoicesList choices -> extractObjectParameters(choices, choices.annotationType(), rootDescription, key);
+			case final ConverterChoices converter -> extractObjectParameters(converter, converter.annotationType(), rootDescription, key);
 			default -> {
 				if(value.getClass().isArray())
 					handleArrayValue(key, value, rootDescription);
@@ -185,7 +196,7 @@ public final class AnnotationDescriptorHelper{
 			for(final ObjectChoices.ObjectChoice alternative : alternatives){
 				final Map<String, Object> alternativeDescription = new HashMap<>(3);
 
-				extractObjectParameters(ROOT, alternative, alternative.annotationType(), alternativeDescription);
+				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
 				describeType(alternative.type(), alternativeDescription);
 
 				alternativesDescription.add(alternativeDescription);
@@ -196,25 +207,18 @@ public final class AnnotationDescriptorHelper{
 
 	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
 		if(isUserDefinedClass(type)){
-			try{
-				final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
-				final Collection<Class<?>> processedTypes = new HashSet<>(1);
-				Class<?> parent = type;
-				while(parent != null && parent != Object.class && !processedTypes.contains(parent)){
-					typeDescription.addFirst(Descriptor.describeRawMessage(parent));
+			final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
+			final Collection<Class<?>> processedTypes = new HashSet<>(1);
+			Class<?> parent = type;
+			while(parent != null && parent != Object.class && !processedTypes.contains(parent)){
+				typeDescription.addFirst(Descriptor.describeRawMessage(parent));
 
-					processedTypes.add(parent);
+				processedTypes.add(parent);
 
-					//go up to parent class
-					parent = parent.getSuperclass();
-				}
-				putIfNotEmpty(DescriberKey.BIND_SUBTYPES, typeDescription, rootDescription);
+				//go up to parent class
+				parent = parent.getSuperclass();
 			}
-			catch(final FieldException fe){
-				final Exception exception = ConfigurationException.create("Cannot handle this type of class: {}, please report to the developer",
-					type.getSimpleName(), fe.getMessage());
-				System.out.println("Boxon ERROR: " + exception.getMessage());
-			}
+			putIfNotEmpty(DescriberKey.BIND_SUBTYPES, typeDescription, rootDescription);
 		}
 	}
 
@@ -231,7 +235,7 @@ public final class AnnotationDescriptorHelper{
 			for(final T alternative : alternatives){
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
 
-				extractObjectParameters(ROOT, alternative, alternative.annotationType(), alternativeDescription);
+				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
 
 				alternativesDescription.add(alternativeDescription);
 			}

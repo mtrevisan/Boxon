@@ -156,7 +156,7 @@ public enum ConfigurationAnnotationValidator{
 	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
 		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
-				final Version maxProtocolVersion) throws AnnotationException, CodecException{
+				final Version maxProtocolVersion) throws AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeConfigurationField)annotation);
 
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;

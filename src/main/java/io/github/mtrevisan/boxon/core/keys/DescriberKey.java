@@ -54,9 +54,7 @@ public enum DescriberKey{
 	ANNOTATION_TYPE("annotationType"),
 
 	/** Represents the bind subtypes constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_SUBTYPES("subtypes"),
-	/** Represents the bind select converter from constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_SELECT_CONVERTER_FROM("selectConverterFrom");
+	BIND_SUBTYPES("subtypes");
 
 
 	private final String name;
