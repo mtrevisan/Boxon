@@ -24,10 +24,10 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
+import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -48,12 +48,12 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveLittleEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+		CodecInterface<BindLong> codec = new CodecLong();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindLong annotation = new BindLong(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindLong.class;
 			}
 
 			@Override
@@ -73,7 +73,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -107,12 +107,12 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+		CodecInterface<BindLong> codec = new CodecLong();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindLong annotation = new BindLong(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindLong.class;
 			}
 
 			@Override
@@ -132,7 +132,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -166,12 +166,12 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveBigEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+		CodecInterface<BindLong> codec = new CodecLong();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindLong annotation = new BindLong(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindLong.class;
 			}
 
 			@Override
@@ -191,7 +191,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -225,12 +225,12 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeBigEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+		CodecInterface<BindLong> codec = new CodecLong();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindLong annotation = new BindLong(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindLong.class;
 			}
 
 			@Override
@@ -250,7 +250,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override

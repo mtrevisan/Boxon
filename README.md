@@ -116,10 +116,8 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     9. [BindInt](#annotation-bindint)
     10. [BindLong](#annotation-bindlong)
     11. [BindInteger](#annotation-bindinteger)
-    12. [BindFloat](#annotation-bindfloat)
-    13. [BindDouble](#annotation-binddouble)
-    14. [BindString](#annotation-bindstring)
-    15. [BindStringTerminated](#annotation-bindstringterminated)
+    12. [BindString](#annotation-bindstring)
+    13. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [TemplateHeader](#annotation-templateheader)
     2. [SkipBits](#annotation-skip-bits)
@@ -201,8 +199,6 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
 | BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
 | BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
@@ -556,60 +552,6 @@ private BigInteger number;
 
 @BindInteger(size = "Long.SIZE + 10")
 private BigInteger number;
-```
-
-
-<a name="annotation-bindfloat"></a>
-### BindFloat
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a float (or Float).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindFloat
-private float number;
-```
-
-
-<a name="annotation-binddouble"></a>
-### BindDouble
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a double (or Double).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindDouble
-private double number;
 ```
 
 

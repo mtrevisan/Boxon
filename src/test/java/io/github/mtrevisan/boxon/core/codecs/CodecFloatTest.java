@@ -24,10 +24,10 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -48,12 +48,12 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveLittleEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInt> codec = new CodecInt();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -73,7 +73,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -107,12 +107,12 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInt> codec = new CodecInt();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -132,7 +132,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -166,12 +166,12 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveBigEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInt> codec = new CodecInt();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -191,7 +191,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -225,12 +225,12 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeBigEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInt> codec = new CodecInt();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -250,7 +250,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override

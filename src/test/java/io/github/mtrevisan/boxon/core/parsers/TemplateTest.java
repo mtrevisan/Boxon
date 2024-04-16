@@ -31,8 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
-import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
@@ -42,6 +40,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
+import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
@@ -124,9 +124,9 @@ class TemplateTest{
 		private byte[] protocolVersion;
 		@BindBitSet(size = "2")
 		private BitSet bitmap;
-		@BindDouble
+		@BindLong(converter = LongToDoubleConverter.class)
 		private double numberDouble;
-		@BindFloat
+		@BindInt(converter = IntegerToFloatConverter.class)
 		private float numberFloat;
 		@BindInt
 		private int numberInt;
