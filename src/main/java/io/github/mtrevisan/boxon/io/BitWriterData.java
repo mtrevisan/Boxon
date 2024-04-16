@@ -164,9 +164,13 @@ class BitWriterData{
 	private static byte getNextByte(final BitSet bitmap, final int offset, final int size){
 		byte valueRead = 0;
 		int index = offset - 1;
-		while((index = bitmap.nextSetBit(index + 1)) >= 0 && index <= offset + size)
+		while((index = nextSetBit(bitmap, index + 1)) >= 0 && index <= offset + size)
 			valueRead |= (byte)(1 << (index - offset));
 		return valueRead;
+	}
+
+	private static int nextSetBit(final BitSet bitmap, final int fromIndex){
+		return bitmap.nextSetBit(fromIndex);
 	}
 
 	/**
