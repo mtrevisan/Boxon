@@ -120,10 +120,9 @@ public final class AnnotationDescriptorHelper{
 
 		switch(value){
 			case final Class<?> cls -> handleClassValue(key, cls, rootDescription);
-			case final ObjectChoices choices -> extractObjectParameters(choices, ObjectChoices.class, rootDescription);
-			case final ObjectChoicesList choices -> extractObjectParameters(choices, ObjectChoicesList.class, rootDescription);
-			case final ConverterChoices converter -> describeAlternatives(converter.alternatives(),
-				rootDescription);
+			case final ObjectChoices choices -> extractObjectParameters(choices, choices.annotationType(), rootDescription);
+			case final ObjectChoicesList choices -> extractObjectParameters(choices, choices.annotationType(), rootDescription);
+			case final ConverterChoices converter -> extractObjectParameters(converter, converter.annotationType(), rootDescription);
 			default -> {
 				if(value.getClass().isArray())
 					handleArrayValue(key, value, rootDescription);
@@ -151,6 +150,8 @@ public final class AnnotationDescriptorHelper{
 			.getComponentType();
 		if(componentType == ObjectChoices.ObjectChoice.class)
 			describeAlternatives((ObjectChoices.ObjectChoice[])value, rootDescription);
+		else if(componentType == ConverterChoices.ConverterChoice.class)
+			describeAlternatives((ConverterChoices.ConverterChoice[])value, rootDescription);
 		else if(componentType == AlternativeSubField.class)
 			describeAlternatives((AlternativeSubField[])value, rootDescription);
 		else if(componentType == CompositeSubField.class)
@@ -168,19 +169,16 @@ public final class AnnotationDescriptorHelper{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final ObjectChoices.ObjectChoice alternative : alternatives)
-				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
+			for(final ObjectChoices.ObjectChoice alternative : alternatives){
+				final Map<String, Object> alternativeDescription = new HashMap<>(3);
+
+				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+				describeType(alternative.type(), alternativeDescription);
+
+				alternativesDescription.add(alternativeDescription);
+			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
-	}
-
-	private static void describeObjectChoicesAlternatives(final String condition, final Object prefix, final Class<?> type,
-			final Collection<Map<String, Object>> alternativesDescription){
-		final Map<String, Object> alternativeDescription = new HashMap<>(3);
-		putIfNotEmpty(DescriberKey.BIND_CONDITION, condition, alternativeDescription);
-		putIfNotEmpty(DescriberKey.BIND_PREFIX, prefix, alternativeDescription);
-		describeType(type, alternativeDescription);
-		alternativesDescription.add(alternativeDescription);
 	}
 
 	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
@@ -221,43 +219,28 @@ public final class AnnotationDescriptorHelper{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
 			for(final ConverterChoices.ConverterChoice alternative : alternatives){
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
-				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				describeConverter(alternative.converter(), alternativeDescription);
+
+				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+
 				alternativesDescription.add(alternativeDescription);
 			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
 	}
 
-	private static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
-		if(converter != NullConverter.class)
-			putIfNotEmpty(DescriberKey.BIND_CONVERTER, converter, rootDescription);
-	}
-
 	private static void describeAlternatives(final AlternativeSubField[] alternatives, final Map<String, Object> rootDescription){
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final AlternativeSubField alternative : alternatives)
-				describeObjectChoicesAlternatives(alternative, alternativesDescription);
+			for(final AlternativeSubField alternative : alternatives){
+				final Map<String, Object> alternativeDescription = new HashMap<>(2);
+
+				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+
+				alternativesDescription.add(alternativeDescription);
+			}
 			putIfNotEmpty(DescriberKey.BIND_SELECT_CONVERTER_FROM, alternativesDescription, rootDescription);
 		}
-	}
-
-	private static void describeObjectChoicesAlternatives(final AlternativeSubField alternative,
-			final Collection<Map<String, Object>> alternativesDescription){
-		final Map<String, Object> alternativeDescription = new HashMap<>(10);
-		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, alternative.longDescription(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, alternative.unitOfMeasure(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternative.minProtocol(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternative.maxProtocol(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.MIN_VALUE, alternative.minValue(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.MAX_VALUE, alternative.maxValue(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.PATTERN, alternative.pattern(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, alternative.defaultValue(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.CHARSET, alternative.charset(), alternativeDescription);
-		putIfNotEmpty(ConfigurationKey.RADIX, alternative.radix(), alternativeDescription);
-		alternativesDescription.add(alternativeDescription);
 	}
 
 	private static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){

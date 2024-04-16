@@ -53,26 +53,12 @@ public enum DescriberKey{
 	/** Represents the annotation type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	ANNOTATION_TYPE("annotationType"),
 
-	/** Represents the bind condition constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_CONDITION("condition"),
 	/** Represents the bind type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	BIND_TYPE("type"),
 	/** Represents the bind subtypes constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
 	BIND_SUBTYPES("subtypes"),
-	/** Represents the bind converter constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_CONVERTER("converter"),
 	/** Represents the bind select converter from constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_SELECT_CONVERTER_FROM("selectConverterFrom"),
-	/** Represents the bind charset constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_CHARSET("charset"),
-	/** Represents the bind terminator constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_TERMINATOR("terminator"),
-	/** Represents the bind prefix constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_PREFIX("prefix"),
-	/** Represents the bind prefix length constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_PREFIX_LENGTH("prefixLength"),
-	/** Represents the bind validator constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
-	BIND_VALIDATOR("validator");
+	BIND_SELECT_CONVERTER_FROM("selectConverterFrom");
 
 
 	private final String name;
