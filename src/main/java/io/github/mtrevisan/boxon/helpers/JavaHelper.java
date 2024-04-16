@@ -198,28 +198,38 @@ public final class JavaHelper{
 
 
 	public static String prettyPrintClassName(Class<?> cls){
-		final int count = countLeadingSquareBrackets(cls.getName());
+		final String className = cls.getName();
+		final int count = countLeadingSquareBrackets(className);
 		if(count > 0){
-			final StringBuilder sb = new StringBuilder(cls.getName());
+			final StringBuilder sb = new StringBuilder(className);
 			sb.deleteCharAt(sb.length() - 1);
 			sb.delete(0, count + 1);
 			sb.append(ARRAY_VARIABLE.repeat(count));
 			return sb.toString();
 		}
-		return cls.getName();
+		return className;
 	}
 
-	private static int countLeadingSquareBrackets(final String str){
+	/**
+	 * Counts the number of leading square brackets in a given text.
+	 * <p>See {@link Class#getName()}.</p>
+	 *
+	 * @param text	The input text.
+	 * @return	The count of leading square brackets.
+	 */
+	private static int countLeadingSquareBrackets(final String text){
 		int count = 0;
-		final char[] array = str.toCharArray();
+		final char[] array = text.toCharArray();
 		for(int i = 0, length = array.length; i < length; i ++){
-			if(array[i] == '[')
+			final char chr = array[i];
+
+			if(chr == '['){
 				count ++;
-			else{
-				if(array[i] != 'L')
-					count = 0;
-				break;
+				continue;
 			}
+			if(chr != 'L')
+				count = 0;
+			break;
 		}
 		return count;
 	}
