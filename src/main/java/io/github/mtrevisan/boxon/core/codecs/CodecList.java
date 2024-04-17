@@ -75,7 +75,7 @@ final class CodecList implements CodecInterface<BindList>{
 
 	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
-			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
+			throw AnnotationException.createNotPrimitiveValue(type);
 
 		return new ArrayList<>(0);
 	}

@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -353,7 +354,7 @@ abstract class BitReaderData{
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	public final synchronized int position(){
-		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
+		return buffer.position() - JavaHelper.getSizeInBytes(remaining);
 	}
 
 	/**

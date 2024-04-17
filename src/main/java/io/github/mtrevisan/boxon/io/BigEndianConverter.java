@@ -24,17 +24,26 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+
 import java.math.BigInteger;
 import java.util.BitSet;
 
 
 final class BigEndianConverter implements BitSetConverter{
 
+	/**
+	 * Creates a {@link BitSet} with the given value.
+	 *
+	 * @param bitmapSize	The size in bits of the value.
+	 * @param value	The value, must not be {@code null}.
+	 * @return	A new bit set initialized with the given value.
+	 */
 	@Override
 	public BitSet createBitSet(final int bitmapSize, final BigInteger value){
 		final BitSet bitmap = new BitSet(bitmapSize);
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
-		for(int i = 0, length = (bitmapSize + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
+		for(int i = 0, length = JavaHelper.getSizeInBytes(bitmapSize); i < length; i ++){
 			final int byteIndex = length - 1 - i;
 			final byte currentByte = value.shiftRight(byteIndex << 3)
 				.byteValue();

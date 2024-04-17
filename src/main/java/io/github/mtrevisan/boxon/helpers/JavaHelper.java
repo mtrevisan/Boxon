@@ -59,6 +59,10 @@ public final class JavaHelper{
 	}
 
 
+	public static int getSizeInBytes(final int bits){
+		return (bits + Byte.SIZE - 1) >>> 3;
+	}
+
 	/**
 	 * Return the length of the text, or {@code 0} if {@code null}.
 	 *

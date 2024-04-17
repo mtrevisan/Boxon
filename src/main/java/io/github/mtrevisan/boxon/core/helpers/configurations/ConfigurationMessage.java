@@ -266,20 +266,20 @@ public final class ConfigurationMessage<T>{
 		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
-	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> configurationFields){
-		final int length = configurationFields.size();
+	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
+		final int length = fields.size();
 		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < length; i ++){
-			final ConfigurationField configurationField = configurationFields.get(i);
+			final ConfigurationField field = fields.get(i);
 
-			final Annotation annotation = configurationField.getBinding();
+			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			manager.addProtocolVersionBoundaries(boundaries);
 
-			final ConfigurationSkip[] skips = configurationField.getSkips();
+			final ConfigurationSkip[] skips = field.getSkips();
 			extractProtocolVersionBoundaries(skips, boundaries);
 		}
 

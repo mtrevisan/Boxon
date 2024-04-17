@@ -77,7 +77,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	@SuppressWarnings("unchecked")
 	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
-			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
+			throw AnnotationException.createNotPrimitiveValue(type);
 
 		return (T[])Array.newInstance(type, length);
 	}
