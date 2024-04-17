@@ -124,8 +124,7 @@ public final class FieldAccessor{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void injectValue(final Object obj, final T value){
-		final Type fieldType = GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
-			.getFirst();
+		final Type fieldType = extractFieldType(value);
 
 		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass())){
 			final Class<?> type = obj.getClass();
@@ -155,11 +154,15 @@ public final class FieldAccessor{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void injectStaticValue(final Class<?> type, final T value){
-		final Type fieldType = GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
-			.getFirst();
+		final Type fieldType = extractFieldType(value);
 
 		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass()))
 			injectStaticValue(type, (Class<? super T>)fieldType, value);
+	}
+
+	private static <T> Type extractFieldType(final T value){
+		return GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
+			.getFirst();
 	}
 
 	/**

@@ -326,41 +326,31 @@ public enum ParserDataType{
 
 
 	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value, if the type is not string,
-	 * in that case the value will be returned.
+	 * Returns the primitive or objective type data stored as a string value, or the value itself if not a string or the field type is a
+	 * string.
 	 *
 	 * @param fieldType	The type of the field that will hold the value represented as a string.
 	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value, if the field type is not string, the given value otherwise.
+	 * @return	The primitive or objective value, or the value passed if not a string or the field type is a string.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof final String v
-			? getValue(fieldType, v)
-			: value);
-	}
-
-	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
-	 *
-	 * @param fieldType	The type of the field that will hold the value represented as a string.
-	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
-	 */
-	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
-		if(fieldType == String.class)
+		if(fieldType == String.class || !(value instanceof final String valueAsString))
 			return value;
-		if(StringHelper.isBlank(value))
+		if(StringHelper.isBlank(valueAsString))
 			return null;
 
 		final Class<?> objectiveType = toObjectiveTypeOrSelf(fieldType);
+		return convertStringValue(valueAsString, objectiveType);
+	}
+
+	private static Object convertStringValue(final String value, final Class<?> objectiveType) throws CodecException{
 		//try convert to a number...
-		final Object val = toNumber(value, objectiveType);
+		final Object valueAsNumber = toNumber(value, objectiveType);
 		//... otherwise convert it to an object
-		return (val == null
+		return (valueAsNumber == null
 			? toObjectValue(value, objectiveType)
-			: val);
+			: valueAsNumber);
 	}
 
 	private static Object toNumber(final String text, final Class<?> objectiveType){

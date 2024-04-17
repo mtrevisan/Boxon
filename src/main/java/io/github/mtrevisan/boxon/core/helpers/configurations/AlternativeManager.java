@@ -231,8 +231,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(field.getType(), v);
+			dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
 
 			final Version minProtocolVersion = Version.of(fieldBinding.minProtocol());
 			final Version maxProtocolVersion = Version.of(fieldBinding.maxProtocol());

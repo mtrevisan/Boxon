@@ -275,8 +275,8 @@ public final class ConfigurationMessage<T>{
 		for(int i = 0; i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final Annotation annotation = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
 			manager.addProtocolVersionBoundaries(boundaries);
 
 			final ConfigurationSkip[] skips = field.getSkips();

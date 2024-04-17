@@ -645,14 +645,13 @@ public final class Version implements Comparable<Version>{
 		if(patch != null)
 			sb.append(DOT)
 				.append(patch);
-		toStringArray(PRE_RELEASE_PREFIX, preRelease, sb);
-		toStringArray(BUILD_PREFIX, build, sb);
-		return sb.toString();
-	}
-
-	private void toStringArray(final String preReleasePrefix, final String[] preRelease, final StringBuilder sb){
 		if(preRelease != null && preRelease.length > 0)
-			sb.append(preReleasePrefix).append(String.join(DOT_AS_STRING, preRelease));
+			sb.append(PRE_RELEASE_PREFIX)
+				.append(String.join(DOT_AS_STRING, preRelease));
+		if(build != null && build.length > 0)
+			sb.append(BUILD_PREFIX)
+				.append(String.join(DOT_AS_STRING, build));
+		return sb.toString();
 	}
 
 }

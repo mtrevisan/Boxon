@@ -62,7 +62,7 @@ enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
 			if(ParserDataType.isPrimitive(type))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used one of the primitive type's annotations",
+				throw AnnotationException.create("Wrong annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -78,8 +78,7 @@ enum TemplateAnnotationValidator{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArray.class.getSimpleName(), type.getSimpleName());
+				throw AnnotationException.createBadAnnotation(BindArray.class, type);
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, type);
@@ -93,8 +92,7 @@ enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			TemplateAnnotationValidatorHelper.validateType(type, BindArray.class);
 			if(ParserDataType.isPrimitive(type))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArray.class.getSimpleName(), type.getSimpleName());
+				throw AnnotationException.createBadAnnotation(BindArray.class, type);
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
@@ -109,7 +107,7 @@ enum TemplateAnnotationValidator{
 			final BindList binding = (BindList)annotation;
 			final Class<?> type = binding.type();
 			if(!List.class.isAssignableFrom(fieldType))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `List<{}>.class`",
+				throw AnnotationException.create("Wrong annotation used for {}, should have been used the type `List<{}>.class`",
 					BindList.class.getSimpleName(), JavaHelper.prettyPrintClassName(type));
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();

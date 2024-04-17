@@ -341,10 +341,11 @@ final class LoaderTemplate{
 
 	private static int findNextMessageIndex(final BitReaderInterface reader, final TemplateHeader header, int minOffset){
 		final Charset charset = CharsetHelper.lookup(header.charset());
-		final String[] messageStarts = header.start();
+		final String[] starts = header.start();
 		//select the minimum index with a valid template
-		for(int i = 0, length = messageStarts.length; i < length; i ++){
-			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
+		for(int i = 0, length = starts.length; i < length; i ++){
+			final byte[] startMessageSequence = starts[i].getBytes(charset);
+			final int offset = searchNextSequence(reader, startMessageSequence);
 			if(offset >= 0 && !(0 <= minOffset && minOffset <= offset))
 				minOffset = offset;
 		}

@@ -76,6 +76,18 @@ public final class AnnotationException extends FieldException{
 	}
 
 	/**
+	 * Constructs a new exception when the wrong annotation is used for the value.
+	 *
+	 * @param fieldType	The field type.
+	 * @param bindingType	The binding type.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createBadAnnotation(final Class<?> fieldType, final Class<?> bindingType){
+		return new AnnotationException(StringHelper.format("Wrong annotation used for type {}, should have been used `{}.class`",
+			fieldType.getSimpleName(), bindingType.getSimpleName()));
+	}
+
+	/**
 	 * Constructs a new exception when the value is not of a primitive type.
 	 *
 	 * @param type	The value type.

@@ -58,16 +58,14 @@ final class TemplateAnnotationValidatorHelper{
 			fieldType = FieldAccessor.extractFieldType(fieldType);
 
 			if(!fieldType.isAssignableFrom(bindingType))
-				throw AnnotationException.create("Bad annotation used for type {}: {}",
-					fieldType.getSimpleName(), bindingType.getSimpleName());
+				throw AnnotationException.createBadAnnotation(fieldType, bindingType);
 		}
 	}
 
 	private static void validateConverterToList(final Class<?> fieldType, final Class<?> bindingType,
 			final Class<? extends Converter<?, ?>> converter, final Class<?> type) throws AnnotationException{
 		if(converter == NullConverter.class && bindingType != Object.class && !type.isAssignableFrom(bindingType))
-			throw AnnotationException.create("Bad annotation used for type {}: {}",
-				fieldType.getSimpleName(), bindingType.getSimpleName());
+			throw AnnotationException.createBadAnnotation(fieldType, bindingType);
 	}
 
 	static void validateObjectChoice(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> type,

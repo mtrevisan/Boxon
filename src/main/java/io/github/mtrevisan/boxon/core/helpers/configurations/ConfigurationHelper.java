@@ -69,17 +69,28 @@ public final class ConfigurationHelper{
 
 	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)
 			throws CodecException{
-		return (enumeration != NullEnum.class
+		return (hasEnumeration(enumeration)
 			? extractEnumerationValue(fieldType, value, enumeration)
-			: ParserDataType.getValue(fieldType, value));
+			: ParserDataType.getValueOrSelf(fieldType, value));
 	}
 
+	/**
+	 * Whether the given class is a true enumeration.
+	 *
+	 * @param enumeration	The class to check.
+	 * @return	Whether the given class is a true enumeration.
+	 */
+	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+		return (enumeration != null && enumeration != NullEnum.class);
+	}
 
-	static Object extractEnumerationValue(final Class<?> fieldType, final String value,
+	static Object extractEnumerationValue(final Class<?> fieldType, Object value,
 			final Class<? extends ConfigurationEnum> enumeration){
-		return (fieldType.isArray()
-			? extractEnumerationArrayValue(value, enumeration)
-			: extractEnumerationSingleValue(value, enumeration));
+		if(value instanceof final String v)
+			value = (fieldType.isArray()
+				? extractEnumerationArrayValue(v, enumeration)
+				: extractEnumerationSingleValue(v, enumeration));
+		return value;
 	}
 
 	@SuppressWarnings("unchecked")

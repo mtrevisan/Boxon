@@ -184,15 +184,10 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 
 			//value compatible with data type and format
-			if(!matches(outerValue, formatPattern))
+			if(!JavaHelper.matches(outerValue, formatPattern))
 				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
 					dataKey, outerValue, pattern);
 		}
-	}
-
-	private static boolean matches(final CharSequence text, final Pattern pattern){
-		return pattern.matcher(text)
-			.matches();
 	}
 
 	@Override

@@ -87,11 +87,11 @@ public final class ReflectiveClassLoader{
 	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
 	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
-	 * @param annotation	The annotation to search for.
+	 * @param type	The annotation to search for.
 	 * @return	The collection of classes.
 	 */
-	public List<Class<?>> extractClassesWithAnnotation(final Class<? extends Annotation> annotation){
-		return extractClassesWithInfo(annotation, scanResult -> scanResult.getClassesWithAnnotation(annotation));
+	public List<Class<?>> extractClassesWithAnnotation(final Class<? extends Annotation> type){
+		return extractClassesWithInfo(type, scanResult -> scanResult.getClassesWithAnnotation(type));
 	}
 
 	/**
