@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an array of primitive values (... before the application of a converter).
+ * Manages an array of primitive values of given {@link #type()} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
