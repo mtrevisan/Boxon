@@ -137,7 +137,6 @@ abstract class BitReaderData{
 				fillCache();
 
 			final int length = Math.min(bitsToRead - bitsRead, remaining);
-			//transfer the cache values
 			bitmap = readFromCache(bitmap, bitsRead, length);
 			bitsRead += length;
 
@@ -178,7 +177,6 @@ abstract class BitReaderData{
 			if(remaining == 0)
 				fillCache();
 
-			//transfer the cache values
 			final int length = Math.min(bitsToRead - bitsRead, remaining);
 			readFromCache(bitmap, bitsRead, length);
 			bitsRead += length;

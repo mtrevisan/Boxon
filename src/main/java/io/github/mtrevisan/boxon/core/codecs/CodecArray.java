@@ -172,8 +172,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			: binding.selectDefault());
 
 		if(chosenAlternativeType == void.class)
-			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
-				rootObject.getClass().getSimpleName());
+			throw CodecException.createNoCodecForAlternatives(rootObject.getClass());
 
 		return chosenAlternativeType;
 	}

@@ -24,55 +24,35 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.Serial;
 
 
 /**
- * Thrown if no codec is found.
+ * Thrown if an unhandled field type is found.
  */
-public final class CodecException extends FieldException{
+public final class UnhandledFieldException extends IllegalArgumentException{
 
 	@Serial
-	private static final long serialVersionUID = 2879230296103139872L;
+	private static final long serialVersionUID = -111445518565658393L;
 
 
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
-	 * @param parameters	The parameters of the message.
+	 * @param value	The unhandled value.
 	 * @return	An instance of this exception.
 	 */
-	public static CodecException create(final String message, final Object... parameters){
-		return new CodecException(StringHelper.format(message, parameters));
-	}
-
-	/**
-	 * Constructs a new 'no codec' exception for the given annotation.
-	 *
-	 * @param annotationType	The annotation type.
-	 * @return	An instance of this exception.
-	 */
-	public static CodecException createNoCodecForBinding(final Class<?> annotationType){
-		return new CodecException(StringHelper.format("Cannot find a codec for binding {}",
-			annotationType.getSimpleName()));
-	}
-
-	/**
-	 * Constructs a new 'no codec' exception for the given type.
-	 *
-	 * @param rootObjectType	The context type.
-	 * @return	An instance of this exception.
-	 */
-	public static CodecException createNoCodecForAlternatives(final Class<?> rootObjectType){
-		return new CodecException(StringHelper.format("Cannot find a valid codec from given alternatives for type {}",
-			rootObjectType.getSimpleName()));
+	public static UnhandledFieldException create(final Object value){
+		return new UnhandledFieldException(
+			StringHelper.format("Cannot handle this type of field: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(value.getClass())));
 	}
 
 
-	private CodecException(final String message){
+	private UnhandledFieldException(final String message){
 		super(message);
 	}
 
