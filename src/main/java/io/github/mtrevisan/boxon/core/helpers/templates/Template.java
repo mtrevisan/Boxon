@@ -275,11 +275,15 @@ public final class Template<T>{
 			if(annotation instanceof final SkipBits sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipBits.Skips sk)
-				Arrays.stream(sk.value()).map(SkipParams::create).forEachOrdered(skips::add);
+				Arrays.stream(sk.value())
+					.map(SkipParams::create)
+					.forEachOrdered(skips::add);
 			else if(annotation instanceof final SkipUntilTerminator sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipUntilTerminator.Skips sk)
-				Arrays.stream(sk.value()).map(SkipParams::create).forEachOrdered(skips::add);
+				Arrays.stream(sk.value())
+					.map(SkipParams::create)
+					.forEachOrdered(skips::add);
 		}
 		return skips;
 	}

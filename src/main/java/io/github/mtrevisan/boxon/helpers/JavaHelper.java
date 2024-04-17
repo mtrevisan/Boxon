@@ -212,7 +212,7 @@ public final class JavaHelper{
 	}
 
 
-	public static String prettyPrintClassName(Class<?> cls){
+	public static String prettyPrintClassName(final Class<?> cls){
 		final String className = cls.getName();
 		final int count = countLeadingSquareBrackets(className);
 		if(count > 0){

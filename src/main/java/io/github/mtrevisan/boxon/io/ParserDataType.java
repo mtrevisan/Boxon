@@ -305,7 +305,7 @@ public enum ParserDataType{
 	abstract Object value(String value);
 
 
-	public abstract Number cast(BigInteger value);
+	protected abstract Number cast(BigInteger value);
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
@@ -405,7 +405,7 @@ public enum ParserDataType{
 
 	public static Number castValue(final BigInteger value, final Class<?> inputType){
 		if(inputType != null){
-			final ParserDataType pdt = ParserDataType.fromType(inputType);
+			final ParserDataType pdt = fromType(inputType);
 			if(pdt != null)
 				return pdt.cast(value);
 		}

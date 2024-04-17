@@ -56,7 +56,7 @@ final class TemplateAnnotationValidatorHelper{
 				annotation.getSimpleName());
 	}
 
-	static void validateConverter(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
+	static void validateConverter(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 			throws AnnotationException{
 		if(fieldType == Object.class)
 			return;

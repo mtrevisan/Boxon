@@ -44,6 +44,7 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -130,7 +131,7 @@ public final class Configurator{
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
+	private static List<Map<String, Object>> extractConfigurations(final Collection<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws CodecException, ConfigurationException{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues){

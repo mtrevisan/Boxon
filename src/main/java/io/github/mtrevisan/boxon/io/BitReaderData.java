@@ -242,7 +242,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	A {@code byte}.
 	 */
-	public abstract byte getByte();
+	protected abstract byte getByte();
 
 	/**
 	 * Retrieve text until a terminator (NOT consumed!) is found.

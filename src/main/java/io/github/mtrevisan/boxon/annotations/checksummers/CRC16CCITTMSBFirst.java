@@ -40,7 +40,7 @@ abstract class CRC16CCITTMSBFirst implements Checksummer{
 	abstract int initialValue();
 
 	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end){
+	public final short calculateChecksum(final byte[] data, final int start, final int end){
 		int value = initialValue();
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];

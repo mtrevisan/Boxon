@@ -109,7 +109,7 @@ public final class AnnotationDescriptorHelper{
 			rootDescription.put(key, Collections.unmodifiableMap(description));
 	}
 
-	public static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription){
+	private static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription){
 		final Method[] methods = objType.getDeclaredMethods();
 
 		extractObjectParameters(obj, methods, rootDescription);
