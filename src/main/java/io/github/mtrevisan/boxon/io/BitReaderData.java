@@ -155,7 +155,7 @@ abstract class BitReaderData{
 	 */
 	private long readFromCache(long bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
 			bitmap |= 1l << (skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
@@ -196,10 +196,14 @@ abstract class BitReaderData{
 	 */
 	private void readFromCache(final BitSet bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
 			bitmap.set(skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
+	}
+
+	private int cacheTrailingZeros(){
+		return Integer.numberOfTrailingZeros(cache & 0xFF);
 	}
 
 	/**
