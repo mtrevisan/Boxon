@@ -87,7 +87,7 @@ class TemplateTest{
 	}
 
 	@TemplateHeader(start = "+", end = "-")
-	private static class Message{
+	static class Message{
 
 		private final Map<Byte, String> messageTypeMap = new HashMap<>(2);
 

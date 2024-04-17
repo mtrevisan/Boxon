@@ -111,12 +111,12 @@ class ConverterTest{
 
 	@Test
 	void wrongOutputFromConverter(){
-		Exception e = Assertions.assertThrows(AnnotationException.class,
+		Exception exc = Assertions.assertThrows(AnnotationException.class,
 			() -> CoreBuilder.builder()
 				.withDefaultCodecs()
 				.withTemplate(TestConverter2.class)
 				.create());
-		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value", e.getMessage());
+		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value", exc.getMessage());
 	}
 
 	@Test

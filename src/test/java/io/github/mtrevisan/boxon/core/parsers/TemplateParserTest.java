@@ -205,20 +205,13 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithConverterOutputError() throws AnnotationException{
-		byte[] payload = StringHelper.hexToByteArray("74633501");
-		BitReaderInterface reader = BitReader.wrap(payload);
-
+	void parseWithConverterOutputError(){
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set byte field to String in field "
+		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> loaderTemplate.createTemplate(TestError3.class));
+		Assertions.assertEquals("Type mismatch between converter output (String) and field type (byte) in field "
 			+ TemplateParserTest.TestError3.class.getName() + ".type", exc.getMessage());
 	}
 
@@ -244,20 +237,12 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithConverterInputError() throws AnnotationException{
-		byte[] payload = StringHelper.hexToByteArray("74633501");
-		BitReaderInterface reader = BitReader.wrap(payload);
-
+	void parseWithConverterInputError(){
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
-
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input BigInteger (1) to decode method of converter WrongInputConverter in field "
+		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> loaderTemplate.createTemplate(TestError4.class));
+		Assertions.assertEquals("Type mismatch between annotation output (BigInteger) and converter input (String) in field "
 			+ TemplateParserTest.TestError4.class.getName() + ".type", exc.getMessage());
 	}
 

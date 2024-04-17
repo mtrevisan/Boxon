@@ -89,9 +89,9 @@ class ExtractorTest{
 		int[] array = {12, 23};
 		Extractor extractor = Extractor.create(array);
 
-		Exception e = Assertions.assertThrows(JSONPathException.class,
+		Exception exc = Assertions.assertThrows(JSONPathException.class,
 			() -> extractor.get("/01", null));
-		Assertions.assertEquals("No array field '01' found on path '/01'", e.getMessage());
+		Assertions.assertEquals("No array field '01' found on path '/01'", exc.getMessage());
 	}
 
 	@Test
