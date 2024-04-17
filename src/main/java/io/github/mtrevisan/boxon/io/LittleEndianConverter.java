@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.io;
 
 import java.math.BigInteger;
 import java.util.BitSet;

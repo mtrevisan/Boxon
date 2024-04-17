@@ -24,7 +24,13 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -391,6 +397,35 @@ public enum ParserDataType{
 			}
 		}
 		return result;
+	}
+
+
+
+	public static Class<?> resolveInputType(final Class<? extends Converter<?, ?>> converterType,
+		final Class<? extends Validator<?>> validatorType){
+		Class<?> inputType = null;
+		if(converterType != NullConverter.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(converterType, Converter.class)
+				.getFirst();
+		if(inputType == null && validatorType != NullValidator.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(validatorType, Validator.class)
+				.getFirst();
+		return inputType;
+	}
+
+	public static Number castValue(final BigInteger value, final Class<?> inputType){
+		if(inputType != null){
+			final ParserDataType pdt = ParserDataType.fromType(inputType);
+			if(pdt != null)
+				return pdt.cast(value);
+		}
+		return value;
+	}
+
+	public static BigInteger reinterpretToBigInteger(final Number value){
+		return  (value instanceof final BigInteger bi
+			? bi
+			: BigInteger.valueOf(value.longValue()));
 	}
 
 }

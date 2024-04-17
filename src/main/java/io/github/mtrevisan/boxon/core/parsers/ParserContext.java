@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -79,7 +79,7 @@ final class ParserContext<T>{
 	@SuppressWarnings("unchecked")
 	void setFieldValue(final Field field, Object value){
 		if(value instanceof final BigInteger bi)
-			value = GenericHelper.castValue(bi, field.getType());
+			value = ParserDataType.castValue(bi, field.getType());
 
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = (T)FieldAccessor.setFieldValue(currentObject, field, value);

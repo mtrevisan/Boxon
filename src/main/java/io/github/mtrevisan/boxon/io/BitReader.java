@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

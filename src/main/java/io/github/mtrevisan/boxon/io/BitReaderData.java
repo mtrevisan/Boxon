@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -171,7 +170,7 @@ abstract class BitReaderData{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final synchronized BitSet getBitSet(final int bitsToRead){
-		final BitSet bitmap = BitSetHelper.createBitSet(bitsToRead);
+		final BitSet bitmap = new BitSet(bitsToRead);
 
 		int bitsRead = 0;
 		while(bitsRead < bitsToRead){
