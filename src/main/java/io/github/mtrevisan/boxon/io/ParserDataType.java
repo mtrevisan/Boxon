@@ -49,7 +49,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.byteValue();
 		}
 
@@ -72,7 +72,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.shortValue();
 		}
 
@@ -95,7 +95,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.intValue();
 		}
 
@@ -118,7 +118,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.longValue();
 		}
 
@@ -141,7 +141,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.floatValue();
 		}
 
@@ -164,7 +164,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.doubleValue();
 		}
 
@@ -299,7 +299,7 @@ public enum ParserDataType{
 	abstract Object value(String value);
 
 
-	abstract Object cast(BigInteger value);
+	public abstract Number cast(BigInteger value);
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.

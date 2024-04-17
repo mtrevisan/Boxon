@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -58,9 +59,14 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+		final Class<? extends Converter<?, ?>> converter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
-		return CodecHelper.decodeValue(converterType, validator, value);
+
+		//convert value type into converter/validator input type
+		final Class<?> inputType = GenericHelper.resolveInputType(converter, validator);
+		final Object convertedValue = GenericHelper.castValue(value, inputType);
+
+		return CodecHelper.decodeValue(converter, validator, convertedValue);
 	}
 
 	@Override
@@ -76,8 +82,9 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
-		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
+		final Number convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
+		final BigInteger v = GenericHelper.reinterpretToBigInteger(convertedValue);
 		final ByteOrder byteOrder = binding.byteOrder();
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 

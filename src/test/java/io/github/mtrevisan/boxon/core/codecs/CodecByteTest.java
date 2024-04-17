@@ -24,39 +24,53 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
+import java.math.BigInteger;
 
 
 class CodecByteTest{
 
 	@Test
 	void testByte() throws FieldException{
-		CodecInterface<BindByte> codec = new CodecByte();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		byte encodedValue = (byte)(TestHelper.RANDOM.nextInt() & 0x0000_00FF);
-		BindByte annotation = new BindByte(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindByte.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "8";
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
 			}
 
 			@Override
@@ -86,6 +100,7 @@ class CodecByteTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -93,7 +108,8 @@ class CodecByteTest{
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		byte decoded = (byte)codec.decode(reader, annotation, null);
+		byte decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.byteValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

@@ -369,6 +369,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
 			final Object value = evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
+
+			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
@@ -437,6 +439,8 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final String expression = valueExtractor.apply(binding);
 		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
+
+		//store value in the current object
 		parserContext.setFieldValue(field.getField(), value);
 
 		eventListener.evaluatedField(templateName, fieldName, value);

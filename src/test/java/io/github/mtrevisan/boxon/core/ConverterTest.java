@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -44,7 +44,7 @@ class ConverterTest{
 	private static class TestConverter1{
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongConverterInput.class)
+		@BindInteger(size = "8", converter = WrongConverterInput.class)
 		String value;
 	}
 
@@ -65,7 +65,7 @@ class ConverterTest{
 	private static class TestConverter2{
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongConverterOutput.class)
+		@BindInteger(size = "8", converter = WrongConverterOutput.class)
 		String value;
 	}
 
@@ -73,7 +73,7 @@ class ConverterTest{
 	private static class TestConverter3{
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongConverterOutput.class)
+		@BindInteger(size = "8", converter = WrongConverterOutput.class)
 		int value;
 	}
 
@@ -105,7 +105,7 @@ class ConverterTest{
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input BigInteger (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
 			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 

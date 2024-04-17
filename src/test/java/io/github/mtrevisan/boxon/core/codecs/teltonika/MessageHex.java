@@ -30,12 +30,8 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16IBM;
 
 import java.math.BigDecimal;
@@ -47,9 +43,9 @@ import java.time.ZonedDateTime;
 public class MessageHex{
 
 	public static final class AVLData{
-		@BindLong(converter = TeltonikaHelper.UnixTimestampConverter.class)
+		@BindInteger(size = "64", converter = TeltonikaHelper.UnixTimestampConverter.class)
 		private LocalDateTime eventTime;
-		@BindByte
+		@BindInteger(size = "8")
 		private byte priority;
 		@BindObject(type = GPSElement.class)
 		private GPSElement gpsElement;
@@ -58,24 +54,24 @@ public class MessageHex{
 	}
 
 	public static final class GPSElement{
-		@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
+		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal longitude;
-		@BindInt(converter = TeltonikaHelper.CoordinateConverter.class)
+		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal latitude;
 		//[m]
-		@BindShort
+		@BindInteger(size = "16")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short altitude;
 		//Heading measured from magnetic north [°]
-		@BindShort
+		@BindInteger(size = "16")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short heading;
-		@BindByte
+		@BindInteger(size = "8")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
 		private Byte satellitesCount;
-		@BindShort
+		@BindInteger(size = "16")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short speed;
 
@@ -87,7 +83,7 @@ public class MessageHex{
 		//IO property that has changed, zero if it's not a record caused by an event
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int eventIOID;
-		@BindByte(condition = "codecID == 0x10")
+		@BindInteger(size = "8", condition = "codecID == 0x10")
 		private int generationType;
 		//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
 		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
@@ -108,7 +104,7 @@ public class MessageHex{
 		private int eightBytesPropertiesCount;
 		@BindArray(size = "#self.eightBytesPropertiesCount", type = TeltonikaHelper.EightBytesProperty.class)
 		private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
-		@BindShort(condition = "codecID == -114")
+		@BindInteger(size = "16", condition = "codecID == -114")
 		private int variableBytesPropertiesCount;
 		@BindArray(condition = "codecID == -114", size = "#self.variableBytesPropertiesCount",
 			type = TeltonikaHelper.VariableBytesProperty.class)
@@ -116,17 +112,17 @@ public class MessageHex{
 	}
 
 
-	@BindInt(validator = TeltonikaHelper.PreambleValidator.class)
+	@BindInteger(size = "32", validator = TeltonikaHelper.PreambleValidator.class)
 	private int preamble;
-	@BindInt
+	@BindInteger(size = "32")
 	private int messageLength;
-	@BindByte
+	@BindInteger(size = "8")
 	private byte codecID;
-	@BindByte
+	@BindInteger(size = "8")
 	private byte dataCount1;
 	@BindArray(size = "dataCount1", type = AVLData.class)
 	private AVLData[] data;
-	@BindByte
+	@BindInteger(size = "8")
 	//should be same as `dataCount1`
 	private byte dataCount2;
 

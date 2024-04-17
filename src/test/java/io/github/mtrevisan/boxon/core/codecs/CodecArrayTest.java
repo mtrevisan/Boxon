@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -61,7 +61,7 @@ import java.util.List;
 
 class CodecArrayTest{
 
-	private record Version(@BindByte byte major, @BindByte byte minor, @BindByte byte build){ }
+	private record Version(@BindInteger(size = "8") byte major, @BindInteger(size = "8") byte minor, @BindInteger(size = "8") byte build){ }
 
 	@TemplateHeader(start = "tc4")
 	static class TestChoice4{
@@ -79,7 +79,7 @@ class CodecArrayTest{
 	static class TestChoice5{
 		@BindString(size = "3")
 		String header;
-		@BindByte
+		@BindInteger(size = "8")
 		byte type;
 		@BindArray(size = "1", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(
 			alternatives = {
@@ -244,8 +244,10 @@ class CodecArrayTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
+		loaderCodec.injectFieldInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(evaluator);
 		FieldAccessor.injectValue(codec, templateParser);
-		FieldAccessor.injectValue(codec, Evaluator.create());
+		FieldAccessor.injectValue(codec, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

@@ -24,13 +24,15 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -48,17 +50,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveLittleEndian() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -93,6 +100,7 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -107,17 +115,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -152,6 +165,7 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -166,17 +180,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveBigEndian() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -211,6 +230,7 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -225,17 +245,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeBigEndian() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -270,6 +295,7 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

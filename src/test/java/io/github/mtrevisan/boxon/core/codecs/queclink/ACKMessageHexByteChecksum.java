@@ -28,8 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.checksummers.BSD16;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
@@ -44,13 +43,13 @@ public class ACKMessageHexByteChecksum{
 
 	@BindString(size = "#headerLength()")
 	private String messageHeader;
-	@BindByte(converter = ACKMessageHex.MessageTypeConverter.class)
+	@BindInteger(size = "8", converter = ACKMessageHex.MessageTypeConverter.class)
 	private String messageType;
-	@BindByte(converter = ACKMaskHex.ACKMaskConverter.class)
+	@BindInteger(size = "8", converter = ACKMaskHex.ACKMaskConverter.class)
 	private ACKMaskHex mask;
-	@BindByte(condition = "mask.hasLength()")
+	@BindInteger(size = "8", condition = "mask.hasLength()")
 	private byte messageLength;
-	@BindByte(condition = "mask.hasDeviceType()")
+	@BindInteger(size = "8", condition = "mask.hasDeviceType()")
 	private byte deviceTypeCode;
 	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class,
 		converter = QueclinkHelper.VersionConverter.class)
@@ -63,14 +62,14 @@ public class ACKMessageHexByteChecksum{
 	private String imei;
 	@BindString(condition = "!mask.hasIMEI()", size = "8")
 	private String deviceName;
-	@BindByte
+	@BindInteger(size = "8")
 	private byte id;
-	@BindShort
+	@BindInteger(size = "16")
 	private short correlationId;
 	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte.class,
 		converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
 	private LocalDateTime eventTime;
-	@BindShort(condition = "mask.hasMessageId()")
+	@BindInteger(size = "16", condition = "mask.hasMessageId()")
 	private short messageId;
 
 	@Checksum(skipStart = 4, skipEnd = 4, algorithm = BSD16.class)

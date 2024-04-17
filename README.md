@@ -111,13 +111,9 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
     5. [BindList](#annotation-bindlist)
     6. [BindBitSet](#annotation-bindbitset)
-    7. [BindByte](#annotation-bindbyte)
-    8. [BindShort](#annotation-bindshort)
-    9. [BindInt](#annotation-bindint)
-    10. [BindLong](#annotation-bindlong)
-    11. [BindInteger](#annotation-bindinteger)
-    12. [BindString](#annotation-bindstring)
-    13. [BindStringTerminated](#annotation-bindstringterminated)
+    7. [BindInteger](#annotation-bindinteger)
+    8. [BindString](#annotation-bindstring)
+    9. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [TemplateHeader](#annotation-templateheader)
     2. [SkipBits](#annotation-skip-bits)
@@ -194,10 +190,6 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
 | BindList             |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindList |
 | BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
-| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
 | BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
@@ -247,9 +239,9 @@ This annotation is bounded to a variable.
 
 ```java
 class Version{
-    @BindByte
+    @BindInteger(size = "8")
     public byte major;
-    @BindByte
+    @BindInteger(size = "8")
     public byte minor;
     public byte build;
 }
@@ -287,9 +279,9 @@ This annotation is bounded to a variable.
 
 ```java
 class Version{
-    @BindByte
+    @BindInteger(size = "8")
     public byte major;
-    @BindByte
+    @BindInteger(size = "8")
     public byte minor;
     public byte build;
 }
@@ -299,7 +291,7 @@ private Version[] versions;
 ```
 
 ```java
-@BindByte
+@BindInteger(size = "8")
 private byte positionsCount;
 @BindArray(size = "positionsCount", type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
@@ -414,113 +406,6 @@ This annotation is bounded to a variable.
 ```java
 @BindBitSet(size = "2")
 private BitSet bitmap;
-```
-
-
-<a name="annotation-bindbyte"></a>
-### BindByte
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a byte (or Byte).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindByte
-public Byte mask;
-```
-
-
-<a name="annotation-bindshort"></a>
-### BindShort
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a short (or Short).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindShort
-private short numberShort;
-```
-
-
-<a name="annotation-bindint"></a>
-### BindInt
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads an int (or Integer).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindInt
-private int numberInt;
-```
-
-
-<a name="annotation-bindlong"></a>
-### BindLong
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a long (or Long).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindLong
-private long numberLong;
 ```
 
 
@@ -821,7 +706,7 @@ Example:
 
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
-	.with((byte)0x46, "QUECLINK_GB200S");
+    .with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
     .withContext(ParserTest.class.getDeclaredMethod("headerLength"))
@@ -852,7 +737,8 @@ gives as output the following
       {
          "converter": "MessageTypeConverter",
          "name": "messageType",
-         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindByte",
+         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindInteger",
+         "size": "8",
          "fieldType": "java.lang.String"
       },
       {
@@ -1233,7 +1119,7 @@ See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com
 
 ```java
 class A{
-    @BindByte
+    @BindInteger(size = "8")
     private byte value;
 
     @BindObject(type = OtherClass.class)
@@ -1270,19 +1156,19 @@ NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 
 ```java
-@BindLong(converter = UnixTimestampConverter.class)
+@BindInteger(size = "64", converter = UnixTimestampConverter.class)
 private LocalDateTime eventTime;
 
 public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
-	@Override
-	public LocalDateTime decode(final Long unixTimestamp){
-		return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneOffset.UTC);
-	}
+    @Override
+    public LocalDateTime decode(final Long unixTimestamp){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneOffset.UTC);
+    }
 
-	@Override
-	public Long encode(final LocalDateTime value){
-		return value.toInstant(ZoneOffset.UTC).toEpochMilli();
-	}
+    @Override
+    public Long encode(final LocalDateTime value){
+        return value.toInstant(ZoneOffset.UTC).toEpochMilli();
+    }
 }
 ```
 
@@ -1349,7 +1235,7 @@ public class IMEIConverter implements Converter<byte[], String>{
 #### RSSI converter (from encoded byte to short value)
 
 ```java
-@BindByte(converter = RSSIConverter.class)
+@BindInteger(size = "8", converter = RSSIConverter.class)
 private short rssi;
 
 /**
@@ -1566,6 +1452,7 @@ Pull requests are welcomed.
 
 - Fixed error while handling of `SkipBits` and `SkipUntilTerminator` to allow processing multiple instances.
 - Removed useless `BindFloat` and `BindDouble` has they are rarely used and can be substituted by the appropriate converters (`IntegerToFloatConvert` and `LongToDoubleConverter`).
+- Removed useless `BindByte`, `BindShort`, `BindInt`, and `BindLong` has they can be substituted by `BindInteger`.
 
 <a name="changelog-3.6.0"></a>
 ### version 3.6.0 - 20240413

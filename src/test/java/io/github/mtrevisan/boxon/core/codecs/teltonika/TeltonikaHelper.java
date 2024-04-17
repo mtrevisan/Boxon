@@ -25,11 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs.teltonika;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
-import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 
@@ -103,33 +99,33 @@ public final class TeltonikaHelper{
 	public static class OneByteProperty{
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
-		@BindByte
+		@BindInteger(size = "8")
 		private int value;
 	}
 
 	public static class TwoBytesProperty{
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
-		@BindShort
+		@BindInteger(size = "16")
 		private int value;
 	}
 
 	public static class FourBytesProperty{
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
-		@BindInt
+		@BindInteger(size = "32")
 		private int value;
 	}
 
 	public static class EightBytesProperty{
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int key;
-		@BindLong
+		@BindInteger(size = "64")
 		private long value;
 	}
 
 	public static class VariableBytesProperty{
-		@BindShort
+		@BindInteger(size = "16")
 		private int length;
 		@BindArrayPrimitive(size = "#self.length", type = byte.class)
 		private byte[] value;
