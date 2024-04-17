@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -46,6 +47,7 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.List;
 
@@ -124,6 +126,16 @@ enum TemplateAnnotationValidator{
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, BitSet.class);
+		}
+	},
+
+	INTEGER(BindInteger.class){
+		@Override
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+			final BindInteger binding = (BindInteger)annotation;
+
+			final Class<? extends Converter<?, ?>> converter = binding.converter();
+			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, BigInteger.class);
 		}
 	},
 

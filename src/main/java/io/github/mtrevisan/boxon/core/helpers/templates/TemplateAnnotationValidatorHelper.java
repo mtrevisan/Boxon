@@ -32,10 +32,14 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.List;
 
 
 /**
@@ -54,12 +58,42 @@ final class TemplateAnnotationValidatorHelper{
 
 	static void validateConverter(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 			throws AnnotationException{
-		if(converter == NullConverter.class && bindingType != Object.class){
-			fieldType = FieldAccessor.extractFieldType(fieldType);
+		if(fieldType == Object.class)
+			return;
 
-			if(!fieldType.isAssignableFrom(bindingType))
-				throw AnnotationException.createBadAnnotation(fieldType, bindingType);
-		}
+		if(converter == NullConverter.class)
+			validateNullConverter(fieldType, bindingType);
+		else
+			validateForNonNullConverter(fieldType, converter, bindingType);
+	}
+
+	private static void validateNullConverter(Class<?> fieldType, final Class<?> bindingType) throws AnnotationException{
+		fieldType = FieldAccessor.extractFieldType(fieldType);
+		if(!validateTypes(fieldType, bindingType))
+			throw AnnotationException.create("Type mismatch between annotation output ({}) and field type ({})",
+				bindingType.getSimpleName(), fieldType.getSimpleName());
+	}
+
+	private static void validateForNonNullConverter(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter,
+			final Class<?> bindingType) throws AnnotationException{
+		final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter, Converter.class);
+		final Class<?> inputType = FieldAccessor.extractFieldType((Class<?>)inOutTypes.getFirst());
+		final Class<?> outputType = (Class<?>)inOutTypes.getLast();
+
+		if(!validateTypes(inputType, bindingType))
+			throw AnnotationException.create("Type mismatch between annotation output ({}) and converter input ({})",
+				bindingType.getSimpleName(), inputType.getSimpleName());
+
+		if(!validateTypes(fieldType, outputType))
+			throw AnnotationException.create("Type mismatch between converter output ({}) and field type ({})",
+				outputType.getSimpleName(), fieldType.getSimpleName());
+	}
+
+	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
+		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
+		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
+		return (checkTypeObjective.isAssignableFrom(baseTypeObjective)
+			|| Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
 	}
 
 	private static void validateConverterToList(final Class<?> fieldType, final Class<?> bindingType,

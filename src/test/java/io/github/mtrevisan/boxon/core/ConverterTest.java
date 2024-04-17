@@ -93,7 +93,7 @@ class ConverterTest{
 	void wrongInputOnConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestConverter1.class)
+			.withTemplate(TestConverter1.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -110,30 +110,20 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
-		Core core = CoreBuilder.builder()
-			.withDefaultCodecs()
-			.withTemplatesFrom(TestConverter2.class)
-			.create();
-		Parser parser = Parser.create(core);
-
-		byte[] payload = StringHelper.hexToByteArray("77633201");
-		List<Response<byte[], Object>> result = parser.parse(payload);
-
-		Assertions.assertNotNull(result);
-		Assertions.assertEquals(2, result.size());
-		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertArrayEquals(payload, response.getSource());
-		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
-			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
+	void wrongOutputFromConverter(){
+		Exception e = Assertions.assertThrows(AnnotationException.class,
+			() -> CoreBuilder.builder()
+				.withDefaultCodecs()
+				.withTemplate(TestConverter2.class)
+				.create());
+		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value", e.getMessage());
 	}
 
 	@Test
 	void allowedOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestConverter3.class)
+			.withTemplate(TestConverter3.class)
 			.create();
 		Parser parser = Parser.create(core);
 
