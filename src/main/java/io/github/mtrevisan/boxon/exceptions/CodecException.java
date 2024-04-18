@@ -49,6 +49,28 @@ public final class CodecException extends FieldException{
 		return new CodecException(StringHelper.format(message, parameters));
 	}
 
+	/**
+	 * Constructs a new 'no codec' exception for the given annotation.
+	 *
+	 * @param annotationType	The annotation type.
+	 * @return	An instance of this exception.
+	 */
+	public static CodecException createNoCodecForBinding(final Class<?> annotationType){
+		return new CodecException(StringHelper.format("Cannot find a codec for binding {}",
+			annotationType.getSimpleName()));
+	}
+
+	/**
+	 * Constructs a new 'no codec' exception for the given type.
+	 *
+	 * @param rootObjectType	The context type.
+	 * @return	An instance of this exception.
+	 */
+	public static CodecException createNoCodecForAlternatives(final Class<?> rootObjectType){
+		return new CodecException(StringHelper.format("Cannot find a valid codec from given alternatives for type {}",
+			rootObjectType.getSimpleName()));
+	}
+
 
 	private CodecException(final String message){
 		super(message);

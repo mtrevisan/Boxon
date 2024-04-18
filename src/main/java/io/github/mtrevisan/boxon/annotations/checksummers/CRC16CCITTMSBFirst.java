@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,21 +22,37 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.extractors;
-
-import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
-
-import java.lang.annotation.Annotation;
+package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-public interface FieldExtractor<F>{
+/**
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT algorithms.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
+ */
+abstract class CRC16CCITTMSBFirst implements Checksummer{
 
-	SkipParams[] getSkips(F field);
+	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021. */
+	private static final int POLYNOMIAL = 0x0000_1021;
 
-	Annotation getBinding(F field);
 
-	String getFieldName(F field);
+	abstract int initialValue();
 
-	Class<?> getFieldType(F field);
+	@Override
+	public final short calculateChecksum(final byte[] data, final int start, final int end){
+		int value = initialValue();
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
+
+			value ^= datum << Byte.SIZE;
+			for(int j = 0; j < Byte.SIZE; j ++){
+				value <<= 1;
+				if((value & 0x1_0000) != 0)
+					value ^= POLYNOMIAL;
+			}
+		}
+		return (short)value;
+	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,21 +22,52 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.extractors;
-
-import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
-
-import java.lang.annotation.Annotation;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 
-public interface FieldExtractor<F>{
+/** An enumeration for byte orders. */
+public enum ByteOrder{
 
-	SkipParams[] getSkips(F field);
+	/** Little-endian byte order. */
+	LITTLE_ENDIAN{
+		@Override
+		public short correctEndianness(final short value){
+			return value;
+		}
 
-	Annotation getBinding(F field);
+		@Override
+		public int correctEndianness(final int value){
+			return value;
+		}
 
-	String getFieldName(F field);
+		@Override
+		public long correctEndianness(final long value){
+			return value;
+		}
+	},
+	/** Big-endian byte order. */
+	BIG_ENDIAN{
+		@Override
+		public short correctEndianness(final short value){
+			return Short.reverseBytes(value);
+		}
 
-	Class<?> getFieldType(F field);
+		@Override
+		public int correctEndianness(final int value){
+			return Integer.reverseBytes(value);
+		}
+
+		@Override
+		public long correctEndianness(final long value){
+			return Long.reverseBytes(value);
+		}
+	};
+
+
+	public abstract short correctEndianness(short value);
+
+	public abstract int correctEndianness(int value);
+
+	public abstract long correctEndianness(long value);
 
 }

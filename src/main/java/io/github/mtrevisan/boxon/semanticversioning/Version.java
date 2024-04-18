@@ -52,6 +52,7 @@ public final class Version implements Comparable<Version>{
 	public static final Version EMPTY = of("");
 
 	private static final char DOT = '.';
+	private static final String DOT_AS_STRING = String.valueOf(DOT);
 	/** A separator that separates the pre-release version from the normal version. */
 	private static final String PRE_RELEASE_PREFIX = "-";
 	/** A separator that separates the build metadata from the normal version or the pre-release version. */
@@ -644,13 +645,12 @@ public final class Version implements Comparable<Version>{
 		if(patch != null)
 			sb.append(DOT)
 				.append(patch);
-		final String dot = String.valueOf(DOT);
 		if(preRelease != null && preRelease.length > 0)
 			sb.append(PRE_RELEASE_PREFIX)
-				.append(String.join(dot, preRelease));
+				.append(String.join(DOT_AS_STRING, preRelease));
 		if(build != null && build.length > 0)
 			sb.append(BUILD_PREFIX)
-				.append(String.join(dot, build));
+				.append(String.join(DOT_AS_STRING, build));
 		return sb.toString();
 	}
 

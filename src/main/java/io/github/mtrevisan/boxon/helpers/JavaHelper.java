@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 
 /**
@@ -58,6 +59,20 @@ public final class JavaHelper{
 		return (obj != null? obj: defaultObject);
 	}
 
+
+	public static boolean matches(final CharSequence text, final Pattern pattern){
+		return pattern.matcher(text)
+			.matches();
+	}
+
+	public static boolean matchesOrBlank(final String text, final Pattern pattern){
+		return (StringHelper.isBlank(text) || matches(text, pattern));
+	}
+
+
+	public static int getSizeInBytes(final int bits){
+		return (bits + Byte.SIZE - 1) >>> 3;
+	}
 
 	/**
 	 * Return the length of the text, or {@code 0} if {@code null}.
@@ -197,7 +212,7 @@ public final class JavaHelper{
 	}
 
 
-	public static String prettyPrintClassName(Class<?> cls){
+	public static String prettyPrintClassName(final Class<?> cls){
 		final String className = cls.getName();
 		final int count = countLeadingSquareBrackets(className);
 		if(count > 0){

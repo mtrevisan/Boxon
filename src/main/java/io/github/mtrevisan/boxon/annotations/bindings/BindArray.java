@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an array of {@link Object} (... before the application of a converter).
+ * Manages an array of the given {@link #type()} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

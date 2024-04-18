@@ -22,52 +22,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.exceptions;
+
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
+import java.io.Serial;
 
 
-/** An enumeration for byte orders. */
-public enum ByteOrder{
+/**
+ * Thrown if an unhandled field type is found.
+ */
+public final class UnhandledFieldException extends IllegalArgumentException{
 
-	/** Little-endian byte order. */
-	LITTLE_ENDIAN{
-		@Override
-		short correctEndianness(final short value){
-			return value;
-		}
-
-		@Override
-		int correctEndianness(final int value){
-			return value;
-		}
-
-		@Override
-		long correctEndianness(final long value){
-			return value;
-		}
-	},
-	/** Big-endian byte order. */
-	BIG_ENDIAN{
-		@Override
-		short correctEndianness(final short value){
-			return Short.reverseBytes(value);
-		}
-
-		@Override
-		int correctEndianness(final int value){
-			return Integer.reverseBytes(value);
-		}
-
-		@Override
-		long correctEndianness(final long value){
-			return Long.reverseBytes(value);
-		}
-	};
+	@Serial
+	private static final long serialVersionUID = -111445518565658393L;
 
 
-	abstract short correctEndianness(short value);
+	/**
+	 * Constructs a new exception with the specified message, possibly with parameters.
+	 *
+	 * @param value	The unhandled value.
+	 * @return	An instance of this exception.
+	 */
+	public static UnhandledFieldException create(final Object value){
+		return new UnhandledFieldException(
+			StringHelper.format("Cannot handle this type of field: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(value.getClass())));
+	}
 
-	abstract int correctEndianness(int value);
 
-	abstract long correctEndianness(long value);
+	private UnhandledFieldException(final String message){
+		super(message);
+	}
 
 }

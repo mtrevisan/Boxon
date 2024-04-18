@@ -24,11 +24,13 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -164,6 +166,14 @@ public final class GenericHelper{
 
 		if(types.isEmpty())
 			types.add(currentOffspring);
+	}
+
+
+	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
+		final int[] dimensions = new int[arraysCount];
+		Arrays.fill(dimensions, 1);
+		return Array.newInstance(cls, dimensions)
+			.getClass();
 	}
 
 }

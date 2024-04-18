@@ -32,8 +32,8 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -278,7 +278,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
-			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
+			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
@@ -369,6 +369,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
 			final Object value = evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
+
+			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
@@ -437,6 +439,8 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final String expression = valueExtractor.apply(binding);
 		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
+
+		//store value in the current object
 		parserContext.setFieldValue(field.getField(), value);
 
 		eventListener.evaluatedField(templateName, fieldName, value);

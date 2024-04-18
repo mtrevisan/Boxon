@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 
 
 final class FloatWriterManager implements WriterManagerInterface{

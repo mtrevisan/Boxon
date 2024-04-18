@@ -296,8 +296,8 @@ public final class LoaderConfiguration{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final Annotation annotation = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
 			final Field f = field.getField();
 			Object dataValue = manager.getDefaultValue(f.getType(), protocol);
 			dataValue = manager.convertValue(f, manager.getShortDescription(), dataValue, protocol);

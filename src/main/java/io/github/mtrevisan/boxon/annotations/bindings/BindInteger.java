@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -38,8 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@code long}/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>, {@link java.math.BigInteger BigInteger}
- * otherwise (... before the application of a converter).
+ * Manages a {@link java.math.BigInteger BigInteger} with the given {@link #size()} in bits (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

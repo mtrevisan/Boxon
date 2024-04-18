@@ -36,8 +36,8 @@ import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.io.IOException;
@@ -162,8 +162,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
 		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), map);
 
 		final Object defaultValue = ConfigurationHelper.convertValue(binding.defaultValue(), fieldType, NullEnum.class);
 		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
@@ -185,15 +184,10 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 
 			//value compatible with data type and format
-			if(!matches(outerValue, formatPattern))
+			if(!JavaHelper.matches(outerValue, formatPattern))
 				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
 					dataKey, outerValue, pattern);
 		}
-	}
-
-	private static boolean matches(final CharSequence text, final Pattern pattern){
-		return pattern.matcher(text)
-			.matches();
 	}
 
 	@Override

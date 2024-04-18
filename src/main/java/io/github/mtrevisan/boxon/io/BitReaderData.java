@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -138,7 +138,6 @@ abstract class BitReaderData{
 				fillCache();
 
 			final int length = Math.min(bitsToRead - bitsRead, remaining);
-			//transfer the cache values
 			bitmap = readFromCache(bitmap, bitsRead, length);
 			bitsRead += length;
 
@@ -157,7 +156,7 @@ abstract class BitReaderData{
 	 */
 	private long readFromCache(long bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
 			bitmap |= 1l << (skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
@@ -171,7 +170,7 @@ abstract class BitReaderData{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final synchronized BitSet getBitSet(final int bitsToRead){
-		final BitSet bitmap = BitSetHelper.createBitSet(bitsToRead);
+		final BitSet bitmap = new BitSet(bitsToRead);
 
 		int bitsRead = 0;
 		while(bitsRead < bitsToRead){
@@ -179,7 +178,6 @@ abstract class BitReaderData{
 			if(remaining == 0)
 				fillCache();
 
-			//transfer the cache values
 			final int length = Math.min(bitsToRead - bitsRead, remaining);
 			readFromCache(bitmap, bitsRead, length);
 			bitsRead += length;
@@ -199,10 +197,14 @@ abstract class BitReaderData{
 	 */
 	private void readFromCache(final BitSet bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
 			bitmap.set(skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
+	}
+
+	private int cacheTrailingZeros(){
+		return Integer.numberOfTrailingZeros(cache & 0xFF);
 	}
 
 	/**
@@ -240,7 +242,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	A {@code byte}.
 	 */
-	public abstract byte getByte();
+	protected abstract byte getByte();
 
 	/**
 	 * Retrieve text until a terminator (NOT consumed!) is found.
@@ -352,7 +354,7 @@ abstract class BitReaderData{
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	public final synchronized int position(){
-		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
+		return buffer.position() - JavaHelper.getSizeInBytes(remaining);
 	}
 
 	/**

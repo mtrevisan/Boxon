@@ -60,7 +60,7 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * Add the minimum and maximum protocol versions to the collection.
 	 *
-	 * @param protocolVersionBoundaries	The collection to add the versions to.
+	 * @param protocolVersionBoundaries	The collection to add the protocol versions to.
 	 */
 	void addProtocolVersionBoundaries(Collection<String> protocolVersionBoundaries);
 

@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
@@ -276,11 +275,15 @@ public final class Template<T>{
 			if(annotation instanceof final SkipBits sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipBits.Skips sk)
-				Arrays.stream(sk.value()).map(SkipParams::create).forEachOrdered(skips::add);
+				Arrays.stream(sk.value())
+					.map(SkipParams::create)
+					.forEachOrdered(skips::add);
 			else if(annotation instanceof final SkipUntilTerminator sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipUntilTerminator.Skips sk)
-				Arrays.stream(sk.value()).map(SkipParams::create).forEachOrdered(skips::add);
+				Arrays.stream(sk.value())
+					.map(SkipParams::create)
+					.forEachOrdered(skips::add);
 		}
 		return skips;
 	}

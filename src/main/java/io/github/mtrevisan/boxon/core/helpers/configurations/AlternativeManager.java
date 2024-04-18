@@ -189,8 +189,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
@@ -202,8 +201,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), map);
 		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(binding.minValue()), map);
 		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(binding.maxValue()), map);
 		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
@@ -233,8 +231,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(field.getType(), v);
+			dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
 
 			final Version minProtocolVersion = Version.of(fieldBinding.minProtocol());
 			final Version maxProtocolVersion = Version.of(fieldBinding.maxProtocol());

@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
-import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
+import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -109,7 +109,7 @@ public final class AnnotationDescriptorHelper{
 			rootDescription.put(key, Collections.unmodifiableMap(description));
 	}
 
-	public static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription){
+	private static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription){
 		final Method[] methods = objType.getDeclaredMethods();
 
 		extractObjectParameters(obj, methods, rootDescription);

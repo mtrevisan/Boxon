@@ -43,7 +43,7 @@ public final class CRC16IBM implements Checksummer{
 
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end){
-		int value = 0;
+		int value = 0x0000;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 

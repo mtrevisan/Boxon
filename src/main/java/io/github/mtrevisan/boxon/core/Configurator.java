@@ -34,18 +34,17 @@ import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
 import io.github.mtrevisan.boxon.helpers.FieldMapper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -109,18 +108,18 @@ public final class Configurator{
 	/**
 	 * Retrieve all the configuration given a protocol version.
 	 *
-	 * @param protocol	The protocol used to extract the configurations.
+	 * @param protocolVersion	The protocol version used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws CodecException, ConfigurationException{
-		if(StringHelper.isBlank(protocol))
-			throw DataException.create("Invalid protocol: {}", protocol);
+	public List<Map<String, Object>> getConfigurations(final String protocolVersion) throws CodecException, ConfigurationException{
+		final Version protocol = Version.of(protocolVersion);
+		if(protocol.isEmpty())
+			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
 
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final Version currentProtocol = Version.of(protocol);
-		return extractConfigurations(configurationValues, currentProtocol);
+		return extractConfigurations(configurationValues, protocol);
 	}
 
 	/**
@@ -132,7 +131,7 @@ public final class Configurator{
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
+	private static List<Map<String, Object>> extractConfigurations(final Collection<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws CodecException, ConfigurationException{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues){
