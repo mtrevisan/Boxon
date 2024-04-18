@@ -177,7 +177,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private static String getFieldBaseType(final Class<?> fieldType){
 		return (fieldType.isArray()
 			? fieldType.getComponentType() + ARRAY_VARIABLE
-			: fieldType.toString());
+			: fieldType.toString()
+		);
 	}
 
 }

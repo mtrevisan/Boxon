@@ -354,7 +354,8 @@ public enum ParserDataType{
 		//... otherwise convert it to an object
 		return (valueAsNumber == null
 			? toObjectValue(value, objectiveType)
-			: valueAsNumber);
+			: valueAsNumber
+		);
 	}
 
 	private static Object toNumber(final String text, final Class<?> objectiveType){
@@ -419,7 +420,8 @@ public enum ParserDataType{
 	public static BigInteger reinterpretToBigInteger(final Number value){
 		return (value instanceof final BigInteger bi
 			? bi
-			: BigInteger.valueOf(value.longValue()));
+			: BigInteger.valueOf(value.longValue())
+		);
 	}
 
 }

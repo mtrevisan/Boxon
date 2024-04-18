@@ -129,7 +129,8 @@ public class FieldException extends Exception{
 		return super.getMessage()
 			+ (className != null && fieldName != null
 				? " in field " + className + "." + fieldName
-				: JavaHelper.EMPTY_STRING);
+				: JavaHelper.EMPTY_STRING
+			);
 	}
 
 }

@@ -114,7 +114,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
 		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
-			: binding.selectDefault());
+			: binding.selectDefault()
+		);
 
 		if(chosenAlternativeType == void.class)
 			throw CodecException.createNoCodecForAlternatives(rootObject.getClass());

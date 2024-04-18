@@ -195,7 +195,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			throws EncodeException{
 		return (dataValue instanceof final Map<?, ?> dv
 			? replace(annotation.composition(), dv, annotation.value())
-			: dataValue);
+			: dataValue
+		);
 	}
 
 	private static String replace(final String text, final Map<?, ?> replacements, final CompositeSubField[] fields)

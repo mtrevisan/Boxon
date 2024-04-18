@@ -55,7 +55,8 @@ public final class FieldAccessor{
 	public static Class<?> extractFieldType(final Class<?> fieldType){
 		return (fieldType.isArray()
 			? fieldType.getComponentType()
-			: fieldType);
+			: fieldType
+		);
 	}
 
 
@@ -70,15 +71,25 @@ public final class FieldAccessor{
 	 */
 	public static Object setFieldValue(final Object obj, final Field field, final Object value){
 		try{
-			return (isRecordClass(obj)
-				? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
-				: updateField(obj, field, value)
-			);
+			return updateObjectFieldValue(obj, field, value);
 		}
 		catch(final IllegalArgumentException | ReflectiveOperationException e){
 			throw DataException.create("Can not set {} field to {}",
 				field.getType().getSimpleName(), value.getClass().getSimpleName(), e);
 		}
+	}
+
+	//FIXME ugliness (set & create... also a cycle...)
+	private static Object updateObjectFieldValue(final Object obj, final Field field, final Object value) throws IllegalArgumentException, ReflectiveOperationException{
+		return (isRecordClass(obj)
+			? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
+			: updateField(obj, field, value)
+		);
+	}
+
+	private static Object updateField(final Object obj, final Field field, final Object value) throws IllegalAccessException{
+		field.set(obj, value);
+		return obj;
 	}
 
 	private static boolean isRecordClass(final Object obj){
@@ -107,11 +118,6 @@ public final class FieldAccessor{
 				recordValues[i] = value;
 				break;
 			}
-	}
-
-	private static Object updateField(final Object obj, final Field field, final Object value) throws IllegalAccessException{
-		field.set(obj, value);
-		return obj;
 	}
 
 

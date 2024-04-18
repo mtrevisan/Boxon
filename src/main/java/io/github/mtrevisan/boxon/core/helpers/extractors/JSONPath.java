@@ -150,7 +150,8 @@ public final class JSONPath{
 	private static Integer extractIndex(final String currentPath){
 		return (JavaHelper.isDecimalIntegerNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
 			? Integer.valueOf(currentPath)
-			: null);
+			: null
+		);
 	}
 
 	private static void validatePath(final Object data, final String currentPath, final Integer idx, final String[] path)
@@ -167,7 +168,8 @@ public final class JSONPath{
 	private static Object extractPath(final Object data, final Integer idx, final Object defaultValue){
 		return (data instanceof final List<?> lst
 			? (idx >= 0 && idx < lst.size()? lst.get(idx): defaultValue)
-			: (idx >= 0 && idx < Array.getLength(data)? Array.get(data, idx): defaultValue));
+			: (idx >= 0 && idx < Array.getLength(data)? Array.get(data, idx): defaultValue)
+		);
 	}
 
 	private static Object extractPath(final Object data, final String currentPath, final Object defaultValue){
@@ -175,7 +177,8 @@ public final class JSONPath{
 		if(data instanceof final Map<?, ?> m)
 			nextData = (m.containsKey(currentPath)
 				? m.get(currentPath)
-				: defaultValue);
+				: defaultValue
+			);
 		else{
 			final Class<?> cls = data.getClass();
 			try{

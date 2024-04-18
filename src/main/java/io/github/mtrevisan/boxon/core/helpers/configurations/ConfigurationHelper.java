@@ -72,7 +72,8 @@ public final class ConfigurationHelper{
 			throws CodecException{
 		return (hasEnumeration(enumeration)
 			? extractEnumerationValue(fieldType, value, enumeration)
-			: ParserDataType.getValueOrSelf(fieldType, value));
+			: ParserDataType.getValueOrSelf(fieldType, value)
+		);
 	}
 
 	/**
@@ -90,7 +91,8 @@ public final class ConfigurationHelper{
 		if(value instanceof final String v)
 			value = (fieldType.isArray()
 				? extractEnumerationArrayValue(v, enumeration)
-				: extractEnumerationSingleValue(v, enumeration));
+				: extractEnumerationSingleValue(v, enumeration)
+			);
 		return value;
 	}
 

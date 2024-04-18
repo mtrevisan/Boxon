@@ -143,7 +143,10 @@ public class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementMajor(final int amount) throws VersionException{
-		return VersionBuilder.of(JavaHelper.nonNullOrDefault(major, 0) + amount);
+		final int major = JavaHelper.nonNullOrDefault(this.major, 0) + amount;
+		final Integer minor = (this.minor != null? 0: null);
+		final Integer patch = (this.patch != null? 0: null);
+		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -161,7 +164,9 @@ public class Version implements Comparable<Version>{
 		if(major == null)
 			throw new IllegalArgumentException("Cannot increment minor part of an invalid version: " + this);
 
-		return VersionBuilder.of(major, JavaHelper.nonNullOrDefault(minor, 0) + amount);
+		final int minor = JavaHelper.nonNullOrDefault(this.minor, 0) + amount;
+		final Integer patch = (this.patch != null? 0: null);
+		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -178,7 +183,8 @@ public class Version implements Comparable<Version>{
 		if(major == null || minor == null)
 			throw new IllegalArgumentException("Cannot increment patch part of an invalid version: " + this);
 
-		return VersionBuilder.of(major, minor, JavaHelper.nonNullOrDefault(patch, 0) + amount);
+		final int patch = JavaHelper.nonNullOrDefault(this.patch, 0) + amount;
+		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -192,7 +198,7 @@ public class Version implements Comparable<Version>{
 		if(major == null || minor == null || patch == null)
 			throw new IllegalArgumentException("Cannot set release part of an invalid version: " + this);
 
-		return VersionBuilder.of(major, minor, patch, preRelease, build);
+		return new Version(major, minor, patch, preRelease, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -206,7 +212,7 @@ public class Version implements Comparable<Version>{
 		if(major == null || minor == null || patch == null)
 			throw new IllegalArgumentException("Cannot set build part of an invalid version: " + this);
 
-		return VersionBuilder.of(major, minor, patch, preRelease, build);
+		return new Version(major, minor, patch, preRelease, build);
 	}
 
 
@@ -431,7 +437,8 @@ public class Version implements Comparable<Version>{
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
 		return (JavaHelper.isDecimalIntegerNumber(identifier1) && JavaHelper.isDecimalIntegerNumber(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
-			: identifier1.compareTo(identifier2));
+			: identifier1.compareTo(identifier2)
+		);
 	}
 
 

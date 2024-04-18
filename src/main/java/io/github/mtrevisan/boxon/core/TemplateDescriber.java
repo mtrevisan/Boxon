@@ -141,19 +141,19 @@ class TemplateDescriber{
 
 	private List<Map<String, Object>> describeAllTemplates(final MessageExtractorBasicStrategy messageExtractor) throws FieldException{
 		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
-		return FieldDescriber.describeEntities(templates, template -> messageDescriber.describeMessage(template, messageExtractor,
+		return EntityDescriber.describeEntities(templates, template -> messageDescriber.describeMessage(template, messageExtractor,
 			FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 	private Map<String, Object> describeSingleTemplate(final Class<?> templateClass, final MessageExtractorBasicStrategy messageExtractor)
 			throws FieldException{
-		return FieldDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
+		return EntityDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
 			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 	private List<Map<String, Object>> describeTemplatesSet(final Class<?>[] templateClasses,
 			final MessageExtractorBasicStrategy messageExtractor) throws FieldException{
-		return FieldDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
+		return EntityDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
 			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 

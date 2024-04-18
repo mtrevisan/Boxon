@@ -155,7 +155,8 @@ public final class GenericHelper{
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
 		final String key = (actualTypeArgument instanceof final TypeVariable<?> v
 			? v.getName()
-			: null);
+			: null
+		);
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 

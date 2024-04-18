@@ -139,7 +139,8 @@ final class CodecList implements CodecInterface<BindList>{
 		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
 		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
-			: binding.selectDefault());
+			: binding.selectDefault()
+		);
 
 		return (chosenAlternativeType != void.class? chosenAlternativeType: null);
 	}

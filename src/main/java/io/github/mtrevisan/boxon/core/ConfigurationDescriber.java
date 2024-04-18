@@ -76,7 +76,7 @@ class ConfigurationDescriber{
 	 */
 	List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
-		return FieldDescriber.describeEntities(configurations, configuration -> messageDescriber.describeMessage(configuration,
+		return EntityDescriber.describeEntities(configurations, configuration -> messageDescriber.describeMessage(configuration,
 			FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION, FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
@@ -90,11 +90,11 @@ class ConfigurationDescriber{
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
-		final FieldDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
+		final EntityDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
 			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};
-		return FieldDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor,
+		return EntityDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor,
 			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
 				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
@@ -108,7 +108,7 @@ class ConfigurationDescriber{
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
-		return FieldDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
+		return EntityDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
 			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
 				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
