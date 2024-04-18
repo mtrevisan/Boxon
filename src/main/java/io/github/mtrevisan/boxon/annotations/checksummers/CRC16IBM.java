@@ -47,15 +47,20 @@ public final class CRC16IBM implements Checksummer{
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 
-			value ^= datum & 0xFF;
-			for(int j = 0; j < Byte.SIZE; j ++){
-				final boolean carry = ((value & 0x01) != 0);
-				value >>>= 1;
-				if(carry)
-					value ^= POLYNOMIAL_REVERSED;
-			}
+			value = updateChecksum(datum, value);
 		}
 		return (short)value;
+	}
+
+	private static int updateChecksum(final byte datum, int value){
+		value ^= datum & 0xFF;
+		for(int j = 0; j < Byte.SIZE; j ++){
+			final boolean carry = ((value & 0x01) != 0);
+			value >>>= 1;
+			if(carry)
+				value ^= POLYNOMIAL_REVERSED;
+		}
+		return value;
 	}
 
 }
