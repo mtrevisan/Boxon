@@ -146,7 +146,7 @@ public class Version implements Comparable<Version>{
 			return false;
 
 		final Version rhs = (Version)obj;
-		return (major.equals(rhs.major)
+		return (Objects.equals(major, rhs.major)
 			&& Objects.equals(minor, rhs.minor)
 			&& Objects.equals(patch, rhs.patch)
 			&& Arrays.equals(preRelease, rhs.preRelease)
@@ -292,7 +292,7 @@ public class Version implements Comparable<Version>{
 	 * @return	Whether the version is pre-release.
 	 */
 	public boolean isPreRelease(){
-		return (major == 0 || preRelease.length > 0);
+		return (major != null && (major == 0 || preRelease.length > 0));
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class Version implements Comparable<Version>{
 	 * @return	Whether the version is stable.
 	 */
 	public boolean isStable(){
-		return (major > 0 && preRelease.length == 0);
+		return (major != null && (major > 0 && preRelease.length == 0));
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class Version implements Comparable<Version>{
 	 * @return	Whether this version is API-compatible with the other version.
 	 */
 	public boolean isCompatibleWith(final Version other){
-		return major.equals(other.major);
+		return (major != null && major.equals(other.major));
 	}
 
 	/**
@@ -379,6 +379,9 @@ public class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementMinor(final int amount) throws VersionException{
+		if(major == null)
+			throw new IllegalArgumentException("Cannot increment minor part of an invalid version: " + this);
+
 		return VersionBuilder.of(major, JavaHelper.nonNullOrDefault(minor, 0) + amount);
 	}
 
@@ -393,6 +396,9 @@ public class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementPatch(final int amount) throws VersionException{
+		if(major == null || minor == null)
+			throw new IllegalArgumentException("Cannot increment patch part of an invalid version: " + this);
+
 		return VersionBuilder.of(major, minor, JavaHelper.nonNullOrDefault(patch, 0) + amount);
 	}
 
@@ -404,6 +410,9 @@ public class Version implements Comparable<Version>{
 	 * @throws VersionException	If the pre-release metadata is not valid.
 	 */
 	public Version setPreRelease(final String... preRelease) throws VersionException{
+		if(major == null || minor == null || patch == null)
+			throw new IllegalArgumentException("Cannot set release part of an invalid version: " + this);
+
 		return VersionBuilder.of(major, minor, patch, preRelease, build);
 	}
 
@@ -415,6 +424,9 @@ public class Version implements Comparable<Version>{
 	 * @throws VersionException	If the build metadata is not valid.
 	 */
 	public Version setBuild(final String... build) throws VersionException{
+		if(major == null || minor == null || patch == null)
+			throw new IllegalArgumentException("Cannot set build part of an invalid version: " + this);
+
 		return VersionBuilder.of(major, minor, patch, preRelease, build);
 	}
 
@@ -426,9 +438,11 @@ public class Version implements Comparable<Version>{
 
 	@Override
 	public String toString(){
+		if(major == null)
+			return null;
+
 		final StringBuilder sb = new StringBuilder();
-		if(major != null)
-			sb.append(major);
+		sb.append(major);
 		if(minor != null)
 			sb.append(DOT)
 				.append(minor);
