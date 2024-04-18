@@ -125,6 +125,7 @@ public final class GenericHelper{
 		for(int i = 0, length = ancestors.size(); i < length; i ++){
 			final Type ancestorType = ancestors.get(i);
 
+			//FIXME chain of 'instanceof' checks
 			if(ancestorType instanceof final ParameterizedType pt){
 				//ancestor is parameterized: process only if the raw type matches the base class
 				final Type rawType = pt.getRawType();

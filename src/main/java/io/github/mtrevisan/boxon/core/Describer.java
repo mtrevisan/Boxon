@@ -176,7 +176,7 @@ public final class Describer{
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
 	 */
-	public Map<String, Object> describeRawMessage(final Class<?> boundClass){
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass){
 		return FieldDescriber.describeRawMessage(boundClass);
 	}
 

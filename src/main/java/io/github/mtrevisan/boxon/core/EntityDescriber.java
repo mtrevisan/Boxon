@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 
-class EntityDescriber{
+final class EntityDescriber{
 
 	private EntityDescriber(){}
 

@@ -64,7 +64,7 @@ import java.util.Map;
 /**
  * Class for describing messages and entities.
  */
-class FieldDescriber{
+final class FieldDescriber{
 
 	static final MessageExtractorBasicStrategy MESSAGE_EXTRACTOR_BASIC_STRATEGY = new MessageExtractorBasicStrategy();
 	static final MessageExtractorBasicStrategy MESSAGE_EXTRACTOR_FULL_STRATEGY = new MessageExtractorFullStrategy();
@@ -240,6 +240,7 @@ class FieldDescriber{
 	private static void handleArrayValue(final String key, final Object value, final Map<String, Object> rootDescription){
 		final Class<?> componentType = value.getClass()
 			.getComponentType();
+		//FIXME chain of 'instanceof' checks
 		if(componentType == String.class)
 			rootDescription.put(key, value);
 		else if(componentType == ObjectChoices.ObjectChoice.class)

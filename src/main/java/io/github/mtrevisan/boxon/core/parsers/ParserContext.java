@@ -106,6 +106,7 @@ final class ParserContext<T>{
 	}
 
 	Object getFieldValue(){
+		//FIXME chain of 'instanceof' checks
 		if(field instanceof final TemplateField f)
 			return f.getFieldValue(currentObject);
 		if(field instanceof final ConfigurationField f)

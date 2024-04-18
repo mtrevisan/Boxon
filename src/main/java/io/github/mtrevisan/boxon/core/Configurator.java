@@ -128,7 +128,8 @@ public final class Configurator{
 	 *
 	 * @param configurationValues	The list of {@link ConfigurationMessage} objects containing the configurations.
 	 * @param protocol	The protocol version used to extract the configurations.
-	 * @return	A list of maps representing the extracted configurations. Each map contains the header and fields of a configuration message.
+	 * @return	A list of maps representing the extracted configurations. Each map contains the header and fields of a configuration
+	 * 	message.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
@@ -206,7 +207,8 @@ public final class Configurator{
 	 *
 	 * @param protocolVersion	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
-	 * @param template	The template, or a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>, containing the data to be composed.
+	 * @param template	The template, or a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>, containing the data
+	 * 	to be composed.
 	 * @return	The composition response.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,

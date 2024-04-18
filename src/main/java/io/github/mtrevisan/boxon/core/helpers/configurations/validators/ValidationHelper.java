@@ -107,7 +107,9 @@ final class ValidationHelper{
 
 		//`defaultValue` compatible with field type
 		if(!isStringAssignableFrom(configData.getFieldType())
-				|| defaultValue != null && isStringAssignableFrom(defaultValue.getClass()) && !((String)defaultValue).isEmpty()
+				|| defaultValue != null
+				&& isStringAssignableFrom(defaultValue.getClass())
+				&& !((String)defaultValue).isEmpty()
 				&& !StringHelper.matches((String)defaultValue, formatPattern))
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",
 				configData.getAnnotationName(), configData.getFieldType(), pattern);

@@ -42,7 +42,7 @@ import java.util.Map;
 /**
  * The ConfigurationDescriber class provides methods to describe loaded configurations.
  */
-class ConfigurationDescriber{
+final class ConfigurationDescriber{
 
 	private final LoaderConfiguration loaderConfiguration;
 

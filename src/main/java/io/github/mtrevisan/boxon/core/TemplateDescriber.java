@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * The TemplateDescriber class is responsible for describing templates.
  */
-class TemplateDescriber{
+final class TemplateDescriber{
 
 	private final TemplateParser templateParser;
 

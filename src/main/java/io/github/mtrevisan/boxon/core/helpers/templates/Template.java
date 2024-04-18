@@ -272,6 +272,7 @@ public final class Template<T>{
 	private static List<SkipParams> extractSkips(final Annotation[] annotations){
 		final List<SkipParams> skips = new ArrayList<>(annotations.length);
 		for(final Annotation annotation : annotations){
+			//FIXME chain of 'instanceof' checks
 			if(annotation instanceof final SkipBits sk)
 				skips.add(SkipParams.create(sk));
 			else if(annotation instanceof final SkipBits.Skips sk)

@@ -36,7 +36,7 @@ import java.util.Objects;
  * @see <a href="https://semver.org/">Semantic Versioning</a>
  */
 @SuppressWarnings("unused")
-public class Version implements Comparable<Version>{
+public final class Version implements Comparable<Version>{
 
 	/** An empty {@code String} array. */
 	static final String[] EMPTY_STRING_ARRAY = new String[0];

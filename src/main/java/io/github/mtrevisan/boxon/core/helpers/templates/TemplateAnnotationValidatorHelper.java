@@ -58,6 +58,7 @@ final class TemplateAnnotationValidatorHelper{
 
 	static void validateConverter(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 			throws AnnotationException{
+		//FIXME chain of 'instanceof' checks
 		if(fieldType == Object.class)
 			return;
 

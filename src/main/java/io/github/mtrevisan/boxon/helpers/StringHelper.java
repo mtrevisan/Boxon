@@ -53,7 +53,7 @@ public final class StringHelper{
 	}
 
 	public static boolean matchesOrBlank(final String text, final Pattern pattern){
-		return (StringHelper.isBlank(text) || matches(text, pattern));
+		return (isBlank(text) || matches(text, pattern));
 	}
 
 
@@ -187,7 +187,7 @@ public final class StringHelper{
 	}
 
 	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
-		return ((value instanceof final String v && StringHelper.isBlank(v))
+		return ((value instanceof final String v && isBlank(v))
 			|| (value instanceof final Collection<?> c && c.isEmpty())
 			|| value == void.class);
 	}

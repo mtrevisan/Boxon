@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 
-public class VersionBuilder{
+public final class VersionBuilder{
 
 	private static final String KEY_MAJOR = "major";
 	private static final String KEY_MINOR = "minor";
@@ -119,6 +119,9 @@ public class VersionBuilder{
 
 		return createVersion(major, minor, patch, preRelease, build);
 	}
+
+
+	private VersionBuilder(){}
 
 
 	private static Version createVersion(final int major, final Integer minor, final Integer patch, final String[] preRelease,

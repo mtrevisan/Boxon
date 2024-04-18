@@ -142,7 +142,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.6.1](#changelog-3.6.1)
+    1. [version 4.0.0](#changelog-4.0.0)
     2. [version 3.6.0](#changelog-3.6.0)
     3. [version 3.5.1](#changelog-3.5.1)
     4. [version 3.5.0](#changelog-3.5.0)
@@ -1447,8 +1447,8 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-3.6.1"></a>
-### version 3.6.1 - 20240417
+<a name="changelog-4.0.0"></a>
+### version 4.0.0 - 20240418
 
 - Fixed error while handling of `SkipBits` and `SkipUntilTerminator` to allow processing multiple instances.
 - Removed useless `BindFloat` and `BindDouble` has they are rarely used and can be substituted by the appropriate converters (`IntegerToFloatConvert` and `LongToDoubleConverter`).

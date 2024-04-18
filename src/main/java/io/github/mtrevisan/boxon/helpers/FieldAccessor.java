@@ -79,8 +79,9 @@ public final class FieldAccessor{
 		}
 	}
 
-	//FIXME ugliness (set & create... also a cycle...)
-	private static Object updateObjectFieldValue(final Object obj, final Field field, final Object value) throws IllegalArgumentException, ReflectiveOperationException{
+	//FIXME ugliness (set & create... also a cycle between classes...)
+	private static Object updateObjectFieldValue(final Object obj, final Field field, final Object value) throws IllegalArgumentException,
+			ReflectiveOperationException{
 		return (isRecordClass(obj)
 			? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
 			: updateField(obj, field, value)

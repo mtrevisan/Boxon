@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Class for describing messages and entities.
  */
-class MessageDescriber{
+final class MessageDescriber{
 
 	private final Core core;
 
