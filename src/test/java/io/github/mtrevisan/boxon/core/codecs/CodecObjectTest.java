@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
-import io.github.mtrevisan.boxon.core.Descriptor;
+import io.github.mtrevisan.boxon.core.Describer;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
@@ -223,7 +223,7 @@ class CodecObjectTest{
 			.withTemplatesFrom(TestChoice1.class)
 			.create();
 		Parser parser = Parser.create(core);
-		Descriptor descriptor = Descriptor.create(core);
+		Describer describer = Describer.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("746331011234");
 		List<Response<byte[], Object>> result = parser.parse(payload);
@@ -253,7 +253,7 @@ class CodecObjectTest{
 		Assertions.assertEquals(0x1122_3344, value2.value);
 
 
-		List<Map<String, Object>> descriptions = descriptor.describeTemplate();
+		List<Map<String, Object>> descriptions = describer.describeTemplate();
 		Assertions.assertEquals(10, descriptions.size());
 		Map<String, Object> description = descriptions.get(1);
 		String jsonDescription = PrettyPrintMap.toString(description);

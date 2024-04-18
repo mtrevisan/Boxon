@@ -25,35 +25,38 @@
 package io.github.mtrevisan.boxon.core.keys;
 
 
+import io.github.mtrevisan.boxon.core.Describer;
+
+
 /**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}.
+ * Holds the constants used as a key in the {@link Describer}.
  */
 public enum DescriberKey{
-	/** Represents the template constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the template constant used as a key in the {@link Describer}. */
 	TEMPLATE("template"),
-	/** Represents the configuration constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the configuration constant used as a key in the {@link Describer}. */
 	CONFIGURATION("configuration"),
 
-	/** Represents the context constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the context constant used as a key in the {@link Describer}. */
 	CONTEXT("context"),
 
-	/** Represents the header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the header constant used as a key in the {@link Describer}. */
 	HEADER("header"),
 
-	/** Represents the fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the fields constant used as a key in the {@link Describer}. */
 	FIELDS("fields"),
-	/** Represents the evaluated fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the evaluated fields constant used as a key in the {@link Describer}. */
 	EVALUATED_FIELDS("evaluatedFields"),
-	/** Represents the post-processed constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the post-processed constant used as a key in the {@link Describer}. */
 	POST_PROCESSED_FIELDS("postProcessedFields"),
-	/** Represents the name constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the name constant used as a key in the {@link Describer}. */
 	FIELD_NAME("name"),
-	/** Represents the field type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the field type constant used as a key in the {@link Describer}. */
 	FIELD_TYPE("fieldType"),
-	/** Represents the annotation type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the annotation type constant used as a key in the {@link Describer}. */
 	ANNOTATION_TYPE("annotationType"),
 
-	/** Represents the bind subtypes constant used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}. */
+	/** Represents the bind subtypes constant used as a key in the {@link Describer}. */
 	BIND_SUBTYPES("subtypes");
 
 

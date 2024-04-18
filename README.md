@@ -130,7 +130,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     5. [CompositeSubField](#annotation-compositesubfield)
     6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
     7. [AlternativeSubField](#annotation-alternativesubfield)
-5. [Descriptor](#descriptor)
+5. [Describer](#describer)
 6. [Extractor](#extractor)
 7. [How to write SpEL expressions](#how-to-spel)
 8. [How to extend the functionalities](#how-to-extend)
@@ -713,9 +713,9 @@ Core core = CoreBuilder.builder()
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
-Descriptor descriptor = Descriptor.create(core);
+Describer describer = Describer.create(core);
 
-List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+List<Map<String, Object>> descriptions = describer.describeTemplates();
 ```
 
 gives as output the following
@@ -1067,17 +1067,17 @@ private int downloadTimeout;
 
 <br/>
 
-<a name="descriptor"></a>
-## Descriptor
+<a name="describer"></a>
+## Describer
 
 Return a description of the loaded templates and configuration.
 It basically provides a description of the annotations in JSON format.
 
 ```java
-Descriptor descriptor = Descriptor.create(core);
+Describer describer = Describer.create(core);
 
-List<Map<String, Object>> templateDescriptions = descriptor.describeTemplates();
-List<Map<String, Object>> configurationDescriptions = descriptor.describeConfiguration();
+List<Map<String, Object>> templateDescriptions = describer.describeTemplates();
+List<Map<String, Object>> configurationDescriptions = describer.describeConfiguration();
 ```
 
 
@@ -1458,7 +1458,7 @@ Pull requests are welcomed.
 ### version 3.6.0 - 20240413
 
 - Specialized `Skip` annotation into `SkipBits` and `SkipUntilTerminator`.
-- Added subtypes descriptor on `BindObject`, `BindArray`, `BindList`, `ObjectChoices.ObjectChoice`, and `ObjectChoicesList.ObjectChoiceList`.
+- Added subtypes describer on `BindObject`, `BindArray`, `BindList`, `ObjectChoices.ObjectChoice`, and `ObjectChoicesList.ObjectChoiceList`.
 - Some minor improvements.
 
 <a name="changelog-3.5.1"></a>

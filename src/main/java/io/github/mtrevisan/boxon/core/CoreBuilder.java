@@ -43,7 +43,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
- * Builder for the {@link Core common data} used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+ * Builder for the {@link Core common data} used by the {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class CoreBuilder{
@@ -276,7 +276,7 @@ public final class CoreBuilder{
 	/**
 	 * Create the common core data executing all the configuration commands called in the proper order.
 	 *
-	 * @return	{@link Core Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+	 * @return	{@link Core Core} data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.

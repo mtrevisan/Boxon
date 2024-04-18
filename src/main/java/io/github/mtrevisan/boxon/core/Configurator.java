@@ -66,7 +66,7 @@ public final class Configurator{
 	 * Create a configurator.
 	 *
 	 * @param core	The parser core.
-	 * @return	A descriptor.
+	 * @return	A describer.
 	 */
 	public static Configurator create(final Core core){
 		return new Configurator(core);

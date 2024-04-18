@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 
-class DescriptorTest{
+class DescriberTest{
 
 	@Test
 	void describeParsing() throws FieldException, NoSuchMethodException{
@@ -49,9 +49,9 @@ class DescriptorTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageASCII.class)
 			.create();
-		Descriptor descriptor = Descriptor.create(core);
+		Describer describer = Describer.create(core);
 
-		List<Map<String, Object>> descriptions = descriptor.describeParsing();
+		List<Map<String, Object>> descriptions = describer.describeParsing();
 
 		Assertions.assertEquals(1, descriptions.size());
 
@@ -72,9 +72,9 @@ class DescriptorTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
-		Descriptor descriptor = Descriptor.create(core);
+		Describer describer = Describer.create(core);
 
-		List<Map<String, Object>> descriptions = descriptor.describeTemplate();
+		List<Map<String, Object>> descriptions = describer.describeTemplate();
 
 		Assertions.assertEquals(1, descriptions.size());
 
@@ -95,9 +95,9 @@ class DescriptorTest{
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
 			.create();
-		Descriptor descriptor = Descriptor.create(core);
+		Describer describer = Describer.create(core);
 
-		List<Map<String, Object>> descriptions = descriptor.describeConfiguration();
+		List<Map<String, Object>> descriptions = describer.describeConfiguration();
 
 		Assertions.assertEquals(1, descriptions.size());
 

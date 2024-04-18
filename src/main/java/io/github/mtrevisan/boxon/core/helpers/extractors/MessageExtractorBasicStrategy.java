@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import java.util.List;
 
 
-public class MessageExtractorBasicTemplate implements MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
+public class MessageExtractorBasicStrategy implements MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
 
 	@Override
 	public final String getTypeName(final Template<?> message){
