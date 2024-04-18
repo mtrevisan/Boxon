@@ -62,6 +62,8 @@ final class NumberWriterManager implements WriterManagerInterface{
 			case final Long v -> writer.putText(Long.toString(v, radix));
 			case final BigDecimal v -> writer.putText(v.toPlainString());
 			case final BigInteger v -> writer.putText(v.toString(radix));
+			case final Float v -> writer.putText(Float.toString(v));
+			case final Double v -> writer.putText(Double.toString(v));
 			case null, default -> {}
 		}
 	}

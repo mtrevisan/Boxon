@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import java.util.Objects;
 
 

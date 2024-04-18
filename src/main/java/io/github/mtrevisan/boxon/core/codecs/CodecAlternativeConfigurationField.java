@@ -46,7 +46,7 @@ final class CodecAlternativeConfigurationField implements CodecInterface<Alterna
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
 			throws CodecException{
-		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
+		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
 			final AlternativeSubField binding = interpretBinding(annotation);
 

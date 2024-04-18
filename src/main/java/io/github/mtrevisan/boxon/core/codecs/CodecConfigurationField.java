@@ -48,7 +48,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 			throws CodecException{
 		final ConfigurationField binding = interpretBinding(annotation);
 
-		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
+		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
 			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
 				binding.charset());

@@ -221,7 +221,7 @@ final class CodecHelper{
 		}
 	}
 
-	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
+	static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
 			if(value instanceof final ConfigurationEnum v)
