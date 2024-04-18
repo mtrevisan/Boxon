@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.codecs;
 
-
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 
 

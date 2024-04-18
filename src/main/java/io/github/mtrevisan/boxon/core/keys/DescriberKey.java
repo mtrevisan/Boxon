@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.keys;
 
-
 import io.github.mtrevisan.boxon.core.Describer;
 
 
