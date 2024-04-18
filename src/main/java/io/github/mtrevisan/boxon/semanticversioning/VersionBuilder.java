@@ -216,7 +216,7 @@ public class VersionBuilder{
 	}
 
 	/**
-	 * <p>Checks if the text contains only certain characters.</p>
+	 * <p>Checks if the text contains only alphabetic characters or dash.</p>
 	 *
 	 * <p>A {@code null} text will return {@code false}.
 	 * An empty String ({@code length() = 0}) always returns {@code true}.</p>
@@ -239,15 +239,19 @@ public class VersionBuilder{
 		if(length == 0)
 			return true;
 
-		final byte[] bytes = text.toUpperCase(Locale.ROOT)
-			.getBytes(StandardCharsets.US_ASCII);
+		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
 		for(int i = 0; i < length; i ++){
 			final byte chr = bytes[i];
 
-			if(chr != '-' && (chr < 'A' || chr > 'Z'))
+			if(chr != '-' && !isAlphabetCharacter(chr))
 				return false;
 		}
 		return true;
+	}
+
+	private static boolean isAlphabetCharacter(final byte chr){
+		return (chr >= 'a' && chr <= 'z'
+			|| chr >= 'A' && chr <= 'Z');
 	}
 
 }
