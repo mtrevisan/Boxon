@@ -47,6 +47,23 @@ public final class JavaHelper{
 
 
 	/**
+	 * Check if the class is not an interface, an anonymous class, or a primitive data type.
+	 *
+	 * @param cls	The class.
+	 * @return	Whether the class is not an interface, an anonymous class, or a primitive data type.
+	 */
+	public static boolean isUserDefinedClass(final Class<?> cls){
+		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
+	}
+
+	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
+		return ((value instanceof final String v && StringHelper.isBlank(v))
+			|| (value instanceof final Collection<?> c && c.isEmpty())
+			|| value == void.class);
+	}
+
+
+	/**
 	 * Return the given object if non-null, the default object otherwise.
 	 *
 	 * @param obj	The object.

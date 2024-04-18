@@ -177,7 +177,7 @@ public final class Describer{
 	 * @return	The description.
 	 */
 	public Map<String, Object> describeRawMessage(final Class<?> boundClass){
-		return MessageDescriber.describeRawMessage(boundClass);
+		return FieldDescriber.describeRawMessage(boundClass);
 	}
 
 }

@@ -49,7 +49,7 @@ class TemplateDescriber{
 
 
 	/**
-	 * Create a describer.
+	 * Create a template describer.
 	 *
 	 * @param core	The parser core.
 	 * @param messageDescriber	The message describer.
@@ -74,7 +74,7 @@ class TemplateDescriber{
 	 * @throws TemplateException   If a template error occurs.
 	 */
 	List<Map<String, Object>> describeTemplate() throws FieldException{
-		return describeAllTemplates(MessageDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
+		return describeAllTemplates(FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
 	}
 
 	/**
@@ -86,7 +86,7 @@ class TemplateDescriber{
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
-		return describeSingleTemplate(templateClass, MessageDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
+		return describeSingleTemplate(templateClass, FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class TemplateDescriber{
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
-		final MessageExtractorBasicStrategy messageExtractor = MessageDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY;
+		final MessageExtractorBasicStrategy messageExtractor = FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY;
 		return describeTemplatesSet(templateClasses, messageExtractor);
 	}
 
@@ -110,7 +110,7 @@ class TemplateDescriber{
 	 * @throws TemplateException   If a template error occurs.
 	 */
 	List<Map<String, Object>> describeParsing() throws FieldException{
-		return describeAllTemplates(MessageDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
+		return describeAllTemplates(FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class TemplateDescriber{
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
-		return describeSingleTemplate(templateClass, MessageDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
+		return describeSingleTemplate(templateClass, FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
 	}
 
 	/**
@@ -134,27 +134,27 @@ class TemplateDescriber{
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
-		final MessageExtractorBasicStrategy messageExtractor = MessageDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY;
+		final MessageExtractorBasicStrategy messageExtractor = FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY;
 		return describeTemplatesSet(templateClasses, messageExtractor);
 	}
 
 
 	private List<Map<String, Object>> describeAllTemplates(final MessageExtractorBasicStrategy messageExtractor) throws FieldException{
 		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
-		return MessageDescriber.describeEntities(templates, template -> messageDescriber.describeMessage(template, messageExtractor,
-			MessageDescriber.FIELD_EXTRACTOR_STRATEGY));
+		return FieldDescriber.describeEntities(templates, template -> messageDescriber.describeMessage(template, messageExtractor,
+			FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 	private Map<String, Object> describeSingleTemplate(final Class<?> templateClass, final MessageExtractorBasicStrategy messageExtractor)
 			throws FieldException{
-		return MessageDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
-			template -> messageDescriber.describeMessage(template, messageExtractor, MessageDescriber.FIELD_EXTRACTOR_STRATEGY));
+		return FieldDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
+			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 	private List<Map<String, Object>> describeTemplatesSet(final Class<?>[] templateClasses,
 			final MessageExtractorBasicStrategy messageExtractor) throws FieldException{
-		return MessageDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
-			template -> messageDescriber.describeMessage(template, messageExtractor, MessageDescriber.FIELD_EXTRACTOR_STRATEGY));
+		return FieldDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
+			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 }

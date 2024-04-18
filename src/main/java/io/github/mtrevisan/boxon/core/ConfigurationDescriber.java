@@ -53,7 +53,7 @@ class ConfigurationDescriber{
 	 * Create a describer.
 	 *
 	 * @param core	The parser core.
-	 * @return	A describer.
+	 * @return	A configuration describer.
 	 */
 	static ConfigurationDescriber create(final Core core, final MessageDescriber messageDescriber){
 		return new ConfigurationDescriber(core, messageDescriber);
@@ -76,8 +76,8 @@ class ConfigurationDescriber{
 	 */
 	List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
-		return MessageDescriber.describeEntities(configurations, configuration -> messageDescriber.describeMessage(configuration, MessageDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
-			MessageDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+		return FieldDescriber.describeEntities(configurations, configuration -> messageDescriber.describeMessage(configuration,
+			FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION, FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -90,12 +90,13 @@ class ConfigurationDescriber{
 	 * @throws EncodeException   If a configuration cannot be retrieved.
 	 */
 	Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
-		final MessageDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
+		final FieldDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
 			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};
-		return MessageDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor,
-			configuration -> messageDescriber.describeMessage(configuration, MessageDescriber.MESSAGE_EXTRACTOR_CONFIGURATION, MessageDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+		return FieldDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor,
+			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
+			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -107,8 +108,9 @@ class ConfigurationDescriber{
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
-		return MessageDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
-			configuration -> messageDescriber.describeMessage(configuration, MessageDescriber.MESSAGE_EXTRACTOR_CONFIGURATION, MessageDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+		return FieldDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
+			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
+			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 }
