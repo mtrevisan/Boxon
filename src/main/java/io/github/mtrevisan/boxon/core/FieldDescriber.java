@@ -85,7 +85,8 @@ class FieldDescriber{
 		extractObjectParameters(obj, methods, rootDescription);
 	}
 
-	static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription, final String key){
+	static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription,
+			final String key){
 		final Method[] methods = objType.getDeclaredMethods();
 
 		final Map<String, Object> description = new HashMap<>(methods.length);
@@ -140,7 +141,8 @@ class FieldDescriber{
 	 * @param <M>	The type of the message.
 	 * @param <F>	The type of the message.
 	 */
-	static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor, final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription){
+	static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
+			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription){
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicStrategy
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);

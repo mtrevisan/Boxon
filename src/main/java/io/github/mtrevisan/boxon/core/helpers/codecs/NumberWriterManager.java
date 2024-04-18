@@ -53,6 +53,11 @@ final class NumberWriterManager implements WriterManagerInterface{
 		return this;
 	}
 
+	/**
+	 * Writes a numeric value to the writer based on its type.
+	 *
+	 * @param value	The value to be written.
+	 */
 	@Override
 	public void put(final Object value){
 		switch(value){
