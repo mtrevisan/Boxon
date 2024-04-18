@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.reflect.Array;
 import java.util.Map;
@@ -123,8 +124,8 @@ public final class ConfigurationHelper{
 		if(protocol.isEmpty())
 			return true;
 
-		final Version min = Version.of(minProtocol);
-		final Version max = Version.of(maxProtocol);
+		final Version min = VersionBuilder.of(minProtocol);
+		final Version max = VersionBuilder.of(maxProtocol);
 		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
 		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
 		return (validMinimum && validMaximum);

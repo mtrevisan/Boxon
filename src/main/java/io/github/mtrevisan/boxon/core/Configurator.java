@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public final class Configurator{
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
 	public List<Map<String, Object>> getConfigurations(final String protocolVersion) throws CodecException, ConfigurationException{
-		final Version protocol = Version.of(protocolVersion);
+		final Version protocol = VersionBuilder.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
 
@@ -224,7 +225,7 @@ public final class Configurator{
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
 			final Map<String, Object> data){
-		final Version protocol = Version.of(protocolVersion);
+		final Version protocol = VersionBuilder.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
 

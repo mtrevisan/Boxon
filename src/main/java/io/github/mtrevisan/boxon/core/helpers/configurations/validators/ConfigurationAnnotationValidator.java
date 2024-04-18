@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -60,8 +61,8 @@ public enum ConfigurationAnnotationValidator{
 			final String minProtocol = binding.minProtocol();
 			final String maxProtocol = binding.maxProtocol();
 			if(!minProtocol.isEmpty() && !maxProtocol.isEmpty()){
-				final Version min = Version.of(minProtocol);
-				final Version max = Version.of(maxProtocol);
+				final Version min = VersionBuilder.of(minProtocol);
+				final Version max = VersionBuilder.of(maxProtocol);
 				if(max.isLessThan(min))
 					throw AnnotationException.create("Maximum protocol should be after minimum protocol in {}; min is {}, max is {}",
 						ConfigurationField.class.getSimpleName(), minProtocol, maxProtocol);

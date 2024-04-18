@@ -32,15 +32,15 @@ class VersionCompareTest{
 
 	@Test
 	void shouldReturnFalseIfOtherVersionIsNull(){
-		Version v1 = Version.of("2.3.7");
+		Version v1 = VersionBuilder.of("2.3.7");
 
 		Assertions.assertNotEquals(v1, null);
 	}
 
 	@Test
 	void preReleaseShouldHaveLowerPrecedenceThanAssociatedNormal(){
-		Version v1 = Version.of("1.3.7");
-		Version v2 = Version.of("1.3.7-alpha");
+		Version v1 = VersionBuilder.of("1.3.7");
+		Version v2 = VersionBuilder.of("1.3.7-alpha");
 
 		Assertions.assertTrue(v1.compareTo(v2) > 0);
 		Assertions.assertTrue(v2.compareTo(v1) < 0);
@@ -48,16 +48,16 @@ class VersionCompareTest{
 
 	@Test
 	void preRelease1(){
-		Version v1 = Version.of("2.3.7-alpha");
-		Version v2 = Version.of("2.3.7-beta");
+		Version v1 = VersionBuilder.of("2.3.7-alpha");
+		Version v2 = VersionBuilder.of("2.3.7-beta");
 
 		Assertions.assertTrue(v1.isLessThan(v2));
 	}
 
 	@Test
 	void preRelease2(){
-		Version v1 = Version.of("2.3.7-beta.1");
-		Version v2 = Version.of("2.3.7-beta.2");
+		Version v1 = VersionBuilder.of("2.3.7-beta.1");
+		Version v2 = VersionBuilder.of("2.3.7-beta.2");
 
 		Assertions.assertTrue(v1.isLessThan(v2));
 	}

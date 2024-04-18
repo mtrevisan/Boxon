@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public final class QueclinkHelper{
 	public static class VersionConverter implements Converter<byte[], Version>{
 		@Override
 		public Version decode(final byte[] value){
-			return Version.of(value[0], value[1]);
+			return VersionBuilder.of(value[0], value[1]);
 		}
 
 		@Override
@@ -55,7 +56,7 @@ public final class QueclinkHelper{
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
 			final int minor = Integer.parseInt(value.substring(2, 4), 16);
-			return Version.of(major, minor);
+			return VersionBuilder.of(major, minor);
 		}
 
 		@Override

@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -233,8 +234,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(fieldBinding != null){
 			dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
 
-			final Version minProtocolVersion = Version.of(fieldBinding.minProtocol());
-			final Version maxProtocolVersion = Version.of(fieldBinding.maxProtocol());
+			final Version minProtocolVersion = VersionBuilder.of(fieldBinding.minProtocol());
+			final Version maxProtocolVersion = VersionBuilder.of(fieldBinding.maxProtocol());
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(
 				annotation.annotationType());
 			validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);

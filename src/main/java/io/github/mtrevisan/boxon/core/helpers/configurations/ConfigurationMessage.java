@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -92,8 +93,8 @@ public final class ConfigurationMessage<T>{
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
 
-		final Version minProtocolVersion = Version.of(header.minProtocol());
-		final Version maxProtocolVersion = Version.of(header.maxProtocol());
+		final Version minProtocolVersion = VersionBuilder.of(header.minProtocol());
+		final Version maxProtocolVersion = VersionBuilder.of(header.maxProtocol());
 		try{
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
 			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
@@ -283,7 +284,7 @@ public final class ConfigurationMessage<T>{
 			extractProtocolVersionBoundaries(skips, boundaries);
 		}
 
-		boundaries.sort(Comparator.comparing(Version::of));
+		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
 		return boundaries;
