@@ -72,7 +72,7 @@ class ConfigurationDescriber{
 	 * Description of all the loaded configuration.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws ConfigurationException   If a configuration error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
@@ -85,9 +85,9 @@ class ConfigurationDescriber{
 	 *
 	 * @param configurationClass	Configuration class to be described.
 	 * @return	The description.
-	 * @throws AnnotationException   If an annotation error occurs.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
-	 * @throws EncodeException   If a configuration cannot be retrieved.
+	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
 		final FieldDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {

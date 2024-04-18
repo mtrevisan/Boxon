@@ -198,7 +198,7 @@ class CodecListTest{
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
 		FieldAccessor.injectValue(codec, templateParser);
-		FieldAccessor.injectValue(codec, Evaluator.create());
+		FieldAccessor.injectValue(codec, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

@@ -204,7 +204,7 @@ class FieldDescriber{
 	 * @param entities	The collection of entities to be described.
 	 * @param mapper	A function that takes an entity of type T and returns its corresponding map representation.
 	 * @return	The list of descriptions for the entities.
-	 * @throws FieldException   If a field exception occurs during the mapping process.
+	 * @throws FieldException	If a field exception occurs during the mapping process.
 	 * @param <T>	The type of the entities.
 	 */
 	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,

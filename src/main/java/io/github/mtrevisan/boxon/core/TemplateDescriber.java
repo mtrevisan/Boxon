@@ -71,7 +71,7 @@ class TemplateDescriber{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException   If a template error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	List<Map<String, Object>> describeTemplate() throws FieldException{
 		return describeAllTemplates(FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
@@ -82,7 +82,7 @@ class TemplateDescriber{
 	 *
 	 * @param templateClass	Template class to be described.
 	 * @return	The description.
-	 * @throws AnnotationException   If an annotation error occurs.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
@@ -107,7 +107,7 @@ class TemplateDescriber{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException   If a template error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	List<Map<String, Object>> describeParsing() throws FieldException{
 		return describeAllTemplates(FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
@@ -118,7 +118,7 @@ class TemplateDescriber{
 	 *
 	 * @param templateClass	Template class to be described.
 	 * @return	The description.
-	 * @throws AnnotationException   If an annotation error occurs.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
