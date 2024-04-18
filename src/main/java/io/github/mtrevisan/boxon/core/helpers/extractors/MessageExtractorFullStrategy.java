@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import java.util.List;
 
 
-public final class MessageExtractorFullTemplate extends MessageExtractorBasicTemplate{
+public final class MessageExtractorFullStrategy extends MessageExtractorBasicStrategy{
 
 	@Override
 	public List<EvaluatedField<Evaluate>> getEvaluatedFields(final Template<?> message){

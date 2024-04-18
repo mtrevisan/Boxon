@@ -30,6 +30,7 @@ import org.slf4j.helpers.MessageFormatter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -185,6 +186,12 @@ public final class StringHelper{
 		return true;
 	}
 
+	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
+		return ((value instanceof final String v && StringHelper.isBlank(v))
+			|| (value instanceof final Collection<?> c && c.isEmpty())
+			|| value == void.class);
+	}
+
 
 	/**
 	 * Converts a decimal value into the corresponding hexadecimal string.
@@ -253,7 +260,7 @@ public final class StringHelper{
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.sizeOrZero(hexString);
 		if(length % 2 != 0)
-			throw DataException.create("Input should be of even length, was {}", length);
+			throw new IllegalArgumentException("Input should be of even length, was " + length);
 
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){

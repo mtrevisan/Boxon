@@ -37,7 +37,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-class DescriptorThreadedTest{
+class DescriberThreadedTest{
 
 	@Test
 	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException, NoSuchMethodException,
@@ -50,11 +50,11 @@ class DescriptorThreadedTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
-		Descriptor descriptor = Descriptor.create(core);
+		Describer describer = Describer.create(core);
 
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
-		MultithreadingHelper.testMultithreading(descriptor::describeTemplate,
+		MultithreadingHelper.testMultithreading(describer::describeTemplate,
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
 		);
@@ -78,8 +78,8 @@ class DescriptorThreadedTest{
 		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describeTemplate();
+				Describer describer = Describer.create(core);
+				return describer.describeTemplate();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
@@ -103,8 +103,8 @@ class DescriptorThreadedTest{
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
 					.create();
-				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describeTemplate();
+				Describer describer = Describer.create(core);
+				return describer.describeTemplate();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
