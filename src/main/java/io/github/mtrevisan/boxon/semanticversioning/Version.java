@@ -86,6 +86,197 @@ public class Version implements Comparable<Version>{
 
 
 	/**
+	 * Major parameter.
+	 *
+	 * @return	Major parameter.
+	 */
+	public Integer getMajor(){
+		return major;
+	}
+
+	/**
+	 * Minor parameter.
+	 *
+	 * @return	Minor parameter.
+	 */
+	public Integer getMinor(){
+		return minor;
+	}
+
+	/**
+	 * Patch parameter.
+	 *
+	 * @return	Patch parameter.
+	 */
+	public Integer getPatch(){
+		return patch;
+	}
+
+	/**
+	 * Pre-release parameter.
+	 *
+	 * @return	Pre-release parameter.
+	 */
+	public String[] getPreRelease(){
+		return preRelease.clone();
+	}
+
+	/**
+	 * Build parameter.
+	 *
+	 * @return	Build parameter.
+	 */
+	public String[] getBuild(){
+		return build.clone();
+	}
+
+
+	/**
+	 * Increments the major version number by a given amount, clearing all other values.
+	 * <p>
+	 * When the major version number is incremented, the minor and patch version numbers are reset to {@code 0}, and
+	 * the pre-release and build metadata are cleared.
+	 * </p>
+	 *
+	 * @param amount	The amount to increment by.
+	 * @return	The new instance.
+	 * @throws VersionException	If the resulting version number is not valid.
+	 */
+	public Version incrementMajor(final int amount) throws VersionException{
+		return VersionBuilder.of(JavaHelper.nonNullOrDefault(major, 0) + amount);
+	}
+
+	/**
+	 * Increments the minor version number by a given amount, clearing lesser values.
+	 * <p>
+	 * When the minor version number is incremented, the patch version number is reset to {@code 0}, and the pre-release
+	 * and build metadata are cleared.
+	 * </p>
+	 *
+	 * @param amount	The amount to increment by.
+	 * @return	The new instance.
+	 * @throws VersionException	If the resulting version number is not valid.
+	 */
+	public Version incrementMinor(final int amount) throws VersionException{
+		if(major == null)
+			throw new IllegalArgumentException("Cannot increment minor part of an invalid version: " + this);
+
+		return VersionBuilder.of(major, JavaHelper.nonNullOrDefault(minor, 0) + amount);
+	}
+
+	/**
+	 * Increments the patch version number by a given amount, clearing all metadata.
+	 * <p>
+	 * When the patch version number is incremented, the pre-release and build metadata are cleared.
+	 * </p>
+	 *
+	 * @param amount	The amount to increment by.
+	 * @return	The new instance.
+	 * @throws VersionException	If the resulting version number is not valid.
+	 */
+	public Version incrementPatch(final int amount) throws VersionException{
+		if(major == null || minor == null)
+			throw new IllegalArgumentException("Cannot increment patch part of an invalid version: " + this);
+
+		return VersionBuilder.of(major, minor, JavaHelper.nonNullOrDefault(patch, 0) + amount);
+	}
+
+	/**
+	 * Sets the pre-release metadata.
+	 *
+	 * @param preRelease	The pre-release metadata.
+	 * @return	The new instance.
+	 * @throws VersionException	If the pre-release metadata is not valid.
+	 */
+	public Version setPreRelease(final String... preRelease) throws VersionException{
+		if(major == null || minor == null || patch == null)
+			throw new IllegalArgumentException("Cannot set release part of an invalid version: " + this);
+
+		return VersionBuilder.of(major, minor, patch, preRelease, build);
+	}
+
+	/**
+	 * Sets the build metadata.
+	 *
+	 * @param build	The build metadata.
+	 * @return	The new instance.
+	 * @throws VersionException	If the build metadata is not valid.
+	 */
+	public Version setBuild(final String... build) throws VersionException{
+		if(major == null || minor == null || patch == null)
+			throw new IllegalArgumentException("Cannot set build part of an invalid version: " + this);
+
+		return VersionBuilder.of(major, minor, patch, preRelease, build);
+	}
+
+
+	/**
+	 * Checks if the version number is a pre-release version number.
+	 *
+	 * @return	Whether the version is pre-release.
+	 */
+	public boolean isPreRelease(){
+		return (major != null && (major == 0 || preRelease.length > 0));
+	}
+
+	/**
+	 * Checks if the version number is a stable version number.
+	 *
+	 * @return	Whether the version is stable.
+	 */
+	public boolean isStable(){
+		return (major != null && (major > 0 && preRelease.length == 0));
+	}
+
+	/**
+	 * Checks if this version is API-compatible with another version, that is, the major identifier is the same.
+	 *
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is API-compatible with the other version.
+	 */
+	public boolean isCompatibleWith(final Version other){
+		return (major != null && major.equals(other.major));
+	}
+
+	/**
+	 * Checks if this version has added functionalities with respect to another version, that is, the major identifier is the same and
+	 * the minor identifier is greater.
+	 *
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is an enhancement of the other version.
+	 */
+	public boolean isEnhancementOf(final Version other){
+		return (isCompatibleWith(other)
+			&& notNullAndGreaterThan(minor, other.minor));
+	}
+
+	/**
+	 * Checks if this version is a patch of the another version, that is, the major and minor identifiers are the same and
+	 * the patch identifier is greater.
+	 *
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is an enhancement of the other version.
+	 */
+	public boolean isPatchOf(final Version other){
+		return (isCompatibleWith(other)
+			&& notNullAndEqualsTo(minor, other.minor)
+			&& notNullAndGreaterThan(patch, other.patch));
+	}
+
+	private static boolean notNullAndEqualsTo(final Integer component1, final Integer component2){
+		return (notNull(component1, component2) && component1.intValue() == component2.intValue());
+	}
+
+	private static boolean notNullAndGreaterThan(final Integer component1, final Integer component2){
+		return (notNull(component1, component2) && component1 > component2);
+	}
+
+	private static boolean notNull(final Integer component1, final Integer component2){
+		return (component1 != null && component2 != null);
+	}
+
+
+	/**
 	 * Checks if this version is greater than the other version.
 	 *
 	 * @param other	The other version to compare to.
@@ -233,206 +424,14 @@ public class Version implements Comparable<Version>{
 		return result;
 	}
 
+	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
+		return Math.min(array1.length, array2.length);
+	}
+
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
 		return (JavaHelper.isDecimalIntegerNumber(identifier1) && JavaHelper.isDecimalIntegerNumber(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
 			: identifier1.compareTo(identifier2));
-	}
-
-
-	/**
-	 * Major parameter.
-	 *
-	 * @return	Major parameter.
-	 */
-	public Integer getMajor(){
-		return major;
-	}
-
-	/**
-	 * Minor parameter.
-	 *
-	 * @return	Minor parameter.
-	 */
-	public Integer getMinor(){
-		return minor;
-	}
-
-	/**
-	 * Patch parameter.
-	 *
-	 * @return	Patch parameter.
-	 */
-	public Integer getPatch(){
-		return patch;
-	}
-
-	/**
-	 * Pre-release parameter.
-	 *
-	 * @return	Pre-release parameter.
-	 */
-	public String[] getPreRelease(){
-		return preRelease.clone();
-	}
-
-	/**
-	 * Build parameter.
-	 *
-	 * @return	Build parameter.
-	 */
-	public String[] getBuild(){
-		return build.clone();
-	}
-
-
-	/**
-	 * Checks if the version number is a pre-release version number.
-	 *
-	 * @return	Whether the version is pre-release.
-	 */
-	public boolean isPreRelease(){
-		return (major != null && (major == 0 || preRelease.length > 0));
-	}
-
-	/**
-	 * Checks if the version number is a stable version number.
-	 *
-	 * @return	Whether the version is stable.
-	 */
-	public boolean isStable(){
-		return (major != null && (major > 0 && preRelease.length == 0));
-	}
-
-	/**
-	 * Checks if this version is API-compatible with another version, that is, the major identifier is the same.
-	 *
-	 * @param other	The other version to compare to.
-	 * @return	Whether this version is API-compatible with the other version.
-	 */
-	public boolean isCompatibleWith(final Version other){
-		return (major != null && major.equals(other.major));
-	}
-
-	/**
-	 * Checks if this version has added functionalities with respect to another version, that is, the major identifier is the same and
-	 * the minor identifier is greater.
-	 *
-	 * @param other	The other version to compare to.
-	 * @return	Whether this version is an enhancement of the other version.
-	 */
-	public boolean isEnhancementOf(final Version other){
-		return (isCompatibleWith(other)
-			&& notNullAndGreaterThan(minor, other.minor));
-	}
-
-	/**
-	 * Checks if this version is a patch of the another version, that is, the major and minor identifiers are the same and
-	 * the patch identifier is greater.
-	 *
-	 * @param other	The other version to compare to.
-	 * @return	Whether this version is an enhancement of the other version.
-	 */
-	public boolean isPatchOf(final Version other){
-		return (isCompatibleWith(other)
-			&& notNullAndEqualsTo(minor, other.minor)
-			&& notNullAndGreaterThan(patch, other.patch));
-	}
-
-	private static boolean notNullAndEqualsTo(final Integer component1, final Integer component2){
-		return (notNull(component1, component2) && component1.intValue() == component2.intValue());
-	}
-
-	private static boolean notNullAndGreaterThan(final Integer component1, final Integer component2){
-		return (notNull(component1, component2) && component1 > component2);
-	}
-
-	private static boolean notNull(final Integer component1, final Integer component2){
-		return (component1 != null && component2 != null);
-	}
-
-
-	/**
-	 * Increments the major version number by a given amount, clearing all other values.
-	 * <p>
-	 * When the major version number is incremented, the minor and patch version numbers are reset to {@code 0}, and
-	 * the pre-release and build metadata are cleared.
-	 * </p>
-	 *
-	 * @param amount	The amount to increment by.
-	 * @return	The new instance.
-	 * @throws VersionException	If the resulting version number is not valid.
-	 */
-	public Version incrementMajor(final int amount) throws VersionException{
-		return VersionBuilder.of(JavaHelper.nonNullOrDefault(major, 0) + amount);
-	}
-
-	/**
-	 * Increments the minor version number by a given amount, clearing lesser values.
-	 * <p>
-	 * When the minor version number is incremented, the patch version number is reset to {@code 0}, and the pre-release
-	 * and build metadata are cleared.
-	 * </p>
-	 *
-	 * @param amount	The amount to increment by.
-	 * @return	The new instance.
-	 * @throws VersionException	If the resulting version number is not valid.
-	 */
-	public Version incrementMinor(final int amount) throws VersionException{
-		if(major == null)
-			throw new IllegalArgumentException("Cannot increment minor part of an invalid version: " + this);
-
-		return VersionBuilder.of(major, JavaHelper.nonNullOrDefault(minor, 0) + amount);
-	}
-
-	/**
-	 * Increments the patch version number by a given amount, clearing all metadata.
-	 * <p>
-	 * When the patch version number is incremented, the pre-release and build metadata are cleared.
-	 * </p>
-	 *
-	 * @param amount	The amount to increment by.
-	 * @return	The new instance.
-	 * @throws VersionException	If the resulting version number is not valid.
-	 */
-	public Version incrementPatch(final int amount) throws VersionException{
-		if(major == null || minor == null)
-			throw new IllegalArgumentException("Cannot increment patch part of an invalid version: " + this);
-
-		return VersionBuilder.of(major, minor, JavaHelper.nonNullOrDefault(patch, 0) + amount);
-	}
-
-	/**
-	 * Sets the pre-release metadata.
-	 *
-	 * @param preRelease	The pre-release metadata.
-	 * @return	The new instance.
-	 * @throws VersionException	If the pre-release metadata is not valid.
-	 */
-	public Version setPreRelease(final String... preRelease) throws VersionException{
-		if(major == null || minor == null || patch == null)
-			throw new IllegalArgumentException("Cannot set release part of an invalid version: " + this);
-
-		return VersionBuilder.of(major, minor, patch, preRelease, build);
-	}
-
-	/**
-	 * Sets the build metadata.
-	 *
-	 * @param build	The build metadata.
-	 * @return	The new instance.
-	 * @throws VersionException	If the build metadata is not valid.
-	 */
-	public Version setBuild(final String... build) throws VersionException{
-		if(major == null || minor == null || patch == null)
-			throw new IllegalArgumentException("Cannot set build part of an invalid version: " + this);
-
-		return VersionBuilder.of(major, minor, patch, preRelease, build);
-	}
-
-
-	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
-		return Math.min(array1.length, array2.length);
 	}
 
 
