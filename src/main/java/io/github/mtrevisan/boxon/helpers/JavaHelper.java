@@ -56,12 +56,6 @@ public final class JavaHelper{
 		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
 	}
 
-	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
-		return ((value instanceof final String v && StringHelper.isBlank(v))
-			|| (value instanceof final Collection<?> c && c.isEmpty())
-			|| value == void.class);
-	}
-
 
 	/**
 	 * Return the given object if non-null, the default object otherwise.

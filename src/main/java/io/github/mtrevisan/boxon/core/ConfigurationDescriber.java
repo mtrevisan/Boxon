@@ -96,7 +96,7 @@ class ConfigurationDescriber{
 		};
 		return FieldDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor,
 			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
-			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -110,7 +110,7 @@ class ConfigurationDescriber{
 	List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
 		return FieldDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
 			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
-			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 }

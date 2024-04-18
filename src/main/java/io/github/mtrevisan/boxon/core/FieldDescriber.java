@@ -284,7 +284,7 @@ class FieldDescriber{
 			default -> {
 				if(value.getClass().isArray())
 					handleArrayValue(key, value, rootDescription);
-				else if(!JavaHelper.isEmptyStringOrCollectionOrVoid(value))
+				else if(!StringHelper.isEmptyStringOrCollectionOrVoid(value))
 					rootDescription.put(key, value);
 			}
 		}

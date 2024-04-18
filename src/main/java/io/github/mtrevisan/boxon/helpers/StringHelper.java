@@ -30,6 +30,7 @@ import org.slf4j.helpers.MessageFormatter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -183,6 +184,12 @@ public final class StringHelper{
 					return false;
 		}
 		return true;
+	}
+
+	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
+		return ((value instanceof final String v && StringHelper.isBlank(v))
+			|| (value instanceof final Collection<?> c && c.isEmpty())
+			|| value == void.class);
 	}
 
 
