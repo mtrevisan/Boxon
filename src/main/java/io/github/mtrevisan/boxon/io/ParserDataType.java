@@ -413,7 +413,7 @@ public enum ParserDataType{
 	}
 
 	public static BigInteger reinterpretToBigInteger(final Number value){
-		return  (value instanceof final BigInteger bi
+		return (value instanceof final BigInteger bi
 			? bi
 			: BigInteger.valueOf(value.longValue()));
 	}

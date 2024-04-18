@@ -260,7 +260,7 @@ public final class StringHelper{
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.sizeOrZero(hexString);
 		if(length % 2 != 0)
-			throw DataException.create("Input should be of even length, was {}", length);
+			throw new IllegalArgumentException("Input should be of even length, was " + length);
 
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){
