@@ -153,12 +153,14 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getFloat(byteOrder);
+			final int rawValue = reader.getInt(byteOrder);
+			return Float.intBitsToFloat(rawValue);
 		}
 
 		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putFloat((Float)value, byteOrder);
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
+			final int value = Float.floatToIntBits((Float)rawValue);
+			writer.putInt(value, byteOrder);
 		}
 	},
 
@@ -176,12 +178,14 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getDouble(byteOrder);
+			final long rawValue = reader.getLong(byteOrder);
+			return Double.longBitsToDouble(rawValue);
 		}
 
 		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putDouble((Double)value, byteOrder);
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
+			final long value = Double.doubleToLongBits((Double)rawValue);
+			writer.putLong(value, byteOrder);
 		}
 	};
 

@@ -140,24 +140,6 @@ public interface BitReaderInterface{
 	BigInteger getBigInteger(int size, ByteOrder byteOrder);
 
 	/**
-	 * Reads {@link Float#SIZE} bits and composes a {@code float} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@code float}.
-	 */
-	float getFloat(ByteOrder byteOrder);
-
-	/**
-	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@code double}.
-	 */
-	double getDouble(ByteOrder byteOrder);
-
-	/**
 	 * Reads the specified amount of {@code char}s with a given {@link Charset}.
 	 *
 	 * @param length	The number of {@code char}s to read.

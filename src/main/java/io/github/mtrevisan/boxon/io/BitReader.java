@@ -169,16 +169,6 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
-	public float getFloat(final ByteOrder byteOrder){
-		return Float.intBitsToFloat(getInt(byteOrder));
-	}
-
-	@Override
-	public double getDouble(final ByteOrder byteOrder){
-		return Double.longBitsToDouble(getLong(byteOrder));
-	}
-
-	@Override
 	public String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
 	}

@@ -133,46 +133,6 @@ class BitWriterTest{
 	}
 
 	@Test
-	void floatPrimitive(){
-		float value = 1.23f;
-		writer.putFloat(value, ByteOrder.LITTLE_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("A4709D3F", reader.toString());
-		Assertions.assertEquals(value, reader.getFloat(ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void floatPrimitiveBigEndian(){
-		float value = 1.23f;
-		writer.putFloat(value, ByteOrder.BIG_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("3F9D70A4", reader.toString());
-		Assertions.assertEquals(value, reader.getFloat(ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
-	void doublePrimitive(){
-		double value = 1.23;
-		writer.putDouble(value, ByteOrder.LITTLE_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("AE47E17A14AEF33F", reader.toString());
-		Assertions.assertEquals(value, reader.getDouble(ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void doublePrimitiveBigEndian(){
-		double value = 1.23;
-		writer.putDouble(value, ByteOrder.BIG_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("3FF3AE147AE147AE", reader.toString());
-		Assertions.assertEquals(value, reader.getDouble(ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
 	void text(){
 		String value = "test";
 		writer.putText(value

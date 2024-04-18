@@ -88,16 +88,6 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 	}
 
 	@Override
-	public void putFloat(final float value, final ByteOrder byteOrder){
-		putInt(Float.floatToRawIntBits(value), byteOrder);
-	}
-
-	@Override
-	public void putDouble(final double value, final ByteOrder byteOrder){
-		putLong(Double.doubleToRawLongBits(value), byteOrder);
-	}
-
-	@Override
 	public void putText(final String text, final Charset charset){
 		putBytes(text.getBytes(charset));
 	}
