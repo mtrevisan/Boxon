@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.helpers.configurations.validators;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
@@ -109,7 +108,7 @@ final class ValidationHelper{
 		//`defaultValue` compatible with field type
 		if(!isStringAssignableFrom(configData.getFieldType())
 				|| defaultValue != null && isStringAssignableFrom(defaultValue.getClass()) && !((String)defaultValue).isEmpty()
-				&& !JavaHelper.matches((String)defaultValue, formatPattern))
+				&& !StringHelper.matches((String)defaultValue, formatPattern))
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",
 				configData.getAnnotationName(), configData.getFieldType(), pattern);
 
@@ -133,15 +132,15 @@ final class ValidationHelper{
 	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData configData)
 			throws AnnotationException{
 		//`defaultValue` compatible with `pattern`
-		if(!JavaHelper.matchesOrBlank(configData.getDefaultValue(), formatPattern))
+		if(!StringHelper.matchesOrBlank(configData.getDefaultValue(), formatPattern))
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
 				configData.getAnnotationName(), configData.getDefaultValue(), formatPattern.pattern());
 		//`minValue` compatible with `pattern`
-		if(!JavaHelper.matchesOrBlank(configData.getMinValue(), formatPattern))
+		if(!StringHelper.matchesOrBlank(configData.getMinValue(), formatPattern))
 			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
 				configData.getAnnotationName(), configData.getMinValue(), formatPattern.pattern());
 		//`maxValue` compatible with `pattern`
-		if(!JavaHelper.matchesOrBlank(configData.getMaxValue(), formatPattern))
+		if(!StringHelper.matchesOrBlank(configData.getMaxValue(), formatPattern))
 			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
 				configData.getAnnotationName(), configData.getMaxValue(), formatPattern.pattern());
 	}

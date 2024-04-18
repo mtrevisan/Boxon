@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 
 /**
@@ -43,6 +44,16 @@ public final class StringHelper{
 
 
 	private StringHelper(){}
+
+
+	public static boolean matches(final CharSequence text, final Pattern pattern){
+		return pattern.matcher(text)
+			.matches();
+	}
+
+	public static boolean matchesOrBlank(final String text, final Pattern pattern){
+		return (StringHelper.isBlank(text) || matches(text, pattern));
+	}
 
 
 	/**

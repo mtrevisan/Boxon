@@ -28,7 +28,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.regex.Pattern;
 
 
 /**
@@ -57,16 +56,6 @@ public final class JavaHelper{
 	 */
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);
-	}
-
-
-	public static boolean matches(final CharSequence text, final Pattern pattern){
-		return pattern.matcher(text)
-			.matches();
-	}
-
-	public static boolean matchesOrBlank(final String text, final Pattern pattern){
-		return (StringHelper.isBlank(text) || matches(text, pattern));
 	}
 
 
