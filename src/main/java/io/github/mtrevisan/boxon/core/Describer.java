@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -58,9 +60,13 @@ public final class Describer{
 
 
 	private Describer(final Core core){
-		final MessageDescriber messageDescriber = MessageDescriber.create(core);
-		templateDescriber = TemplateDescriber.create(core, messageDescriber);
-		configurationDescriber = ConfigurationDescriber.create(core, messageDescriber);
+		final Map<String, Object> context = core.getContext();
+		final TemplateParser templateParser = core.getTemplateParser();
+		final ConfigurationParser configurationParser = core.getConfigurationParser();
+
+		final MessageDescriber messageDescriber = MessageDescriber.create(context);
+		templateDescriber = TemplateDescriber.create(templateParser, messageDescriber);
+		configurationDescriber = ConfigurationDescriber.create(configurationParser, messageDescriber);
 	}
 
 

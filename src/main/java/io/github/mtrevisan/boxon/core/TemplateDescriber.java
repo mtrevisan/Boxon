@@ -44,25 +44,23 @@ import java.util.Map;
 final class TemplateDescriber{
 
 	private final TemplateParser templateParser;
-
 	private final MessageDescriber messageDescriber;
 
 
 	/**
 	 * Create a template describer.
 	 *
-	 * @param core	The parser core.
+	 * @param templateParser	The template parser.
 	 * @param messageDescriber	The message describer.
 	 * @return	A describer.
 	 */
-	static TemplateDescriber create(final Core core, final MessageDescriber messageDescriber){
-		return new TemplateDescriber(core, messageDescriber);
+	static TemplateDescriber create(final TemplateParser templateParser, final MessageDescriber messageDescriber){
+		return new TemplateDescriber(templateParser, messageDescriber);
 	}
 
 
-	private TemplateDescriber(final Core core, final MessageDescriber messageDescriber){
-		templateParser = core.getTemplateParser();
-
+	private TemplateDescriber(final TemplateParser templateParser, final MessageDescriber messageDescriber){
+		this.templateParser = templateParser;
 		this.messageDescriber = messageDescriber;
 	}
 

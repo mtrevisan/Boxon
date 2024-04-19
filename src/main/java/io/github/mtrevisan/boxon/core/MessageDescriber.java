@@ -40,22 +40,22 @@ import java.util.Map;
  */
 final class MessageDescriber{
 
-	private final Core core;
+	private final Map<String, Object> context;
 
 
 	/**
 	 * Create a describer.
 	 *
-	 * @param core	The parser core.
+	 * @param context	The core context.
 	 * @return	A message describer.
 	 */
-	static MessageDescriber create(final Core core){
-		return new MessageDescriber(core);
+	static MessageDescriber create(final Map<String, Object> context){
+		return new MessageDescriber(context);
 	}
 
 
-	private MessageDescriber(final Core core){
-		this.core = core;
+	private MessageDescriber(final Map<String, Object> context){
+		this.context = context;
 	}
 
 
@@ -88,7 +88,7 @@ final class MessageDescriber{
 	 * @param description	The map where the context description will be populated.
 	 */
 	private void describeContext(final Map<String, Object> description){
-		final Map<String, Object> ctx = new HashMap<>(core.getContext());
+		final Map<String, Object> ctx = new HashMap<>(context);
 		ctx.remove(ContextHelper.CONTEXT_SELF);
 		ctx.remove(ContextHelper.CONTEXT_CHOICE_PREFIX);
 		FieldDescriber.putIfNotEmpty(DescriberKey.CONTEXT, Collections.unmodifiableMap(ctx), description);

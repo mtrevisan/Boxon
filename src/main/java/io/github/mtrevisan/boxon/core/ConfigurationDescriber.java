@@ -45,25 +45,22 @@ import java.util.Map;
 final class ConfigurationDescriber{
 
 	private final LoaderConfiguration loaderConfiguration;
-
 	private final MessageDescriber messageDescriber;
 
 
 	/**
 	 * Create a describer.
 	 *
-	 * @param core	The parser core.
+	 * @param configurationParser	The configuration parser.
 	 * @return	A configuration describer.
 	 */
-	static ConfigurationDescriber create(final Core core, final MessageDescriber messageDescriber){
-		return new ConfigurationDescriber(core, messageDescriber);
+	static ConfigurationDescriber create(final ConfigurationParser configurationParser, final MessageDescriber messageDescriber){
+		return new ConfigurationDescriber(configurationParser, messageDescriber);
 	}
 
 
-	private ConfigurationDescriber(final Core core, final MessageDescriber messageDescriber){
-		final ConfigurationParser configurationParser = core.getConfigurationParser();
+	private ConfigurationDescriber(final ConfigurationParser configurationParser, final MessageDescriber messageDescriber){
 		loaderConfiguration = configurationParser.getLoaderConfiguration();
-
 		this.messageDescriber = messageDescriber;
 	}
 
