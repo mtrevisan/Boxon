@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core;
+package io.github.mtrevisan.boxon.core.helpers.describer;
 
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractor;
@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Class for describing messages and entities.
  */
-final class MessageDescriber{
+public final class MessageDescriber{
 
 	private final Map<String, Object> context;
 
@@ -49,7 +49,7 @@ final class MessageDescriber{
 	 * @param context	The core context.
 	 * @return	A message describer.
 	 */
-	static MessageDescriber create(final Map<String, Object> context){
+	public static MessageDescriber create(final Map<String, Object> context){
 		return new MessageDescriber(context);
 	}
 

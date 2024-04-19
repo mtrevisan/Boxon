@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core;
+package io.github.mtrevisan.boxon.core.helpers.describer;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -64,7 +64,7 @@ import java.util.Map;
 /**
  * Class for describing messages and entities.
  */
-final class FieldDescriber{
+public final class FieldDescriber{
 
 	static final MessageExtractorBasicStrategy MESSAGE_EXTRACTOR_BASIC_STRATEGY = new MessageExtractorBasicStrategy();
 	static final MessageExtractorBasicStrategy MESSAGE_EXTRACTOR_FULL_STRATEGY = new MessageExtractorFullStrategy();
@@ -130,7 +130,7 @@ final class FieldDescriber{
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
 	 */
-	static Map<String, Object> describeRawMessage(final Class<?> boundClass){
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass){
 		final Map<String, Object> description = new HashMap<>(6);
 		try{
 			final Template<?> entity = Template.create(boundClass);

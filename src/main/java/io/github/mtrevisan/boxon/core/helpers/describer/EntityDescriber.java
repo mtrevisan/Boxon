@@ -1,4 +1,4 @@
-package io.github.mtrevisan.boxon.core;
+package io.github.mtrevisan.boxon.core.helpers.describer;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
