@@ -83,7 +83,7 @@ final class CodecList implements CodecInterface<BindList>{
 	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindList binding,
 			final Object rootObject) throws FieldException{
 		Class<?> chosenAlternativeType;
-		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, binding, rootObject)) != null){
+		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, binding, rootObject)) != void.class){
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
 			final Object element = templateParser.decode(subTemplate, reader, rootObject);
@@ -134,15 +134,9 @@ final class CodecList implements CodecInterface<BindList>{
 
 		final boolean hasHeader = addListHeaderToContext(reader, objectChoicesList);
 		if(!hasHeader)
-			return null;
+			return void.class;
 
-		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
-		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
-			? chosenAlternative.type()
-			: binding.selectDefault()
-		);
-
-		return (chosenAlternativeType != void.class? chosenAlternativeType: null);
+		return CodecHelper.chooseAlternativeType(alternatives, binding.selectDefault(), evaluator, rootObject);
 	}
 
 	/**

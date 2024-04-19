@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -53,9 +52,10 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = interpretBinding(annotation);
 
-		final Class<?> type = chooseAlternativeType(reader, binding, rootObject);
+		final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, binding.type(), binding.selectFrom(),
+			binding.selectDefault(), evaluator, rootObject);
 
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = templateParser.createTemplate(chosenAlternativeType);
 		final Object instance = templateParser.decode(template, reader, rootObject);
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -92,35 +92,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
 		templateParser.encode(template, writer, rootObject, obj);
-	}
-
-
-	/**
-	 * Gets the alternative class type that parses the next data.
-	 *
-	 * @param reader	The reader from which to read the data from.
-	 * @return	The class type of the chosen alternative.
-	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
-	 */
-	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final BindObject binding, final Object rootObject)
-			throws CodecException{
-		final ObjectChoices objectChoices = binding.selectFrom();
-		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
-		if(!CodecHelper.hasSelectAlternatives(alternatives))
-			return binding.type();
-
-		CodecHelper.addPrefixToContext(reader, objectChoices, evaluator);
-
-		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
-		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
-			? chosenAlternative.type()
-			: binding.selectDefault()
-		);
-
-		if(chosenAlternativeType == void.class)
-			throw CodecException.createNoCodecForAlternatives(rootObject.getClass());
-
-		return chosenAlternativeType;
 	}
 
 }
