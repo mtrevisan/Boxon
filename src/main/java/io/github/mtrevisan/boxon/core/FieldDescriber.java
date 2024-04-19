@@ -142,10 +142,7 @@ final class FieldDescriber{
 	 */
 	static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
 			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription){
-		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicStrategy
-			? DescriberKey.TEMPLATE
-			: DescriberKey.CONFIGURATION
-		);
+		final DescriberKey messageKey = selectMessageKey(messageExtractor);
 		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), rootDescription);
 
 		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor),
@@ -154,6 +151,13 @@ final class FieldDescriber{
 			FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
 		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(
 			messageExtractor.getPostProcessedFields(message), FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
+	}
+
+	private static <M, F> DescriberKey selectMessageKey(final MessageExtractor<M, ?, F> messageExtractor){
+		return (messageExtractor instanceof MessageExtractorBasicStrategy
+			? DescriberKey.TEMPLATE
+			: DescriberKey.CONFIGURATION
+		);
 	}
 
 	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor){
@@ -247,7 +251,7 @@ final class FieldDescriber{
 		else if(componentType == ObjectChoices.ObjectChoice.class)
 			describeAlternatives(key, (ObjectChoices.ObjectChoice[])value, rootDescription);
 		else if(componentType == ConverterChoices.ConverterChoice.class || componentType == AlternativeSubField.class
-			|| componentType == CompositeSubField.class)
+				|| componentType == CompositeSubField.class)
 			describeAlternatives(key, (Annotation[])value, rootDescription);
 	}
 

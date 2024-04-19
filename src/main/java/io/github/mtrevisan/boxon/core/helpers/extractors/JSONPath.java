@@ -58,6 +58,9 @@ public final class JSONPath{
 
 	private static final Pattern PATTERN_HEX_URL_ENCODE = Pattern.compile("%x([0-9a-fA-F]{2})");
 
+	private static final IndexExtractor LIST_INDEX_EXTRACTOR = new ListIndexExtractor();
+	private static final IndexExtractor ARRAY_INDEX_EXTRACTOR = new ArrayIndexExtractor();
+
 
 	private JSONPath(){}
 
@@ -166,10 +169,48 @@ public final class JSONPath{
 	}
 
 	private static Object extractPath(final Object data, final Integer idx, final Object defaultValue){
-		return (data instanceof final List<?> lst
-			? (idx >= 0 && idx < lst.size()? lst.get(idx): defaultValue)
-			: (idx >= 0 && idx < Array.getLength(data)? Array.get(data, idx): defaultValue)
+		final IndexExtractor extractor = selectPathExtractor(data);
+		return (extractor.isValidIndex(idx, data)
+			? extractor.getValueAt(idx, data)
+			: defaultValue
 		);
+	}
+
+	private static IndexExtractor selectPathExtractor(final Object data){
+		return (data instanceof List<?>
+			? LIST_INDEX_EXTRACTOR
+			: ARRAY_INDEX_EXTRACTOR
+		);
+	}
+
+	private interface IndexExtractor{
+		boolean isValidIndex(Integer idx, Object data);
+
+		Object getValueAt(Integer idx, Object data);
+	}
+
+	private static class ListIndexExtractor implements IndexExtractor{
+		@Override
+		public boolean isValidIndex(final Integer idx, final Object data){
+			return (idx >= 0 && idx < ((List<?>)data).size());
+		}
+
+		@Override
+		public Object getValueAt(final Integer idx, final Object data){
+			return ((List<?>)data).get(idx);
+		}
+	}
+
+	private static class ArrayIndexExtractor implements IndexExtractor{
+		@Override
+		public boolean isValidIndex(final Integer idx, final Object data){
+			return (idx >= 0 && idx < Array.getLength(data));
+		}
+
+		@Override
+		public Object getValueAt(final Integer idx, final Object data){
+			return Array.get(data, idx);
+		}
 	}
 
 	private static Object extractPath(final Object data, final String currentPath, final Object defaultValue){
