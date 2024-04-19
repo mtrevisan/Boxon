@@ -1448,12 +1448,15 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-4.0.0"></a>
-### version 4.0.0 - 20240418
+### version 4.0.0 - 20240419
 
 - Incompatibility between read type, converter input, converter output, validator, and field type is now resolved during core construction, rather than at runtime.
 - Fixed error while handling of `SkipBits` and `SkipUntilTerminator` to allow processing multiple instances.
 - Removed useless `BindFloat` and `BindDouble` has they are rarely used and can be substituted by the appropriate converters (`IntegerToFloatConvert` and `LongToDoubleConverter`).
 - Removed useless `BindByte`, `BindShort`, `BindInt`, and `BindLong` as they can be substituted by `BindInteger`.
+- Renamed `Descriptor` into the more meaningful `Describer`.
+- Added builder to `Version`.
+- Many smells removed, major code refactor.
 
 <a name="changelog-3.6.0"></a>
 ### version 3.6.0 - 20240413
