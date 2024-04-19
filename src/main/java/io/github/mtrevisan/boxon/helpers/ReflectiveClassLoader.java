@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.helpers;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import io.github.mtrevisan.boxon.exceptions.DataException;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
@@ -66,7 +65,7 @@ public final class ReflectiveClassLoader{
 
 		final int length = packageClasses.length;
 		if(length == 0)
-			throw DataException.create("Packages list cannot be empty");
+			throw new IllegalArgumentException("Packages list cannot be empty");
 
 		final String[] packageNames = new String[length];
 		for(int i = 0; i < length; i ++)

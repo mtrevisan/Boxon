@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -98,11 +99,10 @@ public final class JavaHelper{
 	 * Return the length of the array, or {@code 0} if {@code null}.
 	 *
 	 * @param array	The array.
-	 * @param <T>	The class type of the array.
 	 * @return	The length of the array, or {@code 0} if {@code null}.
 	 */
-	public static <T> int sizeOrZero(final T[] array){
-		return (array != null? array.length: 0);
+	public static int sizeOrZero(final Object array){
+		return (array != null? Array.getLength(array): 0);
 	}
 
 	/**

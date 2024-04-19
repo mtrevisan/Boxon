@@ -58,7 +58,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
 		final Class<?> bindingType = binding.type();
-		final Object[] array = createArray(bindingType, size);
+		final Object array = createArray(bindingType, size);
 		final ObjectChoices objectChoices = binding.selectFrom();
 		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
 			decodeWithAlternatives(reader, array, binding, rootObject);
@@ -73,31 +73,31 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return CodecHelper.decodeValue(converterType, validator, array);
 	}
 
-	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
+	private static Object createArray(final Class<?> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
 			throw AnnotationException.createNotPrimitiveValue(type);
 
-		return (T[])Array.newInstance(type, length);
+		return Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReaderInterface reader, final Object[] array, final BindArray binding,
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Object array, final BindArray binding,
 			final Object rootObject) throws FieldException{
-		for(int i = 0, length = array.length; i < length; i ++){
+		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, binding.type(), binding.selectFrom(),
 				binding.selectDefault(), evaluator, rootObject);
 
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-			array[i] = templateParser.decode(subTemplate, reader, rootObject);
+			Array.set(array, i, templateParser.decode(subTemplate, reader, rootObject));
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object[] array, final Class<?> type,
+	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final Class<?> type,
 			final Object rootObject) throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
-		for(int i = 0, length = array.length; i < length; i ++)
-			array[i] = templateParser.decode(template, reader, rootObject);
+		for(int i = 0, length = Array.getLength(array); i < length; i ++)
+			Array.set(array, i, templateParser.decode(template, reader, rootObject));
 	}
 
 	@Override

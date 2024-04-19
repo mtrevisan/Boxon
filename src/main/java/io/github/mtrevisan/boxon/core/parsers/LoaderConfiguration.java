@@ -178,12 +178,11 @@ public final class LoaderConfiguration{
 	 * Constructs a new {@link ConfigurationMessage}.
 	 *
 	 * @param type	The class of the object to be returned as a {@link ConfigurationMessage}.
-	 * @param <T>	The type of the object to be returned as a {@link ConfigurationMessage}.
 	 * @return	The {@link ConfigurationMessage} for the given type.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */
-	private <T> ConfigurationMessage<T> createConfiguration(final Class<T> type) throws AnnotationException{
-		return (ConfigurationMessage<T>)configurationStore.apply(type);
+	private ConfigurationMessage<?> createConfiguration(final Class<?> type) throws AnnotationException{
+		return configurationStore.apply(type);
 	}
 
 	private void addConfigurationsInner(final Map<String, ConfigurationMessage<?>> configurations){

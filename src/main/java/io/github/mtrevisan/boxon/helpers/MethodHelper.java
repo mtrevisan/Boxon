@@ -57,14 +57,13 @@ public final class MethodHelper{
 	 *
 	 * @param type	The class containing the method.
 	 * @param methodName	The method name.
-	 * @param value	The value.
-	 * @param <T>	The class type of the value.
+	 * @param input	The input value.
 	 * @return	The value returned by the given method.
 	 */
-	public static <T, R> R invokeStaticMethod(final Class<?> type, final String methodName, final T value) throws NoSuchMethodException,
+	public static Object invokeStaticMethod(final Class<?> type, final String methodName, final Object input) throws NoSuchMethodException,
 			InvocationTargetException, IllegalAccessException{
-		final Method method = type.getDeclaredMethod(methodName, value.getClass());
-		return (R)method.invoke(null, value);
+		final Method method = type.getDeclaredMethod(methodName, input.getClass());
+		return method.invoke(null, input);
 	}
 
 	/**

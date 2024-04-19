@@ -80,6 +80,8 @@ public final class JSONPath{
 			final String[] pathComponents = parsePath(path);
 			return extract(pathComponents, data, defaultValue);
 		}
+
+		//path is null or empty, return the parent object
 		return (T)data;
 	}
 
@@ -132,20 +134,22 @@ public final class JSONPath{
 		return URLDecoder.decode(text, StandardCharsets.UTF_8);
 	}
 
-	private static <T> T extract(final String[] path, Object data, final T defaultValue) throws JSONPathException{
+	private static <T> T extract(final String[] path, final Object data, final T defaultValue) throws JSONPathException{
+		Object result = data;
+		//traverse the object until the path is fully consumed
 		for(int i = 0, length = path.length; i < length; i ++){
 			final String currentPath = path[i];
 
 			final Integer idx = extractIndex(currentPath);
 
-			validatePath(data, currentPath, idx, path);
+			validatePath(result, currentPath, idx, path);
 
 			if(idx != null)
-				data = extractPath(data, idx, defaultValue);
+				result = extractPath(result, idx, defaultValue);
 			else
-				data = extractPath(data, currentPath, defaultValue);
+				result = extractPath(result, currentPath, defaultValue);
 		}
-		return (T)data;
+		return (T)result;
 	}
 
 	private static Integer extractIndex(final String currentPath){

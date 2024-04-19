@@ -86,29 +86,28 @@ public final class ConfigurationHelper{
 		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
-	static Object extractEnumerationValue(final Class<?> fieldType, Object value,
-			final Class<? extends ConfigurationEnum> enumeration){
+	static Object extractEnumerationValue(final Class<?> fieldType, Object value, final Class<? extends ConfigurationEnum> enumerationClass){
 		if(value instanceof final String v)
 			value = (fieldType.isArray()
-				? extractEnumerationArrayValue(v, enumeration)
-				: extractEnumerationSingleValue(v, enumeration)
+				? extractEnumerationArrayValue(v, enumerationClass)
+				: extractEnumerationSingleValue(v, enumerationClass)
 			);
 		return value;
 	}
 
-	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final String value, final Class<T> enumeration){
-		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
+	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum> enumerationClass){
+		final ConfigurationEnum[] enumConstants = enumerationClass.getEnumConstants();
 		final String[] defaultValues = StringHelper.split(value, PIPE);
 		final int length = defaultValues.length;
-		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
+		final Object valEnum = Array.newInstance(enumerationClass, length);
 		for(int i = 0; i < length; i ++)
-			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+			Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
 		return valEnum;
 	}
 
-	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
-		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
+	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum> enumerationClass){
+		final ConfigurationEnum[] enumConstants = enumerationClass.getEnumConstants();
+		return ConfigurationEnum.extractEnum(enumConstants, value);
 	}
 
 
