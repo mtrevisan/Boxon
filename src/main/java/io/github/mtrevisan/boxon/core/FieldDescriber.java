@@ -74,6 +74,19 @@ final class FieldDescriber{
 	private static final FieldExtractorPostProcessedField FIELD_EXTRACTOR_POST_PROCESSED_FIELD = new FieldExtractorPostProcessedField();
 	static final FieldExtractorConfiguration FIELD_EXTRACTOR_CONFIGURATION = new FieldExtractorConfiguration();
 
+	private static final Map<Class<?>, ArrayHandler> PROCESSOR_MAP = new HashMap<>();
+	static{
+		PROCESSOR_MAP.put(String.class, FieldDescriber::describeString);
+		PROCESSOR_MAP.put(ObjectChoices.ObjectChoice.class, FieldDescriber::describeAlternatives);
+		PROCESSOR_MAP.put(ConverterChoices.ConverterChoice.class, FieldDescriber::describeAlternatives);
+		PROCESSOR_MAP.put(AlternativeSubField.class, FieldDescriber::describeAlternatives);
+		PROCESSOR_MAP.put(CompositeSubField.class, FieldDescriber::describeAlternatives);
+	}
+
+	private interface ArrayHandler{
+		void handle(String key, Object value, Map<String, Object> description);
+	}
+
 
 	private FieldDescriber(){}
 
@@ -245,34 +258,42 @@ final class FieldDescriber{
 		final Class<?> componentType = value.getClass()
 			.getComponentType();
 
-		//FIXME chain of 'instanceof' checks
-		if(componentType == String.class)
-			rootDescription.put(key, value);
-		else if(componentType == ObjectChoices.ObjectChoice.class)
-			describeAlternatives(key, (ObjectChoices.ObjectChoice[])value, rootDescription);
-		else if(componentType == ConverterChoices.ConverterChoice.class || componentType == AlternativeSubField.class
-				|| componentType == CompositeSubField.class)
-			describeAlternatives(key, (Annotation[])value, rootDescription);
+		final ArrayHandler processor = PROCESSOR_MAP.get(componentType);
+		processor.handle(key, value, rootDescription);
 	}
 
-	private static void describeAlternatives(final String key, final ObjectChoices.ObjectChoice[] alternatives,
-		final Map<String, Object> rootDescription){
-		final int length = alternatives.length;
-		if(length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final ObjectChoices.ObjectChoice alternative : alternatives){
-				final Map<String, Object> alternativeDescription = new HashMap<>(3);
+	private static void describeString(final String key, final Object value, final Map<String, Object> rootDescription){
+		rootDescription.put(key, value);
+	}
 
-				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
-				describeType(alternative.type(), alternativeDescription);
+	private static void describeAlternatives(final String key, final Object value, final Map<String, Object> rootDescription){
+		final Annotation[] annotations = (Annotation[])value;
+		final int length = annotations.length;
+		if(length == 0)
+			return;
 
-				alternativesDescription.add(alternativeDescription);
-			}
-			putIfNotEmpty(key, alternativesDescription, rootDescription);
+		final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation alternative = annotations[i];
+
+			final Map<String, Object> alternativeDescription = describeAlternative(alternative);
+
+			alternativesDescription.add(alternativeDescription);
 		}
+		putIfNotEmpty(key, alternativesDescription, rootDescription);
 	}
 
-	private static void describeType(final Class<?> type, final Map<String, Object> rootDescription){
+	private static Map<String, Object> describeAlternative(final Annotation alternative){
+		final Map<String, Object> alternativeDescription = new HashMap<>(2);
+
+		extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+		if(alternative instanceof final ObjectChoices.ObjectChoice choice)
+			describeChoiceType(choice.type(), alternativeDescription);
+
+		return alternativeDescription;
+	}
+
+	private static void describeChoiceType(final Class<?> type, final Map<String, Object> rootDescription){
 		if(JavaHelper.isUserDefinedClass(type)){
 			final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
 			final Collection<Class<?>> processedTypes = new HashSet<>(1);
@@ -286,22 +307,6 @@ final class FieldDescriber{
 				parent = parent.getSuperclass();
 			}
 			putIfNotEmpty(DescriberKey.BIND_SUBTYPES, typeDescription, rootDescription);
-		}
-	}
-
-	private static <T extends Annotation> void describeAlternatives(final String key, final T[] alternatives,
-		final Map<String, Object> rootDescription){
-		final int length = alternatives.length;
-		if(length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(final T alternative : alternatives){
-				final Map<String, Object> alternativeDescription = new HashMap<>(2);
-
-				extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
-
-				alternativesDescription.add(alternativeDescription);
-			}
-			putIfNotEmpty(key, alternativesDescription, rootDescription);
 		}
 	}
 

@@ -153,7 +153,7 @@ final class CodecHelper{
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
-		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
+		//if `chosenAlternative.condition()` contains '#prefix', then write `@ObjectChoice.prefix()`
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final byte prefixSize = selectFrom.prefixLength();
 
