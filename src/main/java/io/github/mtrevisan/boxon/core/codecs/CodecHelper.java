@@ -122,7 +122,7 @@ final class CodecHelper{
 	 * @return	Whether the select-object-from binding has any alternatives.
 	 */
 	static <T> boolean hasSelectAlternatives(final T[] alternatives){
-		return (Array.getLength(alternatives) > 0);
+		return (alternatives.length > 0);
 	}
 
 	static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,

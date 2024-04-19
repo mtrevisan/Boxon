@@ -197,13 +197,11 @@ public final class Core{
 	}
 
 	private void postProcessCodec(final CodecInterface<?> codec){
-		loaderCodec.injectDependencyIntoCodec(codec, templateParser);
-		loaderCodec.injectDependencyIntoCodec(codec, evaluator);
+		loaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectDependencyIntoCodecs(templateParser);
-		loaderCodec.injectDependencyIntoCodecs(evaluator);
+		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 

@@ -123,7 +123,7 @@ public final class GenericHelper{
 		return ancestors;
 	}
 
-	private static <T> void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<T> base,
+	private static void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<?> base,
 			final Collection<Class<?>> classStack, final Collection<Type[]> argumentsStack){
 		for(int i = 0, length = ancestors.size(); i < length; i ++){
 			final Type ancestorType = ancestors.get(i);
@@ -132,7 +132,7 @@ public final class GenericHelper{
 		}
 	}
 
-	private static <T> void processAncestor(final Type ancestorType, final Map<String, Type> typeVariables, final Class<T> base,
+	private static void processAncestor(final Type ancestorType, final Map<String, Type> typeVariables, final Class<?> base,
 			final Collection<Class<?>> classStack, final Collection<Type[]> argumentsStack){
 		final AncestorHandler handler = selectAncestorHandler(ancestorType);
 		final Type type = handler.getRawType(ancestorType);

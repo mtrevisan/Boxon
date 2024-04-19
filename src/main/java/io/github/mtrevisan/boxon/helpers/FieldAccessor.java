@@ -69,7 +69,7 @@ public final class FieldAccessor{
 	 * @return	The (possibly new) object on witch the value was set.
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
-	public static Object setFieldValue(final Object obj, final Field field, final Object value){
+	public static <T> T setFieldValue(final T obj, final Field field, final Object value){
 		try{
 			return updateObjectFieldValue(obj, field, value);
 		}
@@ -80,7 +80,7 @@ public final class FieldAccessor{
 	}
 
 	//FIXME ugliness (set & create... also a cycle between classes...)
-	private static Object updateObjectFieldValue(final Object obj, final Field field, final Object value) throws IllegalArgumentException,
+	private static <T> T updateObjectFieldValue(final T obj, final Field field, final Object value) throws IllegalArgumentException,
 			ReflectiveOperationException{
 		return (isRecordClass(obj)
 			? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
@@ -88,7 +88,7 @@ public final class FieldAccessor{
 		);
 	}
 
-	private static Object updateField(final Object obj, final Field field, final Object value) throws IllegalAccessException{
+	private static <T> T updateField(final T obj, final Field field, final Object value) throws IllegalAccessException{
 		field.set(obj, value);
 		return obj;
 	}
@@ -98,7 +98,7 @@ public final class FieldAccessor{
 			.isRecord();
 	}
 
-	static <T> Object[] retrieveCurrentFieldValues(final T obj, final RecordComponent[] components)
+	static Object[] retrieveCurrentFieldValues(final Object obj, final RecordComponent[] components)
 			throws IllegalAccessException, InvocationTargetException{
 		final int length = components.length;
 		final Object[] recordValues = new Object[length];
@@ -152,7 +152,7 @@ public final class FieldAccessor{
 		}
 	}
 
-	private static <T> Type extractFieldType(final T value){
+	private static Type extractFieldType(final Object value){
 		return GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
 			.getFirst();
 	}

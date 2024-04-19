@@ -244,8 +244,7 @@ class CodecArrayTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
-		loaderCodec.injectDependencyIntoCodecs(templateParser);
-		loaderCodec.injectDependencyIntoCodecs(evaluator);
+		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);

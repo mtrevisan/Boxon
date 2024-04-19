@@ -392,8 +392,7 @@ class TemplateParserTest{
 
 
 	private static void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
-		loaderCodec.injectDependencyIntoCodecs(templateParser);
-		loaderCodec.injectDependencyIntoCodecs(evaluator);
+		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 }

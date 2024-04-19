@@ -77,13 +77,12 @@ final class ParserContext<T>{
 	 * @param field	The field.
 	 * @param value	The value.
 	 */
-	@SuppressWarnings("unchecked")
 	void setFieldValue(final Field field, Object value){
 		if(value instanceof final BigInteger bi)
 			value = ParserDataType.castValue(bi, field.getType());
 
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
-		currentObject = (T)FieldAccessor.setFieldValue(currentObject, field, value);
+		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);
 	}
 
 	String getClassName(){
