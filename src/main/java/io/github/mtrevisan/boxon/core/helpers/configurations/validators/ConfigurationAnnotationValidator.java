@@ -68,7 +68,7 @@ public enum ConfigurationAnnotationValidator{
 						ConfigurationField.class.getSimpleName(), minProtocol, maxProtocol);
 			}
 
-			ConfigurationAnnotationValidator.validateCharset(binding.charset());
+			validateCharset(binding.charset());
 		}
 	},
 

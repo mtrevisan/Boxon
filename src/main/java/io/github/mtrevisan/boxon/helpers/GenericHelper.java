@@ -160,29 +160,27 @@ public final class GenericHelper{
 	//ancestor is parameterized: process only if the raw type matches the base class
 	private static class ParameterizedTypeAncestorHandler implements AncestorHandler{
 		@Override
-		public Type getRawType(final Type ancestorType){
+		public final Type getRawType(final Type ancestorType){
 			return ((ParameterizedType)ancestorType).getRawType();
 		}
 
 		@Override
-		public Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
+		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
 			return populateResolvedTypes((ParameterizedType)parameterizedType, typeVariables);
 		}
-
 	}
 
 	//ancestor is non-parameterized: process only if it matches the base class
 	private static class ClassAncestorHandler implements AncestorHandler{
 		@Override
-		public Type getRawType(final Type ancestorType){
+		public final Type getRawType(final Type ancestorType){
 			return ancestorType;
 		}
 
 		@Override
-		public Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
+		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
 			return EMPTY_TYPE_ARRAY;
 		}
-
 	}
 
 	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){

@@ -51,9 +51,9 @@ import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -77,7 +77,7 @@ enum TemplateAnnotationValidator{
 
 		private static boolean hasDuplicates(final String[] array){
 			final int length = array.length;
-			final Set<String> uniqueSet = new HashSet<>(length);
+			final Collection<String> uniqueSet = new HashSet<>(length);
 			for(int i = 0; i < length; i ++)
 				if(!uniqueSet.add(array[i]))
 					return true;

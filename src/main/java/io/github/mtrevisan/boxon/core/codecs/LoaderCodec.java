@@ -200,7 +200,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param codec	The codec to be injected into.
 	 * @param dependencies	The object(s) to be injected.
 	 */
-	public void injectDependenciesIntoCodec(final CodecInterface<?> codec, final Object... dependencies){
+	public static void injectDependenciesIntoCodec(final CodecInterface<?> codec, final Object... dependencies){
 		FieldAccessor.injectValues(codec, dependencies);
 	}
 

@@ -34,6 +34,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -193,24 +194,24 @@ public final class JSONPath{
 
 	private static class ListIndexExtractor implements IndexExtractor{
 		@Override
-		public boolean isValidIndex(final Integer idx, final Object data){
-			return (idx >= 0 && idx < ((List<?>)data).size());
+		public final boolean isValidIndex(final Integer idx, final Object data){
+			return (idx >= 0 && idx < ((Collection<?>)data).size());
 		}
 
 		@Override
-		public Object getValueAt(final Integer idx, final Object data){
+		public final Object getValueAt(final Integer idx, final Object data){
 			return ((List<?>)data).get(idx);
 		}
 	}
 
 	private static class ArrayIndexExtractor implements IndexExtractor{
 		@Override
-		public boolean isValidIndex(final Integer idx, final Object data){
+		public final boolean isValidIndex(final Integer idx, final Object data){
 			return (idx >= 0 && idx < Array.getLength(data));
 		}
 
 		@Override
-		public Object getValueAt(final Integer idx, final Object data){
+		public final Object getValueAt(final Integer idx, final Object data){
 			return Array.get(data, idx);
 		}
 	}

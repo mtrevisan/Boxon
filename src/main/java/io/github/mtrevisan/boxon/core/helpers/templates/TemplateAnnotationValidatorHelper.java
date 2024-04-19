@@ -80,7 +80,7 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static class NullConverterValidationStrategy implements ValidationStrategy{
-		public void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
+		public final void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 				throws AnnotationException{
 			fieldType = FieldAccessor.extractFieldType(fieldType);
 			if(!validateTypes(fieldType, bindingType))
@@ -90,7 +90,7 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static class NonNullConverterValidationStrategy implements ValidationStrategy{
-		public void validate(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
+		public final void validate(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 				throws AnnotationException{
 			final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter, Converter.class);
 			final Class<?> inputType = FieldAccessor.extractFieldType((Class<?>)inOutTypes.getFirst());
