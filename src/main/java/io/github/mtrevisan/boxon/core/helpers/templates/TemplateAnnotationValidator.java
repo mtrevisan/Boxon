@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
@@ -48,14 +49,41 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
  * Container of all the validators of a message template.
  */
 enum TemplateAnnotationValidator{
+
+	HEADER(TemplateHeader.class){
+		@Override
+		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+			final TemplateHeader binding = (TemplateHeader)annotation;
+
+			//assure uniqueness of the `start`s
+			final String[] start = binding.start();
+			if(start.length > 0 && hasDuplicates(start))
+				throw AnnotationException.create("Wrong annotation parameter for {}: there are duplicates on `start` array {}",
+					TemplateHeader.class.getSimpleName(), Arrays.toString(start));
+
+			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
+		}
+
+		private static boolean hasDuplicates(final String[] array){
+			final int length = array.length;
+			final Set<String> uniqueSet = new HashSet<>(length);
+			for(int i = 0; i < length; i ++)
+				if(!uniqueSet.add(array[i]))
+					return true;
+			return false;
+		}
+	},
 
 	OBJECT(BindObject.class){
 		@Override
@@ -114,6 +142,7 @@ enum TemplateAnnotationValidator{
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoicesList selectFrom = binding.selectFrom();
+			TemplateAnnotationValidatorHelper.validateCharset(selectFrom.charset());
 			final Class<?> selectDefault = binding.selectDefault();
 			TemplateAnnotationValidatorHelper.validateObjectChoiceList(fieldType, converter, type, selectFrom, selectDefault);
 		}
@@ -196,7 +225,7 @@ enum TemplateAnnotationValidator{
 	 * @param annotationType	The annotation class type.
 	 * @return	The validator for the given annotation.
 	 */
-	static TemplateAnnotationValidator fromAnnotation(final Class<? extends Annotation> annotationType){
+	static TemplateAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
 

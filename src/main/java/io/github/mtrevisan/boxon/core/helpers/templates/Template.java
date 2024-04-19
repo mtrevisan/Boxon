@@ -31,12 +31,10 @@ import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -146,13 +144,10 @@ public final class Template<T>{
 		this.type = type;
 
 		header = type.getAnnotation(TemplateHeader.class);
+		//(`ObjectChoice` object may not have a `TemplateHeader`)
 		if(header != null){
-			try{
-				CharsetHelper.lookup(header.charset());
-			}
-			catch(final UnsupportedCharsetException ignored){
-				throw AnnotationException.create("Invalid charset: '{}'", header.charset());
-			}
+			final TemplateAnnotationValidator headerValidator = TemplateAnnotationValidator.fromAnnotationType(TemplateHeader.class);
+			headerValidator.validate(null, header);
 		}
 
 		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
@@ -348,7 +343,7 @@ public final class Template<T>{
 	}
 
 	private static void validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation.annotationType());
+		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
 		if(validator != null)
 			validator.validate(fieldType, annotation);
 	}

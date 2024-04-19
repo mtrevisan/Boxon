@@ -114,7 +114,6 @@ abstract class BitReaderData{
 		return new Snapshot(buffer.position(), cache, remaining);
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private void restoreSnapshot(final Snapshot snapshot){
 		buffer.position(snapshot.position);
 		remaining = snapshot.remaining;

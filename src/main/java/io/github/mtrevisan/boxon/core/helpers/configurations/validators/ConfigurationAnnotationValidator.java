@@ -67,6 +67,8 @@ public enum ConfigurationAnnotationValidator{
 					throw AnnotationException.create("Maximum protocol should be after minimum protocol in {}; min is {}, max is {}",
 						ConfigurationField.class.getSimpleName(), minProtocol, maxProtocol);
 			}
+
+			ConfigurationAnnotationValidator.validateCharset(binding.charset());
 		}
 	},
 
