@@ -146,8 +146,8 @@ class CodecObjectTest{
 		loaderCodec.loadDefaultCodecs();
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		loaderCodec.injectFieldInCodecs(templateParser);
-		loaderCodec.injectFieldInCodecs(evaluator);
+		loaderCodec.injectDependencyIntoCodecs(templateParser);
+		loaderCodec.injectDependencyIntoCodecs(evaluator);
 		FieldAccessor.injectValue(codec, templateParser);
 		FieldAccessor.injectValue(codec, evaluator);
 		BitWriter writer = BitWriter.create();
