@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
+import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.DataException;
@@ -106,14 +107,11 @@ final class ParserContext<T>{
 	}
 
 	Object getFieldValue(){
-		//FIXME chain of 'instanceof' checks
-		if(field instanceof final TemplateField f)
-			return f.getFieldValue(currentObject);
-		if(field instanceof final ConfigurationField f)
-			return f.getFieldValue(currentObject);
+		if(!(field instanceof final FieldRetriever retriever))
+			throw DataException.create("Field not of type {} nor {}",
+				TemplateField.class.getSimpleName(), ConfigurationField.class.getSimpleName());
 
-		throw DataException.create("Field not of type {} or {}",
-			TemplateField.class.getSimpleName(), ConfigurationField.class.getSimpleName());
+		return retriever.getFieldValue(currentObject);
 	}
 
 	/**

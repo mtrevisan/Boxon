@@ -47,6 +47,10 @@ import java.util.List;
  */
 final class TemplateAnnotationValidatorHelper{
 
+	private static final NullConverterValidationStrategy NULL_CONVERTER_VALIDATION_STRATEGY = new NullConverterValidationStrategy();
+	private static final NonNullConverterValidationStrategy NON_NULL_CONVERTER_VALIDATION_STRATEGY = new NonNullConverterValidationStrategy();
+
+
 	private TemplateAnnotationValidatorHelper(){}
 
 
@@ -58,14 +62,48 @@ final class TemplateAnnotationValidatorHelper{
 
 	static void validateConverter(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 			throws AnnotationException{
-		//FIXME chain of 'instanceof' checks
-		if(fieldType == Object.class)
-			return;
+		if(fieldType != Object.class){
+			final ValidationStrategy strategy = selectValidationStrategy(converter);
+			strategy.validate(fieldType, converter, bindingType);
+		}
+	}
 
-		if(converter == NullConverter.class)
-			validateNullConverter(fieldType, bindingType);
-		else
-			validateForNonNullConverter(fieldType, converter, bindingType);
+	private static ValidationStrategy selectValidationStrategy(final Class<? extends Converter<?, ?>> converter){
+		return (converter == NullConverter.class
+			? NULL_CONVERTER_VALIDATION_STRATEGY
+			: NON_NULL_CONVERTER_VALIDATION_STRATEGY
+		);
+	}
+
+	private interface ValidationStrategy{
+		void validate(Class<?> fieldType, Class<? extends Converter<?, ?>> converter, Class<?> bindingType) throws AnnotationException;
+	}
+
+	private static class NullConverterValidationStrategy implements ValidationStrategy{
+		public void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
+				throws AnnotationException{
+			fieldType = FieldAccessor.extractFieldType(fieldType);
+			if(!validateTypes(fieldType, bindingType))
+				throw AnnotationException.create("Type mismatch between annotation output ({}) and field type ({})",
+					bindingType.getSimpleName(), fieldType.getSimpleName());
+		}
+	}
+
+	private static class NonNullConverterValidationStrategy implements ValidationStrategy{
+		public void validate(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
+				throws AnnotationException{
+			final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter, Converter.class);
+			final Class<?> inputType = FieldAccessor.extractFieldType((Class<?>)inOutTypes.getFirst());
+			final Class<?> outputType = (Class<?>)inOutTypes.getLast();
+
+			if(!validateTypes(inputType, bindingType))
+				throw AnnotationException.create("Type mismatch between annotation output ({}) and converter input ({})",
+					bindingType.getSimpleName(), inputType.getSimpleName());
+
+			if(!validateTypes(fieldType, outputType))
+				throw AnnotationException.create("Type mismatch between converter output ({}) and field type ({})",
+					outputType.getSimpleName(), fieldType.getSimpleName());
+		}
 	}
 
 	private static void validateNullConverter(Class<?> fieldType, final Class<?> bindingType) throws AnnotationException{

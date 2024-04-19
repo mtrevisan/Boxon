@@ -134,7 +134,7 @@ public final class GenericHelper{
 
 	private static <T> void processAncestor(final Type ancestorType, final Map<String, Type> typeVariables, final Class<T> base,
 			final Collection<Class<?>> classStack, final Collection<Type[]> typesStack){
-		final AncestorHandler handler = getAncestorHandler(ancestorType);
+		final AncestorHandler handler = selectAncestorHandler(ancestorType);
 		final Type type = handler.getRawType(ancestorType);
 		if(type instanceof final Class<?> rawType && base.isAssignableFrom(rawType)){
 			final Type[] resolvedTypes = handler.getResolvedTypes(ancestorType, typeVariables);
@@ -144,7 +144,7 @@ public final class GenericHelper{
 		}
 	}
 
-	private static AncestorHandler getAncestorHandler(final Type ancestorType){
+	private static AncestorHandler selectAncestorHandler(final Type ancestorType){
 		return (ancestorType instanceof ParameterizedType
 			? PARAMETERIZED_TYPE_ANCESTOR_HANDLER
 			: CLASS_ANCESTOR_HANDLER
