@@ -240,6 +240,7 @@ final class FieldDescriber{
 	private static void handleArrayValue(final String key, final Object value, final Map<String, Object> rootDescription){
 		final Class<?> componentType = value.getClass()
 			.getComponentType();
+
 		//FIXME chain of 'instanceof' checks
 		if(componentType == String.class)
 			rootDescription.put(key, value);

@@ -43,6 +43,9 @@ import java.util.Queue;
  */
 public final class GenericHelper{
 
+	private static final ParameterizedTypeAncestorHandler PARAMETERIZED_TYPE_ANCESTOR_HANDLER = new ParameterizedTypeAncestorHandler();
+	private static final ClassAncestorHandler CLASS_ANCESTOR_HANDLER = new ClassAncestorHandler();
+
 	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
 
@@ -125,22 +128,61 @@ public final class GenericHelper{
 		for(int i = 0, length = ancestors.size(); i < length; i ++){
 			final Type ancestorType = ancestors.get(i);
 
-			//FIXME chain of 'instanceof' checks
-			if(ancestorType instanceof final ParameterizedType pt){
-				//ancestor is parameterized: process only if the raw type matches the base class
-				final Type rawType = pt.getRawType();
-				if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
-					final Type[] resolvedTypes = populateResolvedTypes(pt, typeVariables);
-					classStack.add(c);
-					typesStack.add(resolvedTypes);
-				}
-			}
-			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c)){
-				//ancestor is non-parameterized: process only if it matches the base class
-				classStack.add(c);
-				typesStack.add(EMPTY_TYPE_ARRAY);
-			}
+			processAncestor(ancestorType, typeVariables, base, classStack, typesStack);
 		}
+	}
+
+	private static <T> void processAncestor(final Type ancestorType, final Map<String, Type> typeVariables, final Class<T> base,
+			final Collection<Class<?>> classStack, final Collection<Type[]> typesStack){
+		final AncestorHandler handler = getAncestorHandler(ancestorType);
+		final Type type = handler.getRawType(ancestorType);
+		if(type instanceof final Class<?> rawType && base.isAssignableFrom(rawType)){
+			final Type[] resolvedTypes = handler.getResolvedTypes(ancestorType, typeVariables);
+
+			classStack.add(rawType);
+			typesStack.add(resolvedTypes);
+		}
+	}
+
+	private static AncestorHandler getAncestorHandler(final Type ancestorType){
+		return (ancestorType instanceof ParameterizedType
+			? PARAMETERIZED_TYPE_ANCESTOR_HANDLER
+			: CLASS_ANCESTOR_HANDLER
+		);
+	}
+
+	private interface AncestorHandler{
+		Type getRawType(Type ancestorType);
+
+		Type[] getResolvedTypes(Type parameterizedType, Map<String, Type> typeVariables);
+	}
+
+	//ancestor is parameterized: process only if the raw type matches the base class
+	private static class ParameterizedTypeAncestorHandler implements AncestorHandler{
+		@Override
+		public Type getRawType(final Type ancestorType){
+			return ((ParameterizedType)ancestorType).getRawType();
+		}
+
+		@Override
+		public Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
+			return populateResolvedTypes((ParameterizedType)parameterizedType, typeVariables);
+		}
+
+	}
+
+	//ancestor is non-parameterized: process only if it matches the base class
+	private static class ClassAncestorHandler implements AncestorHandler{
+		@Override
+		public Type getRawType(final Type ancestorType){
+			return ancestorType;
+		}
+
+		@Override
+		public Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
+			return EMPTY_TYPE_ARRAY;
+		}
+
 	}
 
 	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){

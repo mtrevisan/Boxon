@@ -40,8 +40,11 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -72,6 +75,21 @@ public final class Template<T>{
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
+	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>();
+	static{
+		ANNOTATION_MAPPING.put(SkipBits.class, annotation
+			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
+		ANNOTATION_MAPPING.put(SkipBits.Skips.class, annotation
+			-> Arrays.stream(((SkipBits.Skips)annotation).value())
+				.map(SkipParams::create)
+				.collect(Collectors.toList()));
+		ANNOTATION_MAPPING.put(SkipUntilTerminator.class, annotation
+			-> Collections.singletonList(SkipParams.create((SkipUntilTerminator)annotation)));
+		ANNOTATION_MAPPING.put(SkipUntilTerminator.Skips.class, annotation
+			-> Arrays.stream(((SkipUntilTerminator.Skips)annotation).value())
+				.map(SkipParams::create)
+				.collect(Collectors.toList()));
+	}
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
 			List<EvaluatedField<PostProcess>> postProcessedFields){
@@ -272,19 +290,9 @@ public final class Template<T>{
 	private static List<SkipParams> extractSkips(final Annotation[] annotations){
 		final List<SkipParams> skips = new ArrayList<>(annotations.length);
 		for(final Annotation annotation : annotations){
-			//FIXME chain of 'instanceof' checks
-			if(annotation instanceof final SkipBits sk)
-				skips.add(SkipParams.create(sk));
-			else if(annotation instanceof final SkipBits.Skips sk)
-				Arrays.stream(sk.value())
-					.map(SkipParams::create)
-					.forEachOrdered(skips::add);
-			else if(annotation instanceof final SkipUntilTerminator sk)
-				skips.add(SkipParams.create(sk));
-			else if(annotation instanceof final SkipUntilTerminator.Skips sk)
-				Arrays.stream(sk.value())
-					.map(SkipParams::create)
-					.forEachOrdered(skips::add);
+			final Function<Annotation, List<SkipParams>> processingFun = ANNOTATION_MAPPING.get(annotation.annotationType());
+			if(processingFun != null)
+				skips.addAll(processingFun.apply(annotation));
 		}
 		return skips;
 	}
