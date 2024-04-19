@@ -182,7 +182,6 @@ public final class LoaderConfiguration{
 	 * @return	The {@link ConfigurationMessage} for the given type.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */
-	@SuppressWarnings("unchecked")
 	private <T> ConfigurationMessage<T> createConfiguration(final Class<T> type) throws AnnotationException{
 		return (ConfigurationMessage<T>)configurationStore.apply(type);
 	}

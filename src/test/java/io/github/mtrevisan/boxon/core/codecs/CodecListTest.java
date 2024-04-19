@@ -205,7 +205,6 @@ class CodecListTest{
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		@SuppressWarnings("unchecked")
 		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());

@@ -75,7 +75,6 @@ public final class JSONPath{
 	 * @return	The value.
 	 * @throws JSONPathException	If the path is not well formatted.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T extract(final String path, final Object data, final T defaultValue) throws JSONPathException{
 		if(path == null || !path.isEmpty()){
 			final String[] pathComponents = parsePath(path);
@@ -133,7 +132,6 @@ public final class JSONPath{
 		return URLDecoder.decode(text, StandardCharsets.UTF_8);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static <T> T extract(final String[] path, Object data, final T defaultValue) throws JSONPathException{
 		for(int i = 0, length = path.length; i < length; i ++){
 			final String currentPath = path[i];

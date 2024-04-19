@@ -48,7 +48,6 @@ public final class MultithreadingHelper{
 			final CountDownLatch latch = new CountDownLatch(1);
 			final AtomicBoolean running = new AtomicBoolean();
 			final AtomicInteger overlaps = new AtomicInteger();
-			@SuppressWarnings("unchecked")
 			final Future<T>[] futures = (Future<T>[])Array.newInstance(Future.class, threadCount);
 			//assure overlaps happens (cycle until some overlaps happens)
 			while(overlaps.get() == 0){

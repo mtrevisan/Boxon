@@ -46,7 +46,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
 			throws CodecException{
-		final ConfigurationField binding = interpretBinding(annotation);
+		final ConfigurationField binding = (ConfigurationField)annotation;
 
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){

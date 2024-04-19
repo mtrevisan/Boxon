@@ -48,7 +48,7 @@ final class CodecAlternativeConfigurationField implements CodecInterface<Alterna
 			throws CodecException{
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
-			final AlternativeSubField binding = interpretBinding(annotation);
+			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
 				binding.charset());

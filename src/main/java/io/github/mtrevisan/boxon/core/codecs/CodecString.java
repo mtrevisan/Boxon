@@ -48,7 +48,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindString binding = interpretBinding(annotation);
+		final BindString binding = (BindString)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
@@ -65,7 +65,7 @@ final class CodecString implements CodecInterface<BindString>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindString binding = interpretBinding(annotation);
+		final BindString binding = (BindString)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 

@@ -50,7 +50,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindObject binding = interpretBinding(annotation);
+		final BindObject binding = (BindObject)annotation;
 
 		final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, binding.type(), binding.selectFrom(),
 			binding.selectDefault(), evaluator, rootObject);
@@ -69,7 +69,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindObject binding = interpretBinding(annotation);
+		final BindObject binding = (BindObject)annotation;
 
 		CodecHelper.validate(value, binding.validator());
 

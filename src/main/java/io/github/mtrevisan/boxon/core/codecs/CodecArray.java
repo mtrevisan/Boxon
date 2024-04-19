@@ -53,7 +53,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindArray binding = interpretBinding(annotation);
+		final BindArray binding = (BindArray)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
@@ -73,7 +73,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return CodecHelper.decodeValue(converterType, validator, array);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
 			throw AnnotationException.createNotPrimitiveValue(type);
@@ -104,7 +103,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindArray binding = interpretBinding(annotation);
+		final BindArray binding = (BindArray)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 

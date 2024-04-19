@@ -180,7 +180,6 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			//compose outer field value
 			final String composition = annotation.composition();
 			final CompositeSubField[] fields = annotation.value();
-			@SuppressWarnings("unchecked")
 			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 
 			//value compatible with data type and format

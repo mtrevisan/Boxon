@@ -43,7 +43,6 @@ public final class MethodHelper{
 	 * @param <T>	The class type of the default value and the returned value.
 	 * @return	The value returned by the given method, or the default value if an exception occurs.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
 		try{
@@ -62,7 +61,6 @@ public final class MethodHelper{
 	 * @param <T>	The class type of the value.
 	 * @return	The value returned by the given method.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T, R> R invokeStaticMethod(final Class<?> type, final String methodName, final T value) throws NoSuchMethodException,
 			InvocationTargetException, IllegalAccessException{
 		final Method method = type.getDeclaredMethod(methodName, value.getClass());

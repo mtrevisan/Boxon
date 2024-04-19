@@ -60,16 +60,4 @@ public interface CodecInterface<B extends Annotation>{
 	 */
 	void encode(BitWriterInterface writer, Annotation annotation, Object rootObject, Object value) throws FieldException;
 
-
-	/**
-	 * Interpret the annotation as the data type indicated in the generic of this codec.
-	 *
-	 * @param annotation	The generic annotation to be interpreted.
-	 * @return	The cast annotation.
-	 */
-	@SuppressWarnings("unchecked")
-	default B interpretBinding(final Annotation annotation){
-		return (B)annotation;
-	}
-
 }

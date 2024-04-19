@@ -194,7 +194,6 @@ final class LoaderTemplate{
 	 * @return	The {@link Template} for the given type.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	@SuppressWarnings("unchecked")
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}
