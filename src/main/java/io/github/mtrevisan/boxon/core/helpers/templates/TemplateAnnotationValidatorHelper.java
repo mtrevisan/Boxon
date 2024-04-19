@@ -106,28 +106,6 @@ final class TemplateAnnotationValidatorHelper{
 		}
 	}
 
-	private static void validateNullConverter(Class<?> fieldType, final Class<?> bindingType) throws AnnotationException{
-		fieldType = FieldAccessor.extractFieldType(fieldType);
-		if(!validateTypes(fieldType, bindingType))
-			throw AnnotationException.create("Type mismatch between annotation output ({}) and field type ({})",
-				bindingType.getSimpleName(), fieldType.getSimpleName());
-	}
-
-	private static void validateForNonNullConverter(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter,
-			final Class<?> bindingType) throws AnnotationException{
-		final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter, Converter.class);
-		final Class<?> inputType = FieldAccessor.extractFieldType((Class<?>)inOutTypes.getFirst());
-		final Class<?> outputType = (Class<?>)inOutTypes.getLast();
-
-		if(!validateTypes(inputType, bindingType))
-			throw AnnotationException.create("Type mismatch between annotation output ({}) and converter input ({})",
-				bindingType.getSimpleName(), inputType.getSimpleName());
-
-		if(!validateTypes(fieldType, outputType))
-			throw AnnotationException.create("Type mismatch between converter output ({}) and field type ({})",
-				outputType.getSimpleName(), fieldType.getSimpleName());
-	}
-
 	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
 		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
 		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
