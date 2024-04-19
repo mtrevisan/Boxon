@@ -126,45 +126,30 @@ public final class FieldAccessor{
 	 * Injects the given value of given field type in the given object.
 	 *
 	 * @param obj	The object whose field should be modified.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
+	 * @param values	The value for the field being modified.
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void injectValue(final Object obj, final T value){
-		final Type fieldType = extractFieldType(value);
-
-		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass())){
-			final Class<?> type = obj.getClass();
-			injectValue(type, obj, (Class<? super T>)fieldType, value);
-		}
-	}
-
-	/**
-	 * Injects the given value of given field type in the given object.
-	 *
-	 * @param obj	The object whose field should be modified.
-	 * @param fieldType	The field class.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
-	 */
-	public static <T> void injectValue(final Object obj, final Class<? super T> fieldType, final T value){
-		final Class<?> type = obj.getClass();
-		injectValue(type, obj, fieldType, value);
+	public static void injectValues(final Object obj, final Object... values){
+		injectValues(obj.getClass(), obj, values);
 	}
 
 	/**
 	 * Static injects the given value of given field type in the given class.
 	 *
-	 * @param type	The object class whose static field should be modified.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
+	 * @param objClass	The object class whose static field should be modified.
+	 * @param values	The value for the field being modified.
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void injectStaticValue(final Class<?> type, final T value){
-		final Type fieldType = extractFieldType(value);
+	public static void injectStaticValues(final Class<?> objClass, final Object... values){
+		injectValues(objClass, null, values);
+	}
 
-		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass()))
-			injectStaticValue(type, (Class<? super T>)fieldType, value);
+	private static void injectValues(final Class<?> objClass, final Object obj, final Object... values){
+		for(int i = 0, length = values.length; i < length; i ++){
+			final Object value = values[i];
+
+			final Type fieldType = extractFieldType(value);
+			if(fieldType instanceof final Class<?> fieldClass && fieldClass.isAssignableFrom(value.getClass()))
+				injectValue(objClass, obj, fieldClass, value);
+		}
 	}
 
 	private static <T> Type extractFieldType(final T value){
@@ -172,19 +157,7 @@ public final class FieldAccessor{
 			.getFirst();
 	}
 
-	/**
-	 * Static injects the given value of given field type in the given class.
-	 *
-	 * @param type	The object class whose static field should be modified.
-	 * @param fieldType	The field class.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
-	 */
-	public static <T> void injectStaticValue(final Class<?> type, final Class<T> fieldType, final T value){
-		injectValue(type, null, fieldType, value);
-	}
-
-	private static <T> void injectValue(final Class<?> objType, final Object obj, final Class<T> fieldType, final T value){
+	private static <T> void injectValue(final Class<?> objType, final Object obj, final Class<? extends T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(objType, fieldType);
 			for(int i = 0, length = fields.size(); i < length; i ++)

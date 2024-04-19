@@ -147,7 +147,7 @@ class CodecArrayTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValue(codec, Evaluator.create());
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -246,8 +246,7 @@ class CodecArrayTest{
 		loaderCodec.loadDefaultCodecs();
 		loaderCodec.injectDependencyIntoCodecs(templateParser);
 		loaderCodec.injectDependencyIntoCodecs(evaluator);
-		FieldAccessor.injectValue(codec, templateParser);
-		FieldAccessor.injectValue(codec, evaluator);
+		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

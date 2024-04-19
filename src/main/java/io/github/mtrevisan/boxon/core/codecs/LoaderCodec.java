@@ -199,11 +199,10 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * Inject the give object in the given codec.
 	 *
 	 * @param codec	The codec to be injected into.
-	 * @param dependency	The object to be injected.
-	 * @param <T>	The class type of the object.
+	 * @param dependencies	The object(s) to be injected.
 	 */
-	public <T> void injectDependencyIntoCodec(final CodecInterface<?> codec, final T dependency){
-		FieldAccessor.injectValue(codec, dependency);
+	public void injectDependencyIntoCodec(final CodecInterface<?> codec, final Object... dependencies){
+		FieldAccessor.injectValues(codec, dependencies);
 	}
 
 	@Override
