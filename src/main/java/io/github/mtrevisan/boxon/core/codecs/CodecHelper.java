@@ -52,9 +52,6 @@ import java.util.BitSet;
  */
 final class CodecHelper{
 
-	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
-
-
 	private CodecHelper(){}
 
 
@@ -118,10 +115,6 @@ final class CodecHelper{
 		return defaultConverter;
 	}
 
-
-//	static boolean isEmptyChoice(final Annotation choice){
-//		return (choice.annotationType() == Annotation.class);
-//	}
 
 	/**
 	 * Whether the select-object-from binding has any alternatives.
