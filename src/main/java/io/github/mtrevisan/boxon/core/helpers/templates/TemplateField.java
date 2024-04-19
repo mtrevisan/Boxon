@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
-import io.github.mtrevisan.boxon.core.helpers.extractors.SkipParams;
+import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
 import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
@@ -38,7 +38,7 @@ import java.util.Objects;
 
 
 /** Data associated to an annotated field. */
-public final class TemplateField{
+public final class TemplateField implements FieldRetriever{
 
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 	private static final String CONDITION = "condition";
@@ -108,6 +108,7 @@ public final class TemplateField{
 	 * @param obj	The object from which to retrieve the value.
 	 * @return	The value of the field.
 	 */
+	@Override
 	public Object getFieldValue(final Object obj){
 		return FieldMapper.getFieldValue(obj, field);
 	}

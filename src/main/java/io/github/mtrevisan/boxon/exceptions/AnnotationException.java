@@ -24,9 +24,11 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.Serial;
+import java.util.Arrays;
 
 
 /**
@@ -71,6 +73,43 @@ public final class AnnotationException extends FieldException{
 	 */
 	public static AnnotationException create(final String message, final Object... parameters){
 		return new AnnotationException(StringHelper.format(message, parameters));
+	}
+
+	/**
+	 * Constructs a new exception when the wrong annotation is used for the value.
+	 *
+	 * @param fieldType	The field type.
+	 * @param bindingType	The binding type.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createBadAnnotation(final Class<?> fieldType, final Class<?> bindingType){
+		return new AnnotationException(StringHelper.format("Wrong annotation used for type {}, should have been used `{}.class`",
+			fieldType.getSimpleName(), bindingType.getSimpleName()));
+	}
+
+	/**
+	 * Constructs a new exception when the value is not of a primitive type.
+	 *
+	 * @param type	The value type.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createNotPrimitiveValue(final Class<?> type){
+		return new AnnotationException(StringHelper.format("Argument cannot be a primitive: {}", type.getSimpleName()));
+	}
+
+	/**
+	 * Constructs a new exception when the default value is not an enumeration.
+	 *
+	 * @param annotationName	The annotation name.
+	 * @param defaultValue	The default value.
+	 * @param enumConstants	The array of possible constants.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createDefaultValueAsEnumeration(final String annotationName, final String defaultValue,
+			final ConfigurationEnum[] enumConstants){
+		return new AnnotationException(
+			StringHelper.format("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
+			annotationName, defaultValue, Arrays.toString(enumConstants)));
 	}
 
 

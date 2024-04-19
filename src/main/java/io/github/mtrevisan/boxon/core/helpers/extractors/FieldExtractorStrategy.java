@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,25 +22,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.codecs;
+package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
+import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
-
-final class FloatWriterManager implements WriterManagerInterface{
-
-	private final BitWriterInterface writer;
+import java.lang.annotation.Annotation;
 
 
-	FloatWriterManager(final BitWriterInterface writer){
-		this.writer = writer;
-	}
-
+public final class FieldExtractorStrategy implements FieldExtractor<TemplateField>{
 
 	@Override
-	public void put(final Object value){
-		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
+	public SkipParams[] getSkips(final TemplateField field){
+		return field.getSkips();
+	}
+
+	@Override
+	public Annotation getBinding(final TemplateField field){
+		return field.getBinding();
+	}
+
+	@Override
+	public String getFieldName(final TemplateField field){
+		return field.getFieldName();
+	}
+
+	@Override
+	public Class<?> getFieldType(final TemplateField field){
+		return field.getFieldType();
 	}
 
 }

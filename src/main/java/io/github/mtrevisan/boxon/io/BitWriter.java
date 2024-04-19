@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.nio.charset.Charset;
@@ -84,16 +85,6 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 	@Override
 	public void putLong(final long value, final ByteOrder byteOrder){
 		putNumber(byteOrder.correctEndianness(value));
-	}
-
-	@Override
-	public void putFloat(final float value, final ByteOrder byteOrder){
-		putInt(Float.floatToRawIntBits(value), byteOrder);
-	}
-
-	@Override
-	public void putDouble(final double value, final ByteOrder byteOrder){
-		putLong(Double.doubleToRawLongBits(value), byteOrder);
 	}
 
 	@Override

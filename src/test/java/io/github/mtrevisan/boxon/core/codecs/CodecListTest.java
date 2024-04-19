@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -85,8 +86,8 @@ class CodecListTest{
 		String type;
 		@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
 			alternatives = {
-				@ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
-				@ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
 			}))
 		List<TestType3> value;
 	}
@@ -133,12 +134,12 @@ class CodecListTest{
 					}
 
 					@Override
-					public ObjectChoiceList[] alternatives(){
-						return new ObjectChoiceList[]{
-							new ObjectChoiceList(){
+					public ObjectChoices.ObjectChoice[] alternatives(){
+						return new ObjectChoices.ObjectChoice[]{
+							new ObjectChoices.ObjectChoice(){
 								@Override
 								public Class<? extends Annotation> annotationType(){
-									return ObjectChoiceList.class;
+									return ObjectChoices.ObjectChoice.class;
 								}
 
 								@Override
@@ -159,6 +160,11 @@ class CodecListTest{
 						};
 					}
 				};
+			}
+
+			@Override
+			public Class<?> selectDefault(){
+				return void.class;
 			}
 
 			@Override
@@ -191,8 +197,7 @@ class CodecListTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
-		FieldAccessor.injectValue(codec, templateParser);
-		FieldAccessor.injectValue(codec, Evaluator.create());
+		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -200,7 +205,6 @@ class CodecListTest{
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		@SuppressWarnings("unchecked")
 		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());

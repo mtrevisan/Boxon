@@ -22,40 +22,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import java.math.BigInteger;
-import java.util.BitSet;
+import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+
+import java.util.List;
 
 
-final class LittleEndianConverter implements BitSetConverter{
+public final class MessageExtractorFullStrategy extends MessageExtractorBasicStrategy{
 
 	@Override
-	public BitSet createBitSet(final int bitmapSize, final BigInteger value){
-		final BitSet bitmap = new BitSet(bitmapSize);
-		//transfer bits one by one from the most significant byte to the {@link BitSet}
-		for(int i = 0, length = (bitmapSize + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
-			final byte currentByte = value.shiftRight(i << 3)
-				.byteValue();
-
-			BitSetConverter.fillBits(bitmap, currentByte, i, bitmapSize);
-		}
-		return bitmap;
+	public List<EvaluatedField<Evaluate>> getEvaluatedFields(final Template<?> message){
+		return message.getEvaluatedFields();
 	}
 
 	@Override
-	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
-		final boolean negative = bitmap.get(bitmapSize - 1);
-		final BigInteger result = toBigInteger(bitmap);
-		return (negative? BitSetConverter.negateValue(result, bitmapSize): result);
-	}
-
-	private static BigInteger toBigInteger(final BitSet bitmap){
-		BigInteger result = BigInteger.ZERO;
-		int i = -1;
-		while((i = bitmap.nextSetBit(i + 1)) >= 0)
-			result = result.setBit(i);
-		return result;
+	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final Template<?> message){
+		return message.getPostProcessedFields();
 	}
 
 }

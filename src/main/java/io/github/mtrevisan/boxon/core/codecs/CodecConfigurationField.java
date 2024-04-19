@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -45,15 +46,14 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
 			throws CodecException{
-		final ConfigurationField binding = interpretBinding(annotation);
+		final ConfigurationField binding = (ConfigurationField)annotation;
 
-		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
+		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
 			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
 				binding.charset());
 			if(writerManager == null)
-				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
-					value.getClass().getSimpleName());
+				throw UnhandledFieldException.create(value);
 
 			writerManager.put(value);
 		}

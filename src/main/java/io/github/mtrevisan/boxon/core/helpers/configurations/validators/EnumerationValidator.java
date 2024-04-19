@@ -28,8 +28,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
-import java.util.Arrays;
-
 
 /**
  * A collection of convenience methods for working with validations.
@@ -109,8 +107,7 @@ final class EnumerationValidator{
 	private static void validateDefaultValueCompatibilityWithEnumeration(final ConfigurationEnum[] enumConstants,
 			final ConfigurationEnum enumValue, final String defaultValue, final ConfigFieldData configData) throws AnnotationException{
 		if(enumValue == null)
-			throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-				configData.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
+			throw AnnotationException.createDefaultValueAsEnumeration(configData.getAnnotationName(), defaultValue, enumConstants);
 	}
 
 	private static void validateEnumerationMutuallyExclusive(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
@@ -132,8 +129,7 @@ final class EnumerationValidator{
 			throws AnnotationException{
 		final String defaultValue = configData.getDefaultValue();
 		if(!StringHelper.isBlank(defaultValue) && ConfigurationEnum.extractEnum(enumConstants, defaultValue) == null)
-			throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-				configData.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
+			throw AnnotationException.createDefaultValueAsEnumeration(configData.getAnnotationName(), defaultValue, enumConstants);
 	}
 
 }

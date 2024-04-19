@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -38,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an array of primitive values (... before the application of a converter).
+ * Manages an array of primitive values of given {@link #type()} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

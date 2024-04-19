@@ -31,7 +31,6 @@ import java.lang.reflect.Field;
 
 
 /** Data associated to an annotated field. */
-@SuppressWarnings("ClassWithTooManyFields")
 final class ConfigFieldData{
 
 	private final Field field;
@@ -149,6 +148,18 @@ final class ConfigFieldData{
 		this.pattern = pattern;
 	}
 
+	/**
+	 * Whether the configuration field has more than one input type.
+	 *
+	 * @return	Whether the configuration field has more than one input type.
+	 */
+	boolean hasIncompatibleInputs(){
+		final boolean hasPattern = !pattern.isEmpty();
+		final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());
+		final boolean hasEnumeration = hasEnumeration();
+		return (hasPattern && (hasMinMaxValues || hasEnumeration)
+			|| hasMinMaxValues && hasEnumeration);
+	}
 	/**
 	 * The enumeration for the configuration field.
 	 *

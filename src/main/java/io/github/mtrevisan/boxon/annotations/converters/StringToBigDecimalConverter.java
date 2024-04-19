@@ -42,14 +42,16 @@ public final class StringToBigDecimalConverter implements Converter<String, BigD
 	public BigDecimal decode(final String value){
 		return (!StringHelper.isBlank(value)
 			? new BigDecimal(value.trim())
-			: null);
+			: null
+		);
 	}
 
 	@Override
 	public String encode(final BigDecimal value){
 		return (value != null
 			? value.toString()
-			: JavaHelper.EMPTY_STRING);
+			: JavaHelper.EMPTY_STRING
+		);
 	}
 
 }

@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
@@ -32,17 +33,15 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import org.springframework.expression.EvaluationException;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.BitSet;
@@ -52,9 +51,6 @@ import java.util.BitSet;
  * A collection of convenience methods for working with codecs.
  */
 final class CodecHelper{
-
-	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
-
 
 	private CodecHelper(){}
 
@@ -67,7 +63,6 @@ final class CodecHelper{
 	 * @throws DataException	If the value does not pass validation.
 	 */
 	static <T> void validate(final T value, final Class<? extends Validator<?>> validator){
-		@SuppressWarnings("unchecked")
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
@@ -78,6 +73,9 @@ final class CodecHelper{
 	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
+	 * @param size	The size to be evaluated.
+	 * @param evaluator	The evaluator.
+	 * @param rootObject	Root object for the evaluator.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
@@ -98,6 +96,10 @@ final class CodecHelper{
 	/**
 	 * Get the first converter that matches the condition.
 	 *
+	 * @param converterChoices	The converter choices annotation.
+	 * @param defaultConverter	The default converter.
+	 * @param evaluator	The evaluator.
+	 * @param rootObject	Root object for the evaluator.
 	 * @return	The converter class.
 	 */
 	static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
@@ -113,29 +115,26 @@ final class CodecHelper{
 	}
 
 
-	static boolean isEmptyChoice(final Annotation choice){
-		return (choice.annotationType() == Annotation.class);
-	}
-
 	/**
 	 * Whether the select-object-from binding has any alternatives.
 	 *
 	 * @return	Whether the select-object-from binding has any alternatives.
 	 */
 	static <T> boolean hasSelectAlternatives(final T[] alternatives){
-		return (Array.getLength(alternatives) > 0);
+		return (alternatives.length > 0);
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Evaluator evaluator,
-			final Object rootObject){
-		for(int i = 0, length = alternatives.length; i < length; i ++){
+	static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
+			final Evaluator evaluator, final Object rootObject){
+		Class<?> chosenAlternativeType = defaultAlternative;
+		for(int i = 0, length = alternatives.length; chosenAlternativeType == defaultAlternative && i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
 			final String condition = alternative.condition();
 			if(evaluator.evaluateBoolean(condition, rootObject))
-				return alternative;
+				chosenAlternativeType = alternative.type();
 		}
-		return EMPTY_CHOICE;
+		return chosenAlternativeType;
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
@@ -150,10 +149,37 @@ final class CodecHelper{
 		throw CodecException.create("Cannot find a valid codec for type {}", type.getSimpleName());
 	}
 
+	/**
+	 * Gets the alternative class type that parses the next data.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @param bindingType	Bind annotation type.
+	 * @param objectChoices	Choices annotation.
+	 * @param defaultAlternativeType	Default alternative type.
+	 * @param evaluator	The evaluator.
+	 * @param rootObject	Root object for the evaluator.
+	 * @return	The class type of the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
+	 */
+	static Class<?> chooseAlternativeType(final BitReaderInterface reader, final Class<?> bindingType, final ObjectChoices objectChoices,
+			final Class<?> defaultAlternativeType, final Evaluator evaluator, final Object rootObject) throws CodecException{
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
+		if(!hasSelectAlternatives(alternatives))
+			return bindingType;
+
+		addPrefixToContext(reader, objectChoices, evaluator);
+
+		final Class<?> chosenAlternativeType = chooseAlternativeType(alternatives, defaultAlternativeType, evaluator, rootObject);
+		if(chosenAlternativeType == void.class)
+			throw CodecException.createNoCodecForAlternatives(rootObject.getClass());
+
+		return chosenAlternativeType;
+	}
+
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
-		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
+		//if `chosenAlternative.condition()` contains '#prefix', then write `@ObjectChoice.prefix()`
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final byte prefixSize = selectFrom.prefixLength();
 
@@ -194,7 +220,6 @@ final class CodecHelper{
 		return convertedValue;
 	}
 
-	@SuppressWarnings("unchecked")
 	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
@@ -208,7 +233,6 @@ final class CodecHelper{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
@@ -221,7 +245,7 @@ final class CodecHelper{
 		}
 	}
 
-	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
+	static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
 			if(value instanceof final ConfigurationEnum v)

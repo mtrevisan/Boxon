@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -37,6 +36,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -69,10 +69,10 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
+	public Object getDefaultValue(final Class<?> fieldType, final Version protocol) throws CodecException{
 		final String value = annotation.defaultValue();
 		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-		return ConfigurationHelper.convertValue(value, field.getType(), enumeration);
+		return ConfigurationHelper.convertValue(value, fieldType, enumeration);
 	}
 
 	@Override
@@ -112,8 +112,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), map);
 		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(annotation.minValue()), map);
 		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(annotation.maxValue()), map);
 		putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
@@ -129,8 +128,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	@Override
 	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws AnnotationException, CodecException{
-		final Version minProtocolVersion = Version.of(annotation.minProtocol());
-		final Version maxProtocolVersion = Version.of(annotation.maxProtocol());
+		final Version minProtocolVersion = VersionBuilder.of(annotation.minProtocol());
+		final Version maxProtocolVersion = VersionBuilder.of(annotation.maxProtocol());
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(annotation.annotationType());
 		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
@@ -140,39 +139,25 @@ final class PlainManager implements ConfigurationManagerInterface{
 			EncodeException{
 		if(dataValue != null){
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			if(hasEnumeration(enumeration))
-				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
-			else if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(field.getType(), v);
+			if(ConfigurationHelper.hasEnumeration(enumeration))
+				dataValue = extractEnumerationValue(field.getType(), dataValue, enumeration, dataKey);
+			else
+				dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
 		}
 		return dataValue;
 	}
 
-	/**
-	 * Whether the given class is a true enumeration.
-	 *
-	 * @param enumeration	The class to check.
-	 * @return	Whether the given class is a true enumeration.
-	 */
-	private static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
-		return (enumeration != null && enumeration != NullEnum.class);
+	private static Object extractEnumerationValue(final Class<?> fieldType, Object value,
+			final Class<? extends ConfigurationEnum> enumeration, final String dataKey) throws EncodeException{
+		value = ConfigurationHelper.extractEnumerationValue(fieldType, value, enumeration);
+
+		validateEnumerationValue(fieldType, value, enumeration, dataKey);
+
+		return value;
 	}
 
-	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
-			final Class<? extends ConfigurationEnum> enumeration) throws EncodeException{
-		final Class<?> fieldType = field.getType();
-
-		//convert `or` between enumerations
-		if(dataValue instanceof final String v)
-			dataValue = ConfigurationHelper.extractEnumerationValue(fieldType, v, enumeration);
-
-		validateEnumerationValue(dataKey, dataValue, enumeration, fieldType);
-
-		return dataValue;
-	}
-
-	private static void validateEnumerationValue(final String dataKey, final Object dataValue,
-			final Class<? extends ConfigurationEnum> enumeration, final Class<?> fieldType) throws EncodeException{
+	private static void validateEnumerationValue(final Class<?> fieldType, final Object dataValue,
+			final Class<? extends ConfigurationEnum> enumeration, final String dataKey) throws EncodeException{
 		if(dataValue == null)
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {}[] for enumeration type",
 				dataKey, getFieldBaseType(fieldType), enumeration.getSimpleName());
@@ -192,7 +177,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private static String getFieldBaseType(final Class<?> fieldType){
 		return (fieldType.isArray()
 			? fieldType.getComponentType() + ARRAY_VARIABLE
-			: fieldType.toString());
+			: fieldType.toString()
+		);
 	}
 
 }

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
@@ -50,9 +51,6 @@ import java.util.List;
 
 final class CodecList implements CodecInterface<BindList>{
 
-	private static final ObjectChoicesList.ObjectChoiceList EMPTY_CHOICE_LIST = new NullObjectChoiceList();
-
-
 	@Injected
 	private Evaluator evaluator;
 	@Injected
@@ -61,7 +59,7 @@ final class CodecList implements CodecInterface<BindList>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindList binding = interpretBinding(annotation);
+		final BindList binding = (BindList)annotation;
 
 		final Class<?> bindingType = binding.type();
 		final List<Object> list = createList(bindingType);
@@ -77,7 +75,7 @@ final class CodecList implements CodecInterface<BindList>{
 
 	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
-			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
+			throw AnnotationException.createNotPrimitiveValue(type);
 
 		return new ArrayList<>(0);
 	}
@@ -85,7 +83,7 @@ final class CodecList implements CodecInterface<BindList>{
 	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindList binding,
 			final Object rootObject) throws FieldException{
 		Class<?> chosenAlternativeType;
-		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, binding, rootObject)) != null){
+		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, binding, rootObject)) != void.class){
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
 			final Object element = templateParser.decode(subTemplate, reader, rootObject);
@@ -96,7 +94,7 @@ final class CodecList implements CodecInterface<BindList>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindList binding = interpretBinding(annotation);
+		final BindList binding = (BindList)annotation;
 
 		CodecHelper.validate(value, binding.validator());
 
@@ -130,20 +128,15 @@ final class CodecList implements CodecInterface<BindList>{
 	 */
 	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindList binding, final Object rootObject){
 		final ObjectChoicesList objectChoicesList = binding.selectFrom();
-		final ObjectChoicesList.ObjectChoiceList[] alternatives = objectChoicesList.alternatives();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoicesList.alternatives();
 		if(!CodecHelper.hasSelectAlternatives((alternatives)))
 			return binding.type();
 
 		final boolean hasHeader = addListHeaderToContext(reader, objectChoicesList);
 		if(!hasHeader)
-			return null;
+			return void.class;
 
-		final ObjectChoicesList.ObjectChoiceList chosenAlternative = chooseAlternative(alternatives, rootObject);
-		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
-			? chosenAlternative.type()
-			: void.class);
-
-		return (chosenAlternativeType != void.class? chosenAlternativeType: null);
+		return CodecHelper.chooseAlternativeType(alternatives, binding.selectDefault(), evaluator, rootObject);
 	}
 
 	/**
@@ -158,18 +151,6 @@ final class CodecList implements CodecInterface<BindList>{
 		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
 		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
-	}
-
-	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
-			final Object rootObject){
-		for(int i = 0, length = alternatives.length; i < length; i ++){
-			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
-
-			final String condition = alternative.condition();
-			if(evaluator.evaluateBoolean(condition, rootObject))
-				return alternative;
-		}
-		return EMPTY_CHOICE_LIST;
 	}
 
 }

@@ -42,7 +42,7 @@ import java.util.Objects;
 
 
 /**
- * Common data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+ * Common data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
@@ -181,7 +181,7 @@ public final class Core{
 	void addCodec(final CodecInterface<?> codec){
 		loaderCodec.addCodec(codec);
 
-		postProcessCodecs();
+		postProcessCodec(codec);
 	}
 
 	/**
@@ -192,12 +192,16 @@ public final class Core{
 	void addCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
 
-		postProcessCodecs();
+		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
+			postProcessCodec(codecs[i]);
+	}
+
+	private void postProcessCodec(final CodecInterface<?> codec){
+		LoaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectFieldInCodecs(templateParser);
-		loaderCodec.injectFieldInCodecs(evaluator);
+		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 

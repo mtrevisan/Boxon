@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 
 /** An enumeration for byte orders. */
@@ -31,43 +31,43 @@ public enum ByteOrder{
 	/** Little-endian byte order. */
 	LITTLE_ENDIAN{
 		@Override
-		short correctEndianness(final short value){
+		public short correctEndianness(final short value){
 			return value;
 		}
 
 		@Override
-		int correctEndianness(final int value){
+		public int correctEndianness(final int value){
 			return value;
 		}
 
 		@Override
-		long correctEndianness(final long value){
+		public long correctEndianness(final long value){
 			return value;
 		}
 	},
 	/** Big-endian byte order. */
 	BIG_ENDIAN{
 		@Override
-		short correctEndianness(final short value){
+		public short correctEndianness(final short value){
 			return Short.reverseBytes(value);
 		}
 
 		@Override
-		int correctEndianness(final int value){
+		public int correctEndianness(final int value){
 			return Integer.reverseBytes(value);
 		}
 
 		@Override
-		long correctEndianness(final long value){
+		public long correctEndianness(final long value){
 			return Long.reverseBytes(value);
 		}
 	};
 
 
-	abstract short correctEndianness(short value);
+	public abstract short correctEndianness(short value);
 
-	abstract int correctEndianness(int value);
+	public abstract int correctEndianness(int value);
 
-	abstract long correctEndianness(long value);
+	public abstract long correctEndianness(long value);
 
 }

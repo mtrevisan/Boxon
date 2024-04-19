@@ -22,9 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.io.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 
 import java.math.BigInteger;
 import java.util.BitSet;
@@ -48,16 +48,6 @@ public final class BitSetHelper{
 
 
 	/**
-	 * Creates a new {@link BitSet} with the specified size.
-	 *
-	 * @param bitmapSize	The size of the resulting {@link BitSet}.
-	 * @return	The created {@link BitSet}.
-	 */
-	public static BitSet createBitSet(final int bitmapSize){
-		return new BitSet(bitmapSize);
-	}
-
-	/**
 	 * Creates a {@link BitSet} from a long value.
 	 *
 	 * @param bitmapSize	The size in bits of the resulting {@link BitSet}.
@@ -65,7 +55,7 @@ public final class BitSetHelper{
 	 * @return	The created {@link BitSet}.
 	 */
 	public static BitSet createBitSet(final int bitmapSize, long value){
-		final BitSet bitmap = createBitSet(bitmapSize);
+		final BitSet bitmap = new BitSet(bitmapSize);
 
 		while(value != 0){
 			final int nextSetBitIndex = Long.numberOfTrailingZeros(value);

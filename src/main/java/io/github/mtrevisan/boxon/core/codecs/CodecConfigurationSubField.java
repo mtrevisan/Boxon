@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -45,7 +46,7 @@ final class CodecConfigurationSubField implements CodecInterface<CompositeSubFie
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object charset, final Object value)
 			throws ConfigurationException{
 		if(!(value instanceof final String v))
-			throw ConfigurationException.create("Cannot handle this type of field: {}", value.getClass().getSimpleName());
+			throw UnhandledFieldException.create(value);
 
 		writer.putText(v, (Charset)charset);
 	}

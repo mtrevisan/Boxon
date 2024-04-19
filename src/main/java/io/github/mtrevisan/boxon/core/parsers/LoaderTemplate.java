@@ -189,12 +189,11 @@ final class LoaderTemplate{
 	/**
 	 * Constructs a new {@link Template}.
 	 *
-	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	@SuppressWarnings("unchecked")
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}
@@ -289,7 +288,7 @@ final class LoaderTemplate{
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
-		//NOTE: we want only a template, so we pick the first `start`
+		//NOTE: we want only one template, so we pick the first `start`
 		final String headerFirstStart = header.start()[0];
 		final String key = calculateKey(headerFirstStart, CharsetHelper.lookup(header.charset()));
 		final Template<?> template = templates.get(key);
@@ -341,10 +340,11 @@ final class LoaderTemplate{
 
 	private static int findNextMessageIndex(final BitReaderInterface reader, final TemplateHeader header, int minOffset){
 		final Charset charset = CharsetHelper.lookup(header.charset());
-		final String[] messageStarts = header.start();
+		final String[] starts = header.start();
 		//select the minimum index with a valid template
-		for(int i = 0, length = messageStarts.length; i < length; i ++){
-			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
+		for(int i = 0, length = starts.length; i < length; i ++){
+			final byte[] startMessageSequence = starts[i].getBytes(charset);
+			final int offset = searchNextSequence(reader, startMessageSequence);
 			if(offset >= 0 && !(0 <= minOffset && minOffset <= offset))
 				minOffset = offset;
 		}

@@ -24,41 +24,49 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
+import java.math.BigInteger;
 
 
 class CodecIntTest{
 
 	@Test
 	void intLittleEndianNegative() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = 0x80FF_0000;
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -93,30 +101,37 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0000FF80", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intLittleEndianSmall() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = 0x0000_7FFF;
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -151,30 +166,37 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("FF7F0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intLittleEndianPositive() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = 0x7FFF_0000;
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -209,30 +231,37 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0000FF7F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intLittleEndianRandom() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = TestHelper.RANDOM.nextInt();
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -267,6 +296,7 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -274,24 +304,30 @@ class CodecIntTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intBigEndianNegative() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = 0x80FF_0000;
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -326,30 +362,37 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("80FF0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intBigEndianSmall() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = 0x0000_7FFF;
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -384,30 +427,37 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("00007FFF", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intBigEndianPositive() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = 0x7FFF_0000;
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -442,30 +492,37 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode( writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7FFF0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void intBigEndianRandom() throws FieldException{
-		CodecInterface<BindInt> codec = new CodecInt();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int encodedValue = TestHelper.RANDOM.nextInt();
-		BindInt annotation = new BindInt(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInt.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -500,13 +557,15 @@ class CodecIntTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode( writer, annotation, null, encodedValue);
+		FieldAccessor.injectValues(codec, Evaluator.create());
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Integer.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = (int)codec.decode(reader, annotation, null);
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

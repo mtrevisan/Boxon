@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ class ExtractorTest{
 
 	@Test
 	void plain() throws JSONPathException{
-		Version version = Version.of(1, 2);
+		Version version = VersionBuilder.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
 		int actual = extractor.get("/minor", null);
@@ -89,14 +90,14 @@ class ExtractorTest{
 		int[] array = {12, 23};
 		Extractor extractor = Extractor.create(array);
 
-		Exception e = Assertions.assertThrows(JSONPathException.class,
+		Exception exc = Assertions.assertThrows(JSONPathException.class,
 			() -> extractor.get("/01", null));
-		Assertions.assertEquals("No array field '01' found on path '/01'", e.getMessage());
+		Assertions.assertEquals("No array field '01' found on path '/01'", exc.getMessage());
 	}
 
 	@Test
 	void defaultValue() throws JSONPathException{
-		Version version = Version.of(1, 2);
+		Version version = VersionBuilder.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
 		int fakeValue = extractor.get("/fake", -1);

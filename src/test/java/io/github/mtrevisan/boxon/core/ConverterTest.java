@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -44,7 +44,7 @@ class ConverterTest{
 	private static class TestConverter1{
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongConverterInput.class)
+		@BindInteger(size = "8", converter = WrongConverterInput.class)
 		String value;
 	}
 
@@ -65,7 +65,7 @@ class ConverterTest{
 	private static class TestConverter2{
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongConverterOutput.class)
+		@BindInteger(size = "8", converter = WrongConverterOutput.class)
 		String value;
 	}
 
@@ -73,7 +73,7 @@ class ConverterTest{
 	private static class TestConverter3{
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongConverterOutput.class)
+		@BindInteger(size = "8", converter = WrongConverterOutput.class)
 		int value;
 	}
 
@@ -93,7 +93,7 @@ class ConverterTest{
 	void wrongInputOnConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestConverter1.class)
+			.withTemplate(TestConverter1.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -105,35 +105,25 @@ class ConverterTest{
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input BigInteger (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
 			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
 	@Test
-	void wrongOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
-		Core core = CoreBuilder.builder()
-			.withDefaultCodecs()
-			.withTemplatesFrom(TestConverter2.class)
-			.create();
-		Parser parser = Parser.create(core);
-
-		byte[] payload = StringHelper.hexToByteArray("77633201");
-		List<Response<byte[], Object>> result = parser.parse(payload);
-
-		Assertions.assertNotNull(result);
-		Assertions.assertEquals(2, result.size());
-		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertArrayEquals(payload, response.getSource());
-		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
-			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
+	void wrongOutputFromConverter(){
+		Exception exc = Assertions.assertThrows(AnnotationException.class,
+			() -> CoreBuilder.builder()
+				.withDefaultCodecs()
+				.withTemplate(TestConverter2.class)
+				.create());
+		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value", exc.getMessage());
 	}
 
 	@Test
 	void allowedOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestConverter3.class)
+			.withTemplate(TestConverter3.class)
 			.create();
 		Parser parser = Parser.create(core);
 

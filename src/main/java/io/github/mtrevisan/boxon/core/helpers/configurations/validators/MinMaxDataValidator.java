@@ -36,6 +36,10 @@ import java.math.BigDecimal;
  */
 final class MinMaxDataValidator{
 
+	private static final String VALUE_TYPE_DATA = "Data";
+	private static final String VALUE_TYPE_DEFAULT = "Default";
+
+
 	private MinMaxDataValidator(){}
 
 
@@ -50,10 +54,12 @@ final class MinMaxDataValidator{
 		if(isMinAndMaxValuesBlank(configData))
 			return;
 
-		validateArrayFieldType(configData);
+		validateArrayFieldType(configData.getFieldType());
 
 		final BigDecimal min = validateMinValue(configData);
 		final BigDecimal max = validateMaxValue(configData);
+		validateMinMaxValues(min, max, configData);
+
 		validateDefaultAgainstMinAndMax(min, max, configData);
 
 		validateDataAgainstMinAndMax(min, max, dataValue, configData);
@@ -63,8 +69,7 @@ final class MinMaxDataValidator{
 		return (StringHelper.isBlank(configData.getMinValue()) && StringHelper.isBlank(configData.getMaxValue()));
 	}
 
-	private static void validateArrayFieldType(final ConfigFieldData configData) throws AnnotationException{
-		final Class<?> fieldType = configData.getFieldType();
+	private static void validateArrayFieldType(final Class<?> fieldType) throws AnnotationException{
 		if(fieldType.isArray())
 			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 	}
@@ -72,16 +77,9 @@ final class MinMaxDataValidator{
 	private static void validateDefaultAgainstMinAndMax(final BigDecimal min, final BigDecimal max, final ConfigFieldData configData)
 			throws AnnotationException{
 		final BigDecimal def = JavaHelper.convertToBigDecimal(configData.getDefaultValue());
-		validateMinMaxValues(min, max, configData);
 
-		if(min != null && isDefaultLessThanMinimum(def, min))
-			//`defaultValue` compatible with `minValue`
-			throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
-				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMinValue().getClass().getSimpleName());
-		if(max != null && isDefaultGreaterThanMaximum(def, max))
-			//`defaultValue` compatible with `maxValue`
-			throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
-				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMaxValue().getClass().getSimpleName());
+		checkMinimumCompatibility(def, min, configData, VALUE_TYPE_DEFAULT);
+		checkMaximumCompatibility(def, max, configData, VALUE_TYPE_DEFAULT);
 	}
 
 	private static void validateDataAgainstMinAndMax(final BigDecimal min, final BigDecimal max, final Object dataValue,
@@ -89,15 +87,25 @@ final class MinMaxDataValidator{
 		if(isStringAssignableFrom(dataValue.getClass()) && !StringHelper.isBlank((String)dataValue)){
 			final BigDecimal val = JavaHelper.convertToBigDecimal((String)dataValue);
 
-			if(min != null && isDefaultLessThanMinimum(val, min))
-				//`dataValue` compatible with `minValue`
-				throw AnnotationException.create("Data value incompatible with minimum value in {}; expected {} >= {}",
-					configData.getAnnotationName(), configData.getDefaultValue(), configData.getMinValue().getClass().getSimpleName());
-			if(max != null && isDefaultGreaterThanMaximum(val, max))
-				//`dataValue` compatible with `maxValue`
-				throw AnnotationException.create("Data value incompatible with maximum value in {}; expected {} <= {}",
-					configData.getAnnotationName(), configData.getDefaultValue(), configData.getMaxValue().getClass().getSimpleName());
+			checkMinimumCompatibility(val, min, configData, VALUE_TYPE_DATA);
+			checkMaximumCompatibility(val, max, configData, VALUE_TYPE_DATA);
 		}
+	}
+
+	private static void checkMinimumCompatibility(final BigDecimal val, final BigDecimal min, final ConfigFieldData configData,
+			final String valueType) throws AnnotationException{
+		if(min != null && isValueLessThanMinimum(val, min))
+			//`dataValue` compatible with `minValue`
+			throw AnnotationException.create(valueType + " value incompatible with minimum value in {}; expected {} >= {}",
+				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMinValue().getClass().getSimpleName());
+	}
+
+	private static void checkMaximumCompatibility(final BigDecimal val, final BigDecimal max, final ConfigFieldData configData,
+			final String valueType) throws AnnotationException{
+		if(max != null && isValueGreaterThanMaximum(val, max))
+			//`dataValue` compatible with `maxValue`
+			throw AnnotationException.create(valueType + " value incompatible with maximum value in {}; expected {} <= {}",
+				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMaxValue().getClass().getSimpleName());
 	}
 
 	private static void validateMinMaxValues(final BigDecimal min, final BigDecimal max, final ConfigFieldData configData)
@@ -138,12 +146,12 @@ final class MinMaxDataValidator{
 		return (min != null && max != null && min.compareTo(max) > 0);
 	}
 
-	private static boolean isDefaultLessThanMinimum(final Comparable<BigDecimal> def, final BigDecimal min){
-		return (def != null && def.compareTo(min) < 0);
+	private static boolean isValueLessThanMinimum(final Comparable<BigDecimal> val, final BigDecimal min){
+		return (val != null && val.compareTo(min) < 0);
 	}
 
-	private static boolean isDefaultGreaterThanMaximum(final Comparable<BigDecimal> def, final BigDecimal max){
-		return (def != null && def.compareTo(max) > 0);
+	private static boolean isValueGreaterThanMaximum(final Comparable<BigDecimal> val, final BigDecimal max){
+		return (val != null && val.compareTo(max) > 0);
 	}
 
 

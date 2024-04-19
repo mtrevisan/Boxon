@@ -24,11 +24,13 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,9 @@ import java.util.Queue;
  */
 public final class GenericHelper{
 
+	private static final ParameterizedTypeAncestorHandler PARAMETERIZED_TYPE_ANCESTOR_HANDLER = new ParameterizedTypeAncestorHandler();
+	private static final ClassAncestorHandler CLASS_ANCESTOR_HANDLER = new ClassAncestorHandler();
+
 	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
 
@@ -52,7 +57,7 @@ public final class GenericHelper{
 	 *
 	 * @param offspring	The class or interface subclassing or extending the base type.
 	 * @param base	The base class.
-	 * @param actualArgs	The actual type arguments passed to the offspring class.
+	 * @param argumentsType	The actual type arguments passed to the offspring class.
 	 * 	If no arguments are given, then the type parameters of the offspring will be used.
 	 * @param <T>	The base type.
 	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
@@ -61,17 +66,17 @@ public final class GenericHelper{
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
 	@SuppressWarnings("DataFlowIssue")
-	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... actualArgs){
+	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... argumentsType){
 		//initialize list to store resolved types
 		final List<Type> types = new ArrayList<>(0);
 
 		final Queue<Class<?>> classStack = new ArrayDeque<>(1);
-		final Queue<Type[]> typesStack = new ArrayDeque<>(1);
+		final Queue<Type[]> argumentsStack = new ArrayDeque<>(1);
 		classStack.add(offspring);
-		typesStack.add(actualArgs);
+		argumentsStack.add(argumentsType);
 		while(!classStack.isEmpty()){
 			final Class<?> currentOffspring = classStack.poll();
-			final Type[] currentTypes = typesStack.poll();
+			final Type[] currentArgumentsTypes = argumentsStack.poll();
 
 			//find direct ancestors (superclass and interfaces)
 			final List<Type> ancestors = extractAncestors(currentOffspring);
@@ -81,12 +86,12 @@ public final class GenericHelper{
 			final Map<String, Type> typeVariables = mapParameterTypes(typeParameters);
 
 			//process ancestors
-			processAncestors(ancestors, typeVariables, base, classStack, typesStack);
+			processAncestors(ancestors, typeVariables, base, classStack, argumentsStack);
 
 			//if there are no resolved types and offspring is equal to base (or the last class before `Object` if `base` is `Object`),
 			//process the base
 			if((base != Object.class? currentOffspring: classStack.peek()) == base){
-				processBase(currentOffspring, currentTypes, types);
+				processBase(currentOffspring, currentArgumentsTypes, types);
 
 				//stop the search once reached the `base` class
 				break;
@@ -118,25 +123,63 @@ public final class GenericHelper{
 		return ancestors;
 	}
 
-	private static <T> void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<T> base,
-			final Collection<Class<?>> classStack, final Collection<Type[]> typesStack){
+	private static void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<?> base,
+			final Collection<Class<?>> classStack, final Collection<Type[]> argumentsStack){
 		for(int i = 0, length = ancestors.size(); i < length; i ++){
 			final Type ancestorType = ancestors.get(i);
 
-			if(ancestorType instanceof final ParameterizedType pt){
-				//ancestor is parameterized: process only if the raw type matches the base class
-				final Type rawType = pt.getRawType();
-				if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
-					final Type[] resolvedTypes = populateResolvedTypes(pt, typeVariables);
-					classStack.add(c);
-					typesStack.add(resolvedTypes);
-				}
-			}
-			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c)){
-				//ancestor is non-parameterized: process only if it matches the base class
-				classStack.add(c);
-				typesStack.add(EMPTY_TYPE_ARRAY);
-			}
+			processAncestor(ancestorType, typeVariables, base, classStack, argumentsStack);
+		}
+	}
+
+	private static void processAncestor(final Type ancestorType, final Map<String, Type> typeVariables, final Class<?> base,
+			final Collection<Class<?>> classStack, final Collection<Type[]> argumentsStack){
+		final AncestorHandler handler = selectAncestorHandler(ancestorType);
+		final Type type = handler.getRawType(ancestorType);
+		if(type instanceof final Class<?> rawType && base.isAssignableFrom(rawType)){
+			final Type[] resolvedTypes = handler.getResolvedTypes(ancestorType, typeVariables);
+
+			classStack.add(rawType);
+			argumentsStack.add(resolvedTypes);
+		}
+	}
+
+	private static AncestorHandler selectAncestorHandler(final Type ancestorType){
+		return (ancestorType instanceof ParameterizedType
+			? PARAMETERIZED_TYPE_ANCESTOR_HANDLER
+			: CLASS_ANCESTOR_HANDLER
+		);
+	}
+
+	private interface AncestorHandler{
+		Type getRawType(Type ancestorType);
+
+		Type[] getResolvedTypes(Type parameterizedType, Map<String, Type> typeVariables);
+	}
+
+	//ancestor is parameterized: process only if the raw type matches the base class
+	private static class ParameterizedTypeAncestorHandler implements AncestorHandler{
+		@Override
+		public final Type getRawType(final Type ancestorType){
+			return ((ParameterizedType)ancestorType).getRawType();
+		}
+
+		@Override
+		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
+			return populateResolvedTypes((ParameterizedType)parameterizedType, typeVariables);
+		}
+	}
+
+	//ancestor is non-parameterized: process only if it matches the base class
+	private static class ClassAncestorHandler implements AncestorHandler{
+		@Override
+		public final Type getRawType(final Type ancestorType){
+			return ancestorType;
+		}
+
+		@Override
+		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
+			return EMPTY_TYPE_ARRAY;
 		}
 	}
 
@@ -153,7 +196,8 @@ public final class GenericHelper{
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
 		final String key = (actualTypeArgument instanceof final TypeVariable<?> v
 			? v.getName()
-			: null);
+			: null
+		);
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
@@ -164,6 +208,14 @@ public final class GenericHelper{
 
 		if(types.isEmpty())
 			types.add(currentOffspring);
+	}
+
+
+	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
+		final int[] dimensions = new int[arraysCount];
+		Arrays.fill(dimensions, 1);
+		return Array.newInstance(cls, dimensions)
+			.getClass();
 	}
 
 }

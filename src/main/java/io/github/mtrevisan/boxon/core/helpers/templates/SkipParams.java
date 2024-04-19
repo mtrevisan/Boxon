@@ -22,16 +22,18 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.extractors;
+package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.lang.annotation.Annotation;
+
 
 public final class SkipParams{
 
-	/** The SpEL expression that determines if an evaluation has to be made (an empty string means &quot;accept&quot;). */
+	/** The SpEL expression that determines if an evaluation has to be made (an empty string means “accept”). */
 	private final String condition;
 
 	/** The SpEL expression evaluating to the number of bits to be skipped. */
@@ -65,8 +67,8 @@ public final class SkipParams{
 	}
 
 
-	public boolean isSkipBits(){
-		return !StringHelper.isBlank(size);
+	public Class<? extends Annotation> annotationType(){
+		return (StringHelper.isBlank(size)? SkipUntilTerminator.class: SkipBits.class);
 	}
 
 	public String condition(){

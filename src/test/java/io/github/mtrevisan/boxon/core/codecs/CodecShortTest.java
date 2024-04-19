@@ -24,41 +24,49 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
+import java.math.BigInteger;
 
 
 class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive1() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = 0x0010;
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -93,30 +101,37 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("1000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortLittleEndianPositive2() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = 0x1000;
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -151,30 +166,37 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0010", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortLittleEndianNegative() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = (short)0x8010;
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -209,30 +231,37 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("1080", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortLittleEndianRandom() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -267,6 +296,7 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -274,24 +304,30 @@ class CodecShortTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortBigEndianNegative() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = (short)0x8F00;
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -326,30 +362,37 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("8F00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortBigEndianSmall() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = 0x007F;
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -384,30 +427,37 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("007F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortBigEndianPositive() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = 0x7F00;
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -442,30 +492,37 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7F00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void shortBigEndianRandom() throws FieldException{
-		CodecInterface<BindShort> codec = new CodecShort();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
-		BindShort annotation = new BindShort(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindShort.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "16";
 			}
 
 			@Override
@@ -500,6 +557,7 @@ class CodecShortTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -507,7 +565,8 @@ class CodecShortTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.math.BigInteger;
@@ -137,24 +138,6 @@ public interface BitReaderInterface{
 	 * @return	A {@link BigInteger} value at the current position.
 	 */
 	BigInteger getBigInteger(int size, ByteOrder byteOrder);
-
-	/**
-	 * Reads {@link Float#SIZE} bits and composes a {@code float} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@code float}.
-	 */
-	float getFloat(ByteOrder byteOrder);
-
-	/**
-	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@code double}.
-	 */
-	double getDouble(ByteOrder byteOrder);
 
 	/**
 	 * Reads the specified amount of {@code char}s with a given {@link Charset}.

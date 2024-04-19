@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,26 +22,25 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.extractors;
-
-import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcess;
-import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
-import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-
-import java.util.List;
+package io.github.mtrevisan.boxon.annotations.converters;
 
 
-public final class MessageExtractorFullTemplate extends MessageExtractorBasicTemplate{
+/**
+ * Convert an integer to a float.
+ */
+public final class LongToDoubleConverter implements Converter<Long, Double>{
+
+	private LongToDoubleConverter(){}
+
 
 	@Override
-	public List<EvaluatedField<Evaluate>> getEvaluatedFields(final Template<?> message){
-		return message.getEvaluatedFields();
+	public Double decode(final Long value){
+		return Double.longBitsToDouble(value);
 	}
 
 	@Override
-	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final Template<?> message){
-		return message.getPostProcessedFields();
+	public Long encode(final Double value){
+		return Double.doubleToLongBits(value);
 	}
 
 }

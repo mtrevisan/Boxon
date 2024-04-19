@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,33 +22,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.extractors;
+package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
-import java.lang.annotation.Annotation;
+import java.io.Serial;
 
 
-public final class FieldExtractorTemplate implements FieldExtractor<TemplateField>{
+/**
+ * Thrown if an unhandled field type is found.
+ */
+public final class UnhandledFieldException extends IllegalArgumentException{
 
-	@Override
-	public SkipParams[] getSkips(final TemplateField field){
-		return field.getSkips();
+	@Serial
+	private static final long serialVersionUID = -111445518565658393L;
+
+
+	/**
+	 * Constructs a new exception with the specified message, possibly with parameters.
+	 *
+	 * @param value	The unhandled value.
+	 * @return	An instance of this exception.
+	 */
+	public static UnhandledFieldException create(final Object value){
+		return new UnhandledFieldException(
+			StringHelper.format("Cannot handle this type of field: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(value.getClass())));
 	}
 
-	@Override
-	public Annotation getBinding(final TemplateField field){
-		return field.getBinding();
-	}
 
-	@Override
-	public String getFieldName(final TemplateField field){
-		return field.getFieldName();
-	}
-
-	@Override
-	public Class<?> getFieldType(final TemplateField field){
-		return field.getFieldType();
+	private UnhandledFieldException(final String message){
+		super(message);
 	}
 
 }

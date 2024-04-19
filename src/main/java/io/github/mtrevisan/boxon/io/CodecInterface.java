@@ -40,7 +40,8 @@ public interface CodecInterface<B extends Annotation>{
 	 * Decode the next field of a message.
 	 *
 	 * @param reader	The reader that holds the raw data of the message (to be interpreted), positioned at a certain index.
-	 * @param annotation	The annotation that links what have to be read and the variable of the <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
+	 * @param annotation	The annotation that links what have to be read and the variable of the
+	 * 	<a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
 	 * @param rootObject	The parent object that holds what have been read so far.
 	 * @return	The object with the new value read and interpreted.
 	 * @throws FieldException	If something bad happened while reading, validating, or converting the raw value.
@@ -51,23 +52,12 @@ public interface CodecInterface<B extends Annotation>{
 	 * Encode the next field of a message.
 	 *
 	 * @param writer	The writer, positioned at a certain index, in which the value will be put.
-	 * @param annotation	The annotation that links what have to be read and the variable of the <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
+	 * @param annotation	The annotation that links what have to be read and the variable of the
+	 * 	<a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
 	 * @param rootObject	The parent object that holds what have been read so far.
 	 * @param value	The value that have to be encoded.
 	 * @throws FieldException	If something bad happened while converting, validating, or writing the value.
 	 */
 	void encode(BitWriterInterface writer, Annotation annotation, Object rootObject, Object value) throws FieldException;
-
-
-	/**
-	 * Interpret the annotation as the data type indicated in the generic of this codec.
-	 *
-	 * @param annotation	The generic annotation to be interpreted.
-	 * @return	The cast annotation.
-	 */
-	@SuppressWarnings("unchecked")
-	default B interpretBinding(final Annotation annotation){
-		return (B)annotation;
-	}
 
 }

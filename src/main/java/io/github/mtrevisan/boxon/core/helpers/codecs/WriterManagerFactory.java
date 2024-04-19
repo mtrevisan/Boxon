@@ -29,20 +29,12 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.function.Function;
 
 
 /**
  * Factory for the {@link WriterManagerInterface writer manager}.
  */
 public final class WriterManagerFactory{
-
-	private static final Map<Class<?>, Function<BitWriterInterface, WriterManagerInterface>> MANAGERS_LEVEL1 = Map.of(
-		Float.class, FloatWriterManager::new,
-		Double.class, DoubleWriterManager::new
-	);
-
 
 	private WriterManagerFactory(){}
 
@@ -60,12 +52,9 @@ public final class WriterManagerFactory{
 	public static WriterManagerInterface buildManager(final Class<?> valueClass, final BitWriterInterface writer, final int radix,
 			final String charsetName){
 		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(valueClass);
-		final Function<BitWriterInterface, WriterManagerInterface> builder = MANAGERS_LEVEL1.get(fieldClass);
 
 		WriterManagerInterface manager = null;
-		if(builder != null)
-			manager = builder.apply(writer);
-		else if(Number.class.isAssignableFrom(fieldClass))
+		if(Number.class.isAssignableFrom(fieldClass))
 			manager = NumberWriterManager.create(writer)
 				.withRadix(radix);
 		else if(String.class.isAssignableFrom(fieldClass)){

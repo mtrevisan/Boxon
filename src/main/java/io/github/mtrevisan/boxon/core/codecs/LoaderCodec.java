@@ -186,13 +186,22 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	/**
 	 * Inject the give object in all the codecs.
 	 *
-	 * @param object	The object to be injected.
-	 * @param <T>	The class type of the object.
+	 * @param dependencies	The object to be injected.
 	 */
 	//FIXME is injection an ugliness?
-	public <T> void injectFieldInCodecs(final T object){
+	public void injectDependenciesIntoCodecs(final Object... dependencies){
 		for(final CodecInterface<?> codec : codecs.values())
-			FieldAccessor.injectValue(codec, object);
+			injectDependenciesIntoCodec(codec, dependencies);
+	}
+
+	/**
+	 * Inject the give object in the given codec.
+	 *
+	 * @param codec	The codec to be injected into.
+	 * @param dependencies	The object(s) to be injected.
+	 */
+	public static void injectDependenciesIntoCodec(final CodecInterface<?> codec, final Object... dependencies){
+		FieldAccessor.injectValues(codec, dependencies);
 	}
 
 	@Override

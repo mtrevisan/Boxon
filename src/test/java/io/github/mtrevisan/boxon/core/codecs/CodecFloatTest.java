@@ -24,18 +24,20 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -48,17 +50,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveLittleEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -73,7 +80,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -93,10 +100,11 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)), Integer.BYTES);
+		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -107,17 +115,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -132,7 +145,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -152,10 +165,11 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)), Integer.BYTES);
+		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -166,17 +180,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveBigEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -191,7 +210,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -211,10 +230,11 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Float.floatToRawIntBits(encodedValue), Integer.BYTES);
+		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -225,17 +245,22 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeBigEndian() throws FieldException{
-		CodecInterface<BindFloat> codec = new CodecFloat();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindFloat annotation = new BindFloat(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindFloat.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "32";
 			}
 
 			@Override
@@ -250,7 +275,7 @@ class CodecFloatTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return IntegerToFloatConverter.class;
 			}
 
 			@Override
@@ -270,10 +295,11 @@ class CodecFloatTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.toHexString(Float.floatToRawIntBits(encodedValue), Integer.BYTES);
+		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

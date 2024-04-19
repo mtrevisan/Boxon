@@ -24,14 +24,17 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
+import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.math.BigInteger;
 
 
 final class ParserContext<T>{
@@ -74,10 +77,12 @@ final class ParserContext<T>{
 	 * @param field	The field.
 	 * @param value	The value.
 	 */
-	@SuppressWarnings("unchecked")
-	void setFieldValue(final Field field, final Object value){
+	void setFieldValue(final Field field, Object value){
+		if(value instanceof final BigInteger bi)
+			value = ParserDataType.castValue(bi, field.getType());
+
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
-		currentObject = (T)FieldAccessor.setFieldValue(currentObject, field, value);
+		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);
 	}
 
 	String getClassName(){
@@ -101,13 +106,11 @@ final class ParserContext<T>{
 	}
 
 	Object getFieldValue(){
-		if(field instanceof final TemplateField f)
-			return f.getFieldValue(currentObject);
-		if(field instanceof final ConfigurationField f)
-			return f.getFieldValue(currentObject);
+		if(!(field instanceof final FieldRetriever retriever))
+			throw DataException.create("Field not of type {} nor {}",
+				TemplateField.class.getSimpleName(), ConfigurationField.class.getSimpleName());
 
-		throw DataException.create("Field not of type {} or {}",
-			TemplateField.class.getSimpleName(), ConfigurationField.class.getSimpleName());
+		return retriever.getFieldValue(currentObject);
 	}
 
 	/**

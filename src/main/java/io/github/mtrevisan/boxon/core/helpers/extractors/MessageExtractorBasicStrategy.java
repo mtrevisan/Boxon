@@ -24,17 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.util.List;
 
 
-public class MessageExtractorBasicTemplate implements MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
+public class MessageExtractorBasicStrategy extends MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
 
 	@Override
 	public final String getTypeName(final Template<?> message){
@@ -50,16 +47,6 @@ public class MessageExtractorBasicTemplate implements MessageExtractor<Template<
 	@Override
 	public final List<TemplateField> getFields(final Template<?> message){
 		return message.getTemplateFields();
-	}
-
-	@Override
-	public List<EvaluatedField<Evaluate>> getEvaluatedFields(final Template<?> message){
-		return null;
-	}
-
-	@Override
-	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final Template<?> message){
-		return null;
 	}
 
 }

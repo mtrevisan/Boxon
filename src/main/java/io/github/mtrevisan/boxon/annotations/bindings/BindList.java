@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link String} with a given terminator {@code byte} (... before the application of a converter).
+ * Manages a list of the given {@link #type()} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -77,6 +77,13 @@ public @interface BindList{
 	 * @return	The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoicesList}).
 	 */
 	ObjectChoicesList selectFrom() default @ObjectChoicesList;
+
+	/**
+	 * The type to decode in case none of the selectors from {@link #selectFrom()} can be chosen.
+	 *
+	 * @return	The type to decode in case none of the selectors from {@link #selectFrom()} can be chosen.
+	 */
+	Class<?> selectDefault() default void.class;
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.

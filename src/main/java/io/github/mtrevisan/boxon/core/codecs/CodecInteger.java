@@ -25,17 +25,18 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
@@ -50,7 +51,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindInteger binding = interpretBinding(annotation);
+		final BindInteger binding = (BindInteger)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final BigInteger value = reader.getBigInteger(size, binding.byteOrder());
@@ -58,15 +59,20 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+		final Class<? extends Converter<?, ?>> converter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
-		return CodecHelper.decodeValue(converterType, validator, value);
+
+		//convert value type into converter/validator input type
+		final Class<?> inputType = ParserDataType.resolveInputType(converter, validator);
+		final Object convertedValue = ParserDataType.castValue(value, inputType);
+
+		return CodecHelper.decodeValue(converter, validator, convertedValue);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindInteger binding = interpretBinding(annotation);
+		final BindInteger binding = (BindInteger)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
@@ -76,8 +82,9 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
-		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
+		final Number convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
+		final BigInteger v = ParserDataType.reinterpretToBigInteger(convertedValue);
 		final ByteOrder byteOrder = binding.byteOrder();
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 

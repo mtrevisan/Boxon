@@ -97,7 +97,8 @@ public final class ValueOf<T extends Enum<T>, K>{
 	private Map<K, T> createMap(final Comparator<K> comparator, final T[] enumConstants){
 		return (comparator != null
 			? new ConcurrentSkipListMap<>(comparator)
-			: new ConcurrentHashMap<>(enumConstants.length));
+			: new ConcurrentHashMap<>(enumConstants.length)
+		);
 	}
 
 

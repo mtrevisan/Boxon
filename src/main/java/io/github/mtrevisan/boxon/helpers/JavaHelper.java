@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -38,10 +39,23 @@ public final class JavaHelper{
 	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
 
+	private static final String ARRAY_VARIABLE = "[]";
+
 	private static final String HEXADECIMAL_PREFIX = "0x";
 
 
 	private JavaHelper(){}
+
+
+	/**
+	 * Check if the class is not an interface, an anonymous class, or a primitive data type.
+	 *
+	 * @param cls	The class.
+	 * @return	Whether the class is not an interface, an anonymous class, or a primitive data type.
+	 */
+	public static boolean isUserDefinedClass(final Class<?> cls){
+		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
+	}
 
 
 	/**
@@ -56,6 +70,10 @@ public final class JavaHelper{
 		return (obj != null? obj: defaultObject);
 	}
 
+
+	public static int getSizeInBytes(final int bits){
+		return (bits + Byte.SIZE - 1) >>> 3;
+	}
 
 	/**
 	 * Return the length of the text, or {@code 0} if {@code null}.
@@ -81,11 +99,10 @@ public final class JavaHelper{
 	 * Return the length of the array, or {@code 0} if {@code null}.
 	 *
 	 * @param array	The array.
-	 * @param <T>	The class type of the array.
 	 * @return	The length of the array, or {@code 0} if {@code null}.
 	 */
-	public static <T> int sizeOrZero(final T[] array){
-		return (array != null? array.length: 0);
+	public static int sizeOrZero(final Object array){
+		return (array != null? Array.getLength(array): 0);
 	}
 
 	/**
@@ -192,6 +209,44 @@ public final class JavaHelper{
 		catch(final NumberFormatException ignored){
 			return null;
 		}
+	}
+
+
+	public static String prettyPrintClassName(final Class<?> cls){
+		final String className = cls.getName();
+		final int count = countLeadingSquareBrackets(className);
+		if(count > 0){
+			final StringBuilder sb = new StringBuilder(className);
+			sb.deleteCharAt(sb.length() - 1);
+			sb.delete(0, count + 1);
+			sb.append(ARRAY_VARIABLE.repeat(count));
+			return sb.toString();
+		}
+		return className;
+	}
+
+	/**
+	 * Counts the number of leading square brackets in a given text.
+	 * <p>See {@link Class#getName()}.</p>
+	 *
+	 * @param text	The input text.
+	 * @return	The count of leading square brackets.
+	 */
+	private static int countLeadingSquareBrackets(final String text){
+		int count = 0;
+		final char[] array = text.toCharArray();
+		for(int i = 0, length = array.length; i < length; i ++){
+			final char chr = array[i];
+
+			if(chr == '['){
+				count ++;
+				continue;
+			}
+			if(chr != 'L')
+				count = 0;
+			break;
+		}
+		return count;
 	}
 
 }

@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -166,16 +166,6 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bitmap = getBitSet(size);
 		return BitSetHelper.toObjectiveType(bitmap, size, byteOrder);
-	}
-
-	@Override
-	public float getFloat(final ByteOrder byteOrder){
-		return Float.intBitsToFloat(getInt(byteOrder));
-	}
-
-	@Override
-	public double getDouble(final ByteOrder byteOrder){
-		return Double.longBitsToDouble(getLong(byteOrder));
 	}
 
 	@Override

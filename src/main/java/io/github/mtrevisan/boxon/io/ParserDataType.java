@@ -24,7 +24,13 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -49,7 +55,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.byteValue();
 		}
 
@@ -72,7 +78,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.shortValue();
 		}
 
@@ -95,7 +101,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.intValue();
 		}
 
@@ -118,7 +124,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.longValue();
 		}
 
@@ -141,18 +147,20 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.floatValue();
 		}
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getFloat(byteOrder);
+			final int rawValue = reader.getInt(byteOrder);
+			return Float.intBitsToFloat(rawValue);
 		}
 
 		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putFloat((Float)value, byteOrder);
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
+			final int value = Float.floatToIntBits((Float)rawValue);
+			writer.putInt(value, byteOrder);
 		}
 	},
 
@@ -164,18 +172,20 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.doubleValue();
 		}
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getDouble(byteOrder);
+			final long rawValue = reader.getLong(byteOrder);
+			return Double.longBitsToDouble(rawValue);
 		}
 
 		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putDouble((Double)value, byteOrder);
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
+			final long value = Double.doubleToLongBits((Double)rawValue);
+			writer.putLong(value, byteOrder);
 		}
 	};
 
@@ -299,7 +309,7 @@ public enum ParserDataType{
 	abstract Object value(String value);
 
 
-	abstract Object cast(BigInteger value);
+	protected abstract Number cast(BigInteger value);
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
@@ -320,41 +330,32 @@ public enum ParserDataType{
 
 
 	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value, if the type is not string,
-	 * in that case the value will be returned.
+	 * Returns the primitive or objective type data stored as a string value, or the value itself if not a string or the field type is a
+	 * string.
 	 *
 	 * @param fieldType	The type of the field that will hold the value represented as a string.
 	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value, if the field type is not string, the given value otherwise.
+	 * @return	The primitive or objective value, or the value passed if not a string or the field type is a string.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof final String v
-			? getValue(fieldType, v)
-			: value);
-	}
-
-	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
-	 *
-	 * @param fieldType	The type of the field that will hold the value represented as a string.
-	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
-	 */
-	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
-		if(fieldType == String.class)
+		if(fieldType == String.class || !(value instanceof final String valueAsString))
 			return value;
-		if(StringHelper.isBlank(value))
+		if(StringHelper.isBlank(valueAsString))
 			return null;
 
 		final Class<?> objectiveType = toObjectiveTypeOrSelf(fieldType);
+		return convertStringValue(valueAsString, objectiveType);
+	}
+
+	private static Object convertStringValue(final String value, final Class<?> objectiveType) throws CodecException{
 		//try convert to a number...
-		final Object val = toNumber(value, objectiveType);
+		final Object valueAsNumber = toNumber(value, objectiveType);
 		//... otherwise convert it to an object
-		return (val == null
+		return (valueAsNumber == null
 			? toObjectValue(value, objectiveType)
-			: val);
+			: valueAsNumber
+		);
 	}
 
 	private static Object toNumber(final String text, final Class<?> objectiveType){
@@ -391,6 +392,36 @@ public enum ParserDataType{
 			}
 		}
 		return result;
+	}
+
+
+
+	public static Class<?> resolveInputType(final Class<? extends Converter<?, ?>> converterType,
+		final Class<? extends Validator<?>> validatorType){
+		Class<?> inputType = null;
+		if(converterType != NullConverter.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(converterType, Converter.class)
+				.getFirst();
+		if(inputType == null && validatorType != NullValidator.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(validatorType, Validator.class)
+				.getFirst();
+		return inputType;
+	}
+
+	public static Number castValue(final BigInteger value, final Class<?> inputType){
+		if(inputType != null){
+			final ParserDataType pdt = fromType(inputType);
+			if(pdt != null)
+				return pdt.cast(value);
+		}
+		return value;
+	}
+
+	public static BigInteger reinterpretToBigInteger(final Number value){
+		return (value instanceof final BigInteger bi
+			? bi
+			: BigInteger.valueOf(value.longValue())
+		);
 	}
 
 }

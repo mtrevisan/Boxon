@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,35 +22,25 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
-
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
-
-import java.lang.annotation.Annotation;
+package io.github.mtrevisan.boxon.annotations.converters;
 
 
-@SuppressWarnings("ClassExplicitlyAnnotation")
-final class NullObjectChoiceList implements ObjectChoicesList.ObjectChoiceList{
+/**
+ * Convert an integer to a float.
+ */
+public final class IntegerToFloatConverter implements Converter<Integer, Float>{
+
+	private IntegerToFloatConverter(){}
+
 
 	@Override
-	public Class<? extends Annotation> annotationType(){
-		return NullObjectChoiceList.class;
+	public Float decode(final Integer value){
+		return Float.intBitsToFloat(value);
 	}
 
 	@Override
-	public String condition(){
-		return JavaHelper.EMPTY_STRING;
-	}
-
-	@Override
-	public String prefix(){
-		return null;
-	}
-
-	@Override
-	public Class<?> type(){
-		return Void.TYPE;
+	public Integer encode(final Float value){
+		return Float.floatToIntBits(value);
 	}
 
 }

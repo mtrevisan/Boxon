@@ -30,25 +30,21 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
-import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
-import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
+import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -83,15 +79,15 @@ class TemplateTest{
 	}
 
 	private static class Version{
-		@BindByte
+		@BindInteger(size = "8")
 		byte major;
-		@BindByte
+		@BindInteger(size = "8")
 		byte minor;
 		byte build;
 	}
 
 	@TemplateHeader(start = "+", end = "-")
-	private static class Message{
+	static class Message{
 
 		private final Map<Byte, String> messageTypeMap = new HashMap<>(2);
 
@@ -116,7 +112,7 @@ class TemplateTest{
 			messageTypeMap.put((byte)1, "AT+GTSRI");
 		}
 
-		@BindByte(converter = Mask.MaskConverter.class)
+		@BindInteger(size = "8", converter = Mask.MaskConverter.class)
 		Mask mask;
 		@BindArray(size = "2", type = Version.class)
 		private Version[] versions;
@@ -124,19 +120,19 @@ class TemplateTest{
 		private byte[] protocolVersion;
 		@BindBitSet(size = "2")
 		private BitSet bitmap;
-		@BindDouble
+		@BindInteger(size = "64", converter = LongToDoubleConverter.class)
 		private double numberDouble;
-		@BindFloat
+		@BindInteger(size = "32", converter = IntegerToFloatConverter.class)
 		private float numberFloat;
-		@BindInt
+		@BindInteger(size = "32")
 		private int numberInt;
-		@BindLong
+		@BindInteger(size = "64")
 		private long numberLong;
 		@BindInteger(size = "5")
 		private long numberLong2;
 		@BindInteger(size = "70")
 		private BigInteger numberLong3;
-		@BindShort
+		@BindInteger(size = "16")
 		private short numberShort;
 		@BindString(size = "4")
 		String text;
@@ -153,7 +149,7 @@ class TemplateTest{
 
 	@TemplateHeader(start = "++", end = "--")
 	private static class MessageChild extends Message{
-		@BindInt
+		@BindInteger(size = "32")
 		private int anotherNumberInt;
 	}
 

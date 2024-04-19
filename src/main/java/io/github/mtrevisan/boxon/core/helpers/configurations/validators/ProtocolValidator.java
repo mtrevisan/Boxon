@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations.validators;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 import io.github.mtrevisan.boxon.semanticversioning.VersionException;
 
 
@@ -67,7 +68,7 @@ final class ProtocolValidator{
 		Version protocol = null;
 		if(!StringHelper.isBlank(protocolVersion)){
 			try{
-				protocol = Version.of(protocolVersion);
+				protocol = VersionBuilder.of(protocolVersion);
 			}
 			catch(final VersionException ve){
 				throw AnnotationException.create(ve, errorMessage, configData.getAnnotationName(), protocolVersion);

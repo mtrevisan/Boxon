@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -92,8 +93,8 @@ public final class ConfigurationMessage<T>{
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
 
-		final Version minProtocolVersion = Version.of(header.minProtocol());
-		final Version maxProtocolVersion = Version.of(header.maxProtocol());
+		final Version minProtocolVersion = VersionBuilder.of(header.minProtocol());
+		final Version maxProtocolVersion = VersionBuilder.of(header.maxProtocol());
 		try{
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
 			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
@@ -151,11 +152,10 @@ public final class ConfigurationMessage<T>{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = annotations[i];
-
+		for(final Annotation annotation : annotations){
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
+
 			if(annotationName.startsWith(CONFIGURATION_NAME_ALTERNATIVE)){
 				validateAlternativeAnnotationOrder(annotationFound);
 
@@ -267,24 +267,24 @@ public final class ConfigurationMessage<T>{
 		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
-	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> configurationFields){
-		final int length = configurationFields.size();
+	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
+		final int length = fields.size();
 		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < length; i ++){
-			final ConfigurationField configurationField = configurationFields.get(i);
+			final ConfigurationField field = fields.get(i);
 
-			final Annotation annotation = configurationField.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
 			manager.addProtocolVersionBoundaries(boundaries);
 
-			final ConfigurationSkip[] skips = configurationField.getSkips();
+			final ConfigurationSkip[] skips = field.getSkips();
 			extractProtocolVersionBoundaries(skips, boundaries);
 		}
 
-		boundaries.sort(Comparator.comparing(Version::of));
+		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
 		return boundaries;
@@ -375,7 +375,8 @@ public final class ConfigurationMessage<T>{
 
 	@Override
 	public int hashCode(){
-		return type.getName().hashCode();
+		return type.getName()
+			.hashCode();
 	}
 
 }

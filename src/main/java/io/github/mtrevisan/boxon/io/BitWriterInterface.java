@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.nio.charset.Charset;
@@ -96,22 +97,6 @@ public interface BitWriterInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	void putLong(long value, ByteOrder byteOrder);
-
-	/**
-	 * Writes a value with the specified {@link ByteOrder} using {@link Float#SIZE} bits.
-	 *
-	 * @param value	The {@code float} to write.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 */
-	void putFloat(float value, ByteOrder byteOrder);
-
-	/**
-	 * Writes a value with the specified {@link ByteOrder} using {@link Double#SIZE} bits.
-	 *
-	 * @param value	The {@code double} to write.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 */
-	void putDouble(double value, ByteOrder byteOrder);
 
 	/**
 	 * Write the text into with a given {@link Charset}.

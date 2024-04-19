@@ -110,11 +110,14 @@ public final class ConfigurationParser{
 	 * Loads the specified configuration class annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param configurationClass	Configuration class.
+	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public void withConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
+	public ConfigurationParser withConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfiguration(configurationClass);
+
+		return this;
 	}
 
 	/**
