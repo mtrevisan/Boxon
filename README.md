@@ -286,7 +286,7 @@ class Version{
     public byte build;
 }
 
-@BindArray(size = "2", type = Version.class)
+@BindObject(type = Version.class)
 @BindAsArray(size = "2")
 private Version[] versions;
 ```
@@ -294,7 +294,7 @@ private Version[] versions;
 ```java
 @BindInteger(size = "8")
 private byte positionsCount;
-@BindArray(size = "positionsCount", type = Position.class,
+@BindObject(type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
         alternatives = {
           @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = "0", type = PositionInvalid.class),

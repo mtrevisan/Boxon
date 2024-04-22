@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
@@ -115,7 +115,7 @@ class TemplateTest{
 
 		@BindInteger(size = "8", converter = Mask.MaskConverter.class)
 		Mask mask;
-		@BindArray(size = "2", type = Version.class)
+		@BindObject(type = Version.class)
 		@BindAsArray(size = "2")
 		private Version[] versions;
 		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class)

@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
@@ -40,11 +39,9 @@ import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -63,7 +60,7 @@ final class CodecList implements CodecInterface<BindList>{
 		final BindList binding = (BindList)annotation;
 
 		final Class<?> bindingType = binding.type();
-		final List<Object> list = createList(bindingType);
+		final List<Object> list = CodecHelper.createList(bindingType);
 		decodeWithAlternatives(reader, list, binding, rootObject);
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -72,13 +69,6 @@ final class CodecList implements CodecInterface<BindList>{
 		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		return CodecHelper.decodeValue(converterType, validator, list);
-	}
-
-	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
-		if(ParserDataType.isPrimitive(type))
-			throw AnnotationException.createNotPrimitiveValue(type);
-
-		return new ArrayList<>(0);
 	}
 
 	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindList binding,

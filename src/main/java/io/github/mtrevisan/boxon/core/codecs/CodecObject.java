@@ -24,13 +24,17 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -38,6 +42,10 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.List;
 
 
 final class CodecObject implements CodecInterface<BindObject>{
@@ -53,11 +61,36 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Object rootObject) throws FieldException{
 		final BindObject binding = (BindObject)annotation;
 
-		final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, binding.type(), binding.selectFrom(),
-			binding.selectDefault(), evaluator, rootObject);
+		final Object instance;
+		final Class<?> bindingType = binding.type();
+		if(arrayBinding != null){
+			if(arrayBinding instanceof final BindAsArray ba){
+				final int size = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
+				final Object array = CodecHelper.createArray(bindingType, size);
 
-		final Template<?> template = templateParser.createTemplate(chosenAlternativeType);
-		final Object instance = templateParser.decode(template, reader, rootObject);
+				final ObjectChoices objectChoices = binding.selectFrom();
+				if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
+					decodeWithAlternatives(reader, array, binding, rootObject);
+				else
+					decodeWithoutAlternatives(reader, array, bindingType, rootObject);
+
+				instance = array;
+			}
+			else{
+				final List<Object> list = CodecHelper.createList(bindingType);
+
+				decodeWithAlternatives(reader, list, binding, rootObject);
+
+				instance = list;
+			}
+		}
+		else{
+			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, bindingType, binding.selectFrom(),
+				binding.selectDefault(), evaluator, rootObject);
+
+			final Template<?> template = templateParser.createTemplate(chosenAlternativeType);
+			instance = templateParser.decode(template, reader, rootObject);
+		}
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -67,6 +100,70 @@ final class CodecObject implements CodecInterface<BindObject>{
 		return CodecHelper.decodeValue(converterType, validator, instance);
 	}
 
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Object array, final BindObject binding,
+		final Object rootObject) throws FieldException{
+		for(int i = 0, length = Array.getLength(array); i < length; i ++){
+			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, binding.type(), binding.selectFrom(),
+				binding.selectDefault(), evaluator, rootObject);
+
+			//read object
+			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
+			Array.set(array, i, templateParser.decode(subTemplate, reader, rootObject));
+		}
+	}
+
+	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final Class<?> type,
+		final Object rootObject) throws FieldException{
+		final Template<?> template = templateParser.createTemplate(type);
+
+		for(int i = 0, length = Array.getLength(array); i < length; i ++)
+			Array.set(array, i, templateParser.decode(template, reader, rootObject));
+	}
+
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindObject binding,
+		final Object rootObject) throws FieldException{
+		Class<?> chosenAlternativeType;
+		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, binding, rootObject)) != void.class){
+			//read object
+			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
+			final Object element = templateParser.decode(subTemplate, reader, rootObject);
+			list.add(element);
+		}
+	}
+
+	/**
+	 * Gets the alternative class type that parses the next data.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @return	The class type of the chosen alternative.
+	 */
+	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindObject binding, final Object rootObject){
+		final ObjectChoicesList objectChoicesList = binding.selectFromList();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoicesList.alternatives();
+		if(!CodecHelper.hasSelectAlternatives((alternatives)))
+			return binding.type();
+
+		final boolean hasHeader = addListHeaderToContext(reader, objectChoicesList);
+		if(!hasHeader)
+			return void.class;
+
+		return CodecHelper.chooseAlternativeType(alternatives, binding.selectDefault(), evaluator, rootObject);
+	}
+
+	/**
+	 * Add the prefix to the evaluator context if needed.
+	 *
+	 * @param reader	The reader from which to read the header.
+	 * @return	Whether a prefix was retrieved.
+	 */
+	private boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
+		final byte terminator = objectChoicesList.terminator();
+		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
+		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
+		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		return !prefix.isEmpty();
+	}
+
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object rootObject,
 			final Object value) throws FieldException{
@@ -74,25 +171,84 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		CodecHelper.validate(value, binding.validator());
 
-		final ObjectChoices objectChoices = binding.selectFrom();
-		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
-		Class<?> type = binding.type();
-		if(CodecHelper.hasSelectAlternatives(alternatives)){
-			type = value.getClass();
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(objectChoices.alternatives(), type);
-
-			CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
-		}
-
-		final Template<?> template = templateParser.createTemplate(type);
-
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
-		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
-		templateParser.encode(template, writer, rootObject, obj);
+		if(arrayBinding != null){
+			if(arrayBinding instanceof final BindAsArray ba){
+				final int size = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
+
+				final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
+
+				CodecHelper.assertSizeEquals(size, Array.getLength(array));
+
+				final ObjectChoices objectChoices = binding.selectFrom();
+				if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
+					encodeWithAlternatives(writer, array, objectChoices, rootObject);
+				else
+					encodeWithoutAlternatives(writer, array, binding.type());
+			}
+			else{
+				final List<Object> list = CodecHelper.converterEncode(chosenConverter, value);
+
+				encodeWithAlternatives(writer, list);
+			}
+		}
+		else{
+			final ObjectChoices objectChoices = binding.selectFrom();
+			final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
+			Class<?> type = binding.type();
+			if(CodecHelper.hasSelectAlternatives(alternatives)){
+				type = value.getClass();
+				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(objectChoices.alternatives(), type);
+
+				CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
+			}
+
+			final Template<?> template = templateParser.createTemplate(type);
+
+			final Object obj = CodecHelper.converterEncode(chosenConverter, value);
+
+			templateParser.encode(template, writer, rootObject, obj);
+		}
+	}
+
+	private void encodeWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom,
+		final Object rootObject) throws FieldException{
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+		for(int i = 0, length = array.length; i < length; i ++){
+			final Object elem = array[i];
+
+			final Class<?> type = elem.getClass();
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
+
+			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
+
+			final Template<?> template = templateParser.createTemplate(type);
+
+			templateParser.encode(template, writer, null, elem);
+		}
+	}
+
+	private void encodeWithoutAlternatives(final BitWriterInterface writer, final Object[] array, final Class<?> type) throws FieldException{
+		final Template<?> template = templateParser.createTemplate(type);
+
+		for(int i = 0, length = array.length; i < length; i ++)
+			templateParser.encode(template, writer, null, array[i]);
+	}
+
+	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list)
+		throws FieldException{
+		for(int i = 0, length = list.size(); i < length; i ++){
+			final Object elem = list.get(i);
+
+			final Class<?> type = elem.getClass();
+			final Template<?> template = templateParser.createTemplate(type);
+
+			templateParser.encode(template, writer, null, elem);
+		}
 	}
 
 }

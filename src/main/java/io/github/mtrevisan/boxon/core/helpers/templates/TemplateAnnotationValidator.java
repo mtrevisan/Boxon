@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
@@ -108,26 +107,10 @@ enum TemplateAnnotationValidator{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
-				throw AnnotationException.createBadAnnotation(BindArray.class, type);
+				throw AnnotationException.createBadAnnotation(BindArrayPrimitive.class, type);
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, type);
-		}
-	},
-
-	ARRAY(BindArray.class){
-		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-			final BindArray binding = (BindArray)annotation;
-			final Class<?> type = binding.type();
-			TemplateAnnotationValidatorHelper.validateType(type, BindArray.class);
-			if(ParserDataType.isPrimitive(type))
-				throw AnnotationException.createBadAnnotation(BindArray.class, type);
-
-			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			final ObjectChoices selectFrom = binding.selectFrom();
-			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, converter, type, selectFrom, selectDefault);
 		}
 	},
 

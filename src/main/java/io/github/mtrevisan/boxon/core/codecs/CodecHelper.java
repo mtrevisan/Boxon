@@ -44,7 +44,9 @@ import org.springframework.expression.EvaluationException;
 
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
 
 /**
@@ -90,6 +92,21 @@ final class CodecHelper{
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
+	}
+
+
+	static Object createArray(final Class<?> type, final int length) throws AnnotationException{
+		if(ParserDataType.isPrimitive(type))
+			throw AnnotationException.createNotPrimitiveValue(type);
+
+		return Array.newInstance(type, length);
+	}
+
+	static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
+		if(ParserDataType.isPrimitive(type))
+			throw AnnotationException.createNotPrimitiveValue(type);
+
+		return new ArrayList<>(0);
 	}
 
 

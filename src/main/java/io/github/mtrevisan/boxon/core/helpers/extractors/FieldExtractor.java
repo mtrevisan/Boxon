@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
-import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.lang.annotation.Annotation;
 

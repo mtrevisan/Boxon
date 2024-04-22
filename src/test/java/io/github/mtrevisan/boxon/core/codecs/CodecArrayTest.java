@@ -25,14 +25,15 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
@@ -68,7 +69,7 @@ class CodecArrayTest{
 	static class TestChoice4{
 		@BindString(size = "3")
 		String header;
-		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
+		@BindObject(type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = "1", type = CodecObjectTest.TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = "2", type = CodecObjectTest.TestType2.class)
@@ -83,7 +84,7 @@ class CodecArrayTest{
 		String header;
 		@BindInteger(size = "8")
 		byte type;
-		@BindArray(size = "1", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(
+		@BindObject(type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "type == 1", prefix = "", type = CodecObjectTest.TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "type == 2", prefix = "", type = CodecObjectTest.TestType2.class)
@@ -164,12 +165,12 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfSameObject() throws FieldException{
-		CodecArray codec = new CodecArray();
+		CodecObject codec = new CodecObject();
 		Version[] encodedValue = {new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
-		BindArray annotation = new BindArray(){
+		BindObject annotation = new BindObject(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindArray.class;
+				return BindObject.class;
 			}
 
 			@Override
@@ -180,11 +181,6 @@ class CodecArrayTest{
 			@Override
 			public Class<?> type(){
 				return Version.class;
-			}
-
-			@Override
-			public String size(){
-				return Integer.toString(encodedValue.length);
 			}
 
 			@Override
@@ -210,6 +206,11 @@ class CodecArrayTest{
 						return new ObjectChoice[0];
 					}
 				};
+			}
+
+			@Override
+			public ObjectChoicesList selectFromList(){
+				return null;
 			}
 
 			@Override
@@ -242,6 +243,17 @@ class CodecArrayTest{
 				};
 			}
 		};
+		BindAsArray arrayAnnotation = new BindAsArray(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindAsArray.class;
+			}
+
+			@Override
+			public String size(){
+				return Integer.toString(encodedValue.length);
+			}
+		};
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
@@ -250,13 +262,13 @@ class CodecArrayTest{
 		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, null, encodedValue);
+		codec.encode(writer, annotation, arrayAnnotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		Version[] decoded = (Version[])codec.decode(reader, annotation, null, null);
+		Version[] decoded = (Version[])codec.decode(reader, annotation, arrayAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);
 		Assertions.assertEquals(encodedValue[0].major, decoded[0].major);

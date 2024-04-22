@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;

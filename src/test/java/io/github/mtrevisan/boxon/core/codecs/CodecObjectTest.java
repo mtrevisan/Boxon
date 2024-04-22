@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
@@ -58,6 +59,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +110,31 @@ class CodecObjectTest{
 					@Override
 					public ObjectChoice[] alternatives(){
 						return new ObjectChoice[0];
+					}
+				};
+			}
+
+			@Override
+			public ObjectChoicesList selectFromList(){
+				return new ObjectChoicesList(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return ObjectChoicesList.class;
+					}
+
+					@Override
+					public String charset(){
+						return StandardCharsets.UTF_8.name();
+					}
+
+					@Override
+					public byte terminator(){
+						return 0;
+					}
+
+					@Override
+					public ObjectChoices.ObjectChoice[] alternatives(){
+						return new ObjectChoices.ObjectChoice[0];
 					}
 				};
 			}
@@ -257,8 +284,8 @@ class CodecObjectTest{
 		Assertions.assertEquals(10, descriptions.size());
 		Map<String, Object> description = descriptions.get(1);
 		String jsonDescription = PrettyPrintMap.toString(description);
-//		Assertions.assertEquals("{context:{},template:io.github.mtrevisan.boxon.core.codecs.CodecArrayTest$TestChoice4,header:{start:[tc4],charset:UTF-8},fields:[{name:header,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,charset:UTF-8,size:3,fieldType:java.lang.String},{selectFrom:{prefixLength:8,byteOrder:BIG_ENDIAN,alternatives:[{condition:#prefix == 1,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,prefix:1,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,fields:[{name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:16,fieldType:short,byteOrder:BIG_ENDIAN}]}]},{condition:#prefix == 2,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,prefix:2,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,fields:[{name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:32,fieldType:int,byteOrder:BIG_ENDIAN}]}]}]},size:3,selectDefault:void,name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArray,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0,fieldType:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0[]}]}", jsonDescription);
-		Assertions.assertEquals(1393, jsonDescription.length());
+//		Assertions.assertEquals("{context:{},template:io.github.mtrevisan.boxon.core.codecs.CodecArrayTest$TestChoice4,header:{start:[tc4],charset:UTF-8},fields:[{name:header,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,charset:UTF-8,size:3,fieldType:java.lang.String},{selectFrom:{prefixLength:8,byteOrder:BIG_ENDIAN,alternatives:[{condition:#prefix == 1,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,prefix:1,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,fields:[{name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:16,fieldType:short,byteOrder:BIG_ENDIAN}]}]},{condition:#prefix == 2,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,prefix:2,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,fields:[{name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:32,fieldType:int,byteOrder:BIG_ENDIAN}]}]}]},selectDefault:void,name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindObject,selectFromList:{charset:UTF-8,terminator:0},type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0,fieldType:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0[]}]}", jsonDescription);
+		Assertions.assertEquals(1431, jsonDescription.length());
 	}
 
 	@Test
