@@ -57,8 +57,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 
 	private record CodecBehavior(Class<?> bindingType, ObjectChoices selectFrom, Class<?> selectDefault, ObjectChoicesList objectChoicesList,
-			ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter, Class<? extends Validator<?>> validator){
-		public static CodecBehavior of(final Annotation annotation){
+			ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter, Class<? extends Validator<?>> validator,
+			Object rootObject){
+		static CodecBehavior of(final Annotation annotation, final Object rootObject){
 			final BindObject binding = (BindObject)annotation;
 
 			final Class<?> bindingType = binding.type();
@@ -68,7 +69,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final ConverterChoices converterChoices = binding.selectConverterFrom();
 			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 			final Class<? extends Validator<?>> validator = binding.validator();
-			return new CodecBehavior(bindingType, selectFrom, selectDefault, objectChoicesList, converterChoices, defaultConverter, validator);
+			return new CodecBehavior(bindingType, selectFrom, selectDefault, objectChoicesList, converterChoices, defaultConverter, validator,
+				rootObject);
 		}
 
 		private Object createArray(final int arraySize){
@@ -80,80 +82,78 @@ final class CodecObject implements CodecInterface<BindObject>{
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws FieldException{
-		final CodecBehavior behavior = CodecBehavior.of(annotation);
+		final CodecBehavior behavior = CodecBehavior.of(annotation, rootObject);
 
 		final Object instance;
 		if(collectionBinding == null)
-			instance = readValue(reader, behavior, rootObject);
+			instance = readValue(reader, behavior);
 		else{
 			if(collectionBinding instanceof final BindAsArray ba){
 				final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
-				instance = decodeArray(reader, behavior, arraySize, rootObject);
+				instance = decodeArray(reader, behavior, arraySize);
 			}
 			else
-				instance = decodeList(reader, behavior, rootObject);
+				instance = decodeList(reader, behavior);
 		}
 
 		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(behavior.converterChoices,
 			behavior.defaultConverter, evaluator, rootObject);
-		return CodecHelper.decodeValue(converterType, behavior.validator, instance);
+		return CodecHelper.convertDecodedValue(instance, converterType, behavior.validator);
 	}
 
-	private Object decodeArray(final BitReaderInterface reader, final CodecBehavior behavior, final int arraySize, final Object rootObject)
-			throws FieldException{
+	private Object decodeArray(final BitReaderInterface reader, final CodecBehavior behavior, final int arraySize) throws FieldException{
 		final Object array = behavior.createArray(arraySize);
 
 		if(CodecHelper.hasSelectAlternatives(behavior.selectFrom.alternatives()))
-			decodeWithAlternatives(reader, array, behavior, rootObject);
+			decodeWithAlternatives(reader, array, behavior);
 		else
-			decodeWithoutAlternatives(reader, array, behavior, rootObject);
+			decodeWithoutAlternatives(reader, array, behavior);
 		return array;
 	}
 
-	private List<Object> decodeList(final BitReaderInterface reader, final CodecBehavior behavior, final Object rootObject)
-			throws FieldException{
+	private List<Object> decodeList(final BitReaderInterface reader, final CodecBehavior behavior) throws FieldException{
 		final List<Object> list = CodecHelper.createList(behavior.bindingType);
 
-		decodeWithAlternatives(reader, list, behavior, rootObject);
+		decodeWithAlternatives(reader, list, behavior);
 
 		return list;
 	}
 
-	private void decodeWithAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior,
-			final Object rootObject) throws FieldException{
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior)
+			throws FieldException{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readValue(reader, behavior, rootObject);
+			final Object element = readValue(reader, behavior);
 
 			Array.set(array, i, element);
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior,
-			final Object rootObject) throws FieldException{
+	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior)
+			throws FieldException{
 		final Template<?> template = templateParser.createTemplate(behavior.bindingType);
 
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = templateParser.decode(template, reader, rootObject);
+			final Object element = templateParser.decode(template, reader, behavior.rootObject);
 
 			Array.set(array, i, element);
 		}
 	}
 
-	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final CodecBehavior behavior,
-			final Object rootObject) throws FieldException{
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final CodecBehavior behavior)
+			throws FieldException{
 		Class<?> chosenAlternativeType;
-		while((chosenAlternativeType = chooseAlternativeSeparatedType2(reader, behavior, rootObject)) != void.class){
-			final Object element = readValue(reader, chosenAlternativeType, rootObject);
+		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, behavior)) != void.class){
+			final Object element = readValue(reader, chosenAlternativeType, behavior.rootObject);
 
 			list.add(element);
 		}
 	}
 
-	private Object readValue(final BitReaderInterface reader, final CodecBehavior behavior, final Object rootObject) throws FieldException{
+	private Object readValue(final BitReaderInterface reader, final CodecBehavior behavior) throws FieldException{
 		final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, behavior.bindingType, behavior.selectFrom,
-			behavior.selectDefault, evaluator, rootObject);
+			behavior.selectDefault, evaluator, behavior.rootObject);
 
-		return readValue(reader, chosenAlternativeType, rootObject);
+		return readValue(reader, chosenAlternativeType, behavior.rootObject);
 	}
 
 	private Object readValue(final BitReaderInterface reader, final Class<?> chosenAlternativeType, final Object rootObject)
@@ -168,7 +168,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
 	 */
-	private Class<?> chooseAlternativeSeparatedType2(final BitReaderInterface reader, final CodecBehavior behavior, final Object rootObject){
+	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final CodecBehavior behavior){
 		final ObjectChoices.ObjectChoice[] alternatives = behavior.objectChoicesList.alternatives();
 		if(!CodecHelper.hasSelectAlternatives((alternatives)))
 			return behavior.bindingType;
@@ -177,7 +177,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		if(!hasHeader)
 			return void.class;
 
-		return CodecHelper.chooseAlternativeType(alternatives, behavior.selectDefault, evaluator, rootObject);
+		return CodecHelper.chooseAlternativeType(alternatives, behavior.selectDefault, evaluator, behavior.rootObject);
 	}
 
 	/**
@@ -198,12 +198,12 @@ final class CodecObject implements CodecInterface<BindObject>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws FieldException{
-		final CodecBehavior behavior = CodecBehavior.of(annotation);
+		final CodecBehavior behavior = CodecBehavior.of(annotation, rootObject);
 
 		CodecHelper.validate(value, behavior.validator);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(behavior.converterChoices,
-			behavior.defaultConverter, evaluator,rootObject);
+			behavior.defaultConverter, evaluator, rootObject);
 
 		if(collectionBinding == null){
 			final ObjectChoices objectChoices = behavior.selectFrom;
@@ -224,7 +224,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			if(collectionBinding instanceof final BindAsArray ba){
 				final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 
-				encodeArray(writer, value, chosenConverter, arraySize, behavior, rootObject);
+				encodeArray(writer, value, chosenConverter, arraySize, behavior);
 			}
 			else{
 				encodeList(writer, value, chosenConverter, rootObject);
@@ -233,16 +233,16 @@ final class CodecObject implements CodecInterface<BindObject>{
 	}
 
 	private void encodeArray(final BitWriterInterface writer, final Object value, final Class<? extends Converter<?, ?>> chosenConverter,
-			final int arraySize, final CodecBehavior behavior, final Object rootObject) throws FieldException{
+			final int arraySize, final CodecBehavior behavior) throws FieldException{
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
 		CodecHelper.assertSizeEquals(arraySize, Array.getLength(array));
 
 		final ObjectChoices objectChoices = behavior.selectFrom;
 		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
-			encodeWithAlternatives(writer, array, objectChoices, rootObject);
+			encodeWithAlternatives(writer, array, objectChoices, behavior.rootObject);
 		else
-			encodeWithoutAlternatives(writer, array, behavior.bindingType, rootObject);
+			encodeWithoutAlternatives(writer, array, behavior.bindingType, behavior.rootObject);
 	}
 
 	private void encodeList(final BitWriterInterface writer, final Object value, final Class<? extends Converter<?, ?>> chosenConverter,

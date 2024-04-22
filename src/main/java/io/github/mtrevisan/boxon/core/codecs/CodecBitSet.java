@@ -48,8 +48,8 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 
 	private record CodecBehavior(int size, ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter,
-			Class<? extends Validator<?>> validator){
-		public static CodecBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
+			Class<? extends Validator<?>> validator, Object rootObject){
+		static CodecBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
 				throws AnnotationException{
 			final BindBitSet binding = (BindBitSet)annotation;
 
@@ -57,7 +57,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			final ConverterChoices converterChoices = binding.selectConverterFrom();
 			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 			final Class<? extends Validator<?>> validator = binding.validator();
-			return new CodecBehavior(size, converterChoices, defaultConverter, validator);
+			return new CodecBehavior(size, converterChoices, defaultConverter, validator, rootObject);
 		}
 
 		private Object createArray(final int arraySize){
@@ -79,23 +79,23 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			final Object rootObject) throws AnnotationException{
 		final CodecBehavior behavior = CodecBehavior.of(annotation, evaluator, rootObject);
 
-		final Object instance = decode(reader, collectionBinding, behavior, rootObject);
+		final Object instance = decode(reader, collectionBinding, behavior);
 
 		final ConverterChoices converterChoices = behavior.converterChoices;
 		final Class<? extends Converter<?, ?>> defaultConverter = behavior.defaultConverter;
 		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		final Class<? extends Validator<?>> validator = behavior.validator;
-		return CodecHelper.decodeValue(converterType, validator, instance);
+		return CodecHelper.convertDecodedValue(instance, converterType, validator);
 	}
 
-	private Object decode(final BitReaderInterface reader, final Annotation collectionBinding, final CodecBehavior behavior,
-			final Object rootObject) throws AnnotationException{
+	private Object decode(final BitReaderInterface reader, final Annotation collectionBinding, final CodecBehavior behavior)
+			throws AnnotationException{
 		Object instance = null;
 		if(collectionBinding == null)
 			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray ba){
-			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
+			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, behavior.rootObject);
 			instance = decodeArray(reader, arraySize, behavior);
 		}
 		return instance;
@@ -104,17 +104,13 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final CodecBehavior behavior){
 		final Object array = behavior.createArray(arraySize);
 
-		decodeWithoutAlternatives(reader, array, behavior);
-
-		return array;
-	}
-
-	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = behavior.readValue(reader);
 
 			Array.set(array, i, element);
 		}
+
+		return array;
 	}
 
 
@@ -141,15 +137,11 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(array));
 
-			encodeWithoutAlternatives(writer, array, behavior);
-		}
-	}
+			for(int i = 0, length = Array.getLength(array); i < length; i ++){
+				final Object element = Array.get(array, i);
 
-	private static void encodeWithoutAlternatives(final BitWriterInterface writer, final Object array, final CodecBehavior behavior){
-		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = Array.get(array, i);
-
-			behavior.writeValue(writer, element);
+				behavior.writeValue(writer, element);
+			}
 		}
 	}
 
