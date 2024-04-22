@@ -95,10 +95,7 @@ final class CodecHelper{
 	}
 
 
-	static Object createArray(final Class<?> type, final int length) throws AnnotationException{
-		if(ParserDataType.isPrimitive(type))
-			throw AnnotationException.createNotPrimitiveValue(type);
-
+	static Object createArray(final Class<?> type, final int length){
 		return Array.newInstance(type, length);
 	}
 

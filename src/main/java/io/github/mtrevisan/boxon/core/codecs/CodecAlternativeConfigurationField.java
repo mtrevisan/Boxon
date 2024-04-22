@@ -39,14 +39,14 @@ import java.lang.annotation.Annotation;
 final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object fieldType,
-			Object value) throws CodecException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object fieldType, Object value) throws CodecException{
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
 			final AlternativeSubField binding = (AlternativeSubField)annotation;

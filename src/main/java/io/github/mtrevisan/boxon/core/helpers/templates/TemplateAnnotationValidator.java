@@ -26,21 +26,17 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
@@ -52,7 +48,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 
 /**
@@ -98,36 +93,6 @@ enum TemplateAnnotationValidator{
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
 			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, converter, type, selectFrom, selectDefault);
-		}
-	},
-
-	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
-		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
-			final Class<?> type = binding.type();
-			if(!ParserDataType.isPrimitive(type))
-				throw AnnotationException.createBadAnnotation(BindArrayPrimitive.class, type);
-
-			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			TemplateAnnotationValidatorHelper.validateConverter(fieldType, converter, type);
-		}
-	},
-
-	LIST_SEPARATED(BindList.class){
-		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-			final BindList binding = (BindList)annotation;
-			final Class<?> type = binding.type();
-			if(!List.class.isAssignableFrom(fieldType))
-				throw AnnotationException.create("Wrong annotation used for {}, should have been used the type `List<{}>.class`",
-					BindList.class.getSimpleName(), JavaHelper.prettyPrintClassName(type));
-
-			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			final ObjectChoicesList selectFrom = binding.selectFrom();
-			TemplateAnnotationValidatorHelper.validateCharset(selectFrom.charset());
-			final Class<?> selectDefault = binding.selectDefault();
-			TemplateAnnotationValidatorHelper.validateObjectChoiceList(fieldType, converter, type, selectFrom, selectDefault);
 		}
 	},
 

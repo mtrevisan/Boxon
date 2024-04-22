@@ -71,7 +71,7 @@ final class ParserWriterHelper{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();
 		final Annotation binding = parserContext.getBinding();
-		final Annotation arrayBinding = parserContext.getArrayBinding();
+		final Annotation collectionBinding = parserContext.getCollectionBinding();
 
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
@@ -85,7 +85,7 @@ final class ParserWriterHelper{
 			//encode value from current object
 			final Object value = parserContext.getFieldValue();
 			//write value to raw message
-			codec.encode(writer, binding, arrayBinding, parserContext.getRootObject(), value);
+			codec.encode(writer, binding, collectionBinding, parserContext.getRootObject(), value);
 
 			eventListener.writtenField(className, fieldName, value);
 		}

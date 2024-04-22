@@ -43,8 +43,8 @@ public final class FieldExtractorStrategy implements FieldExtractor<TemplateFiel
 	}
 
 	@Override
-	public Annotation getArrayBinding(final TemplateField field){
-		return field.getArrayBinding();
+	public Annotation getCollectionBinding(final TemplateField field){
+		return field.getCollectionBinding();
 	}
 
 	@Override

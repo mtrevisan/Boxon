@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
@@ -93,15 +92,14 @@ class CodecArrayTest{
 		CodecObjectTest.TestType0[] value;
 	}
 
-
 	@Test
 	void arrayPrimitive() throws FieldException{
-		CodecInterface<BindArrayPrimitive> codec = new CodecArrayPrimitive();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		int[] encodedValue = {0x0000_0123, 0x0000_0456};
-		BindArrayPrimitive annotation = new BindArrayPrimitive(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindArrayPrimitive.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -110,13 +108,8 @@ class CodecArrayTest{
 			}
 
 			@Override
-			public Class<?> type(){
-				return int.class;
-			}
-
-			@Override
 			public String size(){
-				return Integer.toString(encodedValue.length);
+				return "32";
 			}
 
 			@Override
@@ -126,7 +119,7 @@ class CodecArrayTest{
 
 			@Override
 			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
+				return AlwaysPassValidator.class;
 			}
 
 			@Override
@@ -148,17 +141,36 @@ class CodecArrayTest{
 					}
 				};
 			}
+
+
+			static class AlwaysPassValidator implements Validator<int[]>{
+				@Override
+				public boolean isValid(final int[] value){
+					return true;
+				}
+			}
+		};
+		BindAsArray collectionAnnotation = new BindAsArray(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindAsArray.class;
+			}
+
+			@Override
+			public String size(){
+				return Integer.toString(encodedValue.length);
+			}
 		};
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, null, encodedValue);
+		codec.encode(writer, annotation, collectionAnnotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		Object decoded = codec.decode(reader, annotation, null, null);
+		Object decoded = codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
 	}
@@ -243,7 +255,7 @@ class CodecArrayTest{
 				};
 			}
 		};
-		BindAsArray arrayAnnotation = new BindAsArray(){
+		BindAsArray collectionAnnotation = new BindAsArray(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindAsArray.class;
@@ -262,13 +274,13 @@ class CodecArrayTest{
 		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, arrayAnnotation, null, encodedValue);
+		codec.encode(writer, annotation, collectionAnnotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		Version[] decoded = (Version[])codec.decode(reader, annotation, arrayAnnotation, null);
+		Version[] decoded = (Version[])codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);
 		Assertions.assertEquals(encodedValue[0].major, decoded[0].major);

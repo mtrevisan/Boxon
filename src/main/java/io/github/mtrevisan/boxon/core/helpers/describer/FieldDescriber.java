@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.describer;
 
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
@@ -124,6 +125,14 @@ public final class FieldDescriber{
 		}
 	}
 
+	private static void extractCollectionParameters(final Annotation collectionBinding, final Map<String, Object> fieldDescription){
+		if(collectionBinding != null){
+			fieldDescription.put(DescriberKey.COLLECTION_TYPE.toString(), collectionBinding.annotationType().getName());
+			if(collectionBinding.annotationType() == BindAsArray.class)
+				fieldDescription.put(DescriberKey.COLLECTION_ARRAY_SIZE.toString(), ((BindAsArray)collectionBinding).size());
+		}
+	}
+
 	/**
 	 * Description of a single annotated class.
 	 *
@@ -187,6 +196,7 @@ public final class FieldDescriber{
 	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
 		final Collection<Map<String, Object>> fieldsDescription){
 		final Annotation binding = fieldExtractor.getBinding(field);
+		final Annotation collectionBinding = fieldExtractor.getCollectionBinding(field);
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final String fieldName = fieldExtractor.getFieldName(field);
 		final Class<?> fieldType = fieldExtractor.getFieldType(field);
@@ -199,6 +209,7 @@ public final class FieldDescriber{
 		extractSkipParameters(field, fieldExtractor, fieldsDescription);
 
 		extractObjectParameters(binding, annotationType, fieldDescription);
+		extractCollectionParameters(collectionBinding, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}

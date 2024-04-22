@@ -44,7 +44,7 @@ public final class FieldExtractorEvaluatedField implements FieldExtractor<Evalua
 	}
 
 	@Override
-	public Annotation getArrayBinding(final EvaluatedField<Evaluate> field){
+	public Annotation getCollectionBinding(final EvaluatedField<Evaluate> field){
 		return null;
 	}
 

@@ -333,7 +333,7 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindArrayPrimitive(size = "2", type = byte.class)
+@BindInteger(size = "8")
 @BindAsArray(size = "2")
 private byte[] array;
 ```
@@ -341,7 +341,7 @@ private byte[] array;
 ```java
 @BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean angularDataPresent;
-@BindArrayPrimitive(condition = "angularDataPresent", size = "dataLength", type = byte.class,
+@BindInteger(condition = "angularDataPresent", size = "8",
     selectConverterFrom = @ConverterChoices(
         alternatives = {
             @ConverterChoices.ConverterChoice(condition = "angularDataPresent", converter = CrashDataWithAngularDataConverter.class),
@@ -377,11 +377,12 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
+@BindObject(type = TestType3.class, selectFromList = @ObjectChoicesList(terminator = ',',
     alternatives = {
         @ObjectChoices.ObjectChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
         @ObjectChoices.ObjectChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
     }))
+@BindAsList
 private List<TestType3> value;
 ```
 
@@ -1179,7 +1180,7 @@ public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
 #### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 
 ```java
-@BindArrayPrimitive(size = "7", type = byte.class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindInteger(size = "8", converter = DateTimeYYYYMMDDHHMMSSConverter.class)
 @BindAsArray(size = "7")
 private ZonedDateTime eventTime;
 
@@ -1213,7 +1214,7 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 #### IMEI converter (from 'nibble' array to String, that is, each nibble represents a character of the IMEI)
 
 ```java
-@BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindInteger(size = "8", converter = IMEIConverter.class, validator = IMEIValidator.class)
 @BindAsArray(size = "8")
 private String imei;
 

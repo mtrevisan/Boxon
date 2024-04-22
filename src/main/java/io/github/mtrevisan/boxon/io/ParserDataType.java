@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -397,7 +398,7 @@ public enum ParserDataType{
 
 
 	public static Class<?> resolveInputType(final Class<? extends Converter<?, ?>> converterType,
-		final Class<? extends Validator<?>> validatorType){
+			final Class<? extends Validator<?>> validatorType){
 		Class<?> inputType = null;
 		if(converterType != NullConverter.class)
 			inputType = (Class<?>)GenericHelper.resolveGenericTypes(converterType, Converter.class)
@@ -415,6 +416,17 @@ public enum ParserDataType{
 				return pdt.cast(value);
 		}
 		return value;
+	}
+
+	public static Object castValue(final BigInteger[] array, final Class<?> inputType){
+		final int length = Array.getLength(array);
+		final Object convertedArray = Array.newInstance(inputType, length);
+		for(int i = 0; i < length; i ++){
+			Object element = Array.get(array, i);
+			element = castValue((BigInteger)element, inputType);
+			Array.set(convertedArray, i, element);
+		}
+		return convertedArray;
 	}
 
 	public static BigInteger reinterpretToBigInteger(final Number value){

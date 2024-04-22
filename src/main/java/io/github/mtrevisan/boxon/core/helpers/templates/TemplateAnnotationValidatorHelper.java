@@ -82,7 +82,10 @@ final class TemplateAnnotationValidatorHelper{
 	private static class NullConverterValidationStrategy implements ValidationStrategy{
 		public final void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 				throws AnnotationException{
-			fieldType = FieldAccessor.extractFieldType(fieldType);
+			fieldType = (fieldType != List.class
+				? FieldAccessor.extractFieldType(fieldType)
+				: bindingType
+			);
 			if(!validateTypes(fieldType, bindingType))
 				throw AnnotationException.create("Type mismatch between annotation output ({}) and field type ({})",
 					bindingType.getSimpleName(), fieldType.getSimpleName());

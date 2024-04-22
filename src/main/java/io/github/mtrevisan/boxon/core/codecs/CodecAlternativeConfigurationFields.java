@@ -35,14 +35,14 @@ import java.lang.annotation.Annotation;
 final class CodecAlternativeConfigurationFields implements CodecInterface<AlternativeConfigurationField>{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object fieldType,
-			final Object value){
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object fieldType, final Object value){
 		final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
 		final String terminator = binding.terminator();

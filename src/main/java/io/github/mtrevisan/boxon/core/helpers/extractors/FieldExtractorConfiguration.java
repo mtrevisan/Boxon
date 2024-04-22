@@ -43,7 +43,7 @@ public final class FieldExtractorConfiguration implements FieldExtractor<Configu
 	}
 
 	@Override
-	public Annotation getArrayBinding(final ConfigurationField field){
+	public Annotation getCollectionBinding(final ConfigurationField field){
 		return null;
 	}
 

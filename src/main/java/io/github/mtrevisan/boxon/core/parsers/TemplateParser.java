@@ -205,7 +205,12 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		processEvaluatedFields(template, parserContext);
 
+		try{
 		postProcessFields(template, parserContext);
+		}
+		catch(Exception e){
+		postProcessFields(template, parserContext);
+		}
 
 		readMessageTerminator(template, reader);
 
@@ -275,7 +280,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
 			final TemplateField field) throws FieldException{
 		final Annotation binding = field.getBinding();
-		final Annotation arrayBinding = field.getArrayBinding();
+		final Annotation collectionBinding = field.getCollectionBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
@@ -289,7 +294,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final T currentObject = parserContext.getCurrentObject();
 
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, arrayBinding, parserContext.getRootObject());
+			final Object value = codec.decode(reader, binding, collectionBinding, parserContext.getRootObject());
 
 			//restore original current object
 			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
@@ -464,7 +469,7 @@ public final class TemplateParser implements TemplateParserInterface{
 				parserContext.setField(field);
 				parserContext.setFieldName(field.getFieldName());
 				parserContext.setBinding(field.getBinding());
-				parserContext.setArrayBinding(field.getArrayBinding());
+				parserContext.setCollectionBinding(field.getCollectionBinding());
 
 				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}

@@ -187,10 +187,10 @@ public final class Template<T>{
 
 			try{
 				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
-				final Annotation arrayAnnotation = extractArrayAnnotation(boundedAnnotations);
+				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
 				if(validAnnotation != null || ! skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation, arrayAnnotation, skips));
+					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
@@ -345,13 +345,13 @@ public final class Template<T>{
 	}
 
 	/**
-	 * Return the first array binding annotation.
+	 * Return the first collection binding annotation.
 	 *
 	 * @param annotations	The list of annotations on the field.
-	 * @return	The first array binding annotation, or {@code null} if none are found.
+	 * @return	The first collection binding annotation, or {@code null} if none are found.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	private static Annotation extractArrayAnnotation(final List<? extends Annotation> annotations) throws AnnotationException{
+	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations) throws AnnotationException{
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);

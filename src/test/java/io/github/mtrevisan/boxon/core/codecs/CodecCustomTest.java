@@ -55,7 +55,7 @@ class CodecCustomTest{
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	static class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 		@Override
-		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayAnnotation,
+		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionAnnotation,
 				final Object rootObject){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
@@ -69,7 +69,7 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayAnnotation,
+		public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionAnnotation,
 				final Object rootObject, final Object value) throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
