@@ -101,14 +101,14 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -166,14 +166,14 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -231,14 +231,14 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -296,14 +296,14 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

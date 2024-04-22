@@ -39,7 +39,8 @@ import java.lang.reflect.Method;
 final class CodecChecksum implements CodecInterface<Checksum>{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+			final Object rootObject) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
 		final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
@@ -48,8 +49,8 @@ final class CodecChecksum implements CodecInterface<Checksum>{
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws AnnotationException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object rootObject,
+			final Object value) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
 		writer.put(value, binding.byteOrder());

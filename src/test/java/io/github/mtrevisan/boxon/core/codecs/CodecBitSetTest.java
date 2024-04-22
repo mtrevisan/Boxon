@@ -104,7 +104,7 @@ class CodecBitSetTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -115,7 +115,7 @@ class CodecBitSetTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -170,7 +170,7 @@ class CodecBitSetTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -181,7 +181,7 @@ class CodecBitSetTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

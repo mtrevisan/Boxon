@@ -101,14 +101,14 @@ class CodecByteTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		byte decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		byte decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.byteValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

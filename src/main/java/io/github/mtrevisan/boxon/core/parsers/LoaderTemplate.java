@@ -25,6 +25,8 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
@@ -316,7 +318,10 @@ final class LoaderTemplate{
 		final List<Annotation> annotations = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation declaredAnnotation = declaredAnnotations[i];
-			if(loaderCodec.hasCodec(declaredAnnotation.annotationType()))
+
+			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
+			if(loaderCodec.hasCodec(annotationType)
+					|| annotationType == BindAsArray.class || annotationType == BindAsList.class)
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;

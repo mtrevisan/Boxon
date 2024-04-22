@@ -81,14 +81,14 @@ class CodecChecksumTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(encodedValue, Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = (short)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

@@ -275,6 +275,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
 			final TemplateField field) throws FieldException{
 		final Annotation binding = field.getBinding();
+		final Annotation arrayBinding = field.getArrayBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
@@ -288,7 +289,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final T currentObject = parserContext.getCurrentObject();
 
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
+			final Object value = codec.decode(reader, binding, arrayBinding, parserContext.getRootObject());
 
 			//restore original current object
 			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
@@ -463,6 +464,7 @@ public final class TemplateParser implements TemplateParserInterface{
 				parserContext.setField(field);
 				parserContext.setFieldName(field.getFieldName());
 				parserContext.setBinding(field.getBinding());
+				parserContext.setArrayBinding(field.getArrayBinding());
 
 				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}

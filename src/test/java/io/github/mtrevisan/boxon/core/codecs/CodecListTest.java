@@ -199,13 +199,13 @@ class CodecListTest{
 		loaderCodec.loadDefaultCodecs();
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null);
+		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());
 		Assertions.assertEquals(encodedValue.get(0).type, decoded.get(0).type);

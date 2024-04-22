@@ -102,13 +102,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0000FF80", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -167,13 +167,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("FF7F0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -232,13 +232,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0000FF7F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -297,14 +297,14 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Integer.reverseBytes(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -363,13 +363,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("80FF0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -428,13 +428,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("00007FFF", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -493,13 +493,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode( writer, annotation, null, encodedValue);
+		codec.encode( writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7FFF0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -558,13 +558,13 @@ class CodecIntTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Integer.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

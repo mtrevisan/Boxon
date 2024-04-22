@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
@@ -41,6 +42,11 @@ public final class FieldExtractorPostProcessedField implements FieldExtractor<Ev
 	@Override
 	public Annotation getBinding(final EvaluatedField<PostProcess> field){
 		return field.getBinding();
+	}
+
+	@Override
+	public Annotation getArrayBinding(final EvaluatedField<PostProcess> field){
+		return null;
 	}
 
 	@Override

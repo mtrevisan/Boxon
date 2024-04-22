@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -149,13 +150,13 @@ class CodecObjectTest{
 		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		Version decoded = (Version)codec.decode(reader, annotation, null);
+		Version decoded = (Version)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertNotNull(decoded);
 		Assertions.assertEquals(encodedValue.major, decoded.major);
@@ -192,6 +193,7 @@ class CodecObjectTest{
 		@BindString(size = "3")
 		String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
+		@BindAsArray(size = "2")
 		byte[] index;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {

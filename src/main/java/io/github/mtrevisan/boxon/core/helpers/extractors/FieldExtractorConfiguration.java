@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.lang.annotation.Annotation;
 
@@ -40,6 +41,11 @@ public final class FieldExtractorConfiguration implements FieldExtractor<Configu
 	@Override
 	public Annotation getBinding(final ConfigurationField field){
 		return field.getBinding();
+	}
+
+	@Override
+	public Annotation getArrayBinding(final ConfigurationField field){
+		return null;
 	}
 
 	@Override

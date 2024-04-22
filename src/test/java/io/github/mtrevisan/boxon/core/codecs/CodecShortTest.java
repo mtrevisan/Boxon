@@ -102,13 +102,13 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("1000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -167,13 +167,13 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0010", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -232,13 +232,13 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("1080", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -297,14 +297,14 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Short.reverseBytes(encodedValue), Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -363,13 +363,13 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("8F00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -428,13 +428,13 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("007F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -493,13 +493,13 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7F00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -558,14 +558,14 @@ class CodecShortTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(encodedValue, Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

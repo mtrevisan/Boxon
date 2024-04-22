@@ -46,7 +46,8 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+			final Object rootObject) throws AnnotationException{
 		final BindBitSet binding = (BindBitSet)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
@@ -61,8 +62,8 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws AnnotationException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object rootObject,
+			final Object value) throws AnnotationException{
 		final BindBitSet binding = (BindBitSet)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);

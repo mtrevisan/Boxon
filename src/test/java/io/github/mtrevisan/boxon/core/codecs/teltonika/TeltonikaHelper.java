@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs.teltonika;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
@@ -128,6 +129,7 @@ public final class TeltonikaHelper{
 		@BindInteger(size = "16")
 		private int length;
 		@BindArrayPrimitive(size = "#self.length", type = byte.class)
+		@BindAsArray(size = "#self.length")
 		private byte[] value;
 	}
 

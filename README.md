@@ -287,6 +287,7 @@ class Version{
 }
 
 @BindArray(size = "2", type = Version.class)
+@BindAsArray(size = "2")
 private Version[] versions;
 ```
 
@@ -303,6 +304,7 @@ private byte positionsCount;
        }
     ),
    converter = PositionsConverter.class)
+@BindAsArray(size = "positionsCount")
 private Position[] positions;
 ```
 
@@ -332,6 +334,7 @@ This annotation is bounded to a variable.
 
 ```java
 @BindArrayPrimitive(size = "2", type = byte.class)
+@BindAsArray(size = "2")
 private byte[] array;
 ```
 
@@ -345,6 +348,7 @@ private boolean angularDataPresent;
             @ConverterChoices.ConverterChoice(condition = "!angularDataPresent", converter = CrashDataWithoutAngularDataConverter.class)
         })
     )
+@BindAsArray(size = "dataLength")
 private BigDecimal[][] crashData;
 ```
 
@@ -1176,6 +1180,7 @@ public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
 
 ```java
 @BindArrayPrimitive(size = "7", type = byte.class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindAsArray(size = "7")
 private ZonedDateTime eventTime;
 
 public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
@@ -1209,6 +1214,7 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 
 ```java
 @BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindAsArray(size = "8")
 private String imei;
 
 public class IMEIConverter implements Converter<byte[], String>{

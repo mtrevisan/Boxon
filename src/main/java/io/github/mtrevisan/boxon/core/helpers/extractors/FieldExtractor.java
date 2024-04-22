@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.lang.annotation.Annotation;
 
@@ -34,6 +35,8 @@ public interface FieldExtractor<F>{
 	SkipParams[] getSkips(F field);
 
 	Annotation getBinding(F field);
+
+	Annotation getArrayBinding(F field);
 
 	String getFieldName(F field);
 

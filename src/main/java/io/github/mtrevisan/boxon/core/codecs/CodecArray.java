@@ -52,7 +52,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+			final Object rootObject) throws FieldException{
 		final BindArray binding = (BindArray)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
@@ -101,8 +102,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws FieldException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object rootObject,
+			final Object value) throws FieldException{
 		final BindArray binding = (BindArray)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);

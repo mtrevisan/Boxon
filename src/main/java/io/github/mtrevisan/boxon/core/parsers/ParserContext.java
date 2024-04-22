@@ -46,6 +46,7 @@ final class ParserContext<T>{
 	private String fieldName;
 	private Object field;
 	private Annotation binding;
+	private Annotation arrayBinding;
 
 
 	ParserContext(final T currentObject){
@@ -129,6 +130,24 @@ final class ParserContext<T>{
 	 */
 	void setBinding(final Annotation binding){
 		this.binding = binding;
+	}
+
+	/**
+	 * The array annotation bound to the field.
+	 *
+	 * @return	The array annotation bound to the field.
+	 */
+	Annotation getArrayBinding(){
+		return arrayBinding;
+	}
+
+	/**
+	 * Set the array annotation bound to the field.
+	 *
+	 * @param arrayBinding	The array annotation.
+	 */
+	void setArrayBinding(final Annotation arrayBinding){
+		this.arrayBinding = arrayBinding;
 	}
 
 }

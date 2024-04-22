@@ -39,13 +39,14 @@ import java.lang.annotation.Annotation;
 final class CodecConfigurationField implements CodecInterface<ConfigurationField>{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+			final Object rootObject){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
-			throws CodecException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object fieldType,
+			Object value) throws CodecException{
 		final ConfigurationField binding = (ConfigurationField)annotation;
 
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);

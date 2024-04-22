@@ -101,13 +101,13 @@ class CodecStringTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		String decoded = (String)codec.decode(reader, annotation, null);
+		String decoded = (String)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -170,13 +170,13 @@ class CodecStringTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		String decoded = (String)codec.decode(reader, annotation, null);
+		String decoded = (String)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -238,12 +238,12 @@ class CodecStringTest{
 		};
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
-		Object decoded = codec.decode(reader, annotation, null);
+		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123AB", decoded);
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, decoded);
+		codec.encode(writer, annotation, null, null, decoded);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66}, writer.array());
@@ -307,12 +307,12 @@ class CodecStringTest{
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
-		Object decoded = codec.decode(reader, annotation, null);
+		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123ABC", decoded);
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, decoded);
+		codec.encode(writer, annotation, null, null, decoded);
 		writer.flush();
 
 		//this seems strange, but it has to work like this

@@ -38,13 +38,14 @@ import java.nio.charset.Charset;
 final class CodecConfigurationSubField implements CodecInterface<CompositeSubField>{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation arrayBinding,
+			final Object rootObject){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object charset, final Object value)
-			throws ConfigurationException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation arrayBinding, final Object charset,
+			final Object value) throws ConfigurationException{
 		if(!(value instanceof final String v))
 			throw UnhandledFieldException.create(value);
 

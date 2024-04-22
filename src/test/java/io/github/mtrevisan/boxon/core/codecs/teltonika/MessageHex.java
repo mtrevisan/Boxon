@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16IBM;
@@ -91,23 +92,28 @@ public class MessageHex{
 		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int oneBytePropertiesCount;
 		@BindArray(size = "#self.oneBytePropertiesCount", type = TeltonikaHelper.OneByteProperty.class)
+		@BindAsArray(size = "#self.oneBytePropertiesCount")
 		private TeltonikaHelper.OneByteProperty[] oneByteProperties;
 		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int twoBytesPropertiesCount;
 		@BindArray(size = "#self.twoBytesPropertiesCount", type = TeltonikaHelper.TwoBytesProperty.class)
+		@BindAsArray(size = "#self.twoBytesPropertiesCount")
 		private TeltonikaHelper.TwoBytesProperty[] twoBytesProperties;
 		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int fourBytesPropertiesCount;
 		@BindArray(size = "#self.fourBytesPropertiesCount", type = TeltonikaHelper.FourBytesProperty.class)
+		@BindAsArray(size = "#self.fourBytesPropertiesCount")
 		private TeltonikaHelper.FourBytesProperty[] fourBytesProperties;
 		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int eightBytesPropertiesCount;
 		@BindArray(size = "#self.eightBytesPropertiesCount", type = TeltonikaHelper.EightBytesProperty.class)
+		@BindAsArray(size = "#self.eightBytesPropertiesCount")
 		private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
 		@BindInteger(size = "16", condition = "codecID == -114")
 		private int variableBytesPropertiesCount;
 		@BindArray(condition = "codecID == -114", size = "#self.variableBytesPropertiesCount",
 			type = TeltonikaHelper.VariableBytesProperty.class)
+		@BindAsArray(size = "#self.variableBytesPropertiesCount")
 		private TeltonikaHelper.VariableBytesProperty[] variableBytesProperties;
 	}
 
@@ -121,6 +127,7 @@ public class MessageHex{
 	@BindInteger(size = "8")
 	private byte dataCount1;
 	@BindArray(size = "dataCount1", type = AVLData.class)
+	@BindAsArray(size = "dataCount1")
 	private AVLData[] data;
 	@BindInteger(size = "8")
 	//should be same as `dataCount1`
