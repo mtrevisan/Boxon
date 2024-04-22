@@ -60,12 +60,16 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			return new CodecBehavior(size, converterChoices, defaultConverter, validator);
 		}
 
-		private static BitSet readValue(final BitReaderInterface reader, final CodecBehavior behavior){
-			return reader.getBitSet(behavior.size);
+		private Object createArray(final int arraySize){
+			return CodecHelper.createArray(BitSet.class, arraySize);
 		}
 
-		private static void writeValue(final BitWriterInterface writer, final Object value, final CodecBehavior behavior){
-			writer.putBitSet((BitSet)value, behavior.size);
+		private Object readValue(final BitReaderInterface reader){
+			return reader.getBitSet(size);
+		}
+
+		private void writeValue(final BitWriterInterface writer, final Object value){
+			writer.putBitSet((BitSet)value, size);
 		}
 	}
 
@@ -89,7 +93,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			final Object rootObject) throws AnnotationException{
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = CodecBehavior.readValue(reader, behavior);
+			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 			instance = decodeArray(reader, arraySize, behavior);
@@ -98,7 +102,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	}
 
 	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final CodecBehavior behavior){
-		final Object array = CodecHelper.createArray(BitSet.class, arraySize);
+		final Object array = behavior.createArray(arraySize);
 
 		decodeWithoutAlternatives(reader, array, behavior);
 
@@ -107,7 +111,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = CodecBehavior.readValue(reader, behavior);
+			final Object element = behavior.readValue(reader);
 
 			Array.set(array, i, element);
 		}
@@ -129,7 +133,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		if(collectionBinding == null){
 			final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
-			CodecBehavior.writeValue(writer, convertedValue, behavior);
+			behavior.writeValue(writer, convertedValue);
 		}
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
@@ -145,7 +149,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			CodecBehavior.writeValue(writer, element, behavior);
+			behavior.writeValue(writer, element);
 		}
 	}
 

@@ -62,14 +62,18 @@ final class CodecString implements CodecInterface<BindString>{
 			return new CodecBehavior(size, charset, converterChoices, defaultConverter, validator);
 		}
 
-		private static Object readValue(final BitReaderInterface reader, final CodecBehavior behavior){
-			return reader.getText(behavior.size, behavior.charset);
+		private Object createArray(final int arraySize){
+			return CodecHelper.createArray(String.class, arraySize);
 		}
 
-		private static void writeValue(final BitWriterInterface writer, Object value, final CodecBehavior behavior){
+		private Object readValue(final BitReaderInterface reader){
+			return reader.getText(size, charset);
+		}
+
+		private void writeValue(final BitWriterInterface writer, Object value){
 			String text = (String)value;
-			text = text.substring(0, Math.min(text.length(), behavior.size));
-			writer.putText(text, behavior.charset);
+			text = text.substring(0, Math.min(text.length(), size));
+			writer.putText(text, charset);
 		}
 	}
 
@@ -93,7 +97,7 @@ final class CodecString implements CodecInterface<BindString>{
 			final Object rootObject) throws AnnotationException{
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = CodecBehavior.readValue(reader, behavior);
+			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 			instance = decodeArray(reader, arraySize, behavior);
@@ -102,7 +106,7 @@ final class CodecString implements CodecInterface<BindString>{
 	}
 
 	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final CodecBehavior behavior){
-		final Object array = CodecHelper.createArray(String.class, arraySize);
+		final Object array = behavior.createArray(arraySize);
 
 		decodeWithoutAlternatives(reader, array, behavior);
 
@@ -111,7 +115,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = CodecBehavior.readValue(reader, behavior);
+			final Object element = behavior.readValue(reader);
 
 			Array.set(array, i, element);
 		}
@@ -133,7 +137,7 @@ final class CodecString implements CodecInterface<BindString>{
 		if(collectionBinding == null){
 			final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
-			CodecBehavior.writeValue(writer, convertedValue, behavior);
+			behavior.writeValue(writer, convertedValue);
 		}
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
@@ -149,7 +153,7 @@ final class CodecString implements CodecInterface<BindString>{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			CodecBehavior.writeValue(writer, element, behavior);
+			behavior.writeValue(writer, element);
 		}
 	}
 

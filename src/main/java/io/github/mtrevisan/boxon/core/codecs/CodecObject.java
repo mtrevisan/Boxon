@@ -70,6 +70,10 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Class<? extends Validator<?>> validator = binding.validator();
 			return new CodecBehavior(bindingType, selectFrom, selectDefault, objectChoicesList, converterChoices, defaultConverter, validator);
 		}
+
+		private Object createArray(final int arraySize){
+			return CodecHelper.createArray(bindingType, arraySize);
+		}
 	}
 
 
@@ -97,7 +101,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	private Object decodeArray(final BitReaderInterface reader, final CodecBehavior behavior, final int arraySize, final Object rootObject)
 			throws FieldException{
-		final Object array = CodecHelper.createArray(behavior.bindingType, arraySize);
+		final Object array = behavior.createArray(arraySize);
 
 		if(CodecHelper.hasSelectAlternatives(behavior.selectFrom.alternatives()))
 			decodeWithAlternatives(reader, array, behavior, rootObject);

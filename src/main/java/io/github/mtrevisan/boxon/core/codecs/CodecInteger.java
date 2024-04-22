@@ -65,15 +65,19 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			return new CodecBehavior(size, byteOrder, converterChoices, defaultConverter, validator);
 		}
 
-		private static BigInteger readValue(final BitReaderInterface reader, final CodecBehavior behavior){
-			return reader.getBigInteger(behavior.size, behavior.byteOrder);
+		private Object createArray(final int arraySize){
+			return CodecHelper.createArray(BigInteger.class, arraySize);
 		}
 
-		private static void writeValue(final BitWriterInterface writer, final Object value, final CodecBehavior behavior){
-			final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
-			final BitSet bitmap = BitSetHelper.createBitSet(behavior.size, v, behavior.byteOrder);
+		private Object readValue(final BitReaderInterface reader){
+			return reader.getBigInteger(size, byteOrder);
+		}
 
-			writer.putBitSet(bitmap, behavior.size);
+		private void writeValue(final BitWriterInterface writer, final Object value){
+			final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
+			final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
+
+			writer.putBitSet(bitmap, size);
 		}
 	}
 
@@ -100,7 +104,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			final Object rootObject) throws AnnotationException{
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = CodecBehavior.readValue(reader, behavior);
+			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 			instance = decodeArray(reader, arraySize, behavior);
@@ -109,7 +113,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	}
 
 	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final CodecBehavior behavior){
-		final Object array = CodecHelper.createArray(BigInteger.class, arraySize);
+		final Object array = behavior.createArray(arraySize);
 
 		decodeWithoutAlternatives(reader, array, behavior);
 
@@ -118,7 +122,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = CodecBehavior.readValue(reader, behavior);
+			final Object element = behavior.readValue(reader);
 
 			Array.set(array, i, element);
 		}
@@ -164,7 +168,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		if(collectionBinding == null){
 			final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
-			CodecBehavior.writeValue(writer, convertedValue, behavior);
+			behavior.writeValue(writer, convertedValue);
 		}
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
@@ -180,7 +184,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			CodecBehavior.writeValue(writer, element, behavior);
+			behavior.writeValue(writer, element);
 		}
 	}
 
