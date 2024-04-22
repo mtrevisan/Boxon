@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -50,86 +49,97 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 	private Evaluator evaluator;
 
 
+	private record CodecBehavior(byte terminator, boolean consumeTerminator, Charset charset, ConverterChoices converterChoices,
+			Class<? extends Converter<?, ?>> defaultConverter, Class<? extends Validator<?>> validator){
+		public static CodecBehavior of(final Annotation annotation){
+			final BindStringTerminated binding = (BindStringTerminated)annotation;
+
+			final byte terminator = binding.terminator();
+			final boolean consumeTerminator = binding.consumeTerminator();
+			final Charset charset = CharsetHelper.lookup(binding.charset());
+			final ConverterChoices converterChoices = binding.selectConverterFrom();
+			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+			final Class<? extends Validator<?>> validator = binding.validator();
+			return new CodecBehavior(terminator, consumeTerminator, charset, converterChoices, defaultConverter, validator);
+		}
+
+		private static Object readValue(final BitReaderInterface reader, final CodecBehavior behavior){
+			final String text = reader.getTextUntilTerminator(behavior.terminator, behavior.charset);
+			if(behavior.consumeTerminator){
+				final int length = ParserDataType.getSize(behavior.terminator);
+				reader.skip(length);
+			}
+			return text;
+		}
+
+		private static void writeValue(final BitWriterInterface writer, final Object value, final CodecBehavior behavior){
+			writer.putText((String)value, behavior.charset);
+			if(behavior.consumeTerminator)
+				writer.putByte(behavior.terminator);
+		}
+	}
+
+
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final BindStringTerminated binding = (BindStringTerminated)annotation;
+		final CodecBehavior behavior = CodecBehavior.of(annotation);
 
-		final byte terminator = binding.terminator();
-		final boolean consumeTerminator = binding.consumeTerminator();
-		final Charset charset = CharsetHelper.lookup(binding.charset());
+		final Object instance = decode(reader, collectionBinding, behavior, rootObject);
 
-		final Object instance = decode(reader, collectionBinding, terminator, consumeTerminator, charset, rootObject);
-
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final ConverterChoices converterChoices = behavior.converterChoices;
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.defaultConverter;
 		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
+		final Class<? extends Validator<?>> validator = behavior.validator;
 		return CodecHelper.decodeValue(converterType, validator, instance);
 	}
 
-	private Object decode(final BitReaderInterface reader, final Annotation collectionBinding, final byte terminator,
-			final boolean consumeTerminator, final Charset charset, final Object rootObject) throws AnnotationException{
+	private Object decode(final BitReaderInterface reader, final Annotation collectionBinding, final CodecBehavior behavior,
+			final Object rootObject) throws AnnotationException{
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = readText(reader, terminator, consumeTerminator, charset);
+			instance = CodecBehavior.readValue(reader, behavior);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
-			instance = decodeArray(reader, arraySize, terminator, consumeTerminator, charset);
+			instance = decodeArray(reader, arraySize, behavior);
 		}
 		return instance;
 	}
 
-	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final byte terminator,
-			final boolean consumeTerminator, final Charset charset){
+	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final CodecBehavior behavior){
 		final Object array = CodecHelper.createArray(String.class, arraySize);
 
-		decodeWithoutAlternatives(reader, array, terminator, consumeTerminator, charset);
+		decodeWithoutAlternatives(reader, array, behavior);
 
 		return array;
 	}
 
-	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final byte terminator,
-			final boolean consumeTerminator, final Charset charset){
+	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readText(reader, terminator, consumeTerminator, charset);
+			final Object element = CodecBehavior.readValue(reader, behavior);
 
 			Array.set(array, i, element);
 		}
 	}
 
-	private static String readText(final BitReaderInterface reader, final byte terminator, final boolean consumeTerminator,
-			final Charset charset){
-		final String text = reader.getTextUntilTerminator(terminator, charset);
-		if(consumeTerminator){
-			final int length = ParserDataType.getSize(terminator);
-			reader.skip(length);
-		}
-		return text;
-	}
-
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
-			final Object rootObject, final Object value) throws FieldException{
-		final BindStringTerminated binding = (BindStringTerminated)annotation;
+			final Object rootObject, final Object value) throws AnnotationException{
+		final CodecBehavior behavior = CodecBehavior.of(annotation);
 
-		CodecHelper.validate(value, binding.validator());
+		CodecHelper.validate(value, behavior.validator);
 
-		final byte terminator = binding.terminator();
-		final boolean consumeTerminator = binding.consumeTerminator();
-		final Charset charset = CharsetHelper.lookup(binding.charset());
-
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final ConverterChoices converterChoices = behavior.converterChoices;
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.defaultConverter;
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 
 		if(collectionBinding == null){
-			final String convertedText = CodecHelper.converterEncode(chosenConverter, value);
+			final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
-			writeText(writer, convertedText, terminator, consumeTerminator, charset);
+			CodecBehavior.writeValue(writer, convertedValue, behavior);
 		}
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
@@ -137,24 +147,16 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(array));
 
-			encodeWithoutAlternatives(writer, array, terminator, consumeTerminator, charset);
+			encodeWithoutAlternatives(writer, array, behavior);
 		}
 	}
 
-	private static void encodeWithoutAlternatives(final BitWriterInterface writer, final Object array, final byte terminator,
-			final boolean consumeTerminator, final Charset charset){
+	private static void encodeWithoutAlternatives(final BitWriterInterface writer, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			writeText(writer, (String)element, terminator, consumeTerminator, charset);
+			CodecBehavior.writeValue(writer, element, behavior);
 		}
-	}
-
-	private static void writeText(final BitWriterInterface writer, final String text, final byte terminator, final boolean consumeTerminator,
-			final Charset charset){
-		writer.putText(text, charset);
-		if(consumeTerminator)
-			writer.putByte(terminator);
 	}
 
 }

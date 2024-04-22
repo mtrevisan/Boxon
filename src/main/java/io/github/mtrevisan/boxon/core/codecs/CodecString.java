@@ -48,77 +48,92 @@ final class CodecString implements CodecInterface<BindString>{
 	private Evaluator evaluator;
 
 
+	private record CodecBehavior(int size, Charset charset, ConverterChoices converterChoices,
+			Class<? extends Converter<?, ?>> defaultConverter, Class<? extends Validator<?>> validator){
+		public static CodecBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
+				throws AnnotationException{
+			final BindString binding = (BindString)annotation;
+
+			final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+			final Charset charset = CharsetHelper.lookup(binding.charset());
+			final ConverterChoices converterChoices = binding.selectConverterFrom();
+			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+			final Class<? extends Validator<?>> validator = binding.validator();
+			return new CodecBehavior(size, charset, converterChoices, defaultConverter, validator);
+		}
+
+		private static Object readValue(final BitReaderInterface reader, final CodecBehavior behavior){
+			return reader.getText(behavior.size, behavior.charset);
+		}
+
+		private static void writeValue(final BitWriterInterface writer, Object value, final CodecBehavior behavior){
+			String text = (String)value;
+			text = text.substring(0, Math.min(text.length(), behavior.size));
+			writer.putText(text, behavior.charset);
+		}
+	}
+
+
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final BindString binding = (BindString)annotation;
+		final CodecBehavior behavior = CodecBehavior.of(annotation, evaluator, rootObject);
 
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final Charset charset = CharsetHelper.lookup(binding.charset());
+		final Object instance = decode(reader, collectionBinding, behavior, rootObject);
 
-		final Object instance = decode(reader, collectionBinding, size, charset, rootObject);
-
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final ConverterChoices converterChoices = behavior.converterChoices;
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.defaultConverter;
 		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
+		final Class<? extends Validator<?>> validator = behavior.validator;
 		return CodecHelper.decodeValue(converterType, validator, instance);
 	}
 
-	private Object decode(final BitReaderInterface reader, final Annotation collectionBinding, final int size, final Charset charset,
+	private Object decode(final BitReaderInterface reader, final Annotation collectionBinding, final CodecBehavior behavior,
 			final Object rootObject) throws AnnotationException{
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = readText(reader, size, charset);
+			instance = CodecBehavior.readValue(reader, behavior);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
-			instance = decodeArray(reader, arraySize, size, charset);
+			instance = decodeArray(reader, arraySize, behavior);
 		}
 		return instance;
 	}
 
-	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final int size, final Charset charset){
+	private static Object decodeArray(final BitReaderInterface reader, final int arraySize, final CodecBehavior behavior){
 		final Object array = CodecHelper.createArray(String.class, arraySize);
 
-		decodeWithoutAlternatives(reader, array, size, charset);
+		decodeWithoutAlternatives(reader, array, behavior);
 
 		return array;
 	}
 
-	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final int size,
-			final Charset charset){
+	private static void decodeWithoutAlternatives(final BitReaderInterface reader, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readText(reader, size, charset);
+			final Object element = CodecBehavior.readValue(reader, behavior);
 
 			Array.set(array, i, element);
 		}
-	}
-
-	private static String readText(final BitReaderInterface reader, final int size, final Charset charset){
-		return reader.getText(size, charset);
 	}
 
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final BindString binding = (BindString)annotation;
+		final CodecBehavior behavior = CodecBehavior.of(annotation, evaluator, rootObject);
 
-		CodecHelper.validate(value, binding.validator());
+		CodecHelper.validate(value, behavior.validator);
 
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final Charset charset = CharsetHelper.lookup(binding.charset());
-
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final ConverterChoices converterChoices = behavior.converterChoices;
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.defaultConverter;
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 
 		if(collectionBinding == null){
-			final String convertedText = CodecHelper.converterEncode(chosenConverter, value);
+			final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
-			writeText(writer, convertedText, size, charset);
+			CodecBehavior.writeValue(writer, convertedValue, behavior);
 		}
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
@@ -126,22 +141,16 @@ final class CodecString implements CodecInterface<BindString>{
 
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(array));
 
-			encodeWithoutAlternatives(writer, array, size, charset);
+			encodeWithoutAlternatives(writer, array, behavior);
 		}
 	}
 
-	private static void encodeWithoutAlternatives(final BitWriterInterface writer, final Object array, final int size,
-			final Charset charset){
+	private static void encodeWithoutAlternatives(final BitWriterInterface writer, final Object array, final CodecBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			writeText(writer, (String)element, size, charset);
+			CodecBehavior.writeValue(writer, element, behavior);
 		}
-	}
-
-	private static void writeText(final BitWriterInterface writer, String text, final int size, final Charset charset){
-		text = text.substring(0, Math.min(text.length(), size));
-		writer.putText(text, charset);
 	}
 
 }
