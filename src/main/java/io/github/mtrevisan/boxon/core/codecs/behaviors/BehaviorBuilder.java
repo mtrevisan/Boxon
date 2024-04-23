@@ -21,15 +21,13 @@ public class BehaviorBuilder{
 
 	public static CommonBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
 			throws AnnotationException{
-		if(annotation instanceof BindBitSet)
-			return ofBitSet((BindBitSet)annotation, evaluator, rootObject);
-		if(annotation instanceof BindInteger)
-			return ofInteger((BindInteger)annotation, evaluator, rootObject);
-		if(annotation instanceof BindString)
-			return ofString((BindString)annotation, evaluator, rootObject);
-		if(annotation instanceof BindStringTerminated)
-			return ofStringTerminated((BindStringTerminated)annotation);
-		return null;
+		return switch(annotation){
+			case BindBitSet bindBitSet -> ofBitSet(bindBitSet, evaluator, rootObject);
+			case BindInteger bindInteger -> ofInteger(bindInteger, evaluator, rootObject);
+			case BindString bindString -> ofString(bindString, evaluator, rootObject);
+			case BindStringTerminated bindStringTerminated -> ofStringTerminated(bindStringTerminated);
+			case null, default -> null;
+		};
 	}
 
 	private static BitSetBehavior ofBitSet(final BindBitSet binding, final Evaluator evaluator, final Object rootObject)
@@ -68,8 +66,7 @@ public class BehaviorBuilder{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new StringTerminatedBehavior(binding.annotationType(), terminator, consumeTerminator, charset, converterChoices,
-			defaultConverter, validator);
+		return new StringTerminatedBehavior(terminator, consumeTerminator, charset, converterChoices, defaultConverter, validator);
 	}
 
 }

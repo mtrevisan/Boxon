@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
@@ -46,7 +45,6 @@ import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
 
 
 final class CodecObject implements CodecInterface{
@@ -275,16 +273,6 @@ final class CodecObject implements CodecInterface{
 	private void writeValue(final BitWriterInterface writer, final Template<?> template, final Object object, final Object rootObject)
 			throws FieldException{
 		templateParser.encode(template, writer, rootObject, object);
-	}
-
-
-	private Object convertValue(final BindObject binding, final Object decodedValue, final Object rootObject,
-			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
-		return converter.apply(chosenConverter, decodedValue);
 	}
 
 }

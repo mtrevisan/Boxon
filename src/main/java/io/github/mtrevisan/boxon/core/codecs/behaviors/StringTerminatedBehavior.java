@@ -5,7 +5,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -20,7 +19,7 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 	private final boolean consumeTerminator;
 
 
-	public static StringTerminatedBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject){
+	public static StringTerminatedBehavior of(final Annotation annotation){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		final byte terminator = binding.terminator();
@@ -29,13 +28,12 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new StringTerminatedBehavior(binding.annotationType(), terminator, consumeTerminator, charset, converterChoices,
-			defaultConverter, validator);
+		return new StringTerminatedBehavior(terminator, consumeTerminator, charset, converterChoices, defaultConverter, validator);
 	}
 
 
-	StringTerminatedBehavior(final Class<? extends Annotation> bindingType, final byte terminator, final boolean consumeTerminator,
-			final Charset charset, final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
+	StringTerminatedBehavior(final byte terminator, final boolean consumeTerminator, final Charset charset,
+			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
 			final Class<? extends Validator<?>> validator){
 		super(charset, converterChoices, defaultConverter, validator);
 
