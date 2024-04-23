@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.templates;
+package io.github.mtrevisan.boxon.core.helpers.validators;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
@@ -54,11 +54,11 @@ import java.util.HashSet;
 /**
  * Container of all the validators of a message template.
  */
-enum TemplateAnnotationValidator{
+public enum TemplateAnnotationValidator{
 
 	HEADER(TemplateHeader.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final TemplateHeader binding = (TemplateHeader)annotation;
 
 			//assure uniqueness of the `start`s
@@ -82,7 +82,7 @@ enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
 			final Class<?> type = binding.type();
 			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
@@ -101,7 +101,7 @@ enum TemplateAnnotationValidator{
 
 	BIT_SET(BindBitSet.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -111,7 +111,7 @@ enum TemplateAnnotationValidator{
 
 	INTEGER(BindInteger.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindInteger binding = (BindInteger)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -121,7 +121,7 @@ enum TemplateAnnotationValidator{
 
 	STRING(BindString.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
@@ -132,7 +132,7 @@ enum TemplateAnnotationValidator{
 
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
@@ -144,7 +144,7 @@ enum TemplateAnnotationValidator{
 
 	CHECKSUM(Checksum.class){
 		@Override
-		void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final Class<? extends Checksummer> algorithmClass = ((Checksum)annotation).algorithm();
 			if(algorithmClass.isInterface() || Modifier.isAbstract(algorithmClass.getModifiers())
 					|| algorithmClass.isAssignableFrom(Checksummer.class))
@@ -176,7 +176,7 @@ enum TemplateAnnotationValidator{
 	 * @param annotationType	The annotation class type.
 	 * @return	The validator for the given annotation.
 	 */
-	static TemplateAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
+	public static TemplateAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
 
@@ -187,6 +187,6 @@ enum TemplateAnnotationValidator{
 	 * @param annotation	The annotation.
 	 * @throws AnnotationException	If an error is detected.
 	 */
-	abstract void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
+	public abstract void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
 
 }
