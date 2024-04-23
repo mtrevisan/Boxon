@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
 final class CodecChecksum implements CodecInterface{
 
 	@Override
-	public Class<?> type(){
+	public Class<?> identifier(){
 		return Checksum.class;
 	}
 

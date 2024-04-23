@@ -55,7 +55,7 @@ class CodecCustomTest{
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	static class VariableLengthByteArray implements CodecInterface{
 		@Override
-		public Class<?> type(){
+		public Class<?> identifier(){
 			return VarLengthEncoded.class;
 		}
 

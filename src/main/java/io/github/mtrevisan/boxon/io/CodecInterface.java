@@ -42,7 +42,7 @@ public interface CodecInterface{
 	 *
 	 * @return	The class type.
 	 */
-	Class<?> type();
+	Class<?> identifier();
 
 	/**
 	 * Decode the next field of a message.

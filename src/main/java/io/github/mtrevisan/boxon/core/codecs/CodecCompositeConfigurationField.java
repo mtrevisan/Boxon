@@ -41,7 +41,7 @@ import java.nio.charset.Charset;
 final class CodecCompositeConfigurationField implements CodecInterface{
 
 	@Override
-	public Class<?> type(){
+	public Class<?> identifier(){
 		return CompositeConfigurationField.class;
 	}
 

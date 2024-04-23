@@ -57,7 +57,7 @@ final class CodecObject implements CodecInterface{
 
 
 	@Override
-	public Class<?> type(){
+	public Class<?> identifier(){
 		return BindObject.class;
 	}
 

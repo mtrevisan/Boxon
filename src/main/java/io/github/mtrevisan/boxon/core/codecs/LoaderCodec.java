@@ -196,7 +196,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	private void addCodecInner(final CodecInterface codec) throws CodecException{
-		final Class<?> codecType = codec.type();
+		final Class<?> codecType = codec.identifier();
 		if(codecs.containsKey(codecType))
 			throw CodecException.create("Codec with type {} already added", codecType);
 
