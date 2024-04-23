@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -92,7 +93,9 @@ enum TemplateAnnotationValidator{
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
+			final ObjectChoicesList selectFromList = binding.selectFromList();
 			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, converter, type, selectFrom, selectDefault);
+			TemplateAnnotationValidatorHelper.validateObjectChoiceList(fieldType, converter, type, selectFromList, selectDefault);
 		}
 	},
 

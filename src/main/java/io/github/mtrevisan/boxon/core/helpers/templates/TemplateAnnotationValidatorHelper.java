@@ -129,12 +129,14 @@ final class TemplateAnnotationValidatorHelper{
 
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		validateObjectAlternatives(fieldType, converter, type, alternatives, prefixLength);
+		if(alternatives.length > 0){
+			validateObjectAlternatives(fieldType, converter, type, alternatives, prefixLength);
 
 
-		validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
+			validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
 
-		validateConverter(fieldType, converter, type);
+			validateConverter(fieldType, converter, type);
+		}
 	}
 
 	private static void validatePrefixLength(final byte prefixSize) throws AnnotationException{
@@ -167,23 +169,22 @@ final class TemplateAnnotationValidatorHelper{
 			final ObjectChoicesList selectFrom, final Class<?> selectDefault) throws AnnotationException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		final int length = alternatives.length;
-		if(length == 0)
-			throw AnnotationException.create("All alternatives must be non-empty");
+		if(length > 0){
+			final int minHeaderLength = calculateMinHeaderLength(alternatives);
+			final boolean hasPrefix = (minHeaderLength > 0);
+			for(int i = 0; i < length; i ++){
+				final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
-		final int minHeaderLength = calculateMinHeaderLength(alternatives);
-		final boolean hasPrefix = (minHeaderLength > 0);
-		for(int i = 0; i < length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+				validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
-			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
+				validateConverterToList(fieldType, alternative.type(), converter, type);
+			}
 
-			validateConverterToList(fieldType, alternative.type(), converter, type);
+
+			validateConverterToList(fieldType, type, converter, type);
+
+			validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
 		}
-
-
-		validateConverterToList(fieldType, type, converter, type);
-
-		validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
 	}
 
 	private static int calculateMinHeaderLength(final ObjectChoices.ObjectChoice[] alternatives){
