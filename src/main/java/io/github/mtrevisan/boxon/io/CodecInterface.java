@@ -31,10 +31,10 @@ import java.lang.annotation.Annotation;
 
 /**
  * The interface every codec should implement.
- *
- * @param <B>	The bind annotation associated with this codec.
  */
-public interface CodecInterface<B extends Annotation>{
+public interface CodecInterface{
+
+	Class<?> type();
 
 	/**
 	 * Decode the next field of a message.

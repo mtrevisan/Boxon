@@ -32,7 +32,12 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 import java.lang.annotation.Annotation;
 
 
-final class CodecAlternativeConfigurationFields implements CodecInterface<AlternativeConfigurationField>{
+final class CodecAlternativeConfigurationFields implements CodecInterface{
+
+	@Override
+	public Class<?> type(){
+		return AlternativeConfigurationField.class;
+	}
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,

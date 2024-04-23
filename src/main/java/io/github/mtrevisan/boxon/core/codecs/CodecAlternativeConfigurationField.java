@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerInterface;
@@ -36,7 +37,12 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 import java.lang.annotation.Annotation;
 
 
-final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
+final class CodecAlternativeConfigurationField implements CodecInterface{
+
+	@Override
+	public Class<?> type(){
+		return AlternativeSubField.class;
+	}
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,

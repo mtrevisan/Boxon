@@ -1304,8 +1304,13 @@ Optionally, the method `String condition()` could be defined.
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
-class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
-    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
+class VariableLengthByteArray implements CodecInterface{
+
+   public Class<?> type(){
+      return VarLengthEncoded.class;
+   }
+
+   public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){

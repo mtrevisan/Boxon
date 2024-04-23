@@ -51,7 +51,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianNegative() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = 0x80FF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -116,7 +116,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = 0x0000_7FFF;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -181,7 +181,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianPositive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = 0x7FFF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -246,7 +246,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianRandom() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -312,7 +312,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianNegative() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = 0x80FF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -377,7 +377,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = 0x0000_7FFF;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -442,7 +442,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianPositive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = 0x7FFF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -507,7 +507,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianRandom() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInteger annotation = new BindInteger(){
 			@Override

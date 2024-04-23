@@ -51,7 +51,7 @@ class CodecBitSetTest{
 
 	@Test
 	void bitsLittleEndian() throws FieldException{
-		CodecInterface<BindBitSet> codec = new CodecBitSet();
+		CodecInterface codec = new CodecBitSet();
 		//byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 		byte[] randomBytes = new byte[123];
 		TestHelper.RANDOM.nextBytes(randomBytes);
@@ -122,7 +122,7 @@ class CodecBitSetTest{
 
 	@Test
 	void bitsBigEndian() throws FieldException{
-		CodecInterface<BindBitSet> codec = new CodecBitSet();
+		CodecInterface codec = new CodecBitSet();
 		byte[] randomBytes = new byte[123];
 		TestHelper.RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);

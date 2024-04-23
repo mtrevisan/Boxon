@@ -198,7 +198,7 @@ public final class CoreBuilder{
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodec(final CodecInterface<?> codec){
+	public CoreBuilder withCodec(final CodecInterface codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
 
 		return this;
@@ -210,7 +210,7 @@ public final class CoreBuilder{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodecs(final CodecInterface<?>... codecs){
+	public CoreBuilder withCodecs(final CodecInterface... codecs){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
 
 		return this;

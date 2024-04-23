@@ -26,9 +26,12 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.BehaviorBuilder;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.BitSetBehavior;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.IntegerBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -40,16 +43,21 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
-final class CodecBitSet implements CodecInterface<BindBitSet>{
+final class CodecBitSet implements CodecInterface{
 
 	@Injected
 	private Evaluator evaluator;
 
 
 	@Override
+	public Class<?> type(){
+		return BindBitSet.class;
+	}
+
+	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final BitSetBehavior behavior = BitSetBehavior.of(annotation, evaluator, rootObject);
+		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
 
 		Object instance = null;
 		if(collectionBinding == null)
@@ -59,7 +67,11 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 
-		final Object convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode);
+		final Object convertedValue;
+		if(behavior instanceof IntegerBehavior)
+			convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode, collectionBinding);
+		else
+			convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode);
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(convertedValue, validator);
@@ -71,7 +83,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final CommonBehavior behavior = BitSetBehavior.of(annotation, evaluator, rootObject);
+		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);

@@ -46,7 +46,7 @@ class CodecChecksumTest{
 
 	@Test
 	void checksumShort() throws FieldException{
-		CodecInterface<Checksum> codec = new CodecChecksum();
+		CodecInterface codec = new CodecChecksum();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		Checksum annotation = new Checksum(){
 			@Override

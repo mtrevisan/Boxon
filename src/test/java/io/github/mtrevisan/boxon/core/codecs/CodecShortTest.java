@@ -51,7 +51,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive1() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = 0x0010;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -116,7 +116,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive2() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = 0x1000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -181,7 +181,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianNegative() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = (short)0x8010;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -246,7 +246,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianRandom() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -312,7 +312,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianNegative() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = (short)0x8F00;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -377,7 +377,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = 0x007F;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -442,7 +442,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianPositive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = 0x7F00;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -507,7 +507,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianRandom() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		BindInteger annotation = new BindInteger(){
 			@Override

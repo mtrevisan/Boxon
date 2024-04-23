@@ -50,7 +50,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveLittleEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -115,7 +115,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -180,7 +180,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveBigEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -245,7 +245,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeBigEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override

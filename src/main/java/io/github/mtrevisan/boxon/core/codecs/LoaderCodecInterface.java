@@ -45,6 +45,6 @@ public interface LoaderCodecInterface{
 	 * @param type	The class type.
 	 * @return	The codec for the given class type.
 	 */
-	CodecInterface<?> getCodec(final Type type);
+	CodecInterface getCodec(final Type type);
 
 }

@@ -26,7 +26,10 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.BehaviorBuilder;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.StringCommonBehavior;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.StringTerminatedBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -40,16 +43,21 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
-final class CodecStringTerminated implements CodecInterface<BindStringTerminated>{
+final class CodecStringTerminated implements CodecInterface{
 
 	@Injected
 	private Evaluator evaluator;
 
 
 	@Override
+	public Class<?> type(){
+		return BindStringTerminated.class;
+	}
+
+	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final StringCommonBehavior behavior = StringTerminatedBehavior.of(annotation);
+		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
 
 		Object instance = null;
 		if(collectionBinding == null)
@@ -71,7 +79,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final StringCommonBehavior behavior = StringTerminatedBehavior.of(annotation);
+		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);

@@ -5,6 +5,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -19,7 +20,7 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 	private final boolean consumeTerminator;
 
 
-	public static StringTerminatedBehavior of(final Annotation annotation){
+	public static StringTerminatedBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		final byte terminator = binding.terminator();

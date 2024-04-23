@@ -178,7 +178,7 @@ public final class Core{
 	 *
 	 * @param codec	The codec to be loaded.
 	 */
-	void addCodec(final CodecInterface<?> codec){
+	void addCodec(final CodecInterface codec){
 		loaderCodec.addCodec(codec);
 
 		postProcessCodec(codec);
@@ -189,14 +189,14 @@ public final class Core{
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 */
-	void addCodecs(final CodecInterface<?>... codecs){
+	void addCodecs(final CodecInterface... codecs){
 		loaderCodec.addCodecs(codecs);
 
 		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
 			postProcessCodec(codecs[i]);
 	}
 
-	private void postProcessCodec(final CodecInterface<?> codec){
+	private void postProcessCodec(final CodecInterface codec){
 		LoaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 

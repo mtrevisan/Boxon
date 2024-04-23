@@ -94,7 +94,7 @@ class CodecArrayTest{
 
 	@Test
 	void arrayPrimitive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+		CodecInterface codec = new CodecInteger();
 		int[] encodedValue = {0x0000_0123, 0x0000_0456};
 		BindInteger annotation = new BindInteger(){
 			@Override

@@ -282,7 +282,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final Annotation binding = field.getBinding();
 		final Annotation collectionBinding = field.getCollectionBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		final CodecInterface codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());

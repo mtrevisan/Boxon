@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -53,7 +54,12 @@ class CodecCustomTest{
 
 	//the number of bytes to read is determined by the leading bit of each individual bytes
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
-	static class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
+	static class VariableLengthByteArray implements CodecInterface{
+		@Override
+		public Class<?> type(){
+			return VarLengthEncoded.class;
+		}
+
 		@Override
 		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionAnnotation,
 				final Object rootObject){
@@ -83,7 +89,7 @@ class CodecCustomTest{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.addCodecs(new VariableLengthByteArray());
 
-		CodecInterface<?> codec = loaderCodec.getCodec(VarLengthEncoded.class);
+		CodecInterface codec = loaderCodec.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = {0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override

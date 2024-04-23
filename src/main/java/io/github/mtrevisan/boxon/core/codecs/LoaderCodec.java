@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class LoaderCodec implements LoaderCodecInterface{
 
-	private final Map<Type, CodecInterface<?>> codecs = new ConcurrentHashMap<>(0);
+	private final Map<Type, CodecInterface> codecs = new ConcurrentHashMap<>(0);
 
 	private EventListener eventListener;
 
@@ -96,20 +96,20 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes that implements {@link CodecInterface}. */
 		final List<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(CodecInterface.class);
-		final List<CodecInterface<?>> codecs = extractCodecs(derivedClasses);
+		final List<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
 		eventListener.loadedCodecs(codecs.size());
 	}
 
-	private List<CodecInterface<?>> extractCodecs(final List<Class<?>> derivedClasses){
+	private List<CodecInterface> extractCodecs(final List<Class<?>> derivedClasses){
 		final int length = derivedClasses.size();
-		final List<CodecInterface<?>> codecs = new ArrayList<>(length);
+		final List<CodecInterface> codecs = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Class<?> type = derivedClasses.get(i);
 
 			//for each extracted class, try to create an instance
-			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getEmptyCreator(type)
+			final CodecInterface codec = (CodecInterface)ConstructorHelper.getEmptyCreator(type)
 				.get();
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...
@@ -127,7 +127,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 *
 	 * @param codec	The codec to be loaded.
 	 */
-	public void addCodec(final CodecInterface<?> codec){
+	public void addCodec(final CodecInterface codec){
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
 		eventListener.loadingCodec(codec.getClass());
@@ -143,7 +143,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 */
-	public void addCodecs(final CodecInterface<?>... codecs){
+	public void addCodecs(final CodecInterface... codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
 		final int length = codecs.length;
@@ -157,30 +157,28 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener.loadedCodecs(length);
 	}
 
-	private void addCodecsInner(final List<CodecInterface<?>> codecs){
+	private void addCodecsInner(final List<CodecInterface> codecs){
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.size(); i < length; i ++){
-			final CodecInterface<?> codec = codecs.get(i);
+			final CodecInterface codec = codecs.get(i);
 
 			if(codec != null)
 				addCodecInner(codec);
 		}
 	}
 
-	private void addCodecsInner(final CodecInterface<?>... codecs){
+	private void addCodecsInner(final CodecInterface... codecs){
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.length; i < length; i ++){
-			final CodecInterface<?> codec = codecs[i];
+			final CodecInterface codec = codecs[i];
 
 			if(codec != null)
 				addCodecInner(codec);
 		}
 	}
 
-	private void addCodecInner(final CodecInterface<?> codec){
-		final Type codecType = GenericHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class)
-			.getFirst();
-		codecs.put(codecType, codec);
+	private void addCodecInner(final CodecInterface codec){
+		codecs.put(codec.type(), codec);
 	}
 
 	/**
@@ -190,7 +188,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 */
 	//FIXME is injection an ugliness?
 	public void injectDependenciesIntoCodecs(final Object... dependencies){
-		for(final CodecInterface<?> codec : codecs.values())
+		for(final CodecInterface codec : codecs.values())
 			injectDependenciesIntoCodec(codec, dependencies);
 	}
 
@@ -200,7 +198,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param codec	The codec to be injected into.
 	 * @param dependencies	The object(s) to be injected.
 	 */
-	public static void injectDependenciesIntoCodec(final CodecInterface<?> codec, final Object... dependencies){
+	public static void injectDependenciesIntoCodec(final CodecInterface codec, final Object... dependencies){
 		FieldAccessor.injectValues(codec, dependencies);
 	}
 
@@ -210,7 +208,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	@Override
-	public CodecInterface<?> getCodec(final Type type){
+	public CodecInterface getCodec(final Type type){
 		return codecs.get(type);
 	}
 

@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.ObjectBehavior;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
@@ -49,13 +50,18 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 
-final class CodecObject implements CodecInterface<BindObject>{
+final class CodecObject implements CodecInterface{
 
 	@Injected
 	private Evaluator evaluator;
 	@Injected
 	private TemplateParserInterface templateParser;
 
+
+	@Override
+	public Class<?> type(){
+		return BindObject.class;
+	}
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
