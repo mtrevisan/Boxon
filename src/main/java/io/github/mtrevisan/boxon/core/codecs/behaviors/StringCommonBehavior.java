@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import java.nio.charset.Charset;
 
 
-public abstract class StringCommonBehavior extends CommonBehavior{
+abstract class StringCommonBehavior extends CommonBehavior{
 
 	protected final Charset charset;
 
@@ -46,7 +46,7 @@ public abstract class StringCommonBehavior extends CommonBehavior{
 
 
 	@Override
-	public Object createArray(int arraySize){
+	public final Object createArray(final int arraySize){
 		return CodecHelper.createArray(String.class, arraySize);
 	}
 

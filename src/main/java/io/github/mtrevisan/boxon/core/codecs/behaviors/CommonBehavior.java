@@ -55,16 +55,16 @@ public abstract class CommonBehavior{
 	}
 
 
-	public ConverterChoices converterChoices(){
+	public final ConverterChoices converterChoices(){
 		return converterChoices;
 	}
 
-	public Class<? extends Converter<?, ?>> defaultConverter(){
+	public final Class<? extends Converter<?, ?>> defaultConverter(){
 		return defaultConverter;
 	}
 
 
-	public Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
+	public final Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
 		final Object array = createArray(arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = readValue(reader);
@@ -74,7 +74,7 @@ public abstract class CommonBehavior{
 		return array;
 	}
 
-	public void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array){
+	public final void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
@@ -82,14 +82,14 @@ public abstract class CommonBehavior{
 		}
 	}
 
-	public Object convertValue(final Object value, final Evaluator evaluator, final Object rootObject,
+	public final Object convertValue(final Object value, final Evaluator evaluator, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		return converter.apply(chosenConverter, value);
 	}
 
-	public Object convertValue(Object value, final Evaluator evaluator, final Object rootObject,
+	public final Object convertValue(Object value, final Evaluator evaluator, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter, final Annotation collectionBinding){
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
@@ -135,7 +135,7 @@ public abstract class CommonBehavior{
 
 	public abstract void writeValue(BitWriterInterface writer, Object value);
 
-	public Class<? extends Validator<?>> validator(){
+	public final Class<? extends Validator<?>> validator(){
 		return validator;
 	}
 

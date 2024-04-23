@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -59,7 +60,7 @@ public final class CoreBuilder{
 
 	@FunctionalInterface
 	private interface RunnableThrowable{
-		void execute() throws AnnotationException, CodecException, TemplateException, ConfigurationException;
+		void execute() throws BoxonException;
 	}
 
 
@@ -283,7 +284,7 @@ public final class CoreBuilder{
 	 * @throws TemplateException	If a template error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public Core create() throws AnnotationException, CodecException, TemplateException, ConfigurationException{
+	public Core create() throws BoxonException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
@@ -293,8 +294,7 @@ public final class CoreBuilder{
 		return core;
 	}
 
-	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, CodecException,
-			TemplateException, ConfigurationException{
+	private static void executeCommands(final List<RunnableThrowable> executors) throws BoxonException{
 		for(int i = 0, length = JavaHelper.sizeOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 

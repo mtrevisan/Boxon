@@ -41,15 +41,18 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-public class BehaviorBuilder{
+public final class BehaviorBuilder{
+
+	private BehaviorBuilder(){}
+
 
 	public static CommonBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
 			throws AnnotationException{
 		return switch(annotation){
-			case BindBitSet bindBitSet -> ofBitSet(bindBitSet, evaluator, rootObject);
-			case BindInteger bindInteger -> ofInteger(bindInteger, evaluator, rootObject);
-			case BindString bindString -> ofString(bindString, evaluator, rootObject);
-			case BindStringTerminated bindStringTerminated -> ofStringTerminated(bindStringTerminated);
+			case final BindBitSet bindBitSet -> ofBitSet(bindBitSet, evaluator, rootObject);
+			case final BindInteger bindInteger -> ofInteger(bindInteger, evaluator, rootObject);
+			case final BindString bindString -> ofString(bindString, evaluator, rootObject);
+			case final BindStringTerminated bindStringTerminated -> ofStringTerminated(bindStringTerminated);
 			case null, default -> null;
 		};
 	}
@@ -63,7 +66,7 @@ public class BehaviorBuilder{
 		return new BitSetBehavior(size, converterChoices, defaultConverter, validator);
 	}
 
-	public static IntegerBehavior ofInteger(final BindInteger binding, final Evaluator evaluator, final Object rootObject)
+	private static IntegerBehavior ofInteger(final BindInteger binding, final Evaluator evaluator, final Object rootObject)
 			throws AnnotationException{
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final ByteOrder byteOrder = binding.byteOrder();

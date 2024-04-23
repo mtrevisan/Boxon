@@ -45,7 +45,7 @@ public final class IntegerBehavior extends BitSetBehavior{
 
 	IntegerBehavior(final int size, final ByteOrder byteOrder, final ConverterChoices converterChoices,
 			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
-		super(size, converterChoices, defaultConverter, validator);;
+		super(size, converterChoices, defaultConverter, validator);
 
 		this.byteOrder = byteOrder;
 	}

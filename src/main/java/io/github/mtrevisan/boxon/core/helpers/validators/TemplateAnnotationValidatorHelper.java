@@ -48,7 +48,8 @@ import java.util.List;
 final class TemplateAnnotationValidatorHelper{
 
 	private static final NullConverterValidationStrategy NULL_CONVERTER_VALIDATION_STRATEGY = new NullConverterValidationStrategy();
-	private static final NonNullConverterValidationStrategy NON_NULL_CONVERTER_VALIDATION_STRATEGY = new NonNullConverterValidationStrategy();
+	private static final NonNullConverterValidationStrategy NON_NULL_CONVERTER_VALIDATION_STRATEGY
+		= new NonNullConverterValidationStrategy();
 
 
 	private TemplateAnnotationValidatorHelper(){}

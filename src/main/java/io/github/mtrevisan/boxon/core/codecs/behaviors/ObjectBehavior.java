@@ -59,7 +59,7 @@ public final class ObjectBehavior extends CommonBehavior{
 	}
 
 
-	ObjectBehavior(final Class<?> objectType, final ObjectChoices selectFrom, final Class<?> selectDefault,
+	private ObjectBehavior(final Class<?> objectType, final ObjectChoices selectFrom, final Class<?> selectDefault,
 			final ObjectChoicesList objectChoicesList, final ConverterChoices converterChoices,
 			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
 		super(converterChoices, defaultConverter, validator);

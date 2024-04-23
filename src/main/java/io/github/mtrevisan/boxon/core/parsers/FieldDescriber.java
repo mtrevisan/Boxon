@@ -75,7 +75,7 @@ public final class FieldDescriber{
 	private static final FieldExtractorPostProcessedField FIELD_EXTRACTOR_POST_PROCESSED_FIELD = new FieldExtractorPostProcessedField();
 	static final FieldExtractorConfiguration FIELD_EXTRACTOR_CONFIGURATION = new FieldExtractorConfiguration();
 
-	private static final Map<Class<?>, ArrayHandler> PROCESSOR_MAP = new HashMap<>();
+	private static final Map<Class<?>, ArrayHandler> PROCESSOR_MAP = new HashMap<>(5);
 	static{
 		PROCESSOR_MAP.put(String.class, FieldDescriber::describeString);
 		PROCESSOR_MAP.put(ObjectChoices.ObjectChoice.class, FieldDescriber::describeAlternatives);

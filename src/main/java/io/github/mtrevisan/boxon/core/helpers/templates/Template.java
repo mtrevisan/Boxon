@@ -77,7 +77,7 @@ public final class Template<T>{
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
-	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>();
+	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>(4);
 	static{
 		ANNOTATION_MAPPING.put(SkipBits.class, annotation
 			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
@@ -350,9 +350,8 @@ public final class Template<T>{
 	 *
 	 * @param annotations	The list of annotations on the field.
 	 * @return	The first collection binding annotation, or {@code null} if none are found.
-	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations) throws AnnotationException{
+	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations){
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);

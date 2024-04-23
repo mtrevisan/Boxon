@@ -52,7 +52,7 @@ public final class StringBehavior extends StringCommonBehavior{
 	}
 
 	@Override
-	public void writeValue(final BitWriterInterface writer, Object value){
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		String text = (String)value;
 		text = text.substring(0, Math.min(text.length(), size));
 		writer.putText(text, charset);

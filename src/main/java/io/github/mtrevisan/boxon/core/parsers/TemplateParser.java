@@ -206,10 +206,10 @@ public final class TemplateParser implements TemplateParserInterface{
 		processEvaluatedFields(template, parserContext);
 
 		try{
-		postProcessFields(template, parserContext);
+			postProcessFields(template, parserContext);
 		}
-		catch(Exception e){
-		postProcessFields(template, parserContext);
+		catch(final Exception e){
+			postProcessFields(template, parserContext);
 		}
 
 		readMessageTerminator(template, reader);
