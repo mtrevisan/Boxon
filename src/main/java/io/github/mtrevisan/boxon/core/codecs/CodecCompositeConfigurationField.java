@@ -38,7 +38,12 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{
+final class CodecCompositeConfigurationField implements CodecInterface{
+
+	@Override
+	public Class<?> identifier(){
+		return CompositeConfigurationField.class;
+	}
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,

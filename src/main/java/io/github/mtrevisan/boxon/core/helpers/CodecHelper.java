@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
+package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
@@ -64,7 +64,7 @@ public final class CodecHelper{
 	 * @param <T>	The class type of the value.
 	 * @throws DataException	If the value does not pass validation.
 	 */
-	static <T> void validate(final T value, final Class<? extends Validator<?>> validator){
+	public static <T> void validate(final T value, final Class<? extends Validator<?>> validator){
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
@@ -89,7 +89,7 @@ public final class CodecHelper{
 		return evaluatedSize;
 	}
 
-	static void assertSizeEquals(final int expectedSize, final int size){
+	public static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
 	}
@@ -99,7 +99,7 @@ public final class CodecHelper{
 		return Array.newInstance(type, length);
 	}
 
-	static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
+	public static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
 			throw AnnotationException.createNotPrimitiveValue(type);
 
@@ -116,7 +116,7 @@ public final class CodecHelper{
 	 * @param rootObject	Root object for the evaluator.
 	 * @return	The converter class.
 	 */
-	static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
+	public static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
 			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = converterChoices.alternatives();
 		for(int i = 0, length = alternatives.length; i < length; i ++){
@@ -134,11 +134,11 @@ public final class CodecHelper{
 	 *
 	 * @return	Whether the select-object-from binding has any alternatives.
 	 */
-	static <T> boolean hasSelectAlternatives(final T[] alternatives){
+	public static <T> boolean hasSelectAlternatives(final T[] alternatives){
 		return (alternatives.length > 0);
 	}
 
-	static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
+	public static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
 			final Evaluator evaluator, final Object rootObject){
 		Class<?> chosenAlternativeType = defaultAlternative;
 		for(int i = 0, length = alternatives.length; chosenAlternativeType == defaultAlternative && i < length; i ++){
@@ -151,7 +151,7 @@ public final class CodecHelper{
 		return chosenAlternativeType;
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
+	public static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
 			throws CodecException{
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
@@ -175,8 +175,9 @@ public final class CodecHelper{
 	 * @return	The class type of the chosen alternative.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	static Class<?> chooseAlternativeType(final BitReaderInterface reader, final Class<?> bindingType, final ObjectChoices objectChoices,
-			final Class<?> defaultAlternativeType, final Evaluator evaluator, final Object rootObject) throws CodecException{
+	public static Class<?> chooseAlternativeType(final BitReaderInterface reader, final Class<?> bindingType,
+			final ObjectChoices objectChoices, final Class<?> defaultAlternativeType, final Evaluator evaluator, final Object rootObject)
+			throws CodecException{
 		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
 		if(!hasSelectAlternatives(alternatives))
 			return bindingType;
@@ -191,7 +192,7 @@ public final class CodecHelper{
 	}
 
 
-	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
+	public static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
 		//if `chosenAlternative.condition()` contains '#prefix', then write `@ObjectChoice.prefix()`
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
@@ -213,7 +214,7 @@ public final class CodecHelper{
 	 *
 	 * @param reader	The reader from which to read the prefix.
 	 */
-	static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
+	private static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
 		final byte prefixSize = objectChoices.prefixLength();
 		if(prefixSize > 0){
 			final BitSet bitmap = reader.getBitSet(prefixSize);
@@ -225,7 +226,7 @@ public final class CodecHelper{
 	}
 
 
-	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	public static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
 				.get();
@@ -238,7 +239,7 @@ public final class CodecHelper{
 		}
 	}
 
-	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
+	public static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
 				.get();
@@ -250,7 +251,7 @@ public final class CodecHelper{
 		}
 	}
 
-	static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
+	public static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
 			if(value instanceof final ConfigurationEnum v)

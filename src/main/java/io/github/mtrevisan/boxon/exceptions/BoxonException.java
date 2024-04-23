@@ -32,9 +32,9 @@ import java.lang.reflect.Field;
 
 
 /**
- * Represents an error in coding/decoding of a value.
+ * Represents a generic error.
  */
-public class FieldException extends Exception{
+public class BoxonException extends Exception{
 
 	@Serial
 	private static final long serialVersionUID = -8863756843240934380L;
@@ -53,8 +53,8 @@ public class FieldException extends Exception{
 	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @return	An instance of this exception.
 	 */
-	public static FieldException create(final Throwable cause){
-		return new FieldException(cause);
+	public static BoxonException create(final Throwable cause){
+		return new BoxonException(cause);
 	}
 
 	/**
@@ -64,8 +64,8 @@ public class FieldException extends Exception{
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
-	public static FieldException create(final String message, final Object... parameters){
-		return new FieldException(StringHelper.format(message, parameters));
+	public static BoxonException create(final String message, final Object... parameters){
+		return new BoxonException(StringHelper.format(message, parameters));
 	}
 
 
@@ -74,7 +74,7 @@ public class FieldException extends Exception{
 	 *
 	 * @param message	The message.
 	 */
-	protected FieldException(final String message){
+	protected BoxonException(final String message){
 		super(message);
 	}
 
@@ -85,7 +85,7 @@ public class FieldException extends Exception{
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
 	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
-	protected FieldException(final String message, final Throwable cause){
+	protected BoxonException(final String message, final Throwable cause){
 		super(message, cause);
 	}
 
@@ -95,7 +95,7 @@ public class FieldException extends Exception{
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
 	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
-	protected FieldException(final Throwable cause){
+	protected BoxonException(final Throwable cause){
 		super(cause);
 	}
 
@@ -106,7 +106,7 @@ public class FieldException extends Exception{
 	 * @param field	The field.
 	 * @return	The exception itself.
 	 */
-	public final FieldException withClassAndField(final Class<?> type, final Field field){
+	public final BoxonException withClassAndField(final Class<?> type, final Field field){
 		return withClassNameAndFieldName(type.getName(), field.getName());
 	}
 
@@ -117,7 +117,7 @@ public class FieldException extends Exception{
 	 * @param fieldName	The field name.
 	 * @return	The exception itself.
 	 */
-	public final FieldException withClassNameAndFieldName(final String className, final String fieldName){
+	public final BoxonException withClassNameAndFieldName(final String className, final String fieldName){
 		this.className = className;
 		this.fieldName = fieldName;
 
@@ -125,7 +125,7 @@ public class FieldException extends Exception{
 	}
 
 	@Override
-	public final String getMessage(){
+	public String getMessage(){
 		return super.getMessage()
 			+ (className != null && fieldName != null
 				? " in field " + className + "." + fieldName

@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
+import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;

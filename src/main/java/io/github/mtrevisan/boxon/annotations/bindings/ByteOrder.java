@@ -64,10 +64,28 @@ public enum ByteOrder{
 	};
 
 
+	/**
+	 * Corrects the endianness of a short value according to the specified byte order.
+	 *
+	 * @param value	The short value to correct the endianness of.
+	 * @return	The corrected short value.
+	 */
 	public abstract short correctEndianness(short value);
 
+	/**
+	 * Corrects the endianness of a int value according to the specified byte order.
+	 *
+	 * @param value	The int value to correct the endianness of.
+	 * @return	The corrected int value.
+	 */
 	public abstract int correctEndianness(int value);
 
+	/**
+	 * Corrects the endianness of a long value according to the specified byte order.
+	 *
+	 * @param value	The long value to correct the endianness of.
+	 * @return	The corrected long value.
+	 */
 	public abstract long correctEndianness(long value);
 
 }

@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ import java.util.Map;
 class DescriberTest{
 
 	@Test
-	void describeParsing() throws FieldException, NoSuchMethodException{
+	void describeParsing() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -63,7 +62,7 @@ class DescriberTest{
 	}
 
 	@Test
-	void describeTemplates() throws FieldException, NoSuchMethodException{
+	void describeTemplates() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -86,7 +85,7 @@ class DescriberTest{
 	}
 
 	@Test
-	void describeConfigurations() throws FieldException, NoSuchMethodException{
+	void describeConfigurations() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()

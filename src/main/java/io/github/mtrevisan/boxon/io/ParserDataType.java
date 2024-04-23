@@ -310,6 +310,12 @@ public enum ParserDataType{
 	abstract Object value(String value);
 
 
+	/**
+	 * Casts the given `BigInteger` value to a `Number` object that can be a `byte`, a `short`, an `integer`, a `float`, or a `double`.
+	 *
+	 * @param value	The `BigInteger` value to be cast.
+	 * @return	The cast `Number` object.
+	 */
 	protected abstract Number cast(BigInteger value);
 
 	/**
@@ -397,6 +403,13 @@ public enum ParserDataType{
 
 
 
+	/**
+	 * Resolves the input type for a sequence of a converter, if given, and/or a following validator.
+	 *
+	 * @param converterType	The type of the converter.
+	 * @param validatorType	The type of the validator.
+	 * @return	The resolved input type.
+	 */
 	public static Class<?> resolveInputType(final Class<? extends Converter<?, ?>> converterType,
 			final Class<? extends Validator<?>> validatorType){
 		Class<?> inputType = null;
@@ -409,6 +422,13 @@ public enum ParserDataType{
 		return inputType;
 	}
 
+	/**
+	 * Casts the given {@code value} to the specified {@code inputType}.
+	 *
+	 * @param value	The value to be cast.
+	 * @param inputType	The target data type to cast the value to.
+	 * @return	The cast value if successful, otherwise the original value.
+	 */
 	public static Number castValue(final BigInteger value, final Class<?> inputType){
 		if(inputType != null){
 			final ParserDataType pdt = fromType(inputType);
@@ -429,6 +449,13 @@ public enum ParserDataType{
 		return convertedArray;
 	}
 
+	/**
+	 * Reinterprets a `Number` as a `BigInteger`.
+	 *
+	 * @param value	The `Number` to reinterpret as a `BigInteger`.
+	 * @return	A `BigInteger` representing the same numerical value as the given `Number`.
+	 * @see #castValue(BigInteger, Class)
+	 */
 	public static BigInteger reinterpretToBigInteger(final Number value){
 		return (value instanceof final BigInteger bi
 			? bi

@@ -42,10 +42,7 @@ import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -93,8 +90,8 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayPrimitive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void arrayPrimitive() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		int[] encodedValue = {0x0000_0123, 0x0000_0456};
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -176,7 +173,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfSameObject() throws FieldException{
+	void arrayOfSameObject() throws BoxonException{
 		CodecObject codec = new CodecObject();
 		Version[] encodedValue = {new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindObject annotation = new BindObject(){
@@ -290,7 +287,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
+	void arrayOfDifferentObjects() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplatesFrom(TestChoice4.class)
@@ -317,7 +314,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException, ConfigurationException{
+	void arrayOfDifferentObjectsWithNoPrefix() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice5.class)

@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -51,8 +51,8 @@ import java.util.BitSet;
 class CodecIntegerTest{
 
 	@Test
-	void smallLittleEndianSmall1() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void smallLittleEndianSmall1() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -115,8 +115,8 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallLittleEndianSmall2() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void smallLittleEndianSmall2() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -179,8 +179,8 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallLittleEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void smallLittleEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -244,8 +244,8 @@ class CodecIntegerTest{
 
 
 	@Test
-	void smallBigEndianSmall1() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void smallBigEndianSmall1() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -308,8 +308,8 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallBigEndianSmall2() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void smallBigEndianSmall2() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -372,8 +372,8 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallBigEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void smallBigEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -437,8 +437,8 @@ class CodecIntegerTest{
 
 
 	@Test
-	void bigLittleEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void bigLittleEndianSmall() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -520,8 +520,8 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void bigLittleEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void bigLittleEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -585,8 +585,8 @@ class CodecIntegerTest{
 
 
 	@Test
-	void bigBigEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void bigBigEndianSmall() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -649,8 +649,8 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void bigBigEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void bigBigEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override

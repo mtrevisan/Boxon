@@ -33,10 +33,10 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManage
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
@@ -165,10 +165,10 @@ public final class ConfigurationParser{
 	 * @param writer	The writer that holds the encoded template.
 	 * @param currentObject	The current object that holds the values.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @throws FieldException	If a codec is not found.
+	 * @throws CodecException   If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
-			final Version protocol) throws FieldException{
+			final Version protocol) throws BoxonException{
 		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
 		parserContext.setClassName(configuration.getType().getName());

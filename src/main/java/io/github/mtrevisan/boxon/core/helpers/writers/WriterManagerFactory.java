@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.codecs;
+package io.github.mtrevisan.boxon.core.helpers.writers;
 
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;

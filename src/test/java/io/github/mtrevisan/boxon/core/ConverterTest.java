@@ -29,8 +29,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -90,7 +88,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongInputOnConverter() throws AnnotationException, TemplateException, ConfigurationException{
+	void wrongInputOnConverter() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestConverter1.class)
@@ -120,7 +118,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void allowedOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
+	void allowedOutputFromConverter() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestConverter3.class)

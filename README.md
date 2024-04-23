@@ -107,13 +107,12 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
 1. [Basic annotations](#annotation-basic)
     1. [Summary](#annotation-summary)
     2. [BindObject](#annotation-bindobject)
-    3. [BindArray](#annotation-bindarray)
-    4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindList](#annotation-bindlist)
-    6. [BindBitSet](#annotation-bindbitset)
-    7. [BindInteger](#annotation-bindinteger)
-    8. [BindString](#annotation-bindstring)
-    9. [BindStringTerminated](#annotation-bindstringterminated)
+    3. [BindAsArray](#annotation-bindasarray)
+    4. [BindAsList](#annotation-bindaslist)
+    5. [BindBitSet](#annotation-bindbitset)
+    6. [BindInteger](#annotation-bindinteger)
+    7. [BindString](#annotation-bindstring)
+    8. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [TemplateHeader](#annotation-templateheader)
     2. [SkipBits](#annotation-skip-bits)
@@ -221,8 +220,9 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
- - `selectFrom`: the selection from which to choose the instance type.
+ - `selectFrom`: the selection from which to choose the instance type using an `ObjectChoices` with a prefix of a predetermined length.
  - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
+ - `selectFromList`: the selection from which to choose the instance type using an `ObjectChoicesList` with a prefix consisting in a terminated string.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -253,19 +253,12 @@ private Version version;
 ```
 
 
-<a name="annotation-bindarray"></a>
-### BindArray
+<a name="annotation-bindasarray"></a>
+### BindAsArray
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
- - `selectFrom`: the selection from which to choose the instance type.
- - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
 
@@ -324,7 +317,7 @@ private Position[] positions;
 
 #### description
 
-Reads an array of primitives.
+Defines a parameter as an array.
 
 #### annotation type
 
@@ -353,22 +346,16 @@ private BigDecimal[][] crashData;
 ```
 
 
-<a name="annotation-bindlist"></a>
-### BindList
+<a name="annotation-bindaslist"></a>
+### BindAsList
 
 #### parameters
 
-- `condition`: The SpEL expression that determines if this field has to be read.
-- `type`: the Class of primitive of the single element of the array.
-- `selectFrom`: the selection from which to choose the instance type.
-- `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
-- `validator`: the Class of a validator (applied BEFORE the converter).
-- `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
-- `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
+None.
 
 #### description
 
-Reads a list of Objects.
+Defines a parameter as a list.
 
 #### annotation type
 
@@ -1304,8 +1291,13 @@ Optionally, the method `String condition()` could be defined.
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
-class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
-    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
+class VariableLengthByteArray implements CodecInterface{
+
+   public Class<?> type(){
+      return VarLengthEncoded.class;
+   }
+
+   public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){

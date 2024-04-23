@@ -36,7 +36,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 
-final class CodecChecksum implements CodecInterface<Checksum>{
+final class CodecChecksum implements CodecInterface{
+
+	@Override
+	public Class<?> identifier(){
+		return Checksum.class;
+	}
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,

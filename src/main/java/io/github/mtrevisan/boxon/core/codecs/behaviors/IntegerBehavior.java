@@ -1,47 +1,68 @@
+/*
+ * Copyright (c) 2024 Mauro Trevisan
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
 package io.github.mtrevisan.boxon.core.codecs.behaviors;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.codecs.CodecHelper;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
-import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.util.BitSet;
 
 
-record IntegerBehavior(int size, ByteOrder byteOrder, ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter,
-		Class<? extends Validator<?>> validator){
+public final class IntegerBehavior extends BitSetBehavior{
 
-	public static IntegerBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
-		throws AnnotationException{
-		final BindInteger binding = (BindInteger)annotation;
+	private final ByteOrder byteOrder;
 
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final ByteOrder byteOrder = binding.byteOrder();
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Validator<?>> validator = binding.validator();
-		return new IntegerBehavior(size, byteOrder, converterChoices, defaultConverter, validator);
+
+	IntegerBehavior(final int size, final ByteOrder byteOrder, final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
+		super(size, converterChoices, defaultConverter, validator);;
+
+		this.byteOrder = byteOrder;
 	}
 
-	private Object createArray(final int arraySize){
+
+	@Override
+	public Object createArray(final int arraySize){
 		return CodecHelper.createArray(BigInteger.class, arraySize);
 	}
 
-	private Object readValue(final BitReaderInterface reader){
+	@Override
+	public Object readValue(final BitReaderInterface reader){
 		return reader.getBigInteger(size, byteOrder);
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Object value){
+	@Override
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,36 +22,32 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
+package io.github.mtrevisan.boxon.core.codecs.behaviors;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 
-import java.io.Serial;
-
-
-/**
- * Thrown if a template has validation errors.
- */
-public final class TemplateException extends BoxonException{
-
-	@Serial
-	private static final long serialVersionUID = 7585594459004613305L;
+import java.nio.charset.Charset;
 
 
-	/**
-	 * Constructs a new exception with the specified message, possibly with parameters.
-	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
-	 * @param parameters	The parameters of the message.
-	 * @return	An instance of this exception.
-	 */
-	public static TemplateException create(final String message, final Object... parameters){
-		return new TemplateException(StringHelper.format(message, parameters));
+public abstract class StringCommonBehavior extends CommonBehavior{
+
+	protected final Charset charset;
+
+
+	StringCommonBehavior(final Charset charset, final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
+		super(converterChoices, defaultConverter, validator);
+
+		this.charset = charset;
 	}
 
 
-	private TemplateException(final String message){
-		super(message);
+	@Override
+	public Object createArray(int arraySize){
+		return CodecHelper.createArray(String.class, arraySize);
 	}
 
 }
