@@ -43,10 +43,7 @@ import io.github.mtrevisan.boxon.core.Describer;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -288,7 +285,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice2() throws AnnotationException, TemplateException, ConfigurationException{
+	void choice2() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice2.class)
@@ -324,7 +321,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice3() throws AnnotationException, TemplateException, ConfigurationException{
+	void choice3() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice3.class)

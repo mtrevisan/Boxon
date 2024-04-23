@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -93,15 +94,19 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
 	public void loadDefaultCodecs(){
-		loadCodecsFrom(ReflectiveClassLoader.extractCallerClasses());
+		try{
+			loadCodecsFrom(ReflectiveClassLoader.extractCallerClasses());
+		}
+		catch(final CodecException ignored){}
 	}
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
+	 * @throws CodecException	If a codec was already loaded.
 	 */
-	public void loadCodecsFrom(final Class<?>... basePackageClasses){
+	public void loadCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
 		eventListener.loadingCodecsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
@@ -137,8 +142,9 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codec	The codec to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	public void addCodec(final CodecInterface codec){
+	public void addCodec(final CodecInterface codec) throws CodecException{
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
 		eventListener.loadingCodec(codec.getClass());
@@ -153,8 +159,9 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded.
+	 * @throws CodecException	If a codec was already loaded.
 	 */
-	public void addCodecs(final CodecInterface... codecs){
+	public void addCodecs(final CodecInterface... codecs) throws CodecException{
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
 		final int length = codecs.length;
@@ -168,7 +175,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener.loadedCodecs(length);
 	}
 
-	private void addCodecsInner(final List<CodecInterface> codecs){
+	private void addCodecsInner(final List<CodecInterface> codecs) throws CodecException{
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.size(); i < length; i ++){
 			final CodecInterface codec = codecs.get(i);
@@ -178,7 +185,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		}
 	}
 
-	private void addCodecsInner(final CodecInterface... codecs){
+	private void addCodecsInner(final CodecInterface... codecs) throws CodecException{
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.length; i < length; i ++){
 			final CodecInterface codec = codecs[i];
@@ -188,8 +195,12 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		}
 	}
 
-	private void addCodecInner(final CodecInterface codec){
-		codecs.put(codec.type(), codec);
+	private void addCodecInner(final CodecInterface codec) throws CodecException{
+		final Class<?> codecType = codec.type();
+		if(codecs.containsKey(codecType))
+			throw CodecException.create("Codec with type {} already added", codecType);
+
+		codecs.put(codecType, codec);
 	}
 
 	/**

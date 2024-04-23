@@ -55,7 +55,7 @@ import java.nio.charset.StandardCharsets;
 class TemplateParserTest{
 
 	@Test
-	void parseSingleMessageHex() throws NoSuchMethodException, FieldException{
+	void parseSingleMessageHex() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -85,7 +85,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
+	void parseSingleMessageHexByteChecksum() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 

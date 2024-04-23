@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
@@ -58,7 +59,7 @@ public final class CoreBuilder{
 
 	@FunctionalInterface
 	private interface RunnableThrowable{
-		void execute() throws AnnotationException, TemplateException, ConfigurationException;
+		void execute() throws AnnotationException, CodecException, TemplateException, ConfigurationException;
 	}
 
 
@@ -185,6 +186,7 @@ public final class CoreBuilder{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
+	 * @throws CodecException   If a codec was already loaded.
 	 */
 	public CoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecsFrom(basePackageClasses));
@@ -197,6 +199,7 @@ public final class CoreBuilder{
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
 	public CoreBuilder withCodec(final CodecInterface codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
@@ -209,6 +212,7 @@ public final class CoreBuilder{
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
+	 * @throws CodecException	If a codec was already loaded.
 	 */
 	public CoreBuilder withCodecs(final CodecInterface... codecs){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
@@ -278,10 +282,11 @@ public final class CoreBuilder{
 	 *
 	 * @return	{@link Core Core} data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws CodecException	If a codec was already loaded.
 	 * @throws TemplateException	If a template error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public Core create() throws AnnotationException, TemplateException, ConfigurationException{
+	public Core create() throws AnnotationException, CodecException, TemplateException, ConfigurationException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
@@ -291,8 +296,8 @@ public final class CoreBuilder{
 		return core;
 	}
 
-	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
-			ConfigurationException{
+	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, CodecException,
+			TemplateException, ConfigurationException{
 		for(int i = 0, length = JavaHelper.sizeOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 

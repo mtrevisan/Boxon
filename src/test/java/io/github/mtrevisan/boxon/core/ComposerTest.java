@@ -27,9 +27,6 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +40,7 @@ import java.util.Map;
 class ComposerTest{
 
 	@Test
-	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	void parseAndComposeSingleMessageHex() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -75,7 +72,7 @@ class ComposerTest{
 	}
 
 	@Test
-	void parseAndComposeSingleMessageASCII() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseAndComposeSingleMessageASCII() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);

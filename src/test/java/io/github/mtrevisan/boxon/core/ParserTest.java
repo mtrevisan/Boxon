@@ -27,10 +27,6 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.JSONPathException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.utils.TimeWatch;
@@ -44,7 +40,7 @@ import java.util.Map;
 
 class ParserTest{
 
-	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	public static void main(String[] args) throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -88,7 +84,7 @@ class ParserTest{
 
 
 	@Test
-	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	void parseMultipleMessagesHex() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -111,7 +107,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseMultipleMessagesASCII() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -133,8 +129,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
-			JSONPathException{
+	void parseMultipleMessagesHexASCII() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
@@ -168,7 +163,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException, ConfigurationException{
+	void parseMultipleMessagesASCIIHex() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
@@ -204,7 +199,7 @@ class ParserTest{
 
 
 	@Test
-	void parseTeltonika08_1() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_1() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -220,7 +215,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika08_2() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_2() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -236,7 +231,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika08_3() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_3() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -252,7 +247,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika8E() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika8E() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -268,7 +263,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika10() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika10() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)

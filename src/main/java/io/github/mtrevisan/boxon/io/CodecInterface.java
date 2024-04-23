@@ -30,10 +30,18 @@ import java.lang.annotation.Annotation;
 
 
 /**
- * The interface every codec should implement.
+ * The interface every codec have to implement.
  */
 public interface CodecInterface{
 
+	/**
+	 * Retrieves the type of the codec (usually the class of the managed annotation).
+	 * <p>
+	 * It has to be unique among all the codecs.
+	 * </p>
+	 *
+	 * @return	The class type.
+	 */
 	Class<?> type();
 
 	/**

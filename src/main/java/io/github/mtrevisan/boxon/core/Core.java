@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
@@ -166,8 +167,9 @@ public final class Core{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
+	 * @throws CodecException	If a codec was already loaded.
 	 */
-	void addCodecsFrom(final Class<?>... basePackageClasses){
+	void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
 		loaderCodec.loadCodecsFrom(basePackageClasses);
 
 		postProcessCodecs();
@@ -177,8 +179,9 @@ public final class Core{
 	 * Loads the given codec that extends {@link CodecInterface}.
 	 *
 	 * @param codec	The codec to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final CodecInterface codec){
+	void addCodec(final CodecInterface codec) throws CodecException{
 		loaderCodec.addCodec(codec);
 
 		postProcessCodec(codec);
@@ -188,8 +191,9 @@ public final class Core{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodecs(final CodecInterface... codecs){
+	void addCodecs(final CodecInterface... codecs) throws CodecException{
 		loaderCodec.addCodecs(codecs);
 
 		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
