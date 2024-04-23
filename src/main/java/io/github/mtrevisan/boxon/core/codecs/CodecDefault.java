@@ -51,7 +51,7 @@ final class CodecDefault implements CodecInterface{
 
 	@Override
 	public Class<?> type(){
-		return DefaultCodec.class;
+		return DefaultCodecIdentifier.class;
 	}
 
 	@Override
