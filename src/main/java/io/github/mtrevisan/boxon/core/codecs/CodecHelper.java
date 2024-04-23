@@ -52,7 +52,7 @@ import java.util.List;
 /**
  * A collection of convenience methods for working with codecs.
  */
-final class CodecHelper{
+public final class CodecHelper{
 
 	private CodecHelper(){}
 
@@ -81,7 +81,7 @@ final class CodecHelper{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	static int evaluateSize(final String size, final Evaluator evaluator, final Object rootObject) throws AnnotationException{
+	public static int evaluateSize(final String size, final Evaluator evaluator, final Object rootObject) throws AnnotationException{
 		final int evaluatedSize = evaluator.evaluateSize(size, rootObject);
 		if(evaluatedSize < 0)
 			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
@@ -95,7 +95,7 @@ final class CodecHelper{
 	}
 
 
-	static Object createArray(final Class<?> type, final int length){
+	public static Object createArray(final Class<?> type, final int length){
 		return Array.newInstance(type, length);
 	}
 
