@@ -22,21 +22,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs.helpers;
+package io.github.mtrevisan.boxon.core.helpers.writers;
 
-import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
-public interface WriterManagerInterface{
+final class StringWriterManager implements WriterManagerInterface{
+
+	private final BitWriterInterface writer;
+	private Charset charset;
+
+
+	static StringWriterManager create(final BitWriterInterface writer){
+		return new StringWriterManager(writer);
+	}
+
+
+	private StringWriterManager(final BitWriterInterface writer){
+		this.writer = writer;
+		charset = StandardCharsets.UTF_8;
+	}
+
+
+	StringWriterManager withCharset(final Charset charset){
+		this.charset = charset;
+
+		return this;
+	}
 
 	/**
-	 * Writes a value.
-	 * <p>
-	 * NOTE: the object written is always in {@link ByteOrder#BIG_ENDIAN}.
-	 * </p>
+	 * Writes a string value to the writer.
 	 *
 	 * @param value	The value to write.
 	 */
-	void put(Object value);
+	@Override
+	public void put(final Object value){
+		writer.putText((String)value, charset);
+	}
 
 }

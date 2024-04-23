@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.core.codecs.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.codecs.helpers.WriterManagerFactory;
-import io.github.mtrevisan.boxon.core.codecs.helpers.WriterManagerInterface;
+import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
+import io.github.mtrevisan.boxon.core.helpers.writers.WriterManagerFactory;
+import io.github.mtrevisan.boxon.core.helpers.writers.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
