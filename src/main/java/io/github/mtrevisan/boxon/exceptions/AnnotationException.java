@@ -34,7 +34,7 @@ import java.util.Arrays;
 /**
  * Thrown if an annotation has validation errors.
  */
-public final class AnnotationException extends Exception{
+public final class AnnotationException extends FieldException{
 
 	@Serial
 	private static final long serialVersionUID = 6429044852678473069L;

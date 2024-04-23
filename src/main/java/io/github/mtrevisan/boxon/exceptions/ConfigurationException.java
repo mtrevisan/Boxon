@@ -32,7 +32,7 @@ import java.io.Serial;
 /**
  * Thrown if a configuration has validation errors.
  */
-public final class ConfigurationException extends Exception{
+public final class ConfigurationException extends FieldException{
 
 	@Serial
 	private static final long serialVersionUID = -1344270549034327649L;
