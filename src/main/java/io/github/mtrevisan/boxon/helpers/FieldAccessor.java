@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -98,8 +97,7 @@ public final class FieldAccessor{
 			.isRecord();
 	}
 
-	static Object[] retrieveCurrentFieldValues(final Object obj, final RecordComponent[] components)
-			throws IllegalAccessException, InvocationTargetException{
+	static Object[] retrieveCurrentFieldValues(final Object obj, final RecordComponent[] components) throws ReflectiveOperationException{
 		final int length = components.length;
 		final Object[] recordValues = new Object[length];
 		for(int i = 0; i < length; i ++){
