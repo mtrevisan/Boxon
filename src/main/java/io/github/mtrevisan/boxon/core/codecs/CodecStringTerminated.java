@@ -64,7 +64,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 			instance = readValue(reader, terminator, consumeTerminator, charset);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
-			instance = readWithoutAlternatives(reader, arraySize, terminator, consumeTerminator, charset);
+			instance = readArrayWithoutAlternatives(reader, arraySize, terminator, consumeTerminator, charset);
 		}
 
 		final Object convertedValue = convertValue(binding, instance, rootObject, CodecHelper::converterDecode);
@@ -75,7 +75,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 		return convertedValue;
 	}
 
-	private static Object readWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final byte terminator,
+	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final byte terminator,
 			final boolean consumeTerminator, final Charset charset){
 		final Object array = CodecHelper.createArray(String.class, arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
@@ -117,11 +117,11 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
-			writeWithoutAlternatives(writer, convertedValue, terminator, consumeTerminator, charset);
+			writeArrayWithoutAlternatives(writer, convertedValue, terminator, consumeTerminator, charset);
 		}
 	}
 
-	private static void writeWithoutAlternatives(final BitWriterInterface writer, final Object array, final byte terminator,
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final byte terminator,
 			final boolean consumeTerminator, final Charset charset){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);

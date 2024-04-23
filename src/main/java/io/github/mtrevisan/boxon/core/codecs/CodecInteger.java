@@ -65,7 +65,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			instance = readValue(reader, size, byteOrder);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
-			instance = readWithoutAlternatives(reader, arraySize, size, byteOrder);
+			instance = readArrayWithoutAlternatives(reader, arraySize, size, byteOrder);
 		}
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -83,11 +83,11 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		return convertedValue;
 	}
 
-	private static Object readWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int size,
+	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int size,
 			final ByteOrder byteOrder){
 		final Object array = CodecHelper.createArray(BigInteger.class, arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = reader.getBigInteger(size, byteOrder);
+			final Object element = readValue(reader, size, byteOrder);
 
 			Array.set(array, i, element);
 		}
@@ -142,11 +142,11 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
-			writeWithoutAlternatives(writer, convertedValue, size, byteOrder);
+			writeArrayWithoutAlternatives(writer, convertedValue, size, byteOrder);
 		}
 	}
 
-	private static void writeWithoutAlternatives(final BitWriterInterface writer, final Object array, final int size,
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final int size,
 			final ByteOrder byteOrder){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);

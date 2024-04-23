@@ -225,15 +225,6 @@ final class CodecHelper{
 	}
 
 
-	static Object convertDecodedValue(final Object value, final Class<? extends Converter<?, ?>> converterType,
-			final Class<? extends Validator<?>> validator){
-		final Object convertedValue = converterDecode(converterType, value);
-
-		validate(convertedValue, validator);
-
-		return convertedValue;
-	}
-
 	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)

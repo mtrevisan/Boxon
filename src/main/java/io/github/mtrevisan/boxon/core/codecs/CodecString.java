@@ -51,7 +51,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
-		final Object rootObject) throws AnnotationException{
+			final Object rootObject) throws AnnotationException{
 		final BindString binding = (BindString)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
@@ -62,7 +62,7 @@ final class CodecString implements CodecInterface<BindString>{
 			instance = readValue(reader, size, charset);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
-			instance = readWithoutAlternatives(reader, arraySize, size, charset);
+			instance = readArrayWithoutAlternatives(reader, arraySize, size, charset);
 		}
 
 		final Object convertedValue = convertValue(binding, instance, rootObject, CodecHelper::converterDecode);
@@ -73,8 +73,8 @@ final class CodecString implements CodecInterface<BindString>{
 		return convertedValue;
 	}
 
-	private static Object readWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int elementSize,
-		final Charset charset){
+	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int elementSize,
+			final Charset charset){
 		final Object array = CodecHelper.createArray(String.class, arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = readValue(reader, elementSize, charset);
@@ -91,7 +91,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
-		final Object rootObject, final Object value) throws AnnotationException{
+			final Object rootObject, final Object value) throws AnnotationException{
 		final BindString binding = (BindString)annotation;
 
 		final Class<? extends Validator<?>> validator = binding.validator();
@@ -108,16 +108,16 @@ final class CodecString implements CodecInterface<BindString>{
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
-			writeWithoutAlternatives(writer, convertedValue, size, charset);
+			writeArrayWithoutAlternatives(writer, convertedValue, size, charset);
 		}
 	}
 
-	private static void writeWithoutAlternatives(final BitWriterInterface writer, final Object array, final int elementSize,
-		final Charset charset){
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final int elementSize,
+			final Charset charset){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			writeValue(writer, (String)element, elementSize, charset);
+			writeValue(writer, element, elementSize, charset);
 		}
 	}
 
@@ -129,7 +129,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 
 	private Object convertValue(final BindString binding, final Object decodedValue, final Object rootObject,
-		final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
+			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
