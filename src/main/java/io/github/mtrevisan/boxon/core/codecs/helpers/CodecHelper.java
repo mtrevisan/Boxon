@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs.behaviors;
+package io.github.mtrevisan.boxon.core.codecs.helpers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
@@ -95,7 +95,7 @@ public final class CodecHelper{
 	}
 
 
-	static Object createArray(final Class<?> type, final int length){
+	public static Object createArray(final Class<?> type, final int length){
 		return Array.newInstance(type, length);
 	}
 

@@ -22,55 +22,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.codecs;
+package io.github.mtrevisan.boxon.core.codecs.helpers;
 
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
-final class NumberWriterManager implements WriterManagerInterface{
+final class StringWriterManager implements WriterManagerInterface{
 
 	private final BitWriterInterface writer;
-	private int radix;
+	private Charset charset;
 
 
-	static NumberWriterManager create(final BitWriterInterface writer){
-		return new NumberWriterManager(writer);
+	static StringWriterManager create(final BitWriterInterface writer){
+		return new StringWriterManager(writer);
 	}
 
 
-	private NumberWriterManager(final BitWriterInterface writer){
+	private StringWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
-		radix = 10;
+		charset = StandardCharsets.UTF_8;
 	}
 
 
-	NumberWriterManager withRadix(final int radix){
-		this.radix = radix;
+	StringWriterManager withCharset(final Charset charset){
+		this.charset = charset;
 
 		return this;
 	}
 
 	/**
-	 * Writes a numeric value to the writer based on its type.
+	 * Writes a string value to the writer.
 	 *
-	 * @param value	The value to be written.
+	 * @param value	The value to write.
 	 */
 	@Override
 	public void put(final Object value){
-		switch(value){
-			case final Byte v -> writer.putText(Integer.toString(v & 0xFF, radix));
-			case final Short v -> writer.putText(Integer.toString(v & 0xFFFF, radix));
-			case final Integer v -> writer.putText(Integer.toString(v, radix));
-			case final Long v -> writer.putText(Long.toString(v, radix));
-			case final BigDecimal v -> writer.putText(v.toPlainString());
-			case final BigInteger v -> writer.putText(v.toString(radix));
-			case final Float v -> writer.putText(Float.toString(v));
-			case final Double v -> writer.putText(Double.toString(v));
-			case null, default -> {}
-		}
+		writer.putText((String)value, charset);
 	}
 
 }
