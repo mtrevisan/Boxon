@@ -51,7 +51,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianNegative() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = 0x8FFF_0000_FFFF_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -116,7 +116,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianSmall() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -181,7 +181,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianPositive() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -246,7 +246,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianRandom() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = TestHelper.RANDOM.nextLong();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -312,7 +312,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianNegative() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = 0x8FFF_0000_0000_0011l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -377,7 +377,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianSmall() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -442,7 +442,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianPositive() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -507,7 +507,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianRandom() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		long encodedValue = TestHelper.RANDOM.nextLong();
 		BindInteger annotation = new BindInteger(){
 			@Override

@@ -50,7 +50,7 @@ class CodecByteTest{
 
 	@Test
 	void testByte() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		byte encodedValue = (byte)(TestHelper.RANDOM.nextInt() & 0x0000_00FF);
 		BindInteger annotation = new BindInteger(){
 			@Override

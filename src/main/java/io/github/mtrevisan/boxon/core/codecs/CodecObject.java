@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.ObjectBehavior;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
@@ -74,14 +73,12 @@ final class CodecObject implements CodecInterface{
 				behavior.selectDefault(), evaluator, rootObject);
 			instance = readValue(reader, chosenAlternativeType, rootObject);
 		}
-		else{
-			if(collectionBinding instanceof final BindAsArray superBinding){
-				final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
-				instance = decodeArray(reader, behavior, arraySize, rootObject);
-			}
-			else
-				instance = decodeList(reader, behavior, rootObject);
+		else if(collectionBinding instanceof final BindAsArray superBinding){
+			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
+			instance = decodeArray(reader, behavior, arraySize, rootObject);
 		}
+		else
+			instance = decodeList(reader, behavior, rootObject);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(behavior.converterChoices(),
 			behavior.defaultConverter(), evaluator, rootObject);

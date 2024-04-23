@@ -50,7 +50,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveLittleEndian() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -115,7 +115,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeLittleEndian() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -180,7 +180,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveBigEndian() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -245,7 +245,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeBigEndian() throws FieldException{
-		CodecInterface codec = new CodecInteger();
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override

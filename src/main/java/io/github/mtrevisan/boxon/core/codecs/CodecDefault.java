@@ -25,13 +25,10 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.BehaviorBuilder;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
-import io.github.mtrevisan.boxon.core.codecs.behaviors.StringCommonBehavior;
-import io.github.mtrevisan.boxon.core.codecs.behaviors.StringTerminatedBehavior;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.IntegerBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -43,7 +40,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
-final class CodecStringTerminated implements CodecInterface{
+final class CodecDefault implements CodecInterface{
 
 	@Injected
 	private Evaluator evaluator;
@@ -51,7 +48,7 @@ final class CodecStringTerminated implements CodecInterface{
 
 	@Override
 	public Class<?> type(){
-		return BindStringTerminated.class;
+		return void.class;
 	}
 
 	@Override
@@ -67,7 +64,11 @@ final class CodecStringTerminated implements CodecInterface{
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 
-		final Object convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode);
+		final Object convertedValue;
+		if(behavior instanceof IntegerBehavior)
+			convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode, collectionBinding);
+		else
+			convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode);
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(convertedValue, validator);

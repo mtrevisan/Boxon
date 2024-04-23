@@ -116,7 +116,8 @@ public final class CodecHelper{
 	 * @param rootObject	Root object for the evaluator.
 	 * @return	The converter class.
 	 */
-	public static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
+	public static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = converterChoices.alternatives();
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];

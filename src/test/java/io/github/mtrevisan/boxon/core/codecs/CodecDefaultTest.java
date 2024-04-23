@@ -47,11 +47,11 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 
-class CodecBitSetTest{
+class CodecDefaultTest{
 
 	@Test
 	void bitsLittleEndian() throws FieldException{
-		CodecInterface codec = new CodecBitSet();
+		CodecInterface codec = new CodecDefault();
 		//byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 		byte[] randomBytes = new byte[123];
 		TestHelper.RANDOM.nextBytes(randomBytes);
@@ -122,7 +122,7 @@ class CodecBitSetTest{
 
 	@Test
 	void bitsBigEndian() throws FieldException{
-		CodecInterface codec = new CodecBitSet();
+		CodecInterface codec = new CodecDefault();
 		byte[] randomBytes = new byte[123];
 		TestHelper.RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);

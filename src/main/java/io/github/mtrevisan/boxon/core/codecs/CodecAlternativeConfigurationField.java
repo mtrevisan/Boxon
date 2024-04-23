@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerInterface;

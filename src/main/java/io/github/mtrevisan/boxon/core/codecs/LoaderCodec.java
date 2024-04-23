@@ -24,9 +24,12 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -44,6 +48,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * Loader for the codecs.
  */
 public final class LoaderCodec implements LoaderCodecInterface{
+
+	private static final Set<Type> DEFAULT_BIND_TYPES = Set.of(
+		BindBitSet.class,
+		BindInteger.class,
+		BindString.class,
+		BindStringTerminated.class);
+
 
 	private final Map<Type, CodecInterface> codecs = new ConcurrentHashMap<>(0);
 
@@ -204,7 +215,11 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 	@Override
 	public boolean hasCodec(final Type type){
-		return codecs.containsKey(type);
+		return codecs.containsKey(isDefaultBind(type)? void.class: type);
+	}
+
+	private static boolean isDefaultBind(final Type type){
+		return DEFAULT_BIND_TYPES.contains(type);
 	}
 
 	@Override

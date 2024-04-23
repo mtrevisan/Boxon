@@ -50,7 +50,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUS_ASCII() throws FieldException{
-		CodecInterface codec = new CodecString();
+		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
 			@Override
@@ -114,7 +114,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUTF_8() throws FieldException{
-		CodecInterface codec = new CodecString();
+		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
 		BindString annotation = new BindString(){
 			@Override
@@ -183,7 +183,7 @@ class CodecStringTest{
 
 	@Test
 	void stringTerminated() throws FieldException{
-		CodecInterface codec = new CodecStringTerminated();
+		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
@@ -251,7 +251,7 @@ class CodecStringTest{
 
 	@Test
 	void stringTerminatedButEndOfStream() throws FieldException{
-		CodecInterface codec = new CodecStringTerminated();
+		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
