@@ -29,8 +29,9 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.StringBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -39,7 +40,6 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.util.function.BiFunction;
 
 
@@ -52,86 +52,68 @@ final class CodecString implements CodecInterface<BindString>{
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final BindString binding = (BindString)annotation;
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final Charset charset = CharsetHelper.lookup(binding.charset());
+		final StringBehavior behavior = StringBehavior.of(annotation, evaluator, rootObject);
 
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = readValue(reader, size, charset);
+			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
-			instance = readArrayWithoutAlternatives(reader, arraySize, size, charset);
+			instance = readArrayWithoutAlternatives(reader, arraySize, behavior);
 		}
 
-		final Object convertedValue = convertValue(binding, instance, rootObject, CodecHelper::converterDecode);
+		final Object convertedValue = convertValue(behavior, instance, rootObject, CodecHelper::converterDecode);
 
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(convertedValue, validator);
 
 		return convertedValue;
 	}
 
-	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int elementSize,
-			final Charset charset){
+	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final CommonBehavior behavior){
 		final Object array = CodecHelper.createArray(String.class, arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readValue(reader, elementSize, charset);
+			final Object element = behavior.readValue(reader);
 
 			Array.set(array, i, element);
 		}
 		return array;
 	}
 
-	private static Object readValue(final BitReaderInterface reader, final int size, final Charset charset){
-		return reader.getText(size, charset);
-	}
-
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final BindString binding = (BindString)annotation;
+		final StringBehavior behavior = StringBehavior.of(annotation, evaluator, rootObject);
 
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);
 
-		final Object convertedValue = convertValue(binding, value, rootObject, CodecHelper::converterEncode);
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final Charset charset = CharsetHelper.lookup(binding.charset());
+		final Object convertedValue = convertValue(behavior, value, rootObject, CodecHelper::converterEncode);
 
 		if(collectionBinding == null)
-			writeValue(writer, convertedValue, size, charset);
+			behavior.writeValue(writer, convertedValue);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
-			writeArrayWithoutAlternatives(writer, convertedValue, size, charset);
+			writeArrayWithoutAlternatives(writer, convertedValue, behavior);
 		}
 	}
 
-	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final int elementSize,
-			final Charset charset){
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final CommonBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			writeValue(writer, element, elementSize, charset);
+			behavior.writeValue(writer, element);
 		}
 	}
 
-	private static void writeValue(final BitWriterInterface writer, final Object value, final int size, final Charset charset){
-		String text = (String)value;
-		text = text.substring(0, Math.min(text.length(), size));
-		writer.putText(text, charset);
-	}
 
-
-	private Object convertValue(final BindString binding, final Object decodedValue, final Object rootObject,
+	private Object convertValue(final CommonBehavior behavior, final Object decodedValue, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final ConverterChoices converterChoices = behavior.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		return converter.apply(chosenConverter, decodedValue);

@@ -32,14 +32,13 @@ public final class IntegerBehavior extends BitSetBehavior{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new IntegerBehavior(binding.annotationType(), size, byteOrder, converterChoices, defaultConverter, validator);
+		return new IntegerBehavior(size, byteOrder, converterChoices, defaultConverter, validator);
 	}
 
 
-	IntegerBehavior(final Class<? extends Annotation> bindingType, final int size, final ByteOrder byteOrder,
-			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
-			final Class<? extends Validator<?>> validator){
-		super(bindingType, size, converterChoices, defaultConverter, validator);;
+	IntegerBehavior(final int size, final ByteOrder byteOrder, final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
+		super(size, converterChoices, defaultConverter, validator);;
 
 		this.byteOrder = byteOrder;
 	}

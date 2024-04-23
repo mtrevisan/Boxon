@@ -13,7 +13,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class StringTerminatedBehavior extends StringCommonBehavior{
+public final class StringTerminatedBehavior extends StringCommonBehavior{
 
 	private final byte terminator;
 	private final boolean consumeTerminator;
@@ -36,7 +36,7 @@ final class StringTerminatedBehavior extends StringCommonBehavior{
 	StringTerminatedBehavior(final Class<? extends Annotation> bindingType, final byte terminator, final boolean consumeTerminator,
 			final Charset charset, final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
 			final Class<? extends Validator<?>> validator){
-		super(bindingType, charset, converterChoices, defaultConverter, validator);
+		super(charset, converterChoices, defaultConverter, validator);
 
 		this.terminator = terminator;
 		this.consumeTerminator = consumeTerminator;

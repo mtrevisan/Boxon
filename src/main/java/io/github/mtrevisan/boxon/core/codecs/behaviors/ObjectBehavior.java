@@ -13,7 +13,7 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import java.lang.annotation.Annotation;
 
 
-final class ObjectBehavior extends CommonBehavior{
+public final class ObjectBehavior extends CommonBehavior{
 
 	private final Class<?> objectType;
 	private final ObjectChoices selectFrom;
@@ -31,15 +31,14 @@ final class ObjectBehavior extends CommonBehavior{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new ObjectBehavior(binding.annotationType(), objectType, selectFrom, selectDefault, objectChoicesList, converterChoices,
-			defaultConverter, validator);
+		return new ObjectBehavior(objectType, selectFrom, selectDefault, objectChoicesList, converterChoices, defaultConverter, validator);
 	}
 
 
-	ObjectBehavior(final Class<? extends Annotation> bindingType, final Class<?> objectType, final ObjectChoices selectFrom,
-			final Class<?> selectDefault, final ObjectChoicesList objectChoicesList, final ConverterChoices converterChoices,
+	ObjectBehavior(final Class<?> objectType, final ObjectChoices selectFrom, final Class<?> selectDefault,
+			final ObjectChoicesList objectChoicesList, final ConverterChoices converterChoices,
 			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
-		super(bindingType, converterChoices, defaultConverter, validator);
+		super(converterChoices, defaultConverter, validator);
 
 		this.objectType = objectType;
 		this.selectFrom = selectFrom;
@@ -47,18 +46,36 @@ final class ObjectBehavior extends CommonBehavior{
 		this.objectChoicesList = objectChoicesList;
 	}
 
+
+	public Class<?> objectType(){
+		return objectType;
+	}
+
+	public ObjectChoices selectFrom(){
+		return selectFrom;
+	}
+
+	public Class<?> selectDefault(){
+		return selectDefault;
+	}
+
+	public ObjectChoicesList objectChoicesList(){
+		return objectChoicesList;
+	}
+
+
 	@Override
 	public Object createArray(final int arraySize){
 		return CodecHelper.createArray(objectType, arraySize);
 	}
 
 	@Override
-	Object readValue(final BitReaderInterface reader){
+	public Object readValue(final BitReaderInterface reader){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	void writeValue(final BitWriterInterface writer, final Object value){
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		throw new UnsupportedOperationException();
 	}
 

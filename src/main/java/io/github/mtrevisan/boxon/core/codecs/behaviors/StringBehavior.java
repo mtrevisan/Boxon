@@ -15,7 +15,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class StringBehavior extends StringCommonBehavior{
+public final class StringBehavior extends StringCommonBehavior{
 
 	private final int size;
 
@@ -36,7 +36,7 @@ final class StringBehavior extends StringCommonBehavior{
 	StringBehavior(final Class<? extends Annotation> bindingType, final int size, final Charset charset,
 			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
 			final Class<? extends Validator<?>> validator){
-		super(bindingType, charset, converterChoices, defaultConverter, validator);
+		super(charset, converterChoices, defaultConverter, validator);
 
 		this.size = size;
 	}

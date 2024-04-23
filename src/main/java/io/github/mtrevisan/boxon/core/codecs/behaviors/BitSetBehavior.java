@@ -28,13 +28,13 @@ public class BitSetBehavior extends CommonBehavior{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new BitSetBehavior(binding.annotationType(), size, converterChoices, defaultConverter, validator);
+		return new BitSetBehavior(size, converterChoices, defaultConverter, validator);
 	}
 
 
-	BitSetBehavior(final Class<? extends Annotation> bindingType, final int size, final ConverterChoices converterChoices,
-			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
-		super(bindingType, converterChoices, defaultConverter, validator);
+	BitSetBehavior(final int size, final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
+			final Class<? extends Validator<?>> validator){
+		super(converterChoices, defaultConverter, validator);
 
 		this.size = size;
 	}
