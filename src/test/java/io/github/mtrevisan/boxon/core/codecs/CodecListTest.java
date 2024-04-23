@@ -40,7 +40,7 @@ import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -93,7 +93,7 @@ class CodecListTest{
 
 
 	@Test
-	void listOfSameObject() throws FieldException{
+	void listOfSameObject() throws BoxonException{
 		CodecObject codec = new CodecObject();
 		List<Version> encodedValue = List.of(
 			new Version("2", "0", "1", "12"),

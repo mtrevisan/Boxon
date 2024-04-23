@@ -29,9 +29,9 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessag
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -71,7 +71,7 @@ public final class ConfigurationDescriber{
 	 * @return	The list of descriptions.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public List<Map<String, Object>> describeConfiguration() throws FieldException{
+	public List<Map<String, Object>> describeConfiguration() throws BoxonException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
 		return EntityDescriber.describeEntities(configurations, configuration -> messageDescriber.describeMessage(configuration,
 			FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION, FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
@@ -86,7 +86,7 @@ public final class ConfigurationDescriber{
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
+	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws BoxonException, EncodeException{
 		final EntityDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
 			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 			return loaderConfiguration.getConfiguration(header.shortDescription());
@@ -104,7 +104,7 @@ public final class ConfigurationDescriber{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
+	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws BoxonException{
 		return EntityDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
 			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
 				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));

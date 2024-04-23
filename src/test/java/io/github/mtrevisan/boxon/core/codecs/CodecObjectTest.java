@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.core.Describer;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -66,7 +66,7 @@ class CodecObjectTest{
 
 
 	@Test
-	void object() throws FieldException{
+	void object() throws BoxonException{
 		CodecObject codec = new CodecObject();
 		Version encodedValue = new Version((byte)1, (byte)2);
 		BindObject annotation = new BindObject(){
@@ -240,7 +240,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice1() throws FieldException{
+	void choice1() throws BoxonException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice1.class)

@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -49,7 +49,7 @@ import java.nio.charset.StandardCharsets;
 class CodecStringTest{
 
 	@Test
-	void stringUS_ASCII() throws FieldException{
+	void stringUS_ASCII() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
@@ -113,7 +113,7 @@ class CodecStringTest{
 	}
 
 	@Test
-	void stringUTF_8() throws FieldException{
+	void stringUTF_8() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
 		BindString annotation = new BindString(){
@@ -182,7 +182,7 @@ class CodecStringTest{
 	}
 
 	@Test
-	void stringTerminated() throws FieldException{
+	void stringTerminated() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
@@ -250,7 +250,7 @@ class CodecStringTest{
 	}
 
 	@Test
-	void stringTerminatedButEndOfStream() throws FieldException{
+	void stringTerminatedButEndOfStream() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){

@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -50,7 +50,7 @@ import java.math.BigInteger;
 class CodecIntTest{
 
 	@Test
-	void intLittleEndianNegative() throws FieldException{
+	void intLittleEndianNegative() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = 0x80FF_0000;
 		BindInteger annotation = new BindInteger(){
@@ -115,7 +115,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianSmall() throws FieldException{
+	void intLittleEndianSmall() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = 0x0000_7FFF;
 		BindInteger annotation = new BindInteger(){
@@ -180,7 +180,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianPositive() throws FieldException{
+	void intLittleEndianPositive() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = 0x7FFF_0000;
 		BindInteger annotation = new BindInteger(){
@@ -245,7 +245,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianRandom() throws FieldException{
+	void intLittleEndianRandom() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInteger annotation = new BindInteger(){
@@ -311,7 +311,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianNegative() throws FieldException{
+	void intBigEndianNegative() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = 0x80FF_0000;
 		BindInteger annotation = new BindInteger(){
@@ -376,7 +376,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianSmall() throws FieldException{
+	void intBigEndianSmall() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = 0x0000_7FFF;
 		BindInteger annotation = new BindInteger(){
@@ -441,7 +441,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianPositive() throws FieldException{
+	void intBigEndianPositive() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = 0x7FFF_0000;
 		BindInteger annotation = new BindInteger(){
@@ -506,7 +506,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianRandom() throws FieldException{
+	void intBigEndianRandom() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInteger annotation = new BindInteger(){

@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorBasicSt
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 
 import java.util.Collection;
@@ -71,7 +71,7 @@ public final class TemplateDescriber{
 	 * @return	The list of descriptions.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeTemplate() throws FieldException{
+	public List<Map<String, Object>> describeTemplate() throws BoxonException{
 		return describeAllTemplates(FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
 	}
 
@@ -83,7 +83,7 @@ public final class TemplateDescriber{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
+	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws BoxonException{
 		return describeSingleTemplate(templateClass, FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY);
 	}
 
@@ -95,7 +95,7 @@ public final class TemplateDescriber{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
+	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws BoxonException{
 		final MessageExtractorBasicStrategy messageExtractor = FieldDescriber.MESSAGE_EXTRACTOR_BASIC_STRATEGY;
 		return describeTemplatesSet(templateClasses, messageExtractor);
 	}
@@ -107,7 +107,7 @@ public final class TemplateDescriber{
 	 * @return	The list of descriptions.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeParsing() throws FieldException{
+	public List<Map<String, Object>> describeParsing() throws BoxonException{
 		return describeAllTemplates(FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
 	}
 
@@ -119,7 +119,7 @@ public final class TemplateDescriber{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
+	public Map<String, Object> describeParsing(final Class<?> templateClass) throws BoxonException{
 		return describeSingleTemplate(templateClass, FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY);
 	}
 
@@ -131,26 +131,26 @@ public final class TemplateDescriber{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
+	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws BoxonException{
 		final MessageExtractorBasicStrategy messageExtractor = FieldDescriber.MESSAGE_EXTRACTOR_FULL_STRATEGY;
 		return describeTemplatesSet(templateClasses, messageExtractor);
 	}
 
 
-	private List<Map<String, Object>> describeAllTemplates(final MessageExtractorBasicStrategy messageExtractor) throws FieldException{
+	private List<Map<String, Object>> describeAllTemplates(final MessageExtractorBasicStrategy messageExtractor) throws BoxonException{
 		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
 		return EntityDescriber.describeEntities(templates, template -> messageDescriber.describeMessage(template, messageExtractor,
 			FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 	private Map<String, Object> describeSingleTemplate(final Class<?> templateClass, final MessageExtractorBasicStrategy messageExtractor)
-			throws FieldException{
+			throws BoxonException{
 		return EntityDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
 			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}
 
 	private List<Map<String, Object>> describeTemplatesSet(final Class<?>[] templateClasses,
-			final MessageExtractorBasicStrategy messageExtractor) throws FieldException{
+			final MessageExtractorBasicStrategy messageExtractor) throws BoxonException{
 		return EntityDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
 			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
 	}

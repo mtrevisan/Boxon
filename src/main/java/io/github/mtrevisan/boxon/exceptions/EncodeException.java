@@ -33,7 +33,7 @@ import java.io.Serial;
 /**
  * Thrown if a composition (encoding) went bad.
  */
-public final class EncodeException extends Exception{
+public final class EncodeException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = 4385865753761318892L;

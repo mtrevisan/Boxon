@@ -1,7 +1,7 @@
 package io.github.mtrevisan.boxon.core.helpers.describer;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -24,11 +24,11 @@ final class EntityDescriber{
 	 * @param entities	The collection of entities to be described.
 	 * @param mapper	A function that takes an entity of type T and returns its corresponding map representation.
 	 * @return	The list of descriptions for the entities.
-	 * @throws FieldException   If a field exception occurs during the mapping process.
+	 * @throws BoxonException   If a field exception occurs during the mapping process.
 	 * @param <T>	The type of the entities.
 	 */
 	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
-			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException{
+			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException{
 		final List<Map<String, Object>> descriptions = new ArrayList<>(entities.size());
 		for(final T entity : entities)
 			descriptions.add(mapper.apply(entity));
@@ -45,12 +45,12 @@ final class EntityDescriber{
 	 * @param extractor	The function to extract the entity.
 	 * @param mapper	The function that maps the entity to its corresponding map representation.
 	 * @return	The list of descriptions for the entities.
-	 * @throws FieldException	If a field exception occurs during the mapping process.
+	 * @throws BoxonException   If a field exception occurs during the mapping process.
 	 * @throws E	If any other exception occurs during the extraction or mapping process.
 	 */
 	static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
-			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
+			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException, E{
 		final List<Map<String, Object>> description = new ArrayList<>(entitiesClass.length);
 		for(final Class<?> entityClass : entitiesClass)
 			if(entityClass.isAnnotationPresent(annotationClass)){
@@ -68,14 +68,14 @@ final class EntityDescriber{
 	 * @param extractor	The function to extract the entity.
 	 * @param mapper	The function that maps the entity to its corresponding map representation.
 	 * @return	The map representation of the entity.
-	 * @throws FieldException	If a field exception occurs during the mapping process.
+	 * @throws BoxonException   If a field exception occurs during the mapping process.
 	 * @throws E	If any other exception occurs during the extraction or mapping process.
 	 * @param <T>	The type of the entity.
 	 * @param <E>	The type of the exception.
 	 */
 	static <T, E extends Exception> Map<String, Object> describeEntity(final Class<? extends Annotation> annotationClass,
 			final Class<?> entityClass, final ThrowingFunction<Class<?>, T, E> extractor,
-			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
+			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException, E{
 		if(!entityClass.isAnnotationPresent(annotationClass))
 			throw AnnotationException.create("Entity {} didn't have the `{}` annotation", entityClass.getSimpleName(),
 				annotationClass.getSimpleName());

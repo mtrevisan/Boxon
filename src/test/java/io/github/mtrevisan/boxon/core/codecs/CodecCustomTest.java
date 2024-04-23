@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
@@ -84,7 +84,7 @@ class CodecCustomTest{
 
 
 	@Test
-	void customAnnotation() throws FieldException{
+	void customAnnotation() throws BoxonException{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.addCodecs(new VariableLengthByteArray());
 

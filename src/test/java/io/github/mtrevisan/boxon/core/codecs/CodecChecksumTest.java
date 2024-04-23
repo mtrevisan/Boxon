@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -45,7 +45,7 @@ import java.lang.annotation.Annotation;
 class CodecChecksumTest{
 
 	@Test
-	void checksumShort() throws FieldException{
+	void checksumShort() throws BoxonException{
 		CodecInterface codec = new CodecChecksum();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		Checksum annotation = new Checksum(){

@@ -42,7 +42,7 @@ import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -90,7 +90,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayPrimitive() throws FieldException{
+	void arrayPrimitive() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		int[] encodedValue = {0x0000_0123, 0x0000_0456};
 		BindInteger annotation = new BindInteger(){
@@ -173,7 +173,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfSameObject() throws FieldException{
+	void arrayOfSameObject() throws BoxonException{
 		CodecObject codec = new CodecObject();
 		Version[] encodedValue = {new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindObject annotation = new BindObject(){

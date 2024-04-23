@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 
 import java.lang.annotation.Annotation;
 
@@ -53,9 +53,9 @@ public interface CodecInterface{
 	 * @param collectionBinding	The collection annotation.
 	 * @param rootObject	The parent object that holds what have been read so far.
 	 * @return	The object with the new value read and interpreted.
-	 * @throws FieldException	If something bad happened while reading, validating, or converting the raw value.
+	 * @throws BoxonException   If something bad happened while reading, validating, or converting the raw value.
 	 */
-	Object decode(BitReaderInterface reader, Annotation annotation, Annotation collectionBinding, Object rootObject) throws FieldException;
+	Object decode(BitReaderInterface reader, Annotation annotation, Annotation collectionBinding, Object rootObject) throws BoxonException;
 
 	/**
 	 * Encode the next field of a message.
@@ -66,9 +66,9 @@ public interface CodecInterface{
 	 * @param collectionBinding	The collection annotation.
 	 * @param rootObject	The parent object that holds what have been read so far.
 	 * @param value	The value that have to be encoded.
-	 * @throws FieldException	If something bad happened while converting, validating, or writing the value.
+	 * @throws BoxonException   If something bad happened while converting, validating, or writing the value.
 	 */
 	void encode(BitWriterInterface writer, Annotation annotation, Annotation collectionBinding, Object rootObject, Object value)
-		throws FieldException;
+		throws BoxonException;
 
 }

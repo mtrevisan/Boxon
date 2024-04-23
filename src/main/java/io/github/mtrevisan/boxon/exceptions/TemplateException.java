@@ -32,7 +32,7 @@ import java.io.Serial;
 /**
  * Thrown if a template has validation errors.
  */
-public final class TemplateException extends FieldException{
+public final class TemplateException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = 7585594459004613305L;

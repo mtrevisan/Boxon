@@ -33,9 +33,9 @@ import io.github.mtrevisan.boxon.core.helpers.describer.TemplateDescriber;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 
 import java.util.List;
@@ -80,7 +80,7 @@ public final class Describer{
 	 * @return	The list of descriptions.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeParsing() throws FieldException{
+	public List<Map<String, Object>> describeParsing() throws BoxonException{
 		return templateDescriber.describeParsing();
 	}
 
@@ -92,7 +92,7 @@ public final class Describer{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
+	public Map<String, Object> describeParsing(final Class<?> templateClass) throws BoxonException{
 		return templateDescriber.describeParsing(templateClass);
 	}
 
@@ -104,7 +104,7 @@ public final class Describer{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
+	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws BoxonException{
 		return templateDescriber.describeParsing(templateClasses);
 	}
 
@@ -115,7 +115,7 @@ public final class Describer{
 	 * @return	The list of descriptions.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeTemplate() throws FieldException{
+	public List<Map<String, Object>> describeTemplate() throws BoxonException{
 		return templateDescriber.describeTemplate();
 	}
 
@@ -127,7 +127,7 @@ public final class Describer{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
+	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws BoxonException{
 		return templateDescriber.describeTemplate(templateClass);
 	}
 
@@ -139,7 +139,7 @@ public final class Describer{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
-	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
+	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws BoxonException{
 		return templateDescriber.describeTemplate(templateClasses);
 	}
 
@@ -150,7 +150,7 @@ public final class Describer{
 	 * @return	The list of descriptions.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public List<Map<String, Object>> describeConfiguration() throws FieldException{
+	public List<Map<String, Object>> describeConfiguration() throws BoxonException{
 		return configurationDescriber.describeConfiguration();
 	}
 
@@ -163,7 +163,7 @@ public final class Describer{
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
+	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws BoxonException, EncodeException{
 		return configurationDescriber.describeConfiguration(configurationClass);
 	}
 
@@ -175,7 +175,7 @@ public final class Describer{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
+	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws BoxonException{
 		return configurationDescriber.describeConfiguration(configurationClasses);
 	}
 

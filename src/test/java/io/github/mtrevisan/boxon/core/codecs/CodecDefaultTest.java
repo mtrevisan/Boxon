@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -50,7 +50,7 @@ import java.util.BitSet;
 class CodecDefaultTest{
 
 	@Test
-	void bitsLittleEndian() throws FieldException{
+	void bitsLittleEndian() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		//byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 		byte[] randomBytes = new byte[123];
@@ -121,7 +121,7 @@ class CodecDefaultTest{
 	}
 
 	@Test
-	void bitsBigEndian() throws FieldException{
+	void bitsBigEndian() throws BoxonException{
 		CodecInterface codec = new CodecDefault();
 		byte[] randomBytes = new byte[123];
 		TestHelper.RANDOM.nextBytes(randomBytes);

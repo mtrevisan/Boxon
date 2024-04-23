@@ -186,7 +186,6 @@ public final class CoreBuilder{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
-	 * @throws CodecException   If a codec was already loaded.
 	 */
 	public CoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecsFrom(basePackageClasses));
@@ -199,7 +198,6 @@ public final class CoreBuilder{
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
-	 * @throws CodecException	If the codec was already loaded.
 	 */
 	public CoreBuilder withCodec(final CodecInterface codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
@@ -212,7 +210,6 @@ public final class CoreBuilder{
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
-	 * @throws CodecException	If a codec was already loaded.
 	 */
 	public CoreBuilder withCodecs(final CodecInterface... codecs){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
