@@ -32,7 +32,7 @@ import java.io.Serial;
 /**
  * Thrown if no codec is found.
  */
-public final class CodecException extends FieldException{
+public final class CodecException extends Exception{
 
 	@Serial
 	private static final long serialVersionUID = 2879230296103139872L;
