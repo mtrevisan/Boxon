@@ -8,7 +8,7 @@ import io.github.mtrevisan.boxon.core.codecs.CodecHelper;
 import java.nio.charset.Charset;
 
 
-abstract class StringCommonBehavior extends CommonBehavior{
+public abstract class StringCommonBehavior extends CommonBehavior{
 
 	protected final Charset charset;
 
@@ -19,6 +19,7 @@ abstract class StringCommonBehavior extends CommonBehavior{
 
 		this.charset = charset;
 	}
+
 
 	@Override
 	public Object createArray(int arraySize){

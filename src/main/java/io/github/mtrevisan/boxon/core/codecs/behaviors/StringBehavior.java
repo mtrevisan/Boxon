@@ -29,17 +29,17 @@ public final class StringBehavior extends StringCommonBehavior{
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new StringBehavior(binding.annotationType(), size, charset, converterChoices, defaultConverter, validator);
+		return new StringBehavior(size, charset, converterChoices, defaultConverter, validator);
 	}
 
 
-	StringBehavior(final Class<? extends Annotation> bindingType, final int size, final Charset charset,
-			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
-			final Class<? extends Validator<?>> validator){
+	StringBehavior(final int size, final Charset charset, final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
 		super(charset, converterChoices, defaultConverter, validator);
 
 		this.size = size;
 	}
+
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){

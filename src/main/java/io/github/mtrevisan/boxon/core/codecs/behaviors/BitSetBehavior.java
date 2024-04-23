@@ -11,7 +11,6 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.util.BitSet;
 
 
@@ -42,17 +41,6 @@ public class BitSetBehavior extends CommonBehavior{
 
 	public int size(){
 		return size;
-	}
-
-
-	public Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
-		final Object array = createArray(arraySize);
-		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readValue(reader);
-
-			Array.set(array, i, element);
-		}
-		return array;
 	}
 
 

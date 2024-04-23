@@ -69,8 +69,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 			instance = readValue(reader, chosenAlternativeType, rootObject);
 		}
 		else{
-			if(collectionBinding instanceof final BindAsArray ba){
-				final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
+			if(collectionBinding instanceof final BindAsArray superBinding){
+				final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 				instance = decodeArray(reader, behavior, arraySize, rootObject);
 			}
 			else
@@ -205,8 +205,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			writeValue(writer, type, object, rootObject);
 		}
-		else if(collectionBinding instanceof final BindAsArray ba){
-			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
+		else if(collectionBinding instanceof final BindAsArray superBinding){
+			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 			final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 			CodecHelper.assertSizeEquals(arraySize, array.length);
 

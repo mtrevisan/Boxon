@@ -1,5 +1,6 @@
 package io.github.mtrevisan.boxon.core.codecs.behaviors;
 
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
@@ -14,6 +15,7 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.BitSet;
 
@@ -46,6 +48,31 @@ public final class IntegerBehavior extends BitSetBehavior{
 
 	public ByteOrder byteOrder(){
 		return byteOrder;
+	}
+
+
+	public static Object convertValueType(final Annotation collectionBinding, final Class<? extends Converter<?, ?>> converterType,
+			final Class<? extends Validator<?>> validator, Object instance){
+		//convert value type into converter/validator input type
+		Class<?> inputType = ParserDataType.resolveInputType(converterType, validator);
+		if(collectionBinding == null)
+			instance = ParserDataType.castValue((BigInteger)instance, inputType);
+		else if(collectionBinding instanceof BindAsArray && inputType != null){
+			inputType = inputType.getComponentType();
+			if(inputType != instance.getClass().getComponentType()){
+				final int length = Array.getLength(instance);
+				final Object array = CodecHelper.createArray(inputType, length);
+
+				for(int i = 0; i < length; i++){
+					Object element = Array.get(instance, i);
+					element = ParserDataType.castValue((BigInteger)element, inputType);
+					Array.set(array, i, element);
+				}
+
+				instance = array;
+			}
+		}
+		return instance;
 	}
 
 
