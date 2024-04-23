@@ -11,11 +11,14 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.util.BitSet;
 
 
-record BitSetBehavior(int size, ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter,
-		Class<? extends Validator<?>> validator){
+public class BitSetBehavior extends CommonBehavior{
+
+	protected final int size;
+
 
 	public static BitSetBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
 			throws AnnotationException{
@@ -25,18 +28,46 @@ record BitSetBehavior(int size, ConverterChoices converterChoices, Class<? exten
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new BitSetBehavior(size, converterChoices, defaultConverter, validator);
+		return new BitSetBehavior(binding.annotationType(), size, converterChoices, defaultConverter, validator);
 	}
 
-	private Object createArray(final int arraySize){
+
+	BitSetBehavior(final Class<? extends Annotation> bindingType, final int size, final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
+		super(bindingType, converterChoices, defaultConverter, validator);
+
+		this.size = size;
+	}
+
+
+	public int size(){
+		return size;
+	}
+
+
+	public Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
+		final Object array = createArray(arraySize);
+		for(int i = 0, length = Array.getLength(array); i < length; i ++){
+			final Object element = readValue(reader);
+
+			Array.set(array, i, element);
+		}
+		return array;
+	}
+
+
+	@Override
+	public Object createArray(final int arraySize){
 		return CodecHelper.createArray(BitSet.class, arraySize);
 	}
 
-	private Object readValue(final BitReaderInterface reader){
+	@Override
+	public Object readValue(final BitReaderInterface reader){
 		return reader.getBitSet(size);
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Object value){
+	@Override
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		writer.putBitSet((BitSet)value, size);
 	}
 

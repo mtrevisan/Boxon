@@ -15,8 +15,10 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-record StringBehavior(int size, Charset charset, ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter,
-		Class<? extends Validator<?>> validator){
+final class StringBehavior extends StringCommonBehavior{
+
+	private final int size;
+
 
 	public static StringBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
 			throws AnnotationException{
@@ -27,18 +29,25 @@ record StringBehavior(int size, Charset charset, ConverterChoices converterChoic
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new StringBehavior(size, charset, converterChoices, defaultConverter, validator);
+		return new StringBehavior(binding.annotationType(), size, charset, converterChoices, defaultConverter, validator);
 	}
 
-	private Object createArray(final int arraySize){
-		return CodecHelper.createArray(String.class, arraySize);
+
+	StringBehavior(final Class<? extends Annotation> bindingType, final int size, final Charset charset,
+			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
+			final Class<? extends Validator<?>> validator){
+		super(bindingType, charset, converterChoices, defaultConverter, validator);
+
+		this.size = size;
 	}
 
-	private Object readValue(final BitReaderInterface reader){
+	@Override
+	public Object readValue(final BitReaderInterface reader){
 		return reader.getText(size, charset);
 	}
 
-	private void writeValue(final BitWriterInterface writer, Object value){
+	@Override
+	public void writeValue(final BitWriterInterface writer, Object value){
 		String text = (String)value;
 		text = text.substring(0, Math.min(text.length(), size));
 		writer.putText(text, charset);

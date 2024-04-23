@@ -29,6 +29,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.BitSetBehavior;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -38,7 +40,6 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.util.BitSet;
 import java.util.function.BiFunction;
 
 
@@ -51,80 +52,58 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final BindBitSet binding = (BindBitSet)annotation;
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+		final BitSetBehavior behavior = BitSetBehavior.of(annotation, evaluator, rootObject);
 
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = readValue(reader, size);
+			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
-			instance = readArrayWithoutAlternatives(reader, arraySize, size);
+			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 
-		final Object convertedValue = convertValue(binding, instance, rootObject, CodecHelper::converterDecode);
+		final Object convertedValue = convertValue(behavior, instance, rootObject, CodecHelper::converterDecode);
 
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(convertedValue, validator);
 
 		return convertedValue;
-	}
-
-	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int size){
-		final Object array = CodecHelper.createArray(BitSet.class, arraySize);
-		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readValue(reader, size);
-
-			Array.set(array, i, element);
-		}
-		return array;
-	}
-
-	private static Object readValue(final BitReaderInterface reader, final int size){
-		return reader.getBitSet(size);
 	}
 
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final BindBitSet binding = (BindBitSet)annotation;
+		final BitSetBehavior behavior = BitSetBehavior.of(annotation, evaluator, rootObject);
 
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);
 
-		final Object convertedValue = convertValue(binding, value, rootObject, CodecHelper::converterEncode);
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+		final Object convertedValue = convertValue(behavior, value, rootObject, CodecHelper::converterEncode);
 
 		if(collectionBinding == null)
-			writeValue(writer, convertedValue, size);
+			behavior.writeValue(writer, convertedValue);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
-			writeArrayWithoutAlternatives(writer, convertedValue, size);
+			writeArrayWithoutAlternatives(writer, convertedValue, behavior);
 		}
 	}
 
-	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final int size){
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final BitSetBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			writeValue(writer, element, size);
+			behavior.writeValue(writer, element);
 		}
 	}
 
-	private static void writeValue(final BitWriterInterface writer, final Object value, final int size){
-		writer.putBitSet((BitSet)value, size);
-	}
 
-
-	private Object convertValue(final BindBitSet binding, final Object decodedValue, final Object rootObject,
+	private Object convertValue(final CommonBehavior behavior, final Object decodedValue, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final ConverterChoices converterChoices = behavior.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		return converter.apply(chosenConverter, decodedValue);

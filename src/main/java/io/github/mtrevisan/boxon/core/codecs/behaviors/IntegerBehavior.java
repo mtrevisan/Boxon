@@ -18,11 +18,13 @@ import java.math.BigInteger;
 import java.util.BitSet;
 
 
-record IntegerBehavior(int size, ByteOrder byteOrder, ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter,
-		Class<? extends Validator<?>> validator){
+public final class IntegerBehavior extends BitSetBehavior{
+
+	private final ByteOrder byteOrder;
+
 
 	public static IntegerBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
-		throws AnnotationException{
+			throws AnnotationException{
 		final BindInteger binding = (BindInteger)annotation;
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
@@ -30,18 +32,36 @@ record IntegerBehavior(int size, ByteOrder byteOrder, ConverterChoices converter
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new IntegerBehavior(size, byteOrder, converterChoices, defaultConverter, validator);
+		return new IntegerBehavior(binding.annotationType(), size, byteOrder, converterChoices, defaultConverter, validator);
 	}
 
-	private Object createArray(final int arraySize){
+
+	IntegerBehavior(final Class<? extends Annotation> bindingType, final int size, final ByteOrder byteOrder,
+			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
+			final Class<? extends Validator<?>> validator){
+		super(bindingType, size, converterChoices, defaultConverter, validator);;
+
+		this.byteOrder = byteOrder;
+	}
+
+
+	public ByteOrder byteOrder(){
+		return byteOrder;
+	}
+
+
+	@Override
+	public Object createArray(final int arraySize){
 		return CodecHelper.createArray(BigInteger.class, arraySize);
 	}
 
-	private Object readValue(final BitReaderInterface reader){
+	@Override
+	public Object readValue(final BitReaderInterface reader){
 		return reader.getBigInteger(size, byteOrder);
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Object value){
+	@Override
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 

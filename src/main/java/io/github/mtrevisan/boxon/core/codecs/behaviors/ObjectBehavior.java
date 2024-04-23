@@ -7,28 +7,59 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.codecs.CodecHelper;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.lang.annotation.Annotation;
 
 
-record ObjectBehavior(Class<?> bindingType, ObjectChoices selectFrom, Class<?> selectDefault, ObjectChoicesList objectChoicesList,
-		ConverterChoices converterChoices, Class<? extends Converter<?, ?>> defaultConverter, Class<? extends Validator<?>> validator){
+final class ObjectBehavior extends CommonBehavior{
+
+	private final Class<?> objectType;
+	private final ObjectChoices selectFrom;
+	private final Class<?> selectDefault;
+	private final ObjectChoicesList objectChoicesList;
+
 
 	public static ObjectBehavior of(final Annotation annotation){
 		final BindObject binding = (BindObject)annotation;
 
-		final Class<?> bindingType = binding.type();
+		final Class<?> objectType = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		final Class<?> selectDefault = binding.selectDefault();
 		final ObjectChoicesList objectChoicesList = binding.selectFromList();
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
-		return new ObjectBehavior(bindingType, selectFrom, selectDefault, objectChoicesList, converterChoices, defaultConverter, validator);
+		return new ObjectBehavior(binding.annotationType(), objectType, selectFrom, selectDefault, objectChoicesList, converterChoices,
+			defaultConverter, validator);
 	}
 
-	private Object createArray(final int arraySize){
-		return CodecHelper.createArray(bindingType, arraySize);
+
+	ObjectBehavior(final Class<? extends Annotation> bindingType, final Class<?> objectType, final ObjectChoices selectFrom,
+			final Class<?> selectDefault, final ObjectChoicesList objectChoicesList, final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Class<? extends Validator<?>> validator){
+		super(bindingType, converterChoices, defaultConverter, validator);
+
+		this.objectType = objectType;
+		this.selectFrom = selectFrom;
+		this.selectDefault = selectDefault;
+		this.objectChoicesList = objectChoicesList;
+	}
+
+	@Override
+	public Object createArray(final int arraySize){
+		return CodecHelper.createArray(objectType, arraySize);
+	}
+
+	@Override
+	Object readValue(final BitReaderInterface reader){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	void writeValue(final BitWriterInterface writer, final Object value){
+		throw new UnsupportedOperationException();
 	}
 
 }

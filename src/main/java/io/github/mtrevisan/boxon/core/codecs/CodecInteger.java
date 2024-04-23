@@ -26,15 +26,16 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.BitSetBehavior;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.IntegerBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -42,7 +43,6 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.BitSet;
 import java.util.function.BiFunction;
 
 
@@ -55,24 +55,21 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final BindInteger binding = (BindInteger)annotation;
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final ByteOrder byteOrder = binding.byteOrder();
+		final IntegerBehavior behavior = IntegerBehavior.of(annotation, evaluator, rootObject);
 
 		Object instance = null;
 		if(collectionBinding == null)
-			instance = readValue(reader, size, byteOrder);
+			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
-			instance = readArrayWithoutAlternatives(reader, arraySize, size, byteOrder);
+			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final ConverterChoices converterChoices = behavior.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final Class<? extends Validator<?>> validator = behavior.validator();
 
 		instance = convertValueType(collectionBinding, chosenConverter, validator, instance);
 
@@ -81,21 +78,6 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		CodecHelper.validate(convertedValue, validator);
 
 		return convertedValue;
-	}
-
-	private static Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize, final int size,
-			final ByteOrder byteOrder){
-		final Object array = CodecHelper.createArray(BigInteger.class, arraySize);
-		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Object element = readValue(reader, size, byteOrder);
-
-			Array.set(array, i, element);
-		}
-		return array;
-	}
-
-	private static Object readValue(final BitReaderInterface reader, final int size, final ByteOrder byteOrder){
-		return reader.getBigInteger(size, byteOrder);
 	}
 
 	private static Object convertValueType(final Annotation collectionBinding, final Class<? extends Converter<?, ?>> converterType,
@@ -126,47 +108,36 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final BindInteger binding = (BindInteger)annotation;
+		final IntegerBehavior behavior = IntegerBehavior.of(annotation, evaluator, rootObject);
 
-		final Class<? extends Validator<?>> validator = binding.validator();
+		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);
 
-		final Object convertedValue = convertValue(binding, value, rootObject, CodecHelper::converterEncode);
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-		final ByteOrder byteOrder = binding.byteOrder();
+		final Object convertedValue = convertValue(behavior, value, rootObject, CodecHelper::converterEncode);
 
 		if(collectionBinding == null)
-			writeValue(writer, convertedValue, size, byteOrder);
+			behavior.writeValue(writer, convertedValue);
 		else if(collectionBinding instanceof final BindAsArray ba){
 			final int arraySize = CodecHelper.evaluateSize(ba.size(), evaluator, rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
-			writeArrayWithoutAlternatives(writer, convertedValue, size, byteOrder);
+			writeArrayWithoutAlternatives(writer, convertedValue, behavior);
 		}
 	}
 
-	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final int size,
-			final ByteOrder byteOrder){
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final BitSetBehavior behavior){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			writeValue(writer, element, size, byteOrder);
+			behavior.writeValue(writer, element);
 		}
 	}
 
-	private static void writeValue(final BitWriterInterface writer, final Object value, final int size, final ByteOrder byteOrder){
-		final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
-		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
-		writer.putBitSet(bitmap, size);
-	}
-
-
-	private Object convertValue(final BindInteger binding, final Object decodedValue, final Object rootObject,
+	private Object convertValue(final CommonBehavior behavior, final Object decodedValue, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final ConverterChoices converterChoices = behavior.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = behavior.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		return converter.apply(chosenConverter, decodedValue);
