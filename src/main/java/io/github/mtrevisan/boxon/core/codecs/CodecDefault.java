@@ -40,6 +40,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
+/**
+ * Manages `BindBitSet`, `BindInteger`, `BindString`, and `BindStringTerminated`.
+ */
 final class CodecDefault implements CodecInterface{
 
 	@Injected
