@@ -165,7 +165,7 @@ public final class ConfigurationParser{
 	 * @param writer	The writer that holds the encoded template.
 	 * @param currentObject	The current object that holds the values.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @throws CodecException   If a codec is not found.
+	 * @throws CodecException	If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
 			final Version protocol) throws BoxonException{

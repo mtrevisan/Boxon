@@ -65,7 +65,7 @@ final class ParserWriterHelper{
 	 * @param loaderCodec	The loader codec used for encoding the field.
 	 * @param eventListener	The event listener.
 	 * @throws CodecException	If no suitable codec was found.
-	 * @throws BoxonException   If an error occurs during field encoding.
+	 * @throws BoxonException	If an error occurs during field encoding.
 	 */
 	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec,
 			final EventListener eventListener) throws BoxonException{

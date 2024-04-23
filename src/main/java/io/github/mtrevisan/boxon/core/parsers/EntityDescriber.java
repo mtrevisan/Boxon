@@ -24,7 +24,7 @@ final class EntityDescriber{
 	 * @param entities	The collection of entities to be described.
 	 * @param mapper	A function that takes an entity of type T and returns its corresponding map representation.
 	 * @return	The list of descriptions for the entities.
-	 * @throws BoxonException   If a field exception occurs during the mapping process.
+	 * @throws BoxonException	If a field exception occurs during the mapping process.
 	 * @param <T>	The type of the entities.
 	 */
 	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
@@ -45,7 +45,7 @@ final class EntityDescriber{
 	 * @param extractor	The function to extract the entity.
 	 * @param mapper	The function that maps the entity to its corresponding map representation.
 	 * @return	The list of descriptions for the entities.
-	 * @throws BoxonException   If a field exception occurs during the mapping process.
+	 * @throws BoxonException	If a field exception occurs during the mapping process.
 	 * @throws E	If any other exception occurs during the extraction or mapping process.
 	 */
 	static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
@@ -68,7 +68,7 @@ final class EntityDescriber{
 	 * @param extractor	The function to extract the entity.
 	 * @param mapper	The function that maps the entity to its corresponding map representation.
 	 * @return	The map representation of the entity.
-	 * @throws BoxonException   If a field exception occurs during the mapping process.
+	 * @throws BoxonException	If a field exception occurs during the mapping process.
 	 * @throws E	If any other exception occurs during the extraction or mapping process.
 	 * @param <T>	The type of the entity.
 	 * @param <E>	The type of the exception.

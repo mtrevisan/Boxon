@@ -190,7 +190,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param reader	The reader used for reading the message.
 	 * @param parentObject	The parent object of the message being decoded.
 	 * @return	The decoded object.
-	 * @throws BoxonException   If there is an error decoding a field.
+	 * @throws BoxonException	If there is an error decoding a field.
 	 */
 	@Override
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
@@ -394,7 +394,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param writer	The writer used for writing the encoded message.
 	 * @param parentObject	The parent object of the message being encoded.
 	 * @param currentObject	The object to be encoded.
-	 * @throws BoxonException   If there is an error encoding a field.
+	 * @throws BoxonException	If there is an error encoding a field.
 	 */
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)

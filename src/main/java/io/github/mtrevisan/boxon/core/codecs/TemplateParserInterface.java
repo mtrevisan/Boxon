@@ -41,7 +41,7 @@ public interface TemplateParserInterface{
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
 	 * @param <T>	The class type of the template.
 	 * @return	The data read.
-	 * @throws BoxonException   If a codec is not found.
+	 * @throws BoxonException	If a codec is not found.
 	 */
 	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws BoxonException;
 
@@ -53,7 +53,7 @@ public interface TemplateParserInterface{
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
 	 * @param currentObject	The current object that holds the values.
 	 * @param <T>	The class type of the current object.
-	 * @throws BoxonException   If a codec is not found.
+	 * @throws BoxonException	If a codec is not found.
 	 */
 	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws BoxonException;
 
