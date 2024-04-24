@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -38,16 +37,22 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{
+final class CodecCompositeConfigurationField implements CodecInterface{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
+	public Class<?> identifier(){
+		return CompositeConfigurationField.class;
+	}
+
+	@Override
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+			final Object rootObject){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
-			throws CodecException, ConfigurationException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object fieldType, Object value) throws CodecException, UnhandledFieldException{
 		final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
 		final Charset charset = CharsetHelper.lookup(binding.charset());

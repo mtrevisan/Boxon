@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -49,8 +49,8 @@ import java.lang.annotation.Annotation;
 class CodecFloatTest{
 
 	@Test
-	void floatPositiveLittleEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void floatPositiveLittleEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -101,21 +101,21 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void floatNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void floatNegativeLittleEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -166,21 +166,21 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void floatPositiveBigEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void floatPositiveBigEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -231,21 +231,21 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void floatNegativeBigEndian() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void floatNegativeBigEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -296,14 +296,14 @@ class CodecFloatTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		float decoded = (float)codec.decode(reader, annotation, null);
+		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

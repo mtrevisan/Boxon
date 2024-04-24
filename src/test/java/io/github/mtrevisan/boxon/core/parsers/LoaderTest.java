@@ -46,7 +46,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadFromScan() throws AnnotationException, TemplateException{
+	void loadFromScan() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 
@@ -55,7 +55,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadFromScanWithBasePackage() throws AnnotationException, TemplateException{
+	void loadFromScanWithBasePackage() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 
@@ -73,7 +73,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadTemplate() throws AnnotationException, TemplateException{
+	void loadTemplate() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
@@ -100,7 +100,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void findNextTemplate() throws AnnotationException, TemplateException{
+	void findNextTemplate() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
@@ -114,7 +114,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void cannotFindNextTemplate() throws AnnotationException, TemplateException{
+	void cannotFindNextTemplate() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);

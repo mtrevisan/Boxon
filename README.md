@@ -107,13 +107,12 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
 1. [Basic annotations](#annotation-basic)
     1. [Summary](#annotation-summary)
     2. [BindObject](#annotation-bindobject)
-    3. [BindArray](#annotation-bindarray)
-    4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindList](#annotation-bindlist)
-    6. [BindBitSet](#annotation-bindbitset)
-    7. [BindInteger](#annotation-bindinteger)
-    8. [BindString](#annotation-bindstring)
-    9. [BindStringTerminated](#annotation-bindstringterminated)
+    3. [BindAsArray](#annotation-bindasarray)
+    4. [BindAsList](#annotation-bindaslist)
+    5. [BindBitSet](#annotation-bindbitset)
+    6. [BindInteger](#annotation-bindinteger)
+    7. [BindString](#annotation-bindstring)
+    8. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [TemplateHeader](#annotation-templateheader)
     2. [SkipBits](#annotation-skip-bits)
@@ -142,29 +141,30 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 4.0.0](#changelog-4.0.0)
-    2. [version 3.6.0](#changelog-3.6.0)
-    3. [version 3.5.1](#changelog-3.5.1)
-    4. [version 3.5.0](#changelog-3.5.0)
-    5. [version 3.4.0](#changelog-3.4.0)
-    6. [version 3.3.0](#changelog-3.3.0)
-    7. [version 3.2.0](#changelog-3.2.0)
-    8. [version 3.1.3](#changelog-3.1.3)
-    9. [version 3.1.2](#changelog-3.1.2)
-    10. [version 3.1.1](#changelog-3.1.1)
-    11. [version 3.1.0](#changelog-3.1.0)
-    12. [version 3.0.2](#changelog-3.0.2)
-    13. [version 3.0.1](#changelog-3.0.1)
-    14. [version 3.0.0](#changelog-3.0.0)
-    15. [version 2.1.2](#changelog-2.1.2)
-    16. [version 2.1.1](#changelog-2.1.1)
-    17. [version 2.1.0](#changelog-2.1.0)
-    18. [version 2.0.0](#changelog-2.0.0)
-    19. [version 1.1.0](#changelog-1.1.0)
-    20. [version 1.0.0](#changelog-1.0.0)
-    21. [version 0.0.2](#changelog-0.0.2)
-    22. [version 0.0.1](#changelog-0.0.1)
-    23. [version 0.0.0](#changelog-0.0.0)
+    1. [version 5.0.0](#changelog-5.0.0)
+    2. [version 4.0.0](#changelog-4.0.0)
+    3. [version 3.6.0](#changelog-3.6.0)
+    4. [version 3.5.1](#changelog-3.5.1)
+    5. [version 3.5.0](#changelog-3.5.0)
+    6. [version 3.4.0](#changelog-3.4.0)
+    7. [version 3.3.0](#changelog-3.3.0)
+    8. [version 3.2.0](#changelog-3.2.0)
+    9. [version 3.1.3](#changelog-3.1.3)
+    10. [version 3.1.2](#changelog-3.1.2)
+    11. [version 3.1.1](#changelog-3.1.1)
+    12. [version 3.1.0](#changelog-3.1.0)
+    13. [version 3.0.2](#changelog-3.0.2)
+    14. [version 3.0.1](#changelog-3.0.1)
+    15. [version 3.0.0](#changelog-3.0.0)
+    16. [version 2.1.2](#changelog-2.1.2)
+    17. [version 2.1.1](#changelog-2.1.1)
+    18. [version 2.1.0](#changelog-2.1.0)
+    19. [version 2.0.0](#changelog-2.0.0)
+    21. [version 1.1.0](#changelog-1.1.0)
+    22. [version 1.0.0](#changelog-1.0.0)
+    23. [version 0.0.2](#changelog-0.0.2)
+    24. [version 0.0.1](#changelog-0.0.1)
+    25. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -221,8 +221,9 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
- - `selectFrom`: the selection from which to choose the instance type.
+ - `selectFrom`: the selection from which to choose the instance type using an `ObjectChoices` with a prefix of a predetermined length.
  - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
+ - `selectFromList`: the selection from which to choose the instance type using an `ObjectChoicesList` with a prefix consisting in a terminated string.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -253,19 +254,12 @@ private Version version;
 ```
 
 
-<a name="annotation-bindarray"></a>
-### BindArray
+<a name="annotation-bindasarray"></a>
+### BindAsArray
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
- - `selectFrom`: the selection from which to choose the instance type.
- - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
 
@@ -286,14 +280,15 @@ class Version{
     public byte build;
 }
 
-@BindArray(size = "2", type = Version.class)
+@BindObject(type = Version.class)
+@BindAsArray(size = "2")
 private Version[] versions;
 ```
 
 ```java
 @BindInteger(size = "8")
 private byte positionsCount;
-@BindArray(size = "positionsCount", type = Position.class,
+@BindObject(type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
         alternatives = {
           @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = "0", type = PositionInvalid.class),
@@ -303,6 +298,7 @@ private byte positionsCount;
        }
     ),
    converter = PositionsConverter.class)
+@BindAsArray(size = "positionsCount")
 private Position[] positions;
 ```
 
@@ -322,7 +318,7 @@ private Position[] positions;
 
 #### description
 
-Reads an array of primitives.
+Defines a parameter as an array.
 
 #### annotation type
 
@@ -331,40 +327,36 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindArrayPrimitive(size = "2", type = byte.class)
+@BindInteger(size = "8")
+@BindAsArray(size = "2")
 private byte[] array;
 ```
 
 ```java
 @BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean angularDataPresent;
-@BindArrayPrimitive(condition = "angularDataPresent", size = "dataLength", type = byte.class,
+@BindInteger(condition = "angularDataPresent", size = "8",
     selectConverterFrom = @ConverterChoices(
         alternatives = {
             @ConverterChoices.ConverterChoice(condition = "angularDataPresent", converter = CrashDataWithAngularDataConverter.class),
             @ConverterChoices.ConverterChoice(condition = "!angularDataPresent", converter = CrashDataWithoutAngularDataConverter.class)
         })
     )
+@BindAsArray(size = "dataLength")
 private BigDecimal[][] crashData;
 ```
 
 
-<a name="annotation-bindlist"></a>
-### BindList
+<a name="annotation-bindaslist"></a>
+### BindAsList
 
 #### parameters
 
-- `condition`: The SpEL expression that determines if this field has to be read.
-- `type`: the Class of primitive of the single element of the array.
-- `selectFrom`: the selection from which to choose the instance type.
-- `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
-- `validator`: the Class of a validator (applied BEFORE the converter).
-- `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
-- `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
+None.
 
 #### description
 
-Reads a list of Objects.
+Defines a parameter as a list.
 
 #### annotation type
 
@@ -373,11 +365,12 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
+@BindObject(type = TestType3.class, selectFromList = @ObjectChoicesList(terminator = ',',
     alternatives = {
         @ObjectChoices.ObjectChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
         @ObjectChoices.ObjectChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
     }))
+@BindAsList
 private List<TestType3> value;
 ```
 
@@ -1175,7 +1168,8 @@ public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
 #### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 
 ```java
-@BindArrayPrimitive(size = "7", type = byte.class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindInteger(size = "8", converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindAsArray(size = "7")
 private ZonedDateTime eventTime;
 
 public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
@@ -1208,7 +1202,8 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 #### IMEI converter (from 'nibble' array to String, that is, each nibble represents a character of the IMEI)
 
 ```java
-@BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindInteger(size = "8", converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindAsArray(size = "8")
 private String imei;
 
 public class IMEIConverter implements Converter<byte[], String>{
@@ -1297,8 +1292,13 @@ Optionally, the method `String condition()` could be defined.
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
-class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
-    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
+class VariableLengthByteArray implements CodecInterface{
+
+   public Class<?> type(){
+      return VarLengthEncoded.class;
+   }
+
+   public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){
@@ -1446,6 +1446,14 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-5.0.0"></a>
+### version 5.0.0 - 20240423
+
+- Add support for `BindAsArray` and `BindAsList` instead of many `BindArray(Primitive)`, `BindList`, now removed.
+- Cleaning and refactoring of various codecs.
+- Major reorganization of the code, along with refactor to make it more modular and cohesive, and removal of duplicated code.
+- Simplified the exception handling.
 
 <a name="changelog-4.0.0"></a>
 ### version 4.0.0 - 20240419

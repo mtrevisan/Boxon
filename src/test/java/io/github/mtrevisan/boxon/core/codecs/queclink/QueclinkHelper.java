@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
@@ -39,15 +40,16 @@ public final class QueclinkHelper{
 	private QueclinkHelper(){}
 
 
-	public static class VersionConverter implements Converter<byte[], Version>{
+	public static class VersionConverter implements Converter<BigInteger, Version>{
 		@Override
-		public Version decode(final byte[] value){
-			return VersionBuilder.of(value[0], value[1]);
+		public Version decode(final BigInteger value){
+			final byte[] array = value.toByteArray();
+			return VersionBuilder.of(array[0], array[1]);
 		}
 
 		@Override
-		public byte[] encode(final Version value){
-			return new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()};
+		public BigInteger encode(final Version value){
+			return new BigInteger(new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()});
 		}
 	}
 

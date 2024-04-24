@@ -46,6 +46,7 @@ final class ParserContext<T>{
 	private String fieldName;
 	private Object field;
 	private Annotation binding;
+	private Annotation collectionBinding;
 
 
 	ParserContext(final T currentObject){
@@ -76,10 +77,13 @@ final class ParserContext<T>{
 	 *
 	 * @param field	The field.
 	 * @param value	The value.
+	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	void setFieldValue(final Field field, Object value){
 		if(value instanceof final BigInteger bi)
 			value = ParserDataType.castValue(bi, field.getType());
+		else if(field.getType().isArray() && value.getClass().getComponentType() == BigInteger.class)
+			value = ParserDataType.castValue((BigInteger[])value, field.getType().getComponentType());
 
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);
@@ -129,6 +133,24 @@ final class ParserContext<T>{
 	 */
 	void setBinding(final Annotation binding){
 		this.binding = binding;
+	}
+
+	/**
+	 * The collection annotation bound to the field.
+	 *
+	 * @return	The collection annotation bound to the field.
+	 */
+	Annotation getCollectionBinding(){
+		return collectionBinding;
+	}
+
+	/**
+	 * Set the collection annotation bound to the field.
+	 *
+	 * @param collectionBinding	The collection annotation.
+	 */
+	void setCollectionBinding(final Annotation collectionBinding){
+		this.collectionBinding = collectionBinding;
 	}
 
 }

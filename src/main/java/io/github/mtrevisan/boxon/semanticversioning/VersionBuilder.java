@@ -31,6 +31,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 
+/**
+ * This class is responsible for constructing instances of the {@link Version} class.
+ * <p>
+ * It provides several overloaded static "of" methods that create a new `Version` instance based on different combinations of version
+ * numbers, pre-release identifiers, and build identifiers.</p>
+ */
 public final class VersionBuilder{
 
 	private static final String KEY_MAJOR = "major";

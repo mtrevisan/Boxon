@@ -30,6 +30,9 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 
@@ -58,6 +61,7 @@ public final class Template<T>{
 	private static final int ORDER_POST_PROCESS_INDEX = 3;
 
 	private static final String ANNOTATION_NAME_BIND = "Bind";
+	private static final String ANNOTATION_NAME_BIND_AS = "BindAs";
 	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = "ConverterChoices";
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
 	private static final String STAR = "*";
@@ -73,7 +77,7 @@ public final class Template<T>{
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
-	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>();
+	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>(4);
 	static{
 		ANNOTATION_MAPPING.put(SkipBits.class, annotation
 			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
@@ -184,9 +188,10 @@ public final class Template<T>{
 
 			try{
 				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
+				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
 				if(validAnnotation != null || ! skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation, skips));
+					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
@@ -207,8 +212,8 @@ public final class Template<T>{
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
 
-			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
-					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
+					|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
@@ -330,22 +335,41 @@ public final class Template<T>{
 	 */
 	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType, final List<? extends Annotation> annotations)
 			throws AnnotationException{
-		/** return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
-			validateAnnotation(fieldType, annotation);
-
-			foundAnnotation = annotation;
+			if(validateAnnotation(fieldType, annotation))
+				foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
 
-	private static void validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+	/**
+	 * Return the first collection binding annotation.
+	 *
+	 * @param annotations	The list of annotations on the field.
+	 * @return	The first collection binding annotation, or {@code null} if none are found.
+	 */
+	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations){
+		Annotation foundAnnotation = null;
+		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
+			final Annotation annotation = annotations.get(i);
+
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if(annotationType == BindAsArray.class || annotationType == BindAsList.class)
+				foundAnnotation = annotation;
+		}
+		return foundAnnotation;
+	}
+
+	private static boolean validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
-		if(validator != null)
+		if(validator != null){
 			validator.validate(fieldType, annotation);
+			return true;
+		}
+		return false;
 	}
 
 	/**

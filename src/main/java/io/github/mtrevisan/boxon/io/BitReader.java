@@ -57,7 +57,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public static BitReader wrap(final File file) throws IOException, FileNotFoundException{
+	public static BitReader wrap(final File file) throws IOException{
 		try(
 				final FileInputStream fis = new FileInputStream(file);
 				final FileChannel fc = fis.getChannel()){

@@ -32,10 +32,10 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManage
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
 import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.io.BitWriter;
@@ -210,9 +210,10 @@ public final class Configurator{
 	 * @param template	The template, or a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>, containing the data
 	 * 	to be composed.
 	 * @return	The composition response.
+	 * @throws ProtocolException	If the given protocol version is not recognized.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
-			final Object template){
+			final Object template) throws ProtocolException{
 		final Map<String, Object> data = FieldMapper.mapObject(template);
 		return composeConfiguration(protocolVersion, shortDescription, data);
 	}
@@ -224,9 +225,10 @@ public final class Configurator{
 	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
+	 * @throws ProtocolException	If the given protocol version is not recognized.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
-			final Map<String, Object> data){
+			final Map<String, Object> data) throws ProtocolException{
 		final Version protocol = VersionBuilder.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
@@ -251,7 +253,7 @@ public final class Configurator{
 
 			return null;
 		}
-		catch(final EncodeException | FieldException e){
+		catch(final BoxonException e){
 			return EncodeException.create(e);
 		}
 	}

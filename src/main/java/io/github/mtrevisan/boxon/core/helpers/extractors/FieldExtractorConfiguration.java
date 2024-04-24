@@ -43,6 +43,11 @@ public final class FieldExtractorConfiguration implements FieldExtractor<Configu
 	}
 
 	@Override
+	public Annotation getCollectionBinding(final ConfigurationField field){
+		return null;
+	}
+
+	@Override
 	public String getFieldName(final ConfigurationField field){
 		return field.getFieldName();
 	}

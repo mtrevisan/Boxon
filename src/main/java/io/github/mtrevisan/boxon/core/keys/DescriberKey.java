@@ -54,6 +54,10 @@ public enum DescriberKey{
 	FIELD_TYPE("fieldType"),
 	/** Represents the annotation type constant used as a key in the {@link Describer}. */
 	ANNOTATION_TYPE("annotationType"),
+	/** Represents the collection annotation type constant used as a key in the {@link Describer}. */
+	COLLECTION_TYPE("collectionType"),
+	/** Represents the array collection size constant used as a key in the {@link Describer}. */
+	COLLECTION_ARRAY_SIZE("collectionArraySize"),
 
 	/** Represents the bind subtypes constant used as a key in the {@link Describer}. */
 	BIND_SUBTYPES("subtypes");

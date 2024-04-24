@@ -25,7 +25,8 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindList;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -39,10 +40,7 @@ import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -84,25 +82,26 @@ class CodecListTest{
 	static class TestChoice6{
 		@BindStringTerminated(terminator = ',')
 		String type;
-		@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
+		@BindObject(type = TestType3.class, selectFromList = @ObjectChoicesList(terminator = ',',
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
 			}))
+		@BindAsList
 		List<TestType3> value;
 	}
 
 
 	@Test
-	void listOfSameObject() throws FieldException{
-		CodecList codec = new CodecList();
+	void listOfSameObject() throws BoxonException{
+		CodecObject codec = new CodecObject();
 		List<Version> encodedValue = List.of(
 			new Version("2", "0", "1", "12"),
 			new Version("2", "1", "2", "0"));
-		BindList annotation = new BindList(){
+		BindObject annotation = new BindObject(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindList.class;
+				return BindObject.class;
 			}
 
 			@Override
@@ -116,7 +115,12 @@ class CodecListTest{
 			}
 
 			@Override
-			public ObjectChoicesList selectFrom(){
+			public ObjectChoices selectFrom(){
+				return null;
+			}
+
+			@Override
+			public ObjectChoicesList selectFromList(){
 				return new ObjectChoicesList(){
 					@Override
 					public Class<? extends Annotation> annotationType(){
@@ -192,6 +196,12 @@ class CodecListTest{
 				};
 			}
 		};
+		BindAsList listAnnotation = new BindAsList(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindAsList.class;
+			}
+		};
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
@@ -199,13 +209,13 @@ class CodecListTest{
 		loaderCodec.loadDefaultCodecs();
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, listAnnotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null);
+		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, listAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());
 		Assertions.assertEquals(encodedValue.get(0).type, decoded.get(0).type);
@@ -217,7 +227,7 @@ class CodecListTest{
 	}
 
 	@Test
-	void listOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
+	void listOfDifferentObjects() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplatesFrom(TestChoice6.class)

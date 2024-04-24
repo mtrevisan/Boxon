@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.math.BigInteger;
@@ -255,7 +254,7 @@ public final class StringHelper{
 	 *
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
-	 * @throws DataException	If the input has an odd length.
+	 * @throws IllegalArgumentException	If the input has an odd length.
 	 */
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.sizeOrZero(hexString);

@@ -79,6 +79,13 @@ public @interface BindObject{
 	ObjectChoices selectFrom() default @ObjectChoices;
 
 	/**
+	 * The choices to select from, based on a prefix.
+	 *
+	 * @return	The choices to select from, based on a prefix (defaults to empty {@link ObjectChoices}).
+	 */
+	ObjectChoicesList selectFromList() default @ObjectChoicesList;
+
+	/**
 	 * The type to decode in case none of the selectors from {@link #selectFrom()} can be chosen.
 	 *
 	 * @return	The type to decode in case none of the selectors from {@link #selectFrom()} can be chosen.

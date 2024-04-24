@@ -44,6 +44,11 @@ public final class FieldExtractorEvaluatedField implements FieldExtractor<Evalua
 	}
 
 	@Override
+	public Annotation getCollectionBinding(final EvaluatedField<Evaluate> field){
+		return null;
+	}
+
+	@Override
 	public String getFieldName(final EvaluatedField<Evaluate> field){
 		return field.getFieldName();
 	}

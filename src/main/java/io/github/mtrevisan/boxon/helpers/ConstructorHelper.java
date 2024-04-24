@@ -30,7 +30,6 @@ import org.springframework.objenesis.ObjenesisStd;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.RecordComponent;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -80,14 +79,13 @@ public final class ConstructorHelper{
 		try{
 			instantiator = getConstructor(type);
 		}
-		catch(final Exception ignored){
+		catch(final ReflectiveOperationException ignored){
 			instantiator = OBJENESIS.getInstantiatorOf(type);
 		}
 		return instantiator::newInstance;
 	}
 
-	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException{
+	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws ReflectiveOperationException{
 		final Constructor<T> constructor = type.getDeclaredConstructor();
 		FieldAccessor.makeAccessible(constructor);
 

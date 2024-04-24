@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -49,8 +49,8 @@ import java.math.BigInteger;
 class CodecByteTest{
 
 	@Test
-	void testByte() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void testByte() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		byte encodedValue = (byte)(TestHelper.RANDOM.nextInt() & 0x0000_00FF);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -101,14 +101,14 @@ class CodecByteTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		byte decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		byte decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.byteValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

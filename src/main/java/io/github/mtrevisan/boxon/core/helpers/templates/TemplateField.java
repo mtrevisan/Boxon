@@ -51,24 +51,27 @@ public final class TemplateField implements FieldRetriever{
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
 	private final SkipParams[] skips;
 	private final Annotation binding;
+	private final Annotation collectionBinding;
 
 	private String condition;
 
 
 	static TemplateField create(final Field field, final Annotation binding){
-		return new TemplateField(field, binding, Collections.emptyList());
+		return new TemplateField(field, binding, null, Collections.emptyList());
 	}
 
-	static TemplateField create(final Field field, final Annotation binding, final List<SkipParams> skips){
-		return new TemplateField(field, binding, skips);
+	static TemplateField create(final Field field, final Annotation binding, final Annotation collectionBinding,
+			final List<SkipParams> skips){
+		return new TemplateField(field, binding, collectionBinding, skips);
 	}
 
 
-	private TemplateField(final Field field, final Annotation binding, final List<SkipParams> skips){
+	private TemplateField(final Field field, final Annotation binding, final Annotation collectionBinding, final List<SkipParams> skips){
 		Objects.requireNonNull(skips, "Skips must not be null");
 
 		this.field = field;
 		this.binding = binding;
+		this.collectionBinding = collectionBinding;
 		this.skips = (!skips.isEmpty()? skips.toArray(EMPTY_SKIP_ARRAY): EMPTY_SKIP_ARRAY);
 
 		if(binding != null){
@@ -129,6 +132,15 @@ public final class TemplateField implements FieldRetriever{
 	 */
 	public Annotation getBinding(){
 		return binding;
+	}
+
+	/**
+	 * The collection annotation bound to the field.
+	 *
+	 * @return	The collection annotation bound to the field.
+	 */
+	public Annotation getCollectionBinding(){
+		return collectionBinding;
 	}
 
 	/**

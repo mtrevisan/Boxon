@@ -37,9 +37,9 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
@@ -190,10 +190,10 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param reader	The reader used for reading the message.
 	 * @param parentObject	The parent object of the message being decoded.
 	 * @return	The decoded object.
-	 * @throws FieldException	If there is an error decoding a field.
+	 * @throws BoxonException	If there is an error decoding a field.
 	 */
 	@Override
-	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
+	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		final int startPosition = reader.position();
 
 		T currentObject = createEmptyObject(template);
@@ -205,7 +205,12 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		processEvaluatedFields(template, parserContext);
 
-		postProcessFields(template, parserContext);
+		try{
+			postProcessFields(template, parserContext);
+		}
+		catch(final Exception e){
+			postProcessFields(template, parserContext);
+		}
 
 		readMessageTerminator(template, reader);
 
@@ -228,7 +233,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)
-			throws FieldException{
+			throws BoxonException{
 		final Object rootObject = parserContext.getRootObject();
 
 		final List<TemplateField> fields = template.getTemplateFields();
@@ -273,10 +278,14 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
-			final TemplateField field) throws FieldException{
+			final TemplateField field) throws BoxonException{
 		final Annotation binding = field.getBinding();
+		final Annotation collectionBinding = field.getCollectionBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		CodecInterface codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			//load default codec
+			codec = loaderCodec.getCodec(void.class);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
@@ -288,7 +297,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final T currentObject = parserContext.getCurrentObject();
 
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
+			final Object value = codec.decode(reader, binding, collectionBinding, parserContext.getRootObject());
 
 			//restore original current object
 			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
@@ -298,12 +307,12 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			eventListener.readField(template.toString(), field.getFieldName(), value);
 		}
-		catch(final FieldException fe){
+		catch(final BoxonException fe){
 			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw fe;
 		}
 		catch(final Exception e){
-			throw FieldException.create(e)
+			throw BoxonException.create(e)
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 		}
 	}
@@ -385,11 +394,11 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param writer	The writer used for writing the encoded message.
 	 * @param parentObject	The parent object of the message being encoded.
 	 * @param currentObject	The object to be encoded.
-	 * @throws FieldException	If there is an error encoding a field.
+	 * @throws BoxonException	If there is an error encoding a field.
 	 */
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
-			throws FieldException{
+			throws BoxonException{
 		final ParserContext<T> parserContext = prepareParserContext(parentObject, currentObject);
 		parserContext.setClassName(template.getType().getName());
 
@@ -447,7 +456,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
-		final ParserContext<T> parserContext) throws FieldException{
+		final ParserContext<T> parserContext) throws BoxonException{
 		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final TemplateField field = fields.get(i);
@@ -463,6 +472,7 @@ public final class TemplateParser implements TemplateParserInterface{
 				parserContext.setField(field);
 				parserContext.setFieldName(field.getFieldName());
 				parserContext.setBinding(field.getBinding());
+				parserContext.setCollectionBinding(field.getCollectionBinding());
 
 				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}

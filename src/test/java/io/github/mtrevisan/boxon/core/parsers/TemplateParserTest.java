@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -55,7 +55,7 @@ import java.nio.charset.StandardCharsets;
 class TemplateParserTest{
 
 	@Test
-	void parseSingleMessageHex() throws NoSuchMethodException, FieldException{
+	void parseSingleMessageHex() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -85,7 +85,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
+	void parseSingleMessageHexByteChecksum() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -119,7 +119,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageASCII() throws FieldException{
+	void parseSingleMessageASCII() throws BoxonException{
 		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -269,7 +269,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage1() throws FieldException{
+	void parseCompositeMessage1() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("746D310102016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -334,7 +334,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage21() throws FieldException{
+	void parseCompositeMessage21() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("746D3201016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -362,7 +362,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage22() throws FieldException{
+	void parseCompositeMessage22() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("7463320202616263");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
