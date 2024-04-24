@@ -60,12 +60,12 @@ public class BoxonException extends Exception{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static BoxonException create(final String message, final Object... parameters){
-		return new BoxonException(StringHelper.format(message, parameters));
+		return new BoxonException(null, message, parameters);
 	}
 
 
@@ -74,19 +74,19 @@ public class BoxonException extends Exception{
 	 *
 	 * @param message	The message.
 	 */
-	protected BoxonException(final String message){
-		super(message);
+	protected BoxonException(final String message, final Object... parameters){
+		this(null, message, parameters);
 	}
 
 	/**
 	 * Constructs a new exception with the specified message and cause.
 	 *
-	 * @param message	The message.
-	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is permitted,
+	 * 	and indicates that the cause is nonexistent or unknown.)
+	 * @param message The message.
 	 */
-	protected BoxonException(final String message, final Throwable cause){
-		super(message, cause);
+	protected BoxonException(final Throwable cause, final String message, final Object... parameters){
+		super(StringHelper.format(message, parameters), cause);
 	}
 
 	/**

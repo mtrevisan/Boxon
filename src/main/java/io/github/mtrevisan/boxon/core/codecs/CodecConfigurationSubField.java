@@ -49,7 +49,7 @@ final class CodecConfigurationSubField implements CodecInterface{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
-			final Object charset, final Object value){
+			final Object charset, final Object value) throws UnhandledFieldException{
 		if(!(value instanceof final String v))
 			throw UnhandledFieldException.create(value);
 

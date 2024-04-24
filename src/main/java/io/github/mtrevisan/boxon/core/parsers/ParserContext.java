@@ -77,6 +77,7 @@ final class ParserContext<T>{
 	 *
 	 * @param field	The field.
 	 * @param value	The value.
+	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	void setFieldValue(final Field field, Object value){
 		if(value instanceof final BigInteger bi)

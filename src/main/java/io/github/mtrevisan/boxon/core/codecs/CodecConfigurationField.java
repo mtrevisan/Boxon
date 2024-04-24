@@ -52,7 +52,7 @@ final class CodecConfigurationField implements CodecInterface{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
-			final Object fieldType, Object value) throws CodecException{
+			final Object fieldType, Object value) throws CodecException, UnhandledFieldException{
 		final ConfigurationField binding = (ConfigurationField)annotation;
 
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);

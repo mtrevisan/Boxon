@@ -68,7 +68,7 @@ public final class FieldAccessor{
 	 * @return	The (possibly new) object on witch the value was set.
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
-	public static <T> T setFieldValue(final T obj, final Field field, final Object value){
+	public static <T> T setFieldValue(final T obj, final Field field, final Object value) throws DataException{
 		try{
 			return updateObjectFieldValue(obj, field, value);
 		}

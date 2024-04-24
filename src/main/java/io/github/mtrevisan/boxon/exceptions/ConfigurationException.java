@@ -24,15 +24,13 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
-
 import java.io.Serial;
 
 
 /**
  * Thrown if a configuration has validation errors.
  */
-public final class ConfigurationException extends BoxonException{
+public class ConfigurationException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = -1344270549034327649L;
@@ -41,17 +39,17 @@ public final class ConfigurationException extends BoxonException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static ConfigurationException create(final String message, final Object... parameters){
-		return new ConfigurationException(StringHelper.format(message, parameters));
+		return new ConfigurationException(message, parameters);
 	}
 
 
-	private ConfigurationException(final String message){
-		super(message);
+	protected ConfigurationException(final String message, final Object... parameters){
+		super(message, parameters);
 	}
 
 }

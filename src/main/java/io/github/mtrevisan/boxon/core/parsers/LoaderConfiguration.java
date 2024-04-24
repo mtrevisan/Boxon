@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessag
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
@@ -237,6 +238,7 @@ public final class LoaderConfiguration{
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws DataException   If the value cannot be set to the field.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws AnnotationException, CodecException, EncodeException{

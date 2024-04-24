@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
-
 import java.io.Serial;
 
 
@@ -41,17 +39,17 @@ public final class TemplateException extends BoxonException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static TemplateException create(final String message, final Object... parameters){
-		return new TemplateException(StringHelper.format(message, parameters));
+		return new TemplateException(message, parameters);
 	}
 
 
-	private TemplateException(final String message){
-		super(message);
+	private TemplateException(final String message, final Object... parameters){
+		super(message, parameters);
 	}
 
 }

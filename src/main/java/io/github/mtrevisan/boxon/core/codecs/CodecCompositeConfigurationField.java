@@ -52,7 +52,7 @@ final class CodecCompositeConfigurationField implements CodecInterface{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
-			final Object fieldType, Object value) throws CodecException{
+			final Object fieldType, Object value) throws CodecException, UnhandledFieldException{
 		final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
 		final Charset charset = CharsetHelper.lookup(binding.charset());
