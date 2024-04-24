@@ -67,7 +67,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		loaderTemplate = LoaderTemplate.create(loaderCodec);
 
-		withEventListener(EventListener.getNoOpInstance());
+		withEventListener(null);
 	}
 
 
@@ -80,9 +80,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public TemplateParser withEventListener(final EventListener eventListener){
 		templateDecoder.withEventListener(eventListener);
 		templateEncoder.withEventListener(eventListener);
-
-		if(eventListener != null)
-			loaderTemplate.withEventListener(eventListener);
+		loaderTemplate.withEventListener(eventListener);
 
 		return this;
 	}

@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.util.List;
@@ -50,7 +51,7 @@ class TemplateCoderBase{
 
 		this.evaluator = evaluator;
 
-		withEventListener(EventListener.getNoOpInstance());
+		withEventListener(null);
 	}
 
 
@@ -60,7 +61,7 @@ class TemplateCoderBase{
 	 * @param eventListener The event listener.
 	 */
 	void withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 	}
 
 

@@ -80,7 +80,7 @@ public final class LoaderConfiguration{
 
 
 	private LoaderConfiguration(){
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(null);
 	}
 
 

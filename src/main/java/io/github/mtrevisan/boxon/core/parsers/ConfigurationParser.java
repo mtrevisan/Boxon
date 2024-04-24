@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
@@ -74,7 +75,7 @@ public final class ConfigurationParser{
 
 		loaderConfiguration = LoaderConfiguration.create();
 
-		withEventListener(EventListener.getNoOpInstance());
+		withEventListener(null);
 	}
 
 
@@ -85,11 +86,9 @@ public final class ConfigurationParser{
 	 * @return	This instance, used for chaining.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){
-		if(eventListener != null){
-			this.eventListener = eventListener;
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
-			loaderConfiguration.withEventListener(eventListener);
-		}
+		loaderConfiguration.withEventListener(this.eventListener);
 
 		return this;
 	}

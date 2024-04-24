@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -87,21 +88,17 @@ final class LoaderTemplate{
 	private LoaderTemplate(final LoaderCodecInterface loaderCodec){
 		this.loaderCodec = loaderCodec;
 
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(null);
 	}
 
 
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener	The event listener.
-	 * @return	This instance, used for chaining.
+	 * @param eventListener The event listener.
 	 */
-	LoaderTemplate withEventListener(final EventListener eventListener){
-		if(eventListener != null)
-			this.eventListener = eventListener;
-
-		return this;
+	void withEventListener(final EventListener eventListener){
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 	}
 
 	/**
