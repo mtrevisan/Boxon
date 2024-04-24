@@ -49,11 +49,20 @@ final class ParserContext<T>{
 	private Annotation collectionBinding;
 
 
-	ParserContext(final T currentObject){
+	static <T> ParserContext<T> create(final T currentObject){
+		return new ParserContext<T>(currentObject);
+	}
+
+	static <T> ParserContext<T> create(final T currentObject, final Object parentObject){
+		return new ParserContext<T>(currentObject, parentObject);
+	}
+
+
+	private ParserContext(final T currentObject){
 		this(currentObject, null);
 	}
 
-	ParserContext(final T currentObject, final Object parentObject){
+	private ParserContext(final T currentObject, final Object parentObject){
 		this.currentObject = currentObject;
 
 		setRootObject(parentObject);

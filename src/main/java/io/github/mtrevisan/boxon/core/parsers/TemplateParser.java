@@ -24,39 +24,19 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcess;
-import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
-import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
-import java.lang.annotation.Annotation;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
 
 
 /**
@@ -64,12 +44,10 @@ import java.util.function.Function;
  */
 public final class TemplateParser implements TemplateParserInterface{
 
-	private final LoaderCodecInterface loaderCodec;
-	private final Evaluator evaluator;
+	private final TemplateDecoder templateDecoder;
+	private final TemplateEncoder templateEncoder;
 
 	private final LoaderTemplate loaderTemplate;
-
-	private EventListener eventListener;
 
 
 	/**
@@ -84,8 +62,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		this.loaderCodec = loaderCodec;
-		this.evaluator = evaluator;
+		this.templateDecoder = TemplateDecoder.create(loaderCodec, evaluator);
+		this.templateEncoder = TemplateEncoder.create(loaderCodec, evaluator);
 
 		loaderTemplate = LoaderTemplate.create(loaderCodec);
 
@@ -100,11 +78,11 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	This instance, used for chaining.
 	 */
 	public TemplateParser withEventListener(final EventListener eventListener){
-		if(eventListener != null){
-			this.eventListener = eventListener;
+		templateDecoder.withEventListener(eventListener);
+		templateEncoder.withEventListener(eventListener);
 
+		if(eventListener != null)
 			loaderTemplate.withEventListener(eventListener);
-		}
 
 		return this;
 	}
@@ -181,329 +159,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		return loaderTemplate.findNextMessageIndex(reader);
 	}
 
-
-	/**
-	 * Decodes a message using the provided template and reader.
-	 *
-	 * @param <T>	The type of the object to be returned as a result of decoding.
-	 * @param template	The template used for decoding the message.
-	 * @param reader	The reader used for reading the message.
-	 * @param parentObject	The parent object of the message being decoded.
-	 * @return	The decoded object.
-	 * @throws BoxonException	If there is an error decoding a field.
-	 */
-	@Override
-	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
-		final int startPosition = reader.position();
-
-		T currentObject = createEmptyObject(template);
-
-		final ParserContext<T> parserContext = prepareParserContext(parentObject, currentObject);
-
-		//decode message fields:
-		decodeMessageFields(template, reader, parserContext);
-
-		processEvaluatedFields(template, parserContext);
-
-		try{
-			postProcessFields(template, parserContext);
-		}
-		catch(final Exception e){
-			postProcessFields(template, parserContext);
-		}
-
-		readMessageTerminator(template, reader);
-
-		currentObject = parserContext.getCurrentObject();
-		verifyChecksum(template, currentObject, startPosition, reader);
-
-		return currentObject;
-	}
-
-	private static <T> T createEmptyObject(final Template<T> template){
-		return ConstructorHelper.getEmptyCreator(template.getType())
-			.get();
-	}
-
-	private <T> ParserContext<T> prepareParserContext(final Object parentObject, final T currentObject){
-		//FIXME is there a way to reduce the number of ParserContext objects?
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
-		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
-		return parserContext;
-	}
-
-	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)
-			throws BoxonException{
-		final Object rootObject = parserContext.getRootObject();
-
-		final List<TemplateField> fields = template.getTemplateFields();
-		for(int i = 0, length = fields.size(); i < length; i ++){
-			final TemplateField field = fields.get(i);
-
-			//process skip annotations:
-			final SkipParams[] skips = field.getSkips();
-			readSkips(skips, reader, rootObject);
-
-			//check if field has to be processed...
-			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
-			if(shouldProcessField)
-				//... and if so, process it
-				decodeField(template, reader, parserContext, field);
-		}
-	}
-
-	private void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
-		for(int i = 0, length = skips.length; i < length; i ++)
-			readSkip(skips[i], reader, rootObject);
-	}
-
-	private void readSkip(final SkipParams skip, final BitReaderInterface reader, final Object rootObject){
-		final boolean process = shouldProcessField(skip.condition(), rootObject);
-		if(!process)
-			return;
-
-		//choose between skip-by-size and skip-by-terminator
-		if(skip.annotationType() == SkipBits.class){
-			final int size = evaluator.evaluateSize(skip.size(), rootObject);
-			reader.skip(size);
-		}
-		else{
-			final byte terminator = skip.terminator();
-			reader.skipUntilTerminator(terminator);
-			if(skip.consumeTerminator()){
-				final int length = ParserDataType.getSize(terminator);
-				reader.skip(length);
-			}
-		}
-	}
-
-	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
-			final TemplateField field) throws BoxonException{
-		final Annotation binding = field.getBinding();
-		final Annotation collectionBinding = field.getCollectionBinding();
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		CodecInterface codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			//load default codec
-			codec = loaderCodec.getCodec(void.class);
-		if(codec == null)
-			throw CodecException.createNoCodecForBinding(annotationType)
-				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-
-		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
-
-		try{
-			//save current object (some annotations can overwrite it)
-			final T currentObject = parserContext.getCurrentObject();
-
-			//decode value from raw message
-			final Object value = codec.decode(reader, binding, collectionBinding, parserContext.getRootObject());
-
-			//restore original current object
-			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
-
-			//store value in the current object
-			parserContext.setFieldValue(field.getField(), value);
-
-			eventListener.readField(template.toString(), field.getFieldName(), value);
-		}
-		catch(final BoxonException fe){
-			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-			throw fe;
-		}
-		catch(final Exception e){
-			throw BoxonException.create(e)
-				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-		}
-	}
-
-	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
-		final TemplateHeader header = template.getHeader();
-		if(header != null && !header.end().isEmpty()){
-			final Charset charset = CharsetHelper.lookup(header.charset());
-			final byte[] messageTerminator = header.end()
-				.getBytes(charset);
-			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
-			//verifying terminators
-			if(!Arrays.equals(messageTerminator, readMessageTerminator))
-				throw TemplateException.create("Message does not terminate with 0x{}", StringHelper.toHexString(messageTerminator));
-		}
-	}
-
-	private <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition, final BitReaderInterface reader){
-		if(!template.isChecksumPresent())
-			return;
-
-		final TemplateField checksumField = template.getChecksum();
-		final Checksum checksum = (Checksum)checksumField.getBinding();
-		if(!shouldCalculateChecksum(checksum, data))
-			return;
-
-		final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
-		final short givenChecksum = ((Number)checksumField.getFieldValue(data))
-			.shortValue();
-		if(calculatedChecksum != givenChecksum)
-			throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
-				StringHelper.toHexString(calculatedChecksum, Short.BYTES),
-				StringHelper.toHexString(givenChecksum, Short.BYTES));
-	}
-
-	private <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
-		return shouldProcessField(checksum.condition(), data);
-	}
-
-	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
-		final int skipStart = checksum.skipStart();
-		final int skipEnd = checksum.skipEnd();
-		final Class<? extends Checksummer> algorithm = checksum.algorithm();
-
-		final int endPosition = reader.position();
-
-		final Checksummer checksummer = ConstructorHelper.getEmptyCreator(algorithm)
-			.get();
-		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd);
-	}
-
-	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final Object rootObject = parserContext.getRootObject();
-		final List<EvaluatedField<Evaluate>> evaluatedFields = template.getEvaluatedFields();
-		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
-			final EvaluatedField<Evaluate> field = evaluatedFields.get(i);
-
-			final Evaluate binding = field.getBinding();
-			final boolean process = shouldProcessField(binding.condition(), rootObject);
-			if(!process)
-				continue;
-
-			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
-
-			final Object value = evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
-
-			//store value in the current object
-			parserContext.setFieldValue(field.getField(), value);
-
-			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
-		}
-	}
-
-
-	/**
-	 * Encodes a message using the provided template and writer.
-	 *
-	 * @param template	The template used for encoding the message.
-	 * @param writer	The writer used for writing the encoded message.
-	 * @param parentObject	The parent object of the message being encoded.
-	 * @param currentObject	The object to be encoded.
-	 * @throws BoxonException	If there is an error encoding a field.
-	 */
-	@Override
-	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
-			throws BoxonException{
-		final ParserContext<T> parserContext = prepareParserContext(parentObject, currentObject);
-		parserContext.setClassName(template.getType().getName());
-
-		preProcessFields(template, parserContext);
-
-		final Object rootObject = parserContext.getRootObject();
-
-		//encode message fields:
-		encodeMessageFields(template, writer, rootObject, parserContext);
-
-		final TemplateHeader header = template.getHeader();
-		if(header != null)
-			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
-	}
-
-	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
-		processFields(template, parserContext, PostProcess::valueDecode);
-	}
-
-	private void preProcessFields(final Template<?> template, final ParserContext<?> parserContext){
-		processFields(template, parserContext, PostProcess::valueEncode);
-	}
-
-	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
-			final Function<PostProcess, String> valueExtractor){
-		final String templateName = template.getType()
-			.getName();
-		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
-		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
-			final EvaluatedField<PostProcess> field = postProcessedFields.get(i);
-
-			processField(field, parserContext, templateName, valueExtractor);
-		}
-	}
-
-	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
-			final Function<PostProcess, String> valueExtractor){
-		final PostProcess binding = field.getBinding();
-		final String condition = binding.condition();
-		final Object rootObject = parserContext.getRootObject();
-		final boolean process = shouldProcessField(condition, rootObject);
-		if(!process)
-			return;
-
-		final String fieldName = field.getFieldName();
-		eventListener.evaluatingField(templateName, fieldName);
-
-		final String expression = valueExtractor.apply(binding);
-		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
-
-		//store value in the current object
-		parserContext.setFieldValue(field.getField(), value);
-
-		eventListener.evaluatedField(templateName, fieldName, value);
-	}
-
-	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
-		final ParserContext<T> parserContext) throws BoxonException{
-		final List<TemplateField> fields = template.getTemplateFields();
-		for(int i = 0, length = fields.size(); i < length; i ++){
-			final TemplateField field = fields.get(i);
-
-			//process skip annotations:
-			final SkipParams[] skips = field.getSkips();
-			writeSkips(skips, writer, rootObject);
-
-			//check if field has to be processed...
-			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
-			if(shouldProcessField){
-				//... and if so, process it
-				parserContext.setField(field);
-				parserContext.setFieldName(field.getFieldName());
-				parserContext.setBinding(field.getBinding());
-				parserContext.setCollectionBinding(field.getCollectionBinding());
-
-				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
-			}
-		}
-	}
-
-	private boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
-	}
-
-	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){
-		for(int i = 0, length = skips.length; i < length; i ++)
-			writeSkip(skips[i], writer, rootObject);
-	}
-
-	private void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
-		final boolean process = shouldProcessField(skip.condition(), rootObject);
-		if(!process)
-			return;
-
-		//choose between skip-by-size and skip-by-terminator
-		if(skip.annotationType() == SkipBits.class){
-			final int size = evaluator.evaluateSize(skip.size(), rootObject);
-			writer.skipBits(size);
-		}
-		else if(skip.consumeTerminator())
-			//skip until terminator
-			writer.putByte(skip.terminator());
-	}
-
-
 	/**
 	 * Extract a template for the given class.
 	 *
@@ -523,6 +178,38 @@ public final class TemplateParser implements TemplateParserInterface{
 	 */
 	public Collection<Template<?>> getTemplates(){
 		return loaderTemplate.getTemplates();
+	}
+
+
+	/**
+	 * Decodes a message using the provided template and reader.
+	 *
+	 * @param <T>	The type of the object to be returned as a result of decoding.
+	 * @param template	The template used for decoding the message.
+	 * @param reader	The reader used for reading the message.
+	 * @param parentObject	The parent object of the message being decoded.
+	 * @return	The decoded object.
+	 * @throws BoxonException	If there is an error decoding a field.
+	 */
+	@Override
+	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
+		return templateDecoder.decode(template, reader, parentObject);
+	}
+
+
+	/**
+	 * Encodes a message using the provided template and writer.
+	 *
+	 * @param template	The template used for encoding the message.
+	 * @param writer	The writer used for writing the encoded message.
+	 * @param parentObject	The parent object of the message being encoded.
+	 * @param currentObject	The object to be encoded.
+	 * @throws BoxonException	If there is an error encoding a field.
+	 */
+	@Override
+	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
+			throws BoxonException{
+		templateEncoder.encode(template, writer, parentObject, currentObject);
 	}
 
 }

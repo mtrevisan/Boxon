@@ -1,0 +1,194 @@
+/*
+ * Copyright (c) 2020-2024 Mauro Trevisan
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+package io.github.mtrevisan.boxon.core.parsers;
+
+import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.logs.EventListener;
+
+import java.util.List;
+import java.util.function.Function;
+
+
+final class TemplateEncoder{
+
+	private final LoaderCodecInterface loaderCodec;
+	private final Evaluator evaluator;
+
+	private EventListener eventListener;
+
+
+	/**
+	 * Create a template parser.
+	 *
+	 * @param loaderCodec	A codec loader.
+	 * @param evaluator	An evaluator.
+	 * @return	A template parser.
+	 */
+	static TemplateEncoder create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+		return new TemplateEncoder(loaderCodec, evaluator);
+	}
+
+	private TemplateEncoder(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+		this.loaderCodec = loaderCodec;
+		this.evaluator = evaluator;
+
+		withEventListener(EventListener.getNoOpInstance());
+	}
+
+
+	/**
+	 * Assign an event listener.
+	 *
+	 * @param eventListener The event listener.
+	 */
+	void withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+	}
+
+
+	/**
+	 * Encodes a message using the provided template and writer.
+	 *
+	 * @param template	The template used for encoding the message.
+	 * @param writer	The writer used for writing the encoded message.
+	 * @param parentObject	The parent object of the message being encoded.
+	 * @param currentObject	The object to be encoded.
+	 * @throws BoxonException	If there is an error encoding a field.
+	 */
+	<T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
+			throws BoxonException{
+		//FIXME is there a way to reduce the number of ParserContext objects?
+		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
+		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+		parserContext.setClassName(template.getType().getName());
+
+		preProcessFields(template, parserContext);
+
+		final Object rootObject = parserContext.getRootObject();
+
+		//encode message fields:
+		encodeMessageFields(template, writer, rootObject, parserContext);
+
+		final TemplateHeader header = template.getHeader();
+		if(header != null)
+			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
+	}
+
+	private void preProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		processFields(template, parserContext, PostProcess::valueEncode);
+	}
+
+	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
+			final Function<PostProcess, String> valueExtractor){
+		final String templateName = template.getType()
+			.getName();
+		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
+		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
+			final EvaluatedField<PostProcess> field = postProcessedFields.get(i);
+
+			processField(field, parserContext, templateName, valueExtractor);
+		}
+	}
+
+	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
+			final Function<PostProcess, String> valueExtractor){
+		final PostProcess binding = field.getBinding();
+		final String condition = binding.condition();
+		final Object rootObject = parserContext.getRootObject();
+		final boolean process = shouldProcessField(condition, rootObject);
+		if(!process)
+			return;
+
+		final String fieldName = field.getFieldName();
+		eventListener.evaluatingField(templateName, fieldName);
+
+		final String expression = valueExtractor.apply(binding);
+		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
+
+		//store value in the current object
+		parserContext.setFieldValue(field.getField(), value);
+
+		eventListener.evaluatedField(templateName, fieldName, value);
+	}
+
+	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
+			final ParserContext<T> parserContext) throws BoxonException{
+		final List<TemplateField> fields = template.getTemplateFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final TemplateField field = fields.get(i);
+
+			//process skip annotations:
+			final SkipParams[] skips = field.getSkips();
+			writeSkips(skips, writer, rootObject);
+
+			//check if field has to be processed...
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
+			if(shouldProcessField){
+				//... and if so, process it
+				parserContext.setField(field);
+				parserContext.setFieldName(field.getFieldName());
+				parserContext.setBinding(field.getBinding());
+				parserContext.setCollectionBinding(field.getCollectionBinding());
+
+				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			}
+		}
+	}
+
+	private boolean shouldProcessField(final String condition, final Object rootObject){
+		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
+	}
+
+	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){
+		for(int i = 0, length = skips.length; i < length; i ++)
+			writeSkip(skips[i], writer, rootObject);
+	}
+
+	private void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
+		final boolean process = shouldProcessField(skip.condition(), rootObject);
+		if(!process)
+			return;
+
+		//choose between skip-by-size and skip-by-terminator
+		if(skip.annotationType() == SkipBits.class){
+			final int size = evaluator.evaluateSize(skip.size(), rootObject);
+			writer.skipBits(size);
+		}
+		else if(skip.consumeTerminator())
+			//skip until terminator
+			writer.putByte(skip.terminator());
+	}
+
+}
