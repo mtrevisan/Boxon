@@ -194,7 +194,7 @@ public final class FieldDescriber{
 	}
 
 	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
-		final Collection<Map<String, Object>> fieldsDescription){
+			final Collection<Map<String, Object>> fieldsDescription){
 		final Annotation binding = fieldExtractor.getBinding(field);
 		final Annotation collectionBinding = fieldExtractor.getCollectionBinding(field);
 		final Class<? extends Annotation> annotationType = binding.annotationType();
@@ -215,7 +215,7 @@ public final class FieldDescriber{
 	}
 
 	private static <F> void extractSkipParameters(final F field, final FieldExtractor<F> fieldExtractor,
-		final Collection<Map<String, Object>> fieldsDescription){
+			final Collection<Map<String, Object>> fieldsDescription){
 		final SkipParams[] skips = fieldExtractor.getSkips(field);
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final SkipParams skip = skips[i];

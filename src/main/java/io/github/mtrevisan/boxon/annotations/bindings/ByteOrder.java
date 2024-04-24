@@ -73,7 +73,7 @@ public enum ByteOrder{
 	public abstract short correctEndianness(short value);
 
 	/**
-	 * Corrects the endianness of a int value according to the specified byte order.
+	 * Corrects the endianness of an int value according to the specified byte order.
 	 *
 	 * @param value	The int value to correct the endianness of.
 	 * @return	The corrected int value.

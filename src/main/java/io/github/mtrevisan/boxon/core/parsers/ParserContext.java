@@ -50,11 +50,11 @@ final class ParserContext<T>{
 
 
 	static <T> ParserContext<T> create(final T currentObject){
-		return new ParserContext<T>(currentObject);
+		return new ParserContext<>(currentObject);
 	}
 
 	static <T> ParserContext<T> create(final T currentObject, final Object parentObject){
-		return new ParserContext<T>(currentObject, parentObject);
+		return new ParserContext<>(currentObject, parentObject);
 	}
 
 

@@ -75,10 +75,7 @@ final class ParserWriterHelper{
 		final Annotation collectionBinding = parserContext.getCollectionBinding();
 
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		CodecInterface codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			//load default codec
-			codec = loaderCodec.getCodec(void.class);
+		final CodecInterface codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(className, fieldName);

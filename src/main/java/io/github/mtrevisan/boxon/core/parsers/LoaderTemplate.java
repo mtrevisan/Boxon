@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -98,7 +97,7 @@ final class LoaderTemplate{
 	 * @param eventListener The event listener.
 	 */
 	void withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
 	/**

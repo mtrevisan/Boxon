@@ -38,7 +38,6 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
@@ -91,7 +90,7 @@ public final class LoaderConfiguration{
 	 * @return	This instance, used for chaining.
 	 */
 	LoaderConfiguration withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;
 	}
@@ -239,7 +238,7 @@ public final class LoaderConfiguration{
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws DataException   If the value cannot be set to the field.
+	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws BoxonException{

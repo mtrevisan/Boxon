@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.util.List;
@@ -61,7 +60,7 @@ class TemplateCoderBase{
 	 * @param eventListener The event listener.
 	 */
 	void withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
 
@@ -77,7 +76,7 @@ class TemplateCoderBase{
 	}
 
 	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
-		final Function<PostProcess, String> valueExtractor){
+			final Function<PostProcess, String> valueExtractor){
 		final PostProcess binding = field.getBinding();
 		final String condition = binding.condition();
 		final Object rootObject = parserContext.getRootObject();

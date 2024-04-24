@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
@@ -84,7 +83,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @return	The current instance.
 	 */
 	public LoaderCodec withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;
 	}
