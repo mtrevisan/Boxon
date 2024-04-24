@@ -31,8 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -84,18 +82,15 @@ public enum TemplateAnnotationValidator{
 		@Override
 		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
+
 			final Class<?> type = binding.type();
 			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Wrong annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
 
-			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			final ObjectChoices selectFrom = binding.selectFrom();
-			final Class<?> selectDefault = binding.selectDefault();
-			final ObjectChoicesList selectFromList = binding.selectFromList();
-			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, converter, type, selectFrom, selectDefault);
-			TemplateAnnotationValidatorHelper.validateObjectChoiceList(fieldType, converter, type, selectFromList, selectDefault);
+			TemplateAnnotationValidatorHelper.validateObjectChoice(fieldType, binding);
+			TemplateAnnotationValidatorHelper.validateObjectChoiceList(fieldType, binding);
 		}
 	},
 
@@ -123,6 +118,7 @@ public enum TemplateAnnotationValidator{
 		@Override
 		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
+
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -134,6 +130,7 @@ public enum TemplateAnnotationValidator{
 		@Override
 		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
+
 			TemplateAnnotationValidatorHelper.validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -145,7 +142,9 @@ public enum TemplateAnnotationValidator{
 	CHECKSUM(Checksum.class){
 		@Override
 		public void validate(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-			final Class<? extends Checksummer> algorithmClass = ((Checksum)annotation).algorithm();
+			final Checksum binding = (Checksum)annotation;
+
+			final Class<? extends Checksummer> algorithmClass = binding.algorithm();
 			if(algorithmClass.isInterface() || Modifier.isAbstract(algorithmClass.getModifiers())
 					|| algorithmClass.isAssignableFrom(Checksummer.class))
 				throw AnnotationException.create("Unrecognized algorithm, must be a class implementing `"

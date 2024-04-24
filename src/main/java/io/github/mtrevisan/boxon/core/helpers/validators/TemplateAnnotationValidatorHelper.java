@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.validators;
 
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
@@ -123,14 +124,18 @@ final class TemplateAnnotationValidatorHelper{
 			throw AnnotationException.createBadAnnotation(fieldType, bindingType);
 	}
 
-	static void validateObjectChoice(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> type,
-			final ObjectChoices selectFrom, final Class<?> selectDefault) throws AnnotationException{
+	static void validateObjectChoice(final Class<?> fieldType, final BindObject binding) throws AnnotationException{
+		final ObjectChoices selectFrom = binding.selectFrom();
 		final byte prefixLength = selectFrom.prefixLength();
 		validatePrefixLength(prefixLength);
 
 
+		final Class<?> type = binding.type();
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		if(alternatives.length > 0){
+			final Class<? extends Converter<?, ?>> converter = binding.converter();
+			final Class<?> selectDefault = binding.selectDefault();
+
 			validateObjectAlternatives(fieldType, converter, type, alternatives, prefixLength);
 
 
@@ -166,11 +171,14 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 
-	static void validateObjectChoiceList(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> type,
-			final ObjectChoicesList selectFrom, final Class<?> selectDefault) throws AnnotationException{
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+	static void validateObjectChoiceList(final Class<?> fieldType, final BindObject binding) throws AnnotationException{
+		final ObjectChoicesList selectFromList = binding.selectFromList();
+		final ObjectChoices.ObjectChoice[] alternatives = selectFromList.alternatives();
 		final int length = alternatives.length;
 		if(length > 0){
+			final Class<? extends Converter<?, ?>> converter = binding.converter();
+			final Class<?> type = binding.type();
+
 			final int minHeaderLength = calculateMinHeaderLength(alternatives);
 			final boolean hasPrefix = (minHeaderLength > 0);
 			for(int i = 0; i < length; i ++){
@@ -184,6 +192,7 @@ final class TemplateAnnotationValidatorHelper{
 
 			validateConverterToList(fieldType, type, converter, type);
 
+			final Class<?> selectDefault = binding.selectDefault();
 			validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
 		}
 	}
