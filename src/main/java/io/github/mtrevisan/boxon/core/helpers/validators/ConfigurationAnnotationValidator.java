@@ -248,7 +248,7 @@ public enum ConfigurationAnnotationValidator{
 	/**
 	 * Validate field and annotation.
 	 *
-	 * @param field	The field associated to the annotation.
+	 * @param field	The field associated with the annotation.
 	 * @param annotation	The annotation.
 	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).

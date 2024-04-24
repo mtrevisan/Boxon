@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import java.lang.reflect.Field;
 
 
-/** Data associated to an annotated field. */
+/** Data associated with an annotated field. */
 final class ConfigFieldData{
 
 	private final Field field;

@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 
 
-/** Data associated to an annotated field. */
+/** Data associated with an annotated field. */
 public final class ConfigurationField implements FieldRetriever{
 
 	/** An empty {@code ConfigurationSkip} array. */

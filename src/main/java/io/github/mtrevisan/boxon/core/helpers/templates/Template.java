@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,8 @@ public final class Template<T>{
 	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
 	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+
+	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
 	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>(4);
 	static{
@@ -363,12 +366,24 @@ public final class Template<T>{
 	}
 
 	private static boolean validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		if(!annotation.annotationType().getPackageName().startsWith(LIBRARY_ROOT_PACKAGE_NAME))
+			return true;
+
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
 		if(validator != null){
 			validator.validate(fieldType, annotation);
 			return true;
 		}
 		return false;
+	}
+
+	private static String extractLibraryRootPackage(){
+		final String packageName = Template.class.getPackageName();
+		final String[] packageParts = packageName.split("\\.");
+		final StringJoiner sj = new StringJoiner(".");
+		for(int i = 0, length = Math.min(4, packageParts.length); i < length; i ++)
+			sj.add(packageParts[i]);
+		return sj.toString();
 	}
 
 	/**

@@ -94,7 +94,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 */
 	public void loadDefaultCodecs(){
 		try{
-			loadCodecsFrom(ReflectiveClassLoader.extractCallerClasses());
+			loadCodecsFrom(CodecDefault.class);
 		}
 		catch(final CodecException ignored){}
 	}
