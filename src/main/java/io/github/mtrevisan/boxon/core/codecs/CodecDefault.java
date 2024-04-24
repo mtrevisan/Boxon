@@ -50,7 +50,12 @@ final class CodecDefault implements CodecInterface{
 	/**
 	 * Identifies the default codec.
 	 */
-	static class DefaultCodecIdentifier{}
+	static class DefaultCodecIdentifier implements Annotation{
+		@Override
+		public Class<? extends Annotation> annotationType(){
+			return DefaultCodecIdentifier.class;
+		}
+	}
 
 
 	@Injected
@@ -58,7 +63,7 @@ final class CodecDefault implements CodecInterface{
 
 
 	@Override
-	public Class<?> identifier(){
+	public Class<? extends Annotation> identifier(){
 		return DefaultCodecIdentifier.class;
 	}
 

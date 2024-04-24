@@ -35,14 +35,14 @@ import java.lang.annotation.Annotation;
 public interface CodecInterface{
 
 	/**
-	 * Retrieves the type of the codec (usually the class of the managed annotation).
+	 * Retrieves the type of the codec (MUST BE the class of the managed annotation!).
 	 * <p>
 	 * It has to be unique among all the codecs.
 	 * </p>
 	 *
-	 * @return	The class type.
+	 * @return	The annotation type.
 	 */
-	Class<?> identifier();
+	Class<? extends Annotation> identifier();
 
 	/**
 	 * Decode the next field of a message.

@@ -40,7 +40,7 @@ import java.lang.annotation.Annotation;
 final class CodecConfigurationField implements CodecInterface{
 
 	@Override
-	public Class<?> identifier(){
+	public Class<? extends Annotation> identifier(){
 		return ConfigurationField.class;
 	}
 

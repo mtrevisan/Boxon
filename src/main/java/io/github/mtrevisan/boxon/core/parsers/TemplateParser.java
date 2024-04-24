@@ -182,10 +182,10 @@ public final class TemplateParser implements TemplateParserInterface{
 	/**
 	 * Decodes a message using the provided template and reader.
 	 *
-	 * @param <T>	The type of the object to be returned as a result of decoding.
 	 * @param template	The template used for decoding the message.
 	 * @param reader	The reader used for reading the message.
 	 * @param parentObject	The parent object of the message being decoded.
+	 * @param <T>	The type of the object to be returned as a result of decoding.
 	 * @return	The decoded object.
 	 * @throws BoxonException	If there is an error decoding a field.
 	 */

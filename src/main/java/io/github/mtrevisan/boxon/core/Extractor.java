@@ -73,11 +73,11 @@ public final class Extractor{
 	/**
 	 * Extract the value corresponding to the given path, if the path is not found return the given default value.
 	 *
-	 * @param <T>	The class of the resulting value.
 	 * @param path	The path used to extract the corresponding value (following
 	 * 	<a href="https://tools.ietf.org/html/rfc6901">RFC6901 - JavaScript Object Notation (JSON) Pointer</a> notation).
 	 * @param data	The data from which to extract values.
 	 * @param defaultValue	Default value if the path is not found.
+	 * @param <T>	The class of the resulting value.
 	 * @return	The value.
 	 * @throws JSONPathException	If the path has an error.
 	 */

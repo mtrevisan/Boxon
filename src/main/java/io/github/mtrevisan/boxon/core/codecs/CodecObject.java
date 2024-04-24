@@ -57,7 +57,7 @@ final class CodecObject implements CodecInterface{
 
 
 	@Override
-	public Class<?> identifier(){
+	public Class<? extends Annotation> identifier(){
 		return BindObject.class;
 	}
 
