@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.function.BiFunction;
 
 
 public abstract class CommonBehavior{
@@ -82,19 +81,9 @@ public abstract class CommonBehavior{
 		}
 	}
 
-	public final Object convertValue(final Object value, final Evaluator evaluator, final Object rootObject,
-			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
-		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(evaluator, rootObject);
-		return converter.apply(chosenConverter, value);
-	}
-
-	public final Object convertValue(Object value, final Evaluator evaluator, final Object rootObject,
-			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter, final Annotation collectionBinding){
-		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(evaluator, rootObject);
-
-		value = convertValueType(collectionBinding, chosenConverter, validator, value);
-
-		return converter.apply(chosenConverter, value);
+	public final Object convertValueType(final Object value, final Class<? extends Converter<?, ?>> chosenConverter,
+			final Annotation collectionBinding){
+		return convertValueType(collectionBinding, chosenConverter, validator, value);
 	}
 
 	public Class<? extends Converter<?, ?>> getChosenConverter(final Evaluator evaluator, final Object rootObject){

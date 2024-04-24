@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.BehaviorBuilder;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
@@ -68,11 +69,14 @@ final class CodecDefault implements CodecInterface{
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
 		final Object convertedValue;
-		if(behavior instanceof IntegerBehavior)
-			convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode, collectionBinding);
+		if(behavior instanceof IntegerBehavior){
+			final Object convertedValueType = behavior.convertValueType(instance, chosenConverter, collectionBinding);
+			convertedValue = CodecHelper.converterDecode(chosenConverter, convertedValueType);
+		}
 		else
-			convertedValue = behavior.convertValue(instance, evaluator, rootObject, CodecHelper::converterDecode);
+			convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(convertedValue, validator);
@@ -89,7 +93,8 @@ final class CodecDefault implements CodecInterface{
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);
 
-		final Object convertedValue = behavior.convertValue(value, evaluator, rootObject, CodecHelper::converterEncode);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
+		final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
 		if(collectionBinding == null)
 			behavior.writeValue(writer, convertedValue);
