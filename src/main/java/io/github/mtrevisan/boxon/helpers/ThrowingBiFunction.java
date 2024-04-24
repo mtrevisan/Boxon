@@ -22,41 +22,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
-
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
-
-import java.lang.reflect.Type;
-import java.util.Map;
+package io.github.mtrevisan.boxon.helpers;
 
 
-public interface LoaderCodecInterface{
-
-	/**
-	 * Whether there is a codec for the given class type.
-	 *
-	 * @param type	The class type.
-	 * @return	Whether there is a codec for the given class type.
-	 */
-	boolean hasCodec(final Type type);
+/**
+ * Represents a function that accepts two arguments, produces a result, and throws an exception.
+ *
+ * @param <IN1>	The type of the first input to the function.
+ * @param <IN2>	The type of the second input to the function.
+ * @param <OUT>	The type of the output to the function.
+ * @param <E>	The type of the exception thrown by the function.
+ */
+@FunctionalInterface
+public interface ThrowingBiFunction<IN1, IN2, OUT, E extends Exception>{
 
 	/**
-	 * Get the codec for the given class type.
+	 * Applies this function to the given argument.
 	 *
-	 * @param type	The class type.
-	 * @return	The codec for the given class type.
+	 * @param in1	The function fist argument.
+	 * @param in2	The function second argument.
+	 * @return	The function result.
+	 * @throws E	The exception thrown.
 	 */
-	CodecInterface getCodec(final Type type);
-
-	/**
-	 * Returns a map of codec validators.
-	 * <p>
-	 * The key of the map is the class type and the value is the corresponding {@link AnnotationValidatorInterface} instance.
-	 * </p>
-	 *
-	 * @return	A map of codec validators.
-	 */
-	Map<Type, AnnotationValidatorInterface> getCodecValidators();
+	OUT apply(IN1 in1, IN2 in2) throws E;
 
 }
