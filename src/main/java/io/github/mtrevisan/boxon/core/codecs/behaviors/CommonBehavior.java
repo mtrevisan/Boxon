@@ -100,32 +100,34 @@ public abstract class CommonBehavior{
 	}
 
 	private static Object adaptValue(final Class<? extends Validator<?>> validator, final Object value,
-		final Class<? extends Converter<?, ?>> chosenConverter, final Annotation collectionBinding){
+			final Class<? extends Converter<?, ?>> chosenConverter, final Annotation collectionBinding){
 		return convertValueType(collectionBinding, chosenConverter, validator, value);
 	}
 
 	private static Object convertValueType(final Annotation collectionBinding, final Class<? extends Converter<?, ?>> converterType,
-		final Class<? extends Validator<?>> validator, Object instance){
+			final Class<? extends Validator<?>> validator, Object instance){
 		//convert value type into converter/validator input type
 		Class<?> inputType = ParserDataType.resolveInputType(converterType, validator);
 		if(collectionBinding == null)
 			instance = ParserDataType.castValue((BigInteger)instance, inputType);
 		else if(collectionBinding instanceof BindAsArray && inputType != null){
 			inputType = inputType.getComponentType();
-			if(inputType != instance.getClass().getComponentType()){
-				final int length = Array.getLength(instance);
-				final Object array = CodecHelper.createArray(inputType, length);
-
-				for(int i = 0; i < length; i++){
-					Object element = Array.get(instance, i);
-					element = ParserDataType.castValue((BigInteger)element, inputType);
-					Array.set(array, i, element);
-				}
-
-				instance = array;
-			}
+			if(inputType != instance.getClass().getComponentType())
+				instance = convertArrayElements(instance, inputType);
 		}
 		return instance;
+	}
+
+	private static Object convertArrayElements(final Object data, final Class<?> elementType){
+		final int length = Array.getLength(data);
+		final Object array = CodecHelper.createArray(elementType, length);
+
+		for(int i = 0; i < length; i++){
+			Object element = Array.get(data, i);
+			element = ParserDataType.castValue((BigInteger)element, elementType);
+			Array.set(array, i, element);
+		}
+		return array;
 	}
 
 
