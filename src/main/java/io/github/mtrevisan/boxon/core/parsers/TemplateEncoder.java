@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,26 +28,17 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.util.List;
-import java.util.function.Function;
 
 
-final class TemplateEncoder{
-
-	private final LoaderCodecInterface loaderCodec;
-	private final Evaluator evaluator;
-
-	private EventListener eventListener;
-
+final class TemplateEncoder extends TemplateCoderBase{
 
 	/**
 	 * Create a template parser.
@@ -61,20 +52,7 @@ final class TemplateEncoder{
 	}
 
 	private TemplateEncoder(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		this.loaderCodec = loaderCodec;
-		this.evaluator = evaluator;
-
-		withEventListener(EventListener.getNoOpInstance());
-	}
-
-
-	/**
-	 * Assign an event listener.
-	 *
-	 * @param eventListener The event listener.
-	 */
-	void withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+		super(loaderCodec, evaluator);
 	}
 
 
@@ -110,39 +88,6 @@ final class TemplateEncoder{
 		processFields(template, parserContext, PostProcess::valueEncode);
 	}
 
-	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
-			final Function<PostProcess, String> valueExtractor){
-		final String templateName = template.getType()
-			.getName();
-		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
-		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
-			final EvaluatedField<PostProcess> field = postProcessedFields.get(i);
-
-			processField(field, parserContext, templateName, valueExtractor);
-		}
-	}
-
-	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
-			final Function<PostProcess, String> valueExtractor){
-		final PostProcess binding = field.getBinding();
-		final String condition = binding.condition();
-		final Object rootObject = parserContext.getRootObject();
-		final boolean process = shouldProcessField(condition, rootObject);
-		if(!process)
-			return;
-
-		final String fieldName = field.getFieldName();
-		eventListener.evaluatingField(templateName, fieldName);
-
-		final String expression = valueExtractor.apply(binding);
-		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
-
-		//store value in the current object
-		parserContext.setFieldValue(field.getField(), value);
-
-		eventListener.evaluatedField(templateName, fieldName, value);
-	}
-
 	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
 			final ParserContext<T> parserContext) throws BoxonException{
 		final List<TemplateField> fields = template.getTemplateFields();
@@ -165,10 +110,6 @@ final class TemplateEncoder{
 				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}
 		}
-	}
-
-	private boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
 	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -46,22 +46,14 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
-import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 
-final class TemplateDecoder{
-
-	private final LoaderCodecInterface loaderCodec;
-	private final Evaluator evaluator;
-
-	private EventListener eventListener;
-
+final class TemplateDecoder extends TemplateCoderBase{
 
 	/**
 	 * Create a template parser.
@@ -75,20 +67,7 @@ final class TemplateDecoder{
 	}
 
 	private TemplateDecoder(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		this.loaderCodec = loaderCodec;
-		this.evaluator = evaluator;
-
-		withEventListener(EventListener.getNoOpInstance());
-	}
-
-
-	/**
-	 * Assign an event listener.
-	 *
-	 * @param eventListener The event listener.
-	 */
-	void withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+		super(loaderCodec, evaluator);
 	}
 
 
@@ -293,43 +272,6 @@ final class TemplateDecoder{
 
 	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
 		processFields(template, parserContext, PostProcess::valueDecode);
-	}
-
-	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
-			final Function<PostProcess, String> valueExtractor){
-		final String templateName = template.getType()
-			.getName();
-		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
-		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
-			final EvaluatedField<PostProcess> field = postProcessedFields.get(i);
-
-			processField(field, parserContext, templateName, valueExtractor);
-		}
-	}
-
-	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
-			final Function<PostProcess, String> valueExtractor){
-		final PostProcess binding = field.getBinding();
-		final String condition = binding.condition();
-		final Object rootObject = parserContext.getRootObject();
-		final boolean process = shouldProcessField(condition, rootObject);
-		if(!process)
-			return;
-
-		final String fieldName = field.getFieldName();
-		eventListener.evaluatingField(templateName, fieldName);
-
-		final String expression = valueExtractor.apply(binding);
-		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
-
-		//store value in the current object
-		parserContext.setFieldValue(field.getField(), value);
-
-		eventListener.evaluatedField(templateName, fieldName, value);
-	}
-
-	private boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
 }
