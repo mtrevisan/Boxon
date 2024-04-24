@@ -35,11 +35,9 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -129,27 +127,26 @@ public final class Template<T>{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	public static <T> Template<T> create(final Class<T> type) throws AnnotationException{
-		return new Template<>(type, null, List::of);
+		return new Template<>(type, List::of);
 	}
 
 	/**
 	 * Create an instance of a template.
 	 *
 	 * @param type	The template class.
-	 * @param codecValidators	Map of all the custom validators associated with custom codecs.
 	 * @param filterAnnotationsWithCodec	A function that filters the annotation that have a corresponding codec.
 	 * @param <T>	The class type of the template.
 	 * @return	An instance of a template.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	public static <T> Template<T> create(final Class<T> type, final Map<Type, AnnotationValidatorInterface> codecValidators,
-			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
-		return new Template<>(type, codecValidators, filterAnnotationsWithCodec);
+	public static <T> Template<T> create(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
+		return new Template<>(type, filterAnnotationsWithCodec);
 	}
 
 
-	private Template(final Class<T> type, final Map<Type, AnnotationValidatorInterface> codecValidators,
-			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+	private Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(TemplateHeader.class);
@@ -159,7 +156,7 @@ public final class Template<T>{
 			headerValidator.validate(null, header);
 		}
 
-		final Triplet fields = loadAnnotatedFields(type, codecValidators, filterAnnotationsWithCodec);
+		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
 		templateFields = Collections.unmodifiableList(fields.templateFields);
 		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
 		postProcessedFields = Collections.unmodifiableList(fields.postProcessedFields);
@@ -169,8 +166,8 @@ public final class Template<T>{
 	}
 
 
-	private Triplet loadAnnotatedFields(final Class<T> type, final Map<Type, AnnotationValidatorInterface> codecValidators,
-			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+	private Triplet loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int length = fields.size();
 		final List<TemplateField> templateFields = new ArrayList<>(length);
@@ -192,7 +189,7 @@ public final class Template<T>{
 			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
 
 			try{
-				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), codecValidators, boundedAnnotations);
+				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
 				if(validAnnotation != null || ! skips.isEmpty())
@@ -338,21 +335,13 @@ public final class Template<T>{
 	 * @return	The first valid binding annotation, or {@code null} if none are found.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType,
-			final Map<Type, AnnotationValidatorInterface> codecValidators, final List<? extends Annotation> annotations)
+	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType, final List<? extends Annotation> annotations)
 			throws AnnotationException{
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
-			boolean validAnnotation = true;
-			if(annotation.annotationType().getPackageName().startsWith(LIBRARY_ROOT_PACKAGE_NAME))
-				validAnnotation = validateAnnotation(fieldType, annotation);
-			else
-				//validate with provided validator, if any
-				validateAnnotation(fieldType, annotation, codecValidators);
-
-			if(validAnnotation)
+			if(validateAnnotation(fieldType, annotation))
 				foundAnnotation = annotation;
 		}
 		return foundAnnotation;
@@ -377,21 +366,15 @@ public final class Template<T>{
 	}
 
 	private static boolean validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		if(!annotation.annotationType().getPackageName().startsWith(LIBRARY_ROOT_PACKAGE_NAME))
+			return true;
+
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
 		if(validator != null){
 			validator.validate(fieldType, annotation);
 			return true;
 		}
 		return false;
-	}
-
-	private static void validateAnnotation(final Class<?> fieldType, final Annotation annotation,
-			final Map<Type, AnnotationValidatorInterface> codecValidators) throws AnnotationException{
-		if(codecValidators != null){
-			final AnnotationValidatorInterface codecValidator = codecValidators.get(annotation.annotationType());
-			if(codecValidator != null)
-				codecValidator.validate(fieldType, annotation);
-		}
 	}
 
 	private static String extractLibraryRootPackage(){

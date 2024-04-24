@@ -104,40 +104,4 @@ public final class Memoizer{
 		};
 	}
 
-	/**
-	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
-	 *
-	 * @param function	The function to be memoized.
-	 * @param <IN1>	The type of the first input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
-	 * @param <IN2>	The type of the second input to the function.
-	 * @param <OUT>	The type of the output from the function.
-	 * @param <E>	Type of exception thrown by the function.
-	 * @return	The new memoized function.
-	 *
-	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
-	 */
-	public static <IN1, IN2, OUT, E extends Exception> ThrowingBiFunction<IN1, IN2, OUT, E> biThrowingMemoize(
-			final ThrowingBiFunction<? super IN1, ? super IN2, ? extends OUT, ? extends E> function){
-		return new ThrowingBiFunction<>(){
-			private final Map<IN1, OUT> cache = new ConcurrentHashMap<>(0);
-			private final Lock lock = new ReentrantLock();
-
-			@Override
-			public OUT apply(final IN1 input1, final IN2 input2) throws E{
-				lock.lock();
-				try{
-					OUT value = cache.get(input1);
-					if(value == null){
-						value = function.apply(input1, input2);
-						cache.put(input1, value);
-					}
-					return value;
-				}
-				finally{
-					lock.unlock();
-				}
-			}
-		};
-	}
-
 }

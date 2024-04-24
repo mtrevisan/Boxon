@@ -24,11 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 
 import java.lang.reflect.Type;
-import java.util.Map;
 
 
 public interface LoaderCodecInterface{
@@ -48,15 +46,5 @@ public interface LoaderCodecInterface{
 	 * @return	The codec for the given class type.
 	 */
 	CodecInterface getCodec(final Type type);
-
-	/**
-	 * Returns a map of codec validators.
-	 * <p>
-	 * The key of the map is the class type and the value is the corresponding {@link AnnotationValidatorInterface} instance.
-	 * </p>
-	 *
-	 * @return	A map of codec validators.
-	 */
-	Map<Type, AnnotationValidatorInterface> getCodecValidators();
 
 }

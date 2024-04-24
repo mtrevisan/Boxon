@@ -37,13 +37,11 @@ import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.helpers.ThrowingBiFunction;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
+import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,8 +62,8 @@ final class LoaderTemplate{
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 
-	private final ThrowingBiFunction<Class<?>, Map<Type, AnnotationValidatorInterface>, Template<?>, AnnotationException> templateStore
-		= Memoizer.biThrowingMemoize((type, codecValidators) -> Template.create(type, codecValidators, this::filterAnnotationsWithCodec));
+	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
+		= Memoizer.throwingMemoize(type -> Template.create(type, this::filterAnnotationsWithCodec));
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
@@ -195,8 +193,7 @@ final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		final Map<Type, AnnotationValidatorInterface> codecValidators = loaderCodec.getCodecValidators();
-		return (Template<T>)templateStore.apply(type, codecValidators);
+		return (Template<T>)templateStore.apply(type);
 	}
 
 	private void addTemplatesToMap(final List<Template<?>> templates) throws TemplateException{

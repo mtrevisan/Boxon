@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -177,26 +176,13 @@ public final class Core{
 	}
 
 	/**
-	 * Adds a codec.
+	 * Loads the given codec that extends {@link CodecInterface}.
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
 	void addCodec(final CodecInterface codec) throws CodecException{
 		loaderCodec.addCodec(codec);
-
-		postProcessCodec(codec);
-	}
-
-	/**
-	 * Adds a codec and a codec validator.
-	 *
-	 * @param codec	The codec to be loaded.
-	 * @param codecValidator   The codec validator for validating the codec.
-	 * @throws CodecException	If the codec was already loaded.
-	 */
-	void addCodec(final CodecInterface codec, final AnnotationValidatorInterface codecValidator) throws CodecException{
-		loaderCodec.addCodec(codec, codecValidator);
 
 		postProcessCodec(codec);
 	}

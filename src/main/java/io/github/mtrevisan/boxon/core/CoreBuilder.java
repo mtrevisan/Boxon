@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -172,7 +171,8 @@ public final class CoreBuilder{
 
 
 	/**
-	 * Adds all the default codecs, that is inside the library, to the core builder.
+	 * Loads all the default codecs that extends {@link CodecInterface}.
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 *
 	 * @return	This instance, used for chaining.
 	 */
@@ -183,7 +183,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Adds all the codecs from the given package(s) to the core builder.
+	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
@@ -195,7 +195,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Adds a codec to the core builder.
+	 * Loads the given codec that extends {@link CodecInterface}.
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
@@ -207,20 +207,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Adds a codec to the core builder.
-	 *
-	 * @param codec	The codec to be loaded.
-	 * @param codecValidator   The codec validator for validating the codec.
-	 * @return	This instance, used for chaining.
-	 */
-	public CoreBuilder withCodec(final CodecInterface codec, final AnnotationValidatorInterface codecValidator){
-		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec, codecValidator));
-
-		return this;
-	}
-
-	/**
-	 * Adds all the codecs to the core builder.
+	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.

@@ -37,12 +37,10 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -97,7 +95,7 @@ class CodecInterfaceTest{
 			private Evaluator evaluator;
 
 			@Override
-			public Class<? extends Annotation> identifier(){
+			public Class<?> identifier(){
 				return BindCustomData.class;
 			}
 
@@ -146,18 +144,10 @@ class CodecInterfaceTest{
 				return new BigInteger(hexBuilder.toString(), 16);
 			}
 		};
-		AnnotationValidatorInterface codecValidator = (fieldType, annotation) -> {
-			BindCustomData binding = (BindCustomData)annotation;
-			String sizeAsString = binding.size();
-			if(StringHelper.isBlank(sizeAsString))
-				throw AnnotationException.create("Size must be non-empty");
-			if(Integer.parseInt(sizeAsString) <= 0)
-				throw AnnotationException.create("Size must be a positive number");
-		};
 
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withCodec(codec, codecValidator)
+			.withCodec(codec)
 			.withTemplate(TestCustomCodec.class)
 			.create();
 		Parser parser = Parser.create(core);
