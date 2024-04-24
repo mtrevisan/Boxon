@@ -47,6 +47,12 @@ import java.lang.reflect.Array;
  */
 final class CodecDefault implements CodecInterface{
 
+	/**
+	 * Identifies the default codec.
+	 */
+	static class DefaultCodecIdentifier{}
+
+
 	@Injected
 	private Evaluator evaluator;
 

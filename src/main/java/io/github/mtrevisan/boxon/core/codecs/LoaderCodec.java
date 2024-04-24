@@ -226,12 +226,12 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 	@Override
 	public boolean hasCodec(final Type type){
-		return codecs.containsKey(isDefaultBind(type)? DefaultCodecIdentifier.class: type);
+		return codecs.containsKey(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	@Override
 	public CodecInterface getCodec(final Type type){
-		return codecs.get(isDefaultBind(type)? DefaultCodecIdentifier.class: type);
+		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	private static boolean isDefaultBind(final Type type){
