@@ -84,29 +84,26 @@ public abstract class CommonBehavior{
 
 	public final Object convertValue(final Object value, final Evaluator evaluator, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter){
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(evaluator, rootObject);
 		return converter.apply(chosenConverter, value);
 	}
 
 	public final Object convertValue(Object value, final Evaluator evaluator, final Object rootObject,
 			final BiFunction<Class<? extends Converter<?, ?>>, Object, Object> converter, final Annotation collectionBinding){
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(evaluator, rootObject);
 
-		value = adaptValue(validator, value, chosenConverter, collectionBinding);
+		value = convertValueType(collectionBinding, chosenConverter, validator, value);
 
 		return converter.apply(chosenConverter, value);
 	}
 
-	private static Object adaptValue(final Class<? extends Validator<?>> validator, final Object value,
-			final Class<? extends Converter<?, ?>> chosenConverter, final Annotation collectionBinding){
-		return convertValueType(collectionBinding, chosenConverter, validator, value);
+	public Class<? extends Converter<?, ?>> getChosenConverter(final Evaluator evaluator, final Object rootObject){
+		return CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator, rootObject);
 	}
 
+	//convert value type into converter/validator input type
 	private static Object convertValueType(final Annotation collectionBinding, final Class<? extends Converter<?, ?>> converterType,
 			final Class<? extends Validator<?>> validator, Object instance){
-		//convert value type into converter/validator input type
 		Class<?> inputType = ParserDataType.resolveInputType(converterType, validator);
 		if(collectionBinding == null)
 			instance = ParserDataType.castValue((BigInteger)instance, inputType);
@@ -121,8 +118,7 @@ public abstract class CommonBehavior{
 	private static Object convertArrayElements(final Object data, final Class<?> elementType){
 		final int length = Array.getLength(data);
 		final Object array = CodecHelper.createArray(elementType, length);
-
-		for(int i = 0; i < length; i++){
+		for(int i = 0; i < length; i ++){
 			Object element = Array.get(data, i);
 			element = ParserDataType.castValue((BigInteger)element, elementType);
 			Array.set(array, i, element);

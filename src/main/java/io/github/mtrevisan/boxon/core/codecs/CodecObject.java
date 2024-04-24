@@ -79,8 +79,7 @@ final class CodecObject implements CodecInterface{
 		else
 			instance = decodeList(reader, behavior, rootObject);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(behavior.converterChoices(),
-			behavior.defaultConverter(), evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
 		final Object convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
 
 		CodecHelper.validate(convertedValue, behavior.validator());
@@ -189,8 +188,7 @@ final class CodecObject implements CodecInterface{
 
 		CodecHelper.validate(value, behavior.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(behavior.converterChoices(),
-			behavior.defaultConverter(), evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
 
 		if(collectionBinding == null){
 			final ObjectChoices objectChoices = behavior.selectFrom();
