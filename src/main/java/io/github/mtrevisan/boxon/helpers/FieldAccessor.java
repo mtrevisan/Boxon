@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -52,6 +51,14 @@ public final class FieldAccessor{
 	private FieldAccessor(){}
 
 
+	public static Class<?> extractFieldType(final Class<?> fieldType){
+		return (fieldType.isArray()
+			? fieldType.getComponentType()
+			: fieldType
+		);
+	}
+
+
 	/**
 	 * Sets the field represented by this {@code Field} object on the specified object argument to the specified value.
 	 * <p>The new value is automatically unwrapped if the underlying field has a primitive type.</p>
@@ -61,12 +68,9 @@ public final class FieldAccessor{
 	 * @return	The (possibly new) object on witch the value was set.
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
-	public static Object setFieldValue(final Object obj, final Field field, final Object value){
+	public static <T> T setFieldValue(final T obj, final Field field, final Object value) throws DataException{
 		try{
-			return (isRecordClass(obj)
-				? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
-				: updateField(obj, field, value)
-			);
+			return updateObjectFieldValue(obj, field, value);
 		}
 		catch(final IllegalArgumentException | ReflectiveOperationException e){
 			throw DataException.create("Can not set {} field to {}",
@@ -74,13 +78,26 @@ public final class FieldAccessor{
 		}
 	}
 
+	//FIXME ugliness (set & create... also a cycle between classes...)
+	private static <T> T updateObjectFieldValue(final T obj, final Field field, final Object value) throws IllegalArgumentException,
+			ReflectiveOperationException{
+		return (isRecordClass(obj)
+			? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
+			: updateField(obj, field, value)
+		);
+	}
+
+	private static <T> T updateField(final T obj, final Field field, final Object value) throws IllegalAccessException{
+		field.set(obj, value);
+		return obj;
+	}
+
 	private static boolean isRecordClass(final Object obj){
 		return obj.getClass()
 			.isRecord();
 	}
 
-	static <T> Object[] retrieveCurrentFieldValues(final T obj, final RecordComponent[] components)
-			throws IllegalAccessException, InvocationTargetException{
+	static Object[] retrieveCurrentFieldValues(final Object obj, final RecordComponent[] components) throws ReflectiveOperationException{
 		final int length = components.length;
 		final Object[] recordValues = new Object[length];
 		for(int i = 0; i < length; i ++){
@@ -102,72 +119,43 @@ public final class FieldAccessor{
 			}
 	}
 
-	private static Object updateField(final Object obj, final Field field, final Object value) throws IllegalAccessException{
-		field.set(obj, value);
-		return obj;
-	}
-
 
 	/**
 	 * Injects the given value of given field type in the given object.
 	 *
 	 * @param obj	The object whose field should be modified.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
+	 * @param values	The value for the field being modified.
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void injectValue(final Object obj, final T value){
-		final Type fieldType = GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
-			.getFirst();
+	public static void injectValues(final Object obj, final Object... values){
+		injectValues(obj.getClass(), obj, values);
+	}
 
-		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass())){
-			final Class<?> type = obj.getClass();
-			injectValue(type, obj, (Class<? super T>)fieldType, value);
+	/**
+	 * Static injects the given value of given field type in the given class.
+	 *
+	 * @param objClass	The object class whose static field should be modified.
+	 * @param values	The value for the field being modified.
+	 */
+	public static void injectStaticValues(final Class<?> objClass, final Object... values){
+		injectValues(objClass, null, values);
+	}
+
+	private static void injectValues(final Class<?> objClass, final Object obj, final Object... values){
+		for(int i = 0, length = values.length; i < length; i ++){
+			final Object value = values[i];
+
+			final Type fieldType = extractFieldType(value);
+			if(fieldType instanceof final Class<?> fieldClass && fieldClass.isAssignableFrom(value.getClass()))
+				injectValue(objClass, obj, fieldClass, value);
 		}
 	}
 
-	/**
-	 * Injects the given value of given field type in the given object.
-	 *
-	 * @param obj	The object whose field should be modified.
-	 * @param fieldType	The field class.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
-	 */
-	public static <T> void injectValue(final Object obj, final Class<? super T> fieldType, final T value){
-		final Class<?> type = obj.getClass();
-		injectValue(type, obj, fieldType, value);
-	}
-
-	/**
-	 * Static injects the given value of given field type in the given class.
-	 *
-	 * @param type	The object class whose static field should be modified.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void injectStaticValue(final Class<?> type, final T value){
-		final Type fieldType = GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
+	private static Type extractFieldType(final Object value){
+		return GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
 			.getFirst();
-
-		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass()))
-			injectStaticValue(type, (Class<? super T>)fieldType, value);
 	}
 
-	/**
-	 * Static injects the given value of given field type in the given class.
-	 *
-	 * @param type	The object class whose static field should be modified.
-	 * @param fieldType	The field class.
-	 * @param value	The value for the field being modified.
-	 * @param <T>	The value class type.
-	 */
-	public static <T> void injectStaticValue(final Class<?> type, final Class<T> fieldType, final T value){
-		injectValue(type, null, fieldType, value);
-	}
-
-	private static <T> void injectValue(final Class<?> objType, final Object obj, final Class<T> fieldType, final T value){
+	private static <T> void injectValue(final Class<?> objType, final Object obj, final Class<? extends T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(objType, fieldType);
 			for(int i = 0, length = fields.size(); i < length; i ++)

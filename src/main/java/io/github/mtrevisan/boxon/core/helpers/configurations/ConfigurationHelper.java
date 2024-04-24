@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.reflect.Array;
 import java.util.Map;
@@ -69,34 +70,44 @@ public final class ConfigurationHelper{
 
 	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)
 			throws CodecException{
-		return (enumeration != NullEnum.class
+		return (hasEnumeration(enumeration)
 			? extractEnumerationValue(fieldType, value, enumeration)
-			: ParserDataType.getValue(fieldType, value));
+			: ParserDataType.getValueOrSelf(fieldType, value)
+		);
 	}
 
-
-	static Object extractEnumerationValue(final Class<?> fieldType, final String value,
-			final Class<? extends ConfigurationEnum> enumeration){
-		return (fieldType.isArray()
-			? extractEnumerationArrayValue(value, enumeration)
-			: extractEnumerationSingleValue(value, enumeration));
+	/**
+	 * Whether the given class is a true enumeration.
+	 *
+	 * @param enumeration	The class to check.
+	 * @return	Whether the given class is a true enumeration.
+	 */
+	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final String value, final Class<T> enumeration){
-		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
+	static Object extractEnumerationValue(final Class<?> fieldType, Object value, final Class<? extends ConfigurationEnum> enumerationClass){
+		if(value instanceof final String v)
+			value = (fieldType.isArray()
+				? extractEnumerationArrayValue(v, enumerationClass)
+				: extractEnumerationSingleValue(v, enumerationClass)
+			);
+		return value;
+	}
+
+	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum> enumerationClass){
+		final ConfigurationEnum[] enumConstants = enumerationClass.getEnumConstants();
 		final String[] defaultValues = StringHelper.split(value, PIPE);
 		final int length = defaultValues.length;
-		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
+		final Object valEnum = Array.newInstance(enumerationClass, length);
 		for(int i = 0; i < length; i ++)
-			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+			Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
 		return valEnum;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
-		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
+	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum> enumerationClass){
+		final ConfigurationEnum[] enumConstants = enumerationClass.getEnumConstants();
+		return ConfigurationEnum.extractEnum(enumConstants, value);
 	}
 
 
@@ -112,8 +123,8 @@ public final class ConfigurationHelper{
 		if(protocol.isEmpty())
 			return true;
 
-		final Version min = Version.of(minProtocol);
-		final Version max = Version.of(maxProtocol);
+		final Version min = VersionBuilder.of(minProtocol);
+		final Version max = VersionBuilder.of(maxProtocol);
 		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
 		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
 		return (validMinimum && validMaximum);

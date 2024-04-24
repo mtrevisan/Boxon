@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an annotated {@link Class} (... before the application of a converter).
+ * Manages an annotated {@link Class} of the given {@link #type()} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -77,6 +77,13 @@ public @interface BindObject{
 	 * @return	The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
 	 */
 	ObjectChoices selectFrom() default @ObjectChoices;
+
+	/**
+	 * The choices to select from, based on a prefix.
+	 *
+	 * @return	The choices to select from, based on a prefix (defaults to empty {@link ObjectChoices}).
+	 */
+	ObjectChoicesList selectFromList() default @ObjectChoicesList;
 
 	/**
 	 * The type to decode in case none of the selectors from {@link #selectFrom()} can be chosen.

@@ -52,6 +52,9 @@ public class REGConfigurationASCII{
 	@ConfigurationField(shortDescription = "Random field", defaultValue = "27", terminator = ",")
 	private BigInteger randomField;
 
+	@ConfigurationField(shortDescription = "Decimal field", defaultValue = "3.1415928f", terminator = ",")
+	private float decimalField;
+
 	@ConfigurationField(shortDescription = "Update Over-The-Air", enumeration = BooleanType.class, defaultValue = "FALSE", terminator = ",")
 	private BooleanType updateOverTheAir;
 

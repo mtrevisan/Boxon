@@ -5,7 +5,7 @@
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>3.5.0-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -60,7 +60,7 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 		<maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
-		<maven-gpg-plugin.version>3.2.2</maven-gpg-plugin.version>
+		<maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 		<sonatype.nexus-staging-maven-plugin.version>1.6.13</sonatype.nexus-staging-maven-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
@@ -76,11 +76,11 @@
 
 		<!-- ClassGraph -->
 		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-		<github.classgraph.version>4.8.170</github.classgraph.version>
+		<github.classgraph.version>4.8.172</github.classgraph.version>
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>6.1.5</springframework.spring-expression.version>
+		<springframework.spring-expression.version>6.1.6</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
@@ -94,9 +94,9 @@
 
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<slf4j.slf4j-api.version>2.0.12</slf4j.slf4j-api.version>
+		<slf4j.slf4j-api.version>2.0.13</slf4j.slf4j-api.version>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
-		<logback.logback-classic.version>1.5.3</logback.logback-classic.version>
+		<logback.logback-classic.version>1.5.6</logback.logback-classic.version>
 
 		<!-- JUnit -->
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
@@ -250,6 +250,7 @@
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs.queclink=spring.core,spring.expression
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs.teltonika=spring.core,spring.expression
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.helpers=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.parsers=spring.core,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.parsers.matchers=ALL-UNNAMED

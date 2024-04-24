@@ -34,7 +34,7 @@ class CRC16CCITTFALSETest{
 
 	@Test
 	void oneToFour(){
-		CRC16CCITT_FALSE crc = new CRC16CCITT_FALSE();
+		Checksummer crc = new CRC16CCITT_FALSE();
 		short crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
 		Assertions.assertEquals((short)0x89C3, crc16);
@@ -42,7 +42,7 @@ class CRC16CCITTFALSETest{
 
 	@Test
 	void test(){
-		CRC16CCITT_FALSE crc = new CRC16CCITT_FALSE();
+		Checksummer crc = new CRC16CCITT_FALSE();
 		short crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
 		Assertions.assertEquals((short)0x763A, crc16);

@@ -32,20 +32,20 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManage
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
 import io.github.mtrevisan.boxon.helpers.FieldMapper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +67,7 @@ public final class Configurator{
 	 * Create a configurator.
 	 *
 	 * @param core	The parser core.
-	 * @return	A descriptor.
+	 * @return	A describer.
 	 */
 	public static Configurator create(final Core core){
 		return new Configurator(core);
@@ -99,13 +99,9 @@ public final class Configurator{
 	 */
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final int length = configurationValues.size();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final ConfigurationMessage<?> configuration = configurationValues.get(i);
-
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		}
 		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
@@ -113,29 +109,36 @@ public final class Configurator{
 	/**
 	 * Retrieve all the configuration given a protocol version.
 	 *
-	 * @param protocol	The protocol used to extract the configurations.
+	 * @param protocolVersion	The protocol version used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws CodecException, ConfigurationException{
-		if(StringHelper.isBlank(protocol))
-			throw DataException.create("Invalid protocol: {}", protocol);
+	public List<Map<String, Object>> getConfigurations(final String protocolVersion) throws CodecException, ConfigurationException{
+		final Version protocol = VersionBuilder.of(protocolVersion);
+		if(protocol.isEmpty())
+			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
 
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final Version currentProtocol = Version.of(protocol);
-		return extractConfigurations(configurationValues, currentProtocol);
+		return extractConfigurations(configurationValues, protocol);
 	}
 
-	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
+	/**
+	 * Extracts the configurations from a list of {@link ConfigurationMessage} objects based on the specified protocol version.
+	 *
+	 * @param configurationValues	The list of {@link ConfigurationMessage} objects containing the configurations.
+	 * @param protocol	The protocol version used to extract the configurations.
+	 * @return	A list of maps representing the extracted configurations. Each map contains the header and fields of a configuration
+	 * 	message.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 */
+	private static List<Map<String, Object>> extractConfigurations(final Collection<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws CodecException, ConfigurationException{
-		final int length = configurationValues.size();
-		final List<Map<String, Object>> response = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final ConfigurationMessage<?> configuration = configurationValues.get(i);
-
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
+			if(! ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> map = new HashMap<>(3);
@@ -152,6 +155,15 @@ public final class Configurator{
 		return Collections.unmodifiableList(response);
 	}
 
+	/**
+	 * Extracts a map of fields from a configuration header based on the specified protocol version.
+	 *
+	 * @param protocol	The version of the protocol.
+	 * @param header	The configuration header.
+	 * @return	A map of fields extracted from the configuration header, with the short description of each field as the key and the
+	 * 	configuration map as the value.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 */
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(4);
 		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
@@ -163,19 +175,27 @@ public final class Configurator{
 		return map;
 	}
 
+	/**
+	 * Extracts a map of fields from a configuration message, based on the specified version of the protocol.
+	 *
+	 * @param protocol	The version of the protocol.
+	 * @param configuration	The configuration message.
+	 * @return	A map of fields extracted from the configuration message, with the short description of each field as the key and the
+	 * 	configuration map as the value.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 */
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
-		final int length = fields.size();
-		final Map<String, Object> fieldsMap = new HashMap<>(length);
-		for(int i = 0; i < length; i ++){
-			final ConfigurationField field = fields.get(i);
-
+		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
+		for(final ConfigurationField field : fields){
 			final Annotation annotation = field.getBinding();
 			final Class<?> fieldType = field.getFieldType();
+
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
-			if(!fieldMap.isEmpty())
+			if(! fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;
@@ -187,11 +207,13 @@ public final class Configurator{
 	 *
 	 * @param protocolVersion	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
-	 * @param template	The template, or a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>, containing the data to be composed.
+	 * @param template	The template, or a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>, containing the data
+	 * 	to be composed.
 	 * @return	The composition response.
+	 * @throws ProtocolException	If the given protocol version is not recognized.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
-			final Object template){
+			final Object template) throws ProtocolException{
 		final Map<String, Object> data = FieldMapper.mapObject(template);
 		return composeConfiguration(protocolVersion, shortDescription, data);
 	}
@@ -203,10 +225,11 @@ public final class Configurator{
 	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
+	 * @throws ProtocolException	If the given protocol version is not recognized.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
-			final Map<String, Object> data){
-		final Version protocol = Version.of(protocolVersion);
+			final Map<String, Object> data) throws ProtocolException{
+		final Version protocol = VersionBuilder.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
 
@@ -230,7 +253,7 @@ public final class Configurator{
 
 			return null;
 		}
-		catch(final EncodeException | FieldException e){
+		catch(final BoxonException e){
 			return EncodeException.create(e);
 		}
 	}

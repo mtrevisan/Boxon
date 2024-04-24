@@ -30,7 +30,7 @@ package io.github.mtrevisan.boxon.annotations.converters;
  */
 public final class ShortToCharacterConverter implements Converter<Short, Character>{
 
-	ShortToCharacterConverter(){}
+	private ShortToCharacterConverter(){}
 
 
 	@Override

@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.annotations;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -57,16 +57,16 @@ public @interface Checksum{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * The byte(s) to skip from the start of the message, if any.
+	 * The bytes to skip from the start of the message, if any.
 	 *
-	 * @return	The byte(s) to skip from the start of the message (defaults to {@code 0}).
+	 * @return	The bytes to skip from the start of the message (defaults to {@code 0}).
 	 */
 	int skipStart() default 0;
 
 	/**
-	 * The byte(s) to skip from the end of the message, if any.
+	 * The bytes to skip from the end of the message, if any.
 	 *
-	 * @return	The byte(s) to skip from the end of the message (defaults to {@code 0}).
+	 * @return	The bytes to skip from the end of the message (defaults to {@code 0}).
 	 */
 	int skipEnd() default 0;
 

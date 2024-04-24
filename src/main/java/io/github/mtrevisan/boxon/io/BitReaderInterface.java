@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.math.BigInteger;
@@ -73,9 +74,9 @@ public interface BitReaderInterface{
 	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java
 	 * 	(see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE},
 	 * 	and {@link Double#SIZE}).
-	 * @param byteOrder	The byte order used to read the bytes.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value of the given type.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 
@@ -137,24 +138,6 @@ public interface BitReaderInterface{
 	 * @return	A {@link BigInteger} value at the current position.
 	 */
 	BigInteger getBigInteger(int size, ByteOrder byteOrder);
-
-	/**
-	 * Reads {@link Float#SIZE} bits and composes a {@code float} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@code float}.
-	 */
-	float getFloat(ByteOrder byteOrder);
-
-	/**
-	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@code double}.
-	 */
-	double getDouble(ByteOrder byteOrder);
 
 	/**
 	 * Reads the specified amount of {@code char}s with a given {@link Charset}.

@@ -24,13 +24,13 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -53,9 +53,15 @@ class CodecCustomTest{
 
 	//the number of bytes to read is determined by the leading bit of each individual bytes
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
-	static class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
+	static class VariableLengthByteArray implements CodecInterface{
 		@Override
-		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
+		public Class<?> identifier(){
+			return VarLengthEncoded.class;
+		}
+
+		@Override
+		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionAnnotation,
+				final Object rootObject){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
@@ -68,8 +74,8 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-				throws AnnotationException{
+		public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionAnnotation,
+				final Object rootObject, final Object value) throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
 				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
@@ -78,11 +84,11 @@ class CodecCustomTest{
 
 
 	@Test
-	void customAnnotation() throws FieldException{
+	void customAnnotation() throws BoxonException{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.addCodecs(new VariableLengthByteArray());
 
-		CodecInterface<?> codec = loaderCodec.getCodec(VarLengthEncoded.class);
+		CodecInterface codec = loaderCodec.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = {0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override
@@ -92,13 +98,13 @@ class CodecCustomTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{(byte)0x81, (byte)0x82, 0x03}, writer.array());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		byte[] decoded = (byte[])codec.decode(reader, annotation, null);
+		byte[] decoded = (byte[])codec.decode(reader, annotation, null, null);
 
 		Assertions.assertArrayEquals(encodedValue, decoded);
 	}

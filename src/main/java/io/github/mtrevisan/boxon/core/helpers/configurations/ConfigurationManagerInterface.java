@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -49,18 +50,18 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * The default value of the given field assuming the given protocol number.
 	 *
-	 * @param field	The field from which to extract the default value.
+	 * @param fieldType	The field class from which to extract the default value.
 	 * @param protocol	The protocol number, used to select the right {@link AlternativeSubField}.
 	 * @return	The default value.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	Object getDefaultValue(Field field, Version protocol) throws CodecException, EncodeException;
+	Object getDefaultValue(Class<?> fieldType, Version protocol) throws CodecException, EncodeException;
 
 	/**
 	 * Add the minimum and maximum protocol versions to the collection.
 	 *
-	 * @param protocolVersionBoundaries	The collection to add the versions to.
+	 * @param protocolVersionBoundaries	The collection to add the protocol versions to.
 	 */
 	void addProtocolVersionBoundaries(Collection<String> protocolVersionBoundaries);
 
@@ -97,11 +98,11 @@ public interface ConfigurationManagerInterface{
 	 * @param field	The field.
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
-	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	void validateValue(Field field, String dataKey, Object dataValue) throws CodecException, AnnotationException, EncodeException;
+	void validateValue(Field field, String dataKey, Object dataValue) throws BoxonException;
 
 	/**
 	 * Convert the given value to the type accepted by the field.
@@ -111,11 +112,10 @@ public interface ConfigurationManagerInterface{
 	 * @param dataValue	The value to check against.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The converted value.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws AnnotationException, CodecException,
-		EncodeException;
+	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws BoxonException;
 
 }

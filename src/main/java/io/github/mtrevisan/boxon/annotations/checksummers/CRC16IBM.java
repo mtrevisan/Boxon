@@ -30,6 +30,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  * <p>Also known as CRC-16 and CRC-16-ANSI</p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
  */
 public final class CRC16IBM implements Checksummer{
 
@@ -37,21 +38,29 @@ public final class CRC16IBM implements Checksummer{
 	private static final int POLYNOMIAL_REVERSED = 0x0000_A001;
 
 
+	CRC16IBM(){}
+
+
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end){
-		int value = 0;
+		int value = 0x0000;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 
-			value ^= datum;
-			for(int j = 0; j < Byte.SIZE; j ++){
-				final boolean carry = ((value & 0x01) != 0);
-				value >>>= 1;
-				if(carry)
-					value ^= POLYNOMIAL_REVERSED;
-			}
+			value = updateChecksum(datum, value);
 		}
 		return (short)value;
+	}
+
+	private static int updateChecksum(final byte datum, int value){
+		value ^= datum & 0xFF;
+		for(int j = 0; j < Byte.SIZE; j ++){
+			final boolean carry = ((value & 0x01) != 0);
+			value >>>= 1;
+			if(carry)
+				value ^= POLYNOMIAL_REVERSED;
+		}
+		return value;
 	}
 
 }

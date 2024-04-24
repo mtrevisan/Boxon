@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
@@ -42,7 +43,7 @@ import java.util.Objects;
 
 
 /**
- * Common data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+ * Common data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
@@ -166,8 +167,9 @@ public final class Core{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
+	 * @throws CodecException	If a codec was already loaded.
 	 */
-	void addCodecsFrom(final Class<?>... basePackageClasses){
+	void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
 		loaderCodec.loadCodecsFrom(basePackageClasses);
 
 		postProcessCodecs();
@@ -177,27 +179,33 @@ public final class Core{
 	 * Loads the given codec that extends {@link CodecInterface}.
 	 *
 	 * @param codec	The codec to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final CodecInterface<?> codec){
+	void addCodec(final CodecInterface codec) throws CodecException{
 		loaderCodec.addCodec(codec);
 
-		postProcessCodecs();
+		postProcessCodec(codec);
 	}
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodecs(final CodecInterface<?>... codecs){
+	void addCodecs(final CodecInterface... codecs) throws CodecException{
 		loaderCodec.addCodecs(codecs);
 
-		postProcessCodecs();
+		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
+			postProcessCodec(codecs[i]);
+	}
+
+	private void postProcessCodec(final CodecInterface codec){
+		LoaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectFieldInCodecs(templateParser);
-		loaderCodec.injectFieldInCodecs(evaluator);
+		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 
@@ -205,8 +213,8 @@ public final class Core{
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	void addTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.withTemplatesFrom(basePackageClasses);
@@ -216,8 +224,8 @@ public final class Core{
 	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws TemplateException	If the template is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws TemplateException	If a template error occurs.
 	 */
 	void addTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		templateParser.withTemplate(templateClass);
@@ -228,8 +236,8 @@ public final class Core{
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void addConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		configurationParser.loadConfigurationsFrom(basePackageClasses);
@@ -239,8 +247,8 @@ public final class Core{
 	 * Load the specified protocol class annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param configurationClass	Configuration class.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void addConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		configurationParser.withConfiguration(configurationClass);

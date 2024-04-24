@@ -26,12 +26,13 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
+import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -50,6 +51,20 @@ import java.util.List;
  * @param <T>	The type of object the configuration is able to construct configuration messages.
  */
 public final class ConfigurationMessage<T>{
+
+	private static final int ORDER_ALTERNATIVE_INDEX = 0;
+	private static final int ORDER_COMPOSITE_INDEX = 1;
+	private static final int ORDER_FIELD_INDEX = 2;
+
+	private static final String CONFIGURATION_NAME_ALTERNATIVE = "AlternativeConfigurationField";
+	private static final String CONFIGURATION_NAME_COMPOSITE = "CompositeConfigurationField";
+	private static final String CONFIGURATION_NAME_FIELD = "ConfigurationField";
+	private static final String CONFIGURATION_NAME_SKIP = "ConfigurationSkip";
+
+	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
+	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
+	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+
 
 	private final Class<T> type;
 
@@ -78,8 +93,8 @@ public final class ConfigurationMessage<T>{
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
 
-		final Version minProtocolVersion = Version.of(header.minProtocol());
-		final Version maxProtocolVersion = Version.of(header.maxProtocol());
+		final Version minProtocolVersion = VersionBuilder.of(header.minProtocol());
+		final Version maxProtocolVersion = VersionBuilder.of(header.maxProtocol());
 		try{
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
 			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
@@ -111,9 +126,11 @@ public final class ConfigurationMessage<T>{
 			final ConfigurationSkip[] skips = field.getDeclaredAnnotationsByType(ConfigurationSkip.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
+			validateAnnotationsOrder(declaredAnnotations);
 
 			try{
-				final Annotation validAnnotation = validateField(field, declaredAnnotations, minProtocolVersion, maxProtocolVersion);
+				final Annotation validAnnotation = extractAndValidateConfigurationAnnotation(field, declaredAnnotations, minProtocolVersion,
+					maxProtocolVersion);
 
 				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
 
@@ -128,6 +145,86 @@ public final class ConfigurationMessage<T>{
 		return configurationFields;
 	}
 
+
+	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+		final int length = annotations.length;
+		if(length <= 1)
+			return;
+
+		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
+		for(final Annotation annotation : annotations){
+			final String annotationName = annotation.annotationType()
+				.getSimpleName();
+
+			if(annotationName.startsWith(CONFIGURATION_NAME_ALTERNATIVE)){
+				validateAlternativeAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
+			}
+			else if(annotationName.equals(CONFIGURATION_NAME_COMPOSITE)){
+				validateCompositeAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_COMPOSITE_INDEX] = true;
+			}
+			else if(annotationName.equals(CONFIGURATION_NAME_FIELD)){
+				validateFieldAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_FIELD_INDEX] = true;
+			}
+			else if(annotationName.startsWith(CONFIGURATION_NAME_SKIP))
+				validateSkipAnnotationOrder(annotationFound);
+		}
+	}
+
+	private static void validateAlternativeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				CONFIGURATION_NAME_ALTERNATIVE);
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_COMPOSITE);
+		if(annotationFound[ORDER_FIELD_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_FIELD);
+	}
+
+	private static void validateCompositeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_ALTERNATIVE);
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				CONFIGURATION_NAME_COMPOSITE);
+		if(annotationFound[ORDER_FIELD_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_FIELD);
+	}
+
+	private static void validateFieldAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_ALTERNATIVE);
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_COMPOSITE);
+		if(annotationFound[ORDER_FIELD_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				CONFIGURATION_NAME_FIELD);
+	}
+
+	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_ALTERNATIVE);
+		if(annotationFound[ORDER_COMPOSITE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_COMPOSITE);
+		if(annotationFound[ORDER_FIELD_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_FIELD);
+	}
+
+
 	private void validateShortDescriptionUniqueness(final Annotation annotation, final Collection<String> uniqueShortDescription,
 			final Class<T> type) throws AnnotationException{
 		final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
@@ -136,9 +233,18 @@ public final class ConfigurationMessage<T>{
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
 
-	private static Annotation validateField(final Field field, final Annotation[] annotations, final Version minProtocolVersion,
-			final Version maxProtocolVersion) throws AnnotationException, CodecException{
-		/** filter out {@link ConfigurationSkip} annotations */
+	/**
+	 * Validates a configuration field and return the first valid configuration annotation.
+	 *
+	 * @param field	The configuration field to validate.
+	 * @param annotations	The list of annotations on the configuration field.
+	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @return	The first valid configuration annotation, or {@code null} if none are found.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 */
+	private static Annotation extractAndValidateConfigurationAnnotation(final Field field, final Annotation[] annotations,
+			final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException{
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.length; foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations[i];
@@ -161,24 +267,24 @@ public final class ConfigurationMessage<T>{
 		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
-	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> configurationFields){
-		final int length = configurationFields.size();
+	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
+		final int length = fields.size();
 		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < length; i ++){
-			final ConfigurationField configurationField = configurationFields.get(i);
+			final ConfigurationField field = fields.get(i);
 
-			final Annotation annotation = configurationField.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
 			manager.addProtocolVersionBoundaries(boundaries);
 
-			final ConfigurationSkip[] skips = configurationField.getSkips();
+			final ConfigurationSkip[] skips = field.getSkips();
 			extractProtocolVersionBoundaries(skips, boundaries);
 		}
 
-		boundaries.sort(Comparator.comparing(Version::of));
+		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
 		return boundaries;
@@ -269,7 +375,8 @@ public final class ConfigurationMessage<T>{
 
 	@Override
 	public int hashCode(){
-		return type.getName().hashCode();
+		return type.getName()
+			.hashCode();
 	}
 
 }

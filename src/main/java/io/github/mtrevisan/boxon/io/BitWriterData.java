@@ -84,7 +84,7 @@ class BitWriterData{
 	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
 	 *
 	 * @param value	The value to write.
-	 * @param bitsToWrite   The amount of bits to use when writing the {@code value}.
+	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
 	 */
 	private void putNumber(final long value, final int bitsToWrite){
 		int bitsWritten = 0;
@@ -164,9 +164,13 @@ class BitWriterData{
 	private static byte getNextByte(final BitSet bitmap, final int offset, final int size){
 		byte valueRead = 0;
 		int index = offset - 1;
-		while((index = bitmap.nextSetBit(index + 1)) >= 0 && index <= offset + size)
+		while((index = nextSetBit(bitmap, index + 1)) >= 0 && index <= offset + size)
 			valueRead |= (byte)(1 << (index - offset));
 		return valueRead;
+	}
+
+	private static int nextSetBit(final BitSet bitmap, final int fromIndex){
+		return bitmap.nextSetBit(fromIndex);
 	}
 
 	/**

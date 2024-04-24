@@ -31,8 +31,10 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManage
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
@@ -44,6 +46,7 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -98,7 +101,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfigurationsFrom(basePackageClasses);
@@ -117,7 +120,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @param configurationClass	Configuration class.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	void loadConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfiguration(configurationClass);
@@ -161,8 +164,8 @@ public final class LoaderConfiguration{
 	 *
 	 * @param type	The class type.
 	 * @return	A configuration.
-	 * @throws AnnotationException	If an annotation has validation problems.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public ConfigurationMessage<?> extractConfiguration(final Class<?> type) throws AnnotationException, ConfigurationException{
 		final ConfigurationMessage<?> from = createConfiguration(type);
@@ -177,13 +180,11 @@ public final class LoaderConfiguration{
 	 * Constructs a new {@link ConfigurationMessage}.
 	 *
 	 * @param type	The class of the object to be returned as a {@link ConfigurationMessage}.
-	 * @param <T>	The type of the object to be returned as a {@link ConfigurationMessage}.
 	 * @return	The {@link ConfigurationMessage} for the given type.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */
-	@SuppressWarnings("unchecked")
-	private <T> ConfigurationMessage<T> createConfiguration(final Class<T> type) throws AnnotationException{
-		return (ConfigurationMessage<T>)configurationStore.apply(type);
+	private ConfigurationMessage<?> createConfiguration(final Class<?> type) throws AnnotationException{
+		return configurationStore.apply(type);
 	}
 
 	private void addConfigurationsInner(final Map<String, ConfigurationMessage<?>> configurations){
@@ -238,9 +239,10 @@ public final class LoaderConfiguration{
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws DataException   If the value cannot be set to the field.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws AnnotationException, CodecException, EncodeException{
+			final Version protocol) throws BoxonException{
 		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
@@ -291,15 +293,16 @@ public final class LoaderConfiguration{
 	}
 
 	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
-			throws AnnotationException, CodecException, EncodeException{
+			throws BoxonException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final Annotation annotation = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
-			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
-			configurationObject = FieldAccessor.setFieldValue(configurationObject, field.getField(), dataValue);
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
+			final Field f = field.getField();
+			Object dataValue = manager.getDefaultValue(f.getType(), protocol);
+			dataValue = manager.convertValue(f, manager.getShortDescription(), dataValue, protocol);
+			configurationObject = FieldAccessor.setFieldValue(configurationObject, f, dataValue);
 		}
 		return configurationObject;
 	}

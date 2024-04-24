@@ -27,30 +27,29 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 
-public class QueclinkHelper{
-
-	private static final ZoneId DATE_TIME_ZONE = ZoneId.of("UTC");
-
+public final class QueclinkHelper{
 
 	private QueclinkHelper(){}
 
 
-	public static class VersionConverter implements Converter<byte[], Version>{
+	public static class VersionConverter implements Converter<BigInteger, Version>{
 		@Override
-		public Version decode(final byte[] value){
-			return Version.of(value[0], value[1]);
+		public Version decode(final BigInteger value){
+			final byte[] array = value.toByteArray();
+			return VersionBuilder.of(array[0], array[1]);
 		}
 
 		@Override
-		public byte[] encode(final Version value){
-			return new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()};
+		public BigInteger encode(final Version value){
+			return new BigInteger(new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()});
 		}
 	}
 
@@ -59,7 +58,7 @@ public class QueclinkHelper{
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
 			final int minor = Integer.parseInt(value.substring(2, 4), 16);
-			return Version.of(major, minor);
+			return VersionBuilder.of(major, minor);
 		}
 
 		@Override
@@ -69,9 +68,9 @@ public class QueclinkHelper{
 
 			final Integer major = value.getMajor();
 			final Integer minor = value.getMinor();
-			final String maj = StringHelper.toHexString(major);
-			final String min = StringHelper.toHexString(minor);
-			return (major < 10? "0": "") + maj + (minor < 10? "0": "") + min;
+			final String maj = StringHelper.toHexString(major, Byte.BYTES);
+			final String min = StringHelper.toHexString(minor, Byte.BYTES);
+			return maj + min;
 		}
 	}
 
@@ -105,9 +104,9 @@ public class QueclinkHelper{
 	}
 
 
-	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
+	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], LocalDateTime>{
 		@Override
-		public ZonedDateTime decode(final byte[] value){
+		public LocalDateTime decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
 			final int year = bb.getShort();
 			final int month = bb.get();
@@ -115,11 +114,11 @@ public class QueclinkHelper{
 			final int hour = bb.get();
 			final int minute = bb.get();
 			final int second = bb.get();
-			return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DATE_TIME_ZONE);
+			return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
 		}
 
 		@Override
-		public byte[] encode(final ZonedDateTime value){
+		public byte[] encode(final LocalDateTime value){
 			return ByteBuffer.allocate(7)
 				.putShort((short)value.getYear())
 				.put((byte)value.getMonthValue())
@@ -131,20 +130,20 @@ public class QueclinkHelper{
 		}
 	}
 
-	static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
+	static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, LocalDateTime>{
 		@Override
-		public ZonedDateTime decode(final String value){
+		public LocalDateTime decode(final String value){
 			final int year = Integer.parseInt(value.substring(0, 4));
 			final int month = Integer.parseInt(value.substring(4, 6));
 			final int dayOfMonth = Integer.parseInt(value.substring(6, 8));
 			final int hour = Integer.parseInt(value.substring(8, 10));
 			final int minute = Integer.parseInt(value.substring(10, 12));
 			final int second = Integer.parseInt(value.substring(12, 14));
-			return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DATE_TIME_ZONE);
+			return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
 		}
 
 		@Override
-		public String encode(final ZonedDateTime value){
+		public String encode(final LocalDateTime value){
 			return StringHelper.leftPad(Integer.toString(value.getYear()), 4, '0')
 				+ StringHelper.leftPad(Integer.toString(value.getMonthValue()), 2, '0')
 				+ StringHelper.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0')
@@ -163,7 +162,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Byte value){
-			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFF), 2, '0');
+			return StringHelper.toHexString(value, Byte.BYTES);
 		}
 	}
 
@@ -176,7 +175,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Short value){
-			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFFFF), 4, '0');
+			return StringHelper.toHexString(value, Short.BYTES);
 		}
 	}
 

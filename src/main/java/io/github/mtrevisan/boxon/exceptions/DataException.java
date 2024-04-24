@@ -46,12 +46,12 @@ public final class DataException extends IllegalArgumentException{
 	 * @return	An instance of this exception.
 	 */
 	public static DataException create(final String message, final Object... parameters){
-		return new DataException(StringHelper.format(message, parameters));
+		return new DataException(message, parameters);
 	}
 
 
-	private DataException(final String message){
-		super(message);
+	private DataException(final String message, final Object... parameters){
+		super(StringHelper.format(message, parameters));
 	}
 
 }

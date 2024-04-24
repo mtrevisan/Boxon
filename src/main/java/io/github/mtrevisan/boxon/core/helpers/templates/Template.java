@@ -26,20 +26,26 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcessField;
-import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
+import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -49,10 +55,48 @@ import java.util.function.Function;
  */
 public final class Template<T>{
 
+	private static final int ORDER_BIND_INDEX = 0;
+	private static final int ORDER_CHECKSUM_INDEX = 1;
+	private static final int ORDER_EVALUATE_INDEX = 2;
+	private static final int ORDER_POST_PROCESS_INDEX = 3;
+
+	private static final String ANNOTATION_NAME_BIND = "Bind";
+	private static final String ANNOTATION_NAME_BIND_AS = "BindAs";
+	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = "ConverterChoices";
+	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
+	private static final String STAR = "*";
+	private static final String ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR = ANNOTATION_NAME_BIND + STAR + "`, `"
+		+ ANNOTATION_NAME_CONVERTER_CHOICES + "`, or `" + ANNOTATION_NAME_OBJECT_CHOICES + STAR;
+	private static final String ANNOTATION_NAME_CHECKSUM = "Checksum";
+	private static final String ANNOTATION_NAME_EVALUATE = "Evaluate";
+	private static final String ANNOTATION_NAME_POST_PROCESS = "PostProcess";
+	private static final String ANNOTATION_NAME_SKIP = "Skip";
+	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
+
+	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
+	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
+	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+
+	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>(4);
+	static{
+		ANNOTATION_MAPPING.put(SkipBits.class, annotation
+			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
+		ANNOTATION_MAPPING.put(SkipBits.Skips.class, annotation
+			-> Arrays.stream(((SkipBits.Skips)annotation).value())
+				.map(SkipParams::create)
+				.collect(Collectors.toList()));
+		ANNOTATION_MAPPING.put(SkipUntilTerminator.class, annotation
+			-> Collections.singletonList(SkipParams.create((SkipUntilTerminator)annotation)));
+		ANNOTATION_MAPPING.put(SkipUntilTerminator.Skips.class, annotation
+			-> Arrays.stream(((SkipUntilTerminator.Skips)annotation).value())
+				.map(SkipParams::create)
+				.collect(Collectors.toList()));
+	}
+
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
-			List<EvaluatedField<PostProcessField>> postProcessedFields){
+			List<EvaluatedField<PostProcess>> postProcessedFields){
 		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
-				final List<EvaluatedField<PostProcessField>> postProcessedFields){
+				final List<EvaluatedField<PostProcess>> postProcessedFields){
 			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
 		}
 	}
@@ -63,7 +107,7 @@ public final class Template<T>{
 	private final TemplateHeader header;
 	private final List<TemplateField> templateFields;
 	private final List<EvaluatedField<Evaluate>> evaluatedFields;
-	private final List<EvaluatedField<PostProcessField>> postProcessedFields;
+	private final List<EvaluatedField<PostProcess>> postProcessedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #templateFields}).
@@ -75,10 +119,22 @@ public final class Template<T>{
 	 * Create an instance of a template.
 	 *
 	 * @param type	The template class.
+	 * @param <T>	The class type of the template.
+	 * @return	An instance of a template.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 */
+	public static <T> Template<T> create(final Class<T> type) throws AnnotationException{
+		return new Template<>(type, List::of);
+	}
+
+	/**
+	 * Create an instance of a template.
+	 *
+	 * @param type	The template class.
 	 * @param filterAnnotationsWithCodec	A function that filters the annotation that have a corresponding codec.
 	 * @param <T>	The class type of the template.
 	 * @return	An instance of a template.
-	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	public static <T> Template<T> create(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
@@ -92,13 +148,10 @@ public final class Template<T>{
 		this.type = type;
 
 		header = type.getAnnotation(TemplateHeader.class);
+		//(`ObjectChoice` object may not have a `TemplateHeader`)
 		if(header != null){
-			try{
-				CharsetHelper.lookup(header.charset());
-			}
-			catch(final UnsupportedCharsetException ignored){
-				throw AnnotationException.create("Invalid charset: '{}'", header.charset());
-			}
+			final TemplateAnnotationValidator headerValidator = TemplateAnnotationValidator.fromAnnotationType(TemplateHeader.class);
+			headerValidator.validate(null, header);
 		}
 
 		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
@@ -117,26 +170,28 @@ public final class Template<T>{
 		final int length = fields.size();
 		final List<TemplateField> templateFields = new ArrayList<>(length);
 		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
-		final List<EvaluatedField<PostProcessField>> postProcessedFields = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Field field = fields.get(i);
+		final List<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
+		for(final Field field : fields){
+			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
+			validateAnnotationsOrder(declaredAnnotations);
 
-			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
+			final List<SkipParams> skips = extractSkips(declaredAnnotations);
+
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			loadChecksumField(checksum, type, field);
 
-			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
 
 			try{
-				final Annotation validAnnotation = validateField(field, boundedAnnotations);
+				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
+				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
-				if(validAnnotation != null || skips.length > 0)
-					templateFields.add(TemplateField.create(field, validAnnotation, skips));
+				if(validAnnotation != null || ! skips.isEmpty())
+					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
@@ -144,6 +199,102 @@ public final class Template<T>{
 			}
 		}
 		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
+	}
+
+
+	private static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
+		final int length = annotations.length;
+		if(length <= 1)
+			return;
+
+		final boolean[] annotationFound = new boolean[ORDER_POST_PROCESS_INDEX + 1];
+		for(final Annotation annotation : annotations){
+			final String annotationName = annotation.annotationType()
+				.getSimpleName();
+
+			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
+					|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+				validateBindAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_BIND_INDEX] = true;
+			}
+			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
+				validateChecksumAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_CHECKSUM_INDEX] = true;
+			}
+			else if(annotationName.equals(ANNOTATION_NAME_EVALUATE)){
+				validateEvaluateAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_EVALUATE_INDEX] = true;
+			}
+			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS)){
+				validatePostProcessAnnotationOrder(annotationFound);
+
+				annotationFound[ORDER_POST_PROCESS_INDEX] = true;
+			}
+			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP))
+				validateSkipAnnotationOrder(annotationFound);
+		}
+	}
+
+	private static void validateBindAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_BIND_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
+		if(annotationFound[ORDER_CHECKSUM_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, ANNOTATION_NAME_CHECKSUM);
+	}
+
+	private static void validateChecksumAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_BIND_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				ANNOTATION_NAME_CHECKSUM, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
+		if(annotationFound[ORDER_CHECKSUM_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_CHECKSUM);
+	}
+
+	private static void validateEvaluateAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_CHECKSUM_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+				ANNOTATION_NAME_EVALUATE, ANNOTATION_NAME_CHECKSUM);
+		if(annotationFound[ORDER_EVALUATE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_EVALUATE);
+	}
+
+	private static void validatePostProcessAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_POST_PROCESS_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+				ANNOTATION_NAME_POST_PROCESS);
+	}
+
+	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
+		if(annotationFound[ORDER_BIND_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
+		if(annotationFound[ORDER_CHECKSUM_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_CHECKSUM);
+		if(annotationFound[ORDER_EVALUATE_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_EVALUATE);
+		if(annotationFound[ORDER_POST_PROCESS_INDEX])
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_POST_PROCESS);
+	}
+
+
+	private static List<SkipParams> extractSkips(final Annotation[] annotations){
+		final List<SkipParams> skips = new ArrayList<>(annotations.length);
+		for(final Annotation annotation : annotations){
+			final Function<Annotation, List<SkipParams>> processingFun = ANNOTATION_MAPPING.get(annotation.annotationType());
+			if(processingFun != null)
+				skips.addAll(processingFun.apply(annotation));
+		}
+		return skips;
 	}
 
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
@@ -159,50 +310,66 @@ public final class Template<T>{
 	}
 
 	private static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final int length = declaredAnnotations.length;
-		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
-
+		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
-		}
 		return evaluations;
 	}
 
-	private static List<EvaluatedField<PostProcessField>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
-		final int length = declaredAnnotations.length;
-		final List<EvaluatedField<PostProcessField>> processed = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
-
-			if(annotation.annotationType() == PostProcessField.class)
-				processed.add(EvaluatedField.create(field, (PostProcessField)annotation));
-		}
+	private static List<EvaluatedField<PostProcess>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
+		final List<EvaluatedField<PostProcess>> processed = new ArrayList<>(declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
+			if(annotation.annotationType() == PostProcess.class)
+				processed.add(EvaluatedField.create(field, (PostProcess)annotation));
 		return processed;
 	}
 
-	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
-		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
+	/**
+	 * Validates a field and return the first valid binding annotation.
+	 *
+	 * @param fieldType	The field class to validate.
+	 * @param annotations	The list of annotations on the field.
+	 * @return	The first valid binding annotation, or {@code null} if none are found.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 */
+	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType, final List<? extends Annotation> annotations)
+			throws AnnotationException{
+		Annotation foundAnnotation = null;
+		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
+			final Annotation annotation = annotations.get(i);
+
+			if(validateAnnotation(fieldType, annotation))
+				foundAnnotation = annotation;
+		}
+		return foundAnnotation;
+	}
+
+	/**
+	 * Return the first collection binding annotation.
+	 *
+	 * @param annotations	The list of annotations on the field.
+	 * @return	The first collection binding annotation, or {@code null} if none are found.
+	 */
+	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations){
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
-				continue;
-
-			validateAnnotation(field, annotation);
-
-			foundAnnotation = annotation;
+			if(annotationType == BindAsArray.class || annotationType == BindAsList.class)
+				foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
 
-	private static void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
-		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation.annotationType());
-		if(validator != null)
-			validator.validate(field, annotation);
+	private static boolean validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
+		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
+		if(validator != null){
+			validator.validate(fieldType, annotation);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -246,7 +413,7 @@ public final class Template<T>{
 	 *
 	 * @return	List of processed fields.
 	 */
-	public List<EvaluatedField<PostProcessField>> getPostProcessedFields(){
+	public List<EvaluatedField<PostProcess>> getPostProcessedFields(){
 		return postProcessedFields;
 	}
 
@@ -295,7 +462,8 @@ public final class Template<T>{
 
 	@Override
 	public int hashCode(){
-		return type.getName().hashCode();
+		return type.getName()
+			.hashCode();
 	}
 
 }

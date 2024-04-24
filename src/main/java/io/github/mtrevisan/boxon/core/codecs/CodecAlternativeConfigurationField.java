@@ -25,9 +25,11 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerFactory;
-import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerInterface;
+import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
+import io.github.mtrevisan.boxon.core.helpers.writers.WriterManagerFactory;
+import io.github.mtrevisan.boxon.core.helpers.writers.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -35,25 +37,30 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 import java.lang.annotation.Annotation;
 
 
-final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
+final class CodecAlternativeConfigurationField implements CodecInterface{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
+	public Class<?> identifier(){
+		return AlternativeSubField.class;
+	}
+
+	@Override
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+			final Object rootObject){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
-			throws CodecException{
-		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object fieldType, Object value) throws CodecException, UnhandledFieldException{
+		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
-			final AlternativeSubField binding = interpretBinding(annotation);
+			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
 				binding.charset());
 			if(writerManager == null)
-				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
-					value.getClass().getSimpleName());
+				throw UnhandledFieldException.create(value);
 
 			writerManager.put(value);
 		}

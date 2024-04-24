@@ -24,13 +24,15 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -77,7 +79,7 @@ abstract class BitReaderData{
 
 
 	/**
-	 * Create a fallback point that can later be restored (see {@link #restoreFallbackPoint()}).
+	 * Create a fallback point that can later be restored (see {@link BitReaderData#restoreFallbackPoint()}).
 	 */
 	public final synchronized void createFallbackPoint(){
 		if(fallbackPoint != null)
@@ -89,7 +91,7 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Restore a fallback point created with {@link #createFallbackPoint()}.
+	 * Restore a fallback point created with {@link BitReaderData#createFallbackPoint()}.
 	 */
 	public final synchronized void restoreFallbackPoint(){
 		if(fallbackPoint != null){
@@ -102,7 +104,7 @@ abstract class BitReaderData{
 
 	/**
 	 * Clear fallback point data.
-	 * <p>After calling this method, no restoring is possible (see {@link #restoreFallbackPoint()}).</p>
+	 * <p>After calling this method, no restoring is possible (see {@link BitReaderData#restoreFallbackPoint()}).</p>
 	 */
 	private synchronized void clearFallbackPoint(){
 		fallbackPoint = null;
@@ -112,7 +114,6 @@ abstract class BitReaderData{
 		return new Snapshot(buffer.position(), cache, remaining);
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private void restoreSnapshot(final Snapshot snapshot){
 		buffer.position(snapshot.position);
 		remaining = snapshot.remaining;
@@ -136,7 +137,6 @@ abstract class BitReaderData{
 				fillCache();
 
 			final int length = Math.min(bitsToRead - bitsRead, remaining);
-			//transfer the cache values
 			bitmap = readFromCache(bitmap, bitsRead, length);
 			bitsRead += length;
 
@@ -155,7 +155,7 @@ abstract class BitReaderData{
 	 */
 	private long readFromCache(long bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
 			bitmap |= 1l << (skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
@@ -169,7 +169,7 @@ abstract class BitReaderData{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final synchronized BitSet getBitSet(final int bitsToRead){
-		final BitSet bitmap = BitSetHelper.createBitSet(bitsToRead);
+		final BitSet bitmap = new BitSet(bitsToRead);
 
 		int bitsRead = 0;
 		while(bitsRead < bitsToRead){
@@ -177,7 +177,6 @@ abstract class BitReaderData{
 			if(remaining == 0)
 				fillCache();
 
-			//transfer the cache values
 			final int length = Math.min(bitsToRead - bitsRead, remaining);
 			readFromCache(bitmap, bitsRead, length);
 			bitsRead += length;
@@ -197,10 +196,14 @@ abstract class BitReaderData{
 	 */
 	private void readFromCache(final BitSet bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
 			bitmap.set(skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
+	}
+
+	private int cacheTrailingZeros(){
+		return Integer.numberOfTrailingZeros(cache & 0xFF);
 	}
 
 	/**
@@ -238,7 +241,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	A {@code byte}.
 	 */
-	public abstract byte getByte();
+	protected abstract byte getByte();
 
 	/**
 	 * Retrieve text until a terminator (NOT consumed!) is found.
@@ -250,6 +253,24 @@ abstract class BitReaderData{
 	final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		Byte byteRead;
 		while((byteRead = peekByte()) != null && byteRead != terminator)
+			baos.write(getByte());
+		baos.flush();
+	}
+
+	/**
+	 * Retrieve text until a terminator (NOT consumed!) is found.
+	 *
+	 * @param baos	The stream to write to.
+	 * @param terminator	The terminator.
+	 * @param charset	The charset.
+	 * @throws IOException	If an I/O error occurs.
+	 */
+	final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final String terminator, final Charset charset)
+			throws IOException{
+		final byte[] terminatorArray = terminator.getBytes(charset);
+		final byte[] peekBuffer = new byte[terminatorArray.length];
+
+		while(peekString(peekBuffer) != null && !Arrays.equals(terminatorArray, peekBuffer))
 			baos.write(getByte());
 		baos.flush();
 	}
@@ -270,6 +291,26 @@ abstract class BitReaderData{
 			restoreSnapshot(originalSnapshot);
 		}
 		return b;
+	}
+
+	private byte[] peekString(final byte[] peekBuffer){
+		//make a copy of internal variables
+		final Snapshot originalSnapshot = createSnapshot();
+
+		try{
+			for(int i = 0, length = peekBuffer.length; i < length; i ++)
+				peekBuffer[i] = getByte();
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+			return null;
+		}
+		finally{
+			//restore original variables
+			restoreSnapshot(originalSnapshot);
+		}
+
+		return peekBuffer;
 	}
 
 	/**
@@ -312,7 +353,7 @@ abstract class BitReaderData{
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	public final synchronized int position(){
-		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
+		return buffer.position() - JavaHelper.getSizeInBytes(remaining);
 	}
 
 	/**

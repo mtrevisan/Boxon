@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
+import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -67,12 +68,12 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
+	public Object getDefaultValue(final Class<?> fieldType, final Version protocol) throws CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			return ConfigurationHelper.convertValue(value, field.getType(), enumeration);
+			return ConfigurationHelper.convertValue(value, fieldType, enumeration);
 		}
 		return JavaHelper.EMPTY_STRING;
 	}
@@ -189,8 +190,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
@@ -202,8 +202,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), map);
 		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(binding.minValue()), map);
 		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(binding.maxValue()), map);
 		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
@@ -233,11 +232,10 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(field.getType(), v);
+			dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
 
-			final Version minProtocolVersion = Version.of(fieldBinding.minProtocol());
-			final Version maxProtocolVersion = Version.of(fieldBinding.maxProtocol());
+			final Version minProtocolVersion = VersionBuilder.of(fieldBinding.minProtocol());
+			final Version maxProtocolVersion = VersionBuilder.of(fieldBinding.maxProtocol());
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(
 				annotation.annotationType());
 			validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);

@@ -24,13 +24,14 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 
 /**
@@ -43,6 +44,16 @@ public final class StringHelper{
 
 
 	private StringHelper(){}
+
+
+	public static boolean matches(final CharSequence text, final Pattern pattern){
+		return pattern.matcher(text)
+			.matches();
+	}
+
+	public static boolean matchesOrBlank(final String text, final Pattern pattern){
+		return (isBlank(text) || matches(text, pattern));
+	}
 
 
 	/**
@@ -168,23 +179,18 @@ public final class StringHelper{
 		if(length > 0){
 			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 			for(int i = 0; i < length; i ++)
-				if(!Character.isWhitespace(bytes[i]))
+				if(!Character.isWhitespace(bytes[i]) || bytes[i] == '\r' || bytes[i] == '\n')
 					return false;
 		}
 		return true;
 	}
 
-
-	/**
-	 * Converts a decimal value into the corresponding hexadecimal string.
-	 *
-	 * @param value	Value to be converted to hexadecimal characters.
-	 * @return	The hexadecimal characters.
-	 */
-	public static String toHexString(final int value){
-		return Integer.toHexString(value)
-			.toUpperCase(Locale.ROOT);
+	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
+		return ((value instanceof final String v && isBlank(v))
+			|| (value instanceof final Collection<?> c && c.isEmpty())
+			|| value == void.class);
 	}
+
 
 	/**
 	 * Converts a decimal value into the corresponding hexadecimal string.
@@ -195,6 +201,20 @@ public final class StringHelper{
 	public static String toHexString(final long value){
 		return Long.toHexString(value)
 			.toUpperCase(Locale.ROOT);
+	}
+
+
+	/**
+	 * Converts a decimal value into the corresponding hexadecimal string, padded to `size` bytes.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @param size	Number of bytes used to pad the final hexadecimal value.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final long value, final int size){
+		final long mask = (size >= 8? -1L: (1l << (size << 3)) - 1);
+		final String hex = toHexString(value & mask);
+		return leftPad(hex, size << 1, '0');
 	}
 
 	/**
@@ -234,12 +254,12 @@ public final class StringHelper{
 	 *
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
-	 * @throws DataException	If the input has an odd length.
+	 * @throws IllegalArgumentException	If the input has an odd length.
 	 */
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.sizeOrZero(hexString);
 		if(length % 2 != 0)
-			throw DataException.create("Input should be of even length, was {}", length);
+			throw new IllegalArgumentException("Input should be of even length, was " + length);
 
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){

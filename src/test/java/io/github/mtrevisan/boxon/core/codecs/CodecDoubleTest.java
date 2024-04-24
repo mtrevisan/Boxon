@@ -24,18 +24,20 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -47,18 +49,23 @@ import java.lang.annotation.Annotation;
 class CodecDoubleTest{
 
 	@Test
-	void doublePositiveLittleEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+	void doublePositiveLittleEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "64";
 			}
 
 			@Override
@@ -73,7 +80,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -93,32 +100,37 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		FieldAccessor.injectValues(codec, Evaluator.create());
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))),
-			16, '0');
+		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToLongBits(encodedValue)), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null);
+		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void doubleNegativeLittleEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+	void doubleNegativeLittleEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "64";
 			}
 
 			@Override
@@ -133,7 +145,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -153,32 +165,37 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		FieldAccessor.injectValues(codec, Evaluator.create());
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))),
-			16, '0');
+		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToLongBits(encodedValue)), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null);
+		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void doublePositiveBigEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+	void doublePositiveBigEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "64";
 			}
 
 			@Override
@@ -193,7 +210,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -213,31 +230,37 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		FieldAccessor.injectValues(codec, Evaluator.create());
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue)), 8, '0');
+		String expected = StringHelper.toHexString(Double.doubleToLongBits(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null);
+		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void doubleNegativeBigEndian() throws FieldException{
-		CodecInterface<BindDouble> codec = new CodecDouble();
+	void doubleNegativeBigEndian() throws BoxonException{
+		CodecInterface codec = new CodecDefault();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
-		BindDouble annotation = new BindDouble(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindDouble.class;
+				return BindInteger.class;
 			}
 
 			@Override
 			public String condition(){
 				return null;
+			}
+
+			@Override
+			public String size(){
+				return "64";
 			}
 
 			@Override
@@ -252,7 +275,7 @@ class CodecDoubleTest{
 
 			@Override
 			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
+				return LongToDoubleConverter.class;
 			}
 
 			@Override
@@ -272,14 +295,15 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		FieldAccessor.injectValues(codec, Evaluator.create());
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue)), 8, '0');
+		String expected = StringHelper.toHexString(Double.doubleToLongBits(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null);
+		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.nio.charset.Charset;
@@ -39,8 +40,8 @@ public interface BitWriterInterface{
 	 *
 	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE},
 	 * 	{@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
-	 * @param byteOrder	The byte order used to write the value.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
 
@@ -96,22 +97,6 @@ public interface BitWriterInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	void putLong(long value, ByteOrder byteOrder);
-
-	/**
-	 * Writes a value with the specified {@link ByteOrder} using {@link Float#SIZE} bits.
-	 *
-	 * @param value	The {@code float} to write.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 */
-	void putFloat(float value, ByteOrder byteOrder);
-
-	/**
-	 * Writes a value with the specified {@link ByteOrder} using {@link Double#SIZE} bits.
-	 *
-	 * @param value	The {@code double} to write.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 */
-	void putDouble(double value, ByteOrder byteOrder);
 
 	/**
 	 * Write the text into with a given {@link Charset}.

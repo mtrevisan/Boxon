@@ -33,10 +33,10 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManage
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
@@ -100,7 +100,7 @@ public final class ConfigurationParser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfigurationsFrom(basePackageClasses);
@@ -110,11 +110,14 @@ public final class ConfigurationParser{
 	 * Loads the specified configuration class annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param configurationClass	Configuration class.
+	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public void withConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
+	public ConfigurationParser withConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfiguration(configurationClass);
+
+		return this;
 	}
 
 	/**
@@ -133,12 +136,12 @@ public final class ConfigurationParser{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
-	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
 	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws AnnotationException, CodecException, EncodeException{
+			final Version protocol) throws BoxonException{
 		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}
 
@@ -157,17 +160,17 @@ public final class ConfigurationParser{
 	/**
 	 * Encode the configuration using the given writer with the given object that contains the values.
 	 *
-	 * @param <T>           The class type of the current object.
-	 * @param configuration The configuration to encode.
-	 * @param writer        The writer that holds the encoded template.
-	 * @param currentObject The current object that holds the values.
-	 * @param protocol      The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @throws FieldException If a codec is not found.
+	 * @param <T>	The class type of the current object.
+	 * @param configuration	The configuration to encode.
+	 * @param writer	The writer that holds the encoded template.
+	 * @param currentObject	The current object that holds the values.
+	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @throws CodecException	If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
-			final Version protocol) throws FieldException{
+			final Version protocol) throws BoxonException{
 		//FIXME is there a way to reduce the number of ParserContext objects?
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
+		final ParserContext<T> parserContext = ParserContext.create(currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();

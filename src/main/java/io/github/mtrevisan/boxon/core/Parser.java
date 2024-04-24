@@ -73,7 +73,7 @@ public final class Parser{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public List<Response<byte[], Object>> parse(final File file) throws IOException, FileNotFoundException{
+	public List<Response<byte[], Object>> parse(final File file) throws IOException{
 		final BitReader reader = BitReader.wrap(file);
 		return parse(reader);
 	}

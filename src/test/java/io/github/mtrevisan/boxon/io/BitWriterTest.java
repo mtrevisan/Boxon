@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -129,46 +130,6 @@ class BitWriterTest{
 
 		Assertions.assertEquals("1234567812344568", reader.toString());
 		Assertions.assertEquals(value, reader.getLong(ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
-	void floatPrimitive(){
-		float value = 1.23f;
-		writer.putFloat(value, ByteOrder.LITTLE_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("A4709D3F", reader.toString());
-		Assertions.assertEquals(value, reader.getFloat(ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void floatPrimitiveBigEndian(){
-		float value = 1.23f;
-		writer.putFloat(value, ByteOrder.BIG_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("3F9D70A4", reader.toString());
-		Assertions.assertEquals(value, reader.getFloat(ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
-	void doublePrimitive(){
-		double value = 1.23;
-		writer.putDouble(value, ByteOrder.LITTLE_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("AE47E17A14AEF33F", reader.toString());
-		Assertions.assertEquals(value, reader.getDouble(ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void doublePrimitiveBigEndian(){
-		double value = 1.23;
-		writer.putDouble(value, ByteOrder.BIG_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("3FF3AE147AE147AE", reader.toString());
-		Assertions.assertEquals(value, reader.getDouble(ByteOrder.BIG_ENDIAN));
 	}
 
 	@Test

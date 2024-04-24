@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.Serial;
 
@@ -33,7 +32,7 @@ import java.io.Serial;
 /**
  * Thrown if a composition (encoding) went bad.
  */
-public final class EncodeException extends Exception{
+public class EncodeException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = 4385865753761318892L;
@@ -55,32 +54,32 @@ public final class EncodeException extends Exception{
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
 	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static EncodeException create(final Throwable cause, final String message, final Object... parameters){
-		return new EncodeException(StringHelper.format(message, parameters), cause);
+		return new EncodeException(cause, message, parameters);
 	}
 
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static EncodeException create(final String message, final Object... parameters){
-		return new EncodeException(StringHelper.format(message, parameters));
+		return new EncodeException(message, parameters);
 	}
 
 
-	private EncodeException(final String message, final Throwable cause){
-		super(message, cause);
+	private EncodeException(final Throwable cause, final String message, final Object... parameters){
+		super(cause, message, parameters);
 	}
 
-	private EncodeException(final String message){
-		super(message);
+	protected EncodeException(final String message, final Object... parameters){
+		super(message, parameters);
 	}
 
 	private EncodeException(final Throwable cause){

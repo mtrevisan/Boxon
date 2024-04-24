@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.validators;
 
-
 import java.nio.charset.StandardCharsets;
 
 

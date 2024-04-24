@@ -24,11 +24,18 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -41,6 +48,7 @@ import java.util.Map;
  */
 public enum ParserDataType{
 
+	/** Represents the byte data type. */
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
 		Object value(final String value){
@@ -48,7 +56,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.byteValue();
 		}
 
@@ -63,6 +71,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the short data type. */
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
 		Object value(final String value){
@@ -70,7 +79,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.shortValue();
 		}
 
@@ -85,6 +94,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the int/integer data type. */
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
 		Object value(final String value){
@@ -92,7 +102,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.intValue();
 		}
 
@@ -107,6 +117,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the long data type. */
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
 		Object value(final String value){
@@ -114,7 +125,7 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.longValue();
 		}
 
@@ -129,6 +140,7 @@ public enum ParserDataType{
 		}
 	},
 
+	/** Represents the float data type. */
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
 		Object value(final String value){
@@ -136,21 +148,24 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.floatValue();
 		}
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getFloat(byteOrder);
+			final int rawValue = reader.getInt(byteOrder);
+			return Float.intBitsToFloat(rawValue);
 		}
 
 		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putFloat((Float)value, byteOrder);
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
+			final int value = Float.floatToIntBits((Float)rawValue);
+			writer.putInt(value, byteOrder);
 		}
 	},
 
+	/** Represents the double data type. */
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
 		@Override
 		Object value(final String value){
@@ -158,18 +173,20 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object cast(final BigInteger value){
+		public Number cast(final BigInteger value){
 			return value.doubleValue();
 		}
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getDouble(byteOrder);
+			final long rawValue = reader.getLong(byteOrder);
+			return Double.longBitsToDouble(rawValue);
 		}
 
 		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putDouble((Double)value, byteOrder);
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
+			final long value = Double.doubleToLongBits((Double)rawValue);
+			writer.putLong(value, byteOrder);
 		}
 	};
 
@@ -281,15 +298,6 @@ public enum ParserDataType{
 	}
 
 	/**
-	 * The bit mask for the given type.
-	 *
-	 * @return	The bit mask for the given type.
-	 */
-	public int getMask(){
-		return (size == 0? 0: (1 << size) - 1);
-	}
-
-	/**
 	 * Describe the data types handled by this class.
 	 *
 	 * @return	A list of data types.
@@ -302,13 +310,19 @@ public enum ParserDataType{
 	abstract Object value(String value);
 
 
-	abstract Object cast(BigInteger value);
+	/**
+	 * Casts the given `BigInteger` value to a `Number` object that can be a `byte`, a `short`, an `integer`, a `float`, or a `double`.
+	 *
+	 * @param value	The `BigInteger` value to be cast.
+	 * @return	The cast `Number` object.
+	 */
+	protected abstract Number cast(BigInteger value);
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
 	 *
 	 * @param reader	The reader from which to read the data from.
-	 * @param byteOrder	The byte order.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value.
 	 */
 	abstract Object read(BitReaderInterface reader, ByteOrder byteOrder);
@@ -317,47 +331,38 @@ public enum ParserDataType{
 	 * Write a specific data to the writer, using the given byte order.
 	 * @param writer	The writer used to write the data to.
 	 * @param value	The value to be written.
-	 * @param byteOrder	The byte order.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	abstract void write(BitWriterInterface writer, Object value, ByteOrder byteOrder);
 
 
 	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value, if the type is not string,
-	 * in that case the value will be returned.
+	 * Returns the primitive or objective type data stored as a string value, or the value itself if not a string or the field type is a
+	 * string.
 	 *
 	 * @param fieldType	The type of the field that will hold the value represented as a string.
 	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value, if the field type is not string, the given value otherwise.
+	 * @return	The primitive or objective value, or the value passed if not a string or the field type is a string.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof final String v
-			? getValue(fieldType, v)
-			: value);
-	}
-
-	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
-	 *
-	 * @param fieldType	The type of the field that will hold the value represented as a string.
-	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
-	 */
-	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
-		if(fieldType == String.class)
+		if(fieldType == String.class || !(value instanceof final String valueAsString))
 			return value;
-		if(StringHelper.isBlank(value))
+		if(StringHelper.isBlank(valueAsString))
 			return null;
 
 		final Class<?> objectiveType = toObjectiveTypeOrSelf(fieldType);
+		return convertStringValue(valueAsString, objectiveType);
+	}
+
+	private static Object convertStringValue(final String value, final Class<?> objectiveType) throws CodecException{
 		//try convert to a number...
-		final Object val = toNumber(value, objectiveType);
+		final Object valueAsNumber = toNumber(value, objectiveType);
 		//... otherwise convert it to an object
-		return (val == null
+		return (valueAsNumber == null
 			? toObjectValue(value, objectiveType)
-			: val);
+			: valueAsNumber
+		);
 	}
 
 	private static Object toNumber(final String text, final Class<?> objectiveType){
@@ -394,6 +399,68 @@ public enum ParserDataType{
 			}
 		}
 		return result;
+	}
+
+
+
+	/**
+	 * Resolves the input type for a sequence of a converter, if given, and/or a following validator.
+	 *
+	 * @param converterType	The type of the converter.
+	 * @param validatorType	The type of the validator.
+	 * @return	The resolved input type.
+	 */
+	public static Class<?> resolveInputType(final Class<? extends Converter<?, ?>> converterType,
+			final Class<? extends Validator<?>> validatorType){
+		Class<?> inputType = null;
+		if(converterType != NullConverter.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(converterType, Converter.class)
+				.getFirst();
+		if(inputType == null && validatorType != NullValidator.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(validatorType, Validator.class)
+				.getFirst();
+		return inputType;
+	}
+
+	/**
+	 * Casts the given {@code value} to the specified {@code inputType}.
+	 *
+	 * @param value	The value to be cast.
+	 * @param inputType	The target data type to cast the value to.
+	 * @return	The cast value if successful, otherwise the original value.
+	 */
+	public static Number castValue(final BigInteger value, final Class<?> inputType){
+		if(inputType != null){
+			final ParserDataType pdt = fromType(inputType);
+			if(pdt != null)
+				return pdt.cast(value);
+		}
+		return value;
+	}
+
+	public static Object castValue(final BigInteger[] array, final Class<?> inputType){
+		final int length = Array.getLength(array);
+		final Object convertedArray = Array.newInstance(inputType, length);
+		for(int i = 0; i < length; i ++){
+			Object element = Array.get(array, i);
+			element = castValue((BigInteger)element, inputType);
+			Array.set(convertedArray, i, element);
+		}
+		return convertedArray;
+	}
+
+	/**
+	 * Reinterprets a `Number` as a `BigInteger`.
+	 *
+	 * @param value	The `Number` to reinterpret as a `BigInteger`.
+	 * @return	A `BigInteger` representing the same numerical value as the given `Number`.
+	 * @see #castValue(BigInteger, Class)
+	 */
+	public static BigInteger reinterpretToBigInteger(final Number value){
+		return (value instanceof final BigInteger bi
+			? bi
+			: BigInteger.valueOf(value.longValue())
+		);
 	}
 
 }

@@ -30,7 +30,6 @@ import org.springframework.objenesis.ObjenesisStd;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.RecordComponent;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -59,7 +58,6 @@ public final class ConstructorHelper{
 	 * @param <T>	The parameter identifying the class.
 	 * @return	A method that construct the given class.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> Supplier<T> getEmptyCreator(final Class<T> type){
 		return (Supplier<T>)EMPTY_CREATORS.apply(type);
 	}
@@ -72,7 +70,6 @@ public final class ConstructorHelper{
 	 * @param <T>	The parameter identifying the class.
 	 * @return	A method that construct the given class.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> Function<Object[], T> getNonEmptyCreator(final Class<T> type, final Class<?>[] constructorClasses){
 		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new AbstractMap.SimpleEntry<>(type, constructorClasses));
 	}
@@ -82,14 +79,13 @@ public final class ConstructorHelper{
 		try{
 			instantiator = getConstructor(type);
 		}
-		catch(final Exception ignored){
+		catch(final ReflectiveOperationException ignored){
 			instantiator = OBJENESIS.getInstantiatorOf(type);
 		}
 		return instantiator::newInstance;
 	}
 
-	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException{
+	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws ReflectiveOperationException{
 		final Constructor<T> constructor = type.getDeclaredConstructor();
 		FieldAccessor.makeAccessible(constructor);
 
@@ -130,7 +126,6 @@ public final class ConstructorHelper{
 
 	static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
 			throws ReflectiveOperationException{
-		@SuppressWarnings("unchecked")
 		final Class<T> objClass = (Class<T>)obj.getClass();
 		final RecordComponent[] recordComponents = objClass.getRecordComponents();
 

@@ -34,6 +34,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -58,6 +59,9 @@ public final class JSONPath{
 
 	private static final Pattern PATTERN_HEX_URL_ENCODE = Pattern.compile("%x([0-9a-fA-F]{2})");
 
+	private static final IndexExtractor LIST_INDEX_EXTRACTOR = new ListIndexExtractor();
+	private static final IndexExtractor ARRAY_INDEX_EXTRACTOR = new ArrayIndexExtractor();
+
 
 	private JSONPath(){}
 
@@ -72,12 +76,13 @@ public final class JSONPath{
 	 * @return	The value.
 	 * @throws JSONPathException	If the path is not well formatted.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T extract(final String path, final Object data, final T defaultValue) throws JSONPathException{
 		if(path == null || !path.isEmpty()){
 			final String[] pathComponents = parsePath(path);
 			return extract(pathComponents, data, defaultValue);
 		}
+
+		//path is null or empty, return the parent object
 		return (T)data;
 	}
 
@@ -130,27 +135,29 @@ public final class JSONPath{
 		return URLDecoder.decode(text, StandardCharsets.UTF_8);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> T extract(final String[] path, Object data, final T defaultValue) throws JSONPathException{
+	private static <T> T extract(final String[] path, final Object data, final T defaultValue) throws JSONPathException{
+		Object result = data;
+		//traverse the object until the path is fully consumed
 		for(int i = 0, length = path.length; i < length; i ++){
 			final String currentPath = path[i];
 
 			final Integer idx = extractIndex(currentPath);
 
-			validatePath(data, currentPath, idx, path);
+			validatePath(result, currentPath, idx, path);
 
 			if(idx != null)
-				data = extractPath(data, idx, defaultValue);
+				result = extractPath(result, idx, defaultValue);
 			else
-				data = extractPath(data, currentPath, defaultValue);
+				result = extractPath(result, currentPath, defaultValue);
 		}
-		return (T)data;
+		return (T)result;
 	}
 
 	private static Integer extractIndex(final String currentPath){
 		return (JavaHelper.isDecimalIntegerNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
 			? Integer.valueOf(currentPath)
-			: null);
+			: null
+		);
 	}
 
 	private static void validatePath(final Object data, final String currentPath, final Integer idx, final String[] path)
@@ -165,9 +172,48 @@ public final class JSONPath{
 	}
 
 	private static Object extractPath(final Object data, final Integer idx, final Object defaultValue){
-		return (data instanceof final List<?> lst
-			? (idx >= 0 && idx < lst.size()? lst.get(idx): defaultValue)
-			: (idx >= 0 && idx < Array.getLength(data)? Array.get(data, idx): defaultValue));
+		final IndexExtractor extractor = selectPathExtractor(data);
+		return (extractor.isValidIndex(idx, data)
+			? extractor.getValueAt(idx, data)
+			: defaultValue
+		);
+	}
+
+	private static IndexExtractor selectPathExtractor(final Object data){
+		return (data instanceof List<?>
+			? LIST_INDEX_EXTRACTOR
+			: ARRAY_INDEX_EXTRACTOR
+		);
+	}
+
+	private interface IndexExtractor{
+		boolean isValidIndex(Integer idx, Object data);
+
+		Object getValueAt(Integer idx, Object data);
+	}
+
+	private static class ListIndexExtractor implements IndexExtractor{
+		@Override
+		public final boolean isValidIndex(final Integer idx, final Object data){
+			return (idx >= 0 && idx < ((Collection<?>)data).size());
+		}
+
+		@Override
+		public final Object getValueAt(final Integer idx, final Object data){
+			return ((List<?>)data).get(idx);
+		}
+	}
+
+	private static class ArrayIndexExtractor implements IndexExtractor{
+		@Override
+		public final boolean isValidIndex(final Integer idx, final Object data){
+			return (idx >= 0 && idx < Array.getLength(data));
+		}
+
+		@Override
+		public final Object getValueAt(final Integer idx, final Object data){
+			return Array.get(data, idx);
+		}
 	}
 
 	private static Object extractPath(final Object data, final String currentPath, final Object defaultValue){
@@ -175,7 +221,8 @@ public final class JSONPath{
 		if(data instanceof final Map<?, ?> m)
 			nextData = (m.containsKey(currentPath)
 				? m.get(currentPath)
-				: defaultValue);
+				: defaultValue
+			);
 		else{
 			final Class<?> cls = data.getClass();
 			try{

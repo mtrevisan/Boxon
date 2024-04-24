@@ -24,50 +24,43 @@
  */
 package io.github.mtrevisan.boxon.core.keys;
 
+import io.github.mtrevisan.boxon.core.Describer;
+
 
 /**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}.
+ * Holds the constants used as a key in the {@link Describer}.
  */
 public enum DescriberKey{
+	/** Represents the template constant used as a key in the {@link Describer}. */
 	TEMPLATE("template"),
+	/** Represents the configuration constant used as a key in the {@link Describer}. */
 	CONFIGURATION("configuration"),
 
+	/** Represents the context constant used as a key in the {@link Describer}. */
 	CONTEXT("context"),
 
+	/** Represents the header constant used as a key in the {@link Describer}. */
 	HEADER("header"),
-	HEADER_START("start"),
-	HEADER_END("end"),
-	HEADER_CHARSET("charset"),
 
+	/** Represents the fields constant used as a key in the {@link Describer}. */
 	FIELDS("fields"),
+	/** Represents the evaluated fields constant used as a key in the {@link Describer}. */
 	EVALUATED_FIELDS("evaluatedFields"),
+	/** Represents the post-processed constant used as a key in the {@link Describer}. */
 	POST_PROCESSED_FIELDS("postProcessedFields"),
+	/** Represents the name constant used as a key in the {@link Describer}. */
 	FIELD_NAME("name"),
+	/** Represents the field type constant used as a key in the {@link Describer}. */
 	FIELD_TYPE("fieldType"),
+	/** Represents the annotation type constant used as a key in the {@link Describer}. */
 	ANNOTATION_TYPE("annotationType"),
+	/** Represents the collection annotation type constant used as a key in the {@link Describer}. */
+	COLLECTION_TYPE("collectionType"),
+	/** Represents the array collection size constant used as a key in the {@link Describer}. */
+	COLLECTION_ARRAY_SIZE("collectionArraySize"),
 
-	BIND_CONDITION("condition"),
-	BIND_TYPE("type"),
-	BIND_SELECT_DEFAULT("selectDefault"),
-	BIND_CONVERTER("converter"),
-	BIND_SELECT_CONVERTER_FROM("selectConverterFrom"),
-	BIND_SIZE("size"),
-	BIND_BYTE_ORDER("byteOrder"),
-	BIND_CHARSET("charset"),
-	BIND_TERMINATOR("terminator"),
-	BIND_CONSUME_TERMINATOR("consumeTerminator"),
-	BIND_PREFIX("prefix"),
-	BIND_PREFIX_LENGTH("prefixLength"),
-	BIND_SKIP_START("skipStart"),
-	BIND_SKIP_END("skipEnd"),
-	BIND_ALGORITHM("algorithm"),
-	BIND_VALUE("value"),
-	BIND_VALUE_DECODE("valueDecode"),
-	BIND_VALUE_ENCODE("valueEncode"),
-	BIND_VALIDATOR("validator"),
-
-	BIND_MIN_PROTOCOL("minProtocol"),
-	BIND_MAX_PROTOCOL("maxProtocol");
+	/** Represents the bind subtypes constant used as a key in the {@link Describer}. */
+	BIND_SUBTYPES("subtypes");
 
 
 	private final String name;

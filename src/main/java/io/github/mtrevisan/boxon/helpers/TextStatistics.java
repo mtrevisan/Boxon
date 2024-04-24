@@ -24,6 +24,7 @@ package io.github.mtrevisan.boxon.helpers;
  *
  * @see <a href="https://github.com/apache/tika/">Apache Tika</a>.
  */
+@SuppressWarnings("unused")
 public final class TextStatistics{
 
 	private static final int BYTE_MASK = 0xFF;

@@ -107,25 +107,19 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
 1. [Basic annotations](#annotation-basic)
     1. [Summary](#annotation-summary)
     2. [BindObject](#annotation-bindobject)
-    3. [BindArray](#annotation-bindarray)
-    4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindList](#annotation-bindlist)
-    6. [BindBitSet](#annotation-bindbitset)
-    7. [BindByte](#annotation-bindbyte)
-    8. [BindShort](#annotation-bindshort)
-    9. [BindInt](#annotation-bindint)
-    10. [BindLong](#annotation-bindlong)
-    11. [BindInteger](#annotation-bindinteger)
-    12. [BindFloat](#annotation-bindfloat)
-    13. [BindDouble](#annotation-binddouble)
-    14. [BindString](#annotation-bindstring)
-    15. [BindStringTerminated](#annotation-bindstringterminated)
+    3. [BindAsArray](#annotation-bindasarray)
+    4. [BindAsList](#annotation-bindaslist)
+    5. [BindBitSet](#annotation-bindbitset)
+    6. [BindInteger](#annotation-bindinteger)
+    7. [BindString](#annotation-bindstring)
+    8. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [TemplateHeader](#annotation-templateheader)
-    2. [Skip](#annotation-skip)
-    3. [Checksum](#annotation-checksum)
-    4. [Evaluate](#annotation-evaluate)
-    5. [PostProcessField](#annotation-post-process-field)
+    2. [SkipBits](#annotation-skip-bits)
+    3. [SkipUntilTerminator](#annotation-skip-until-terminator)
+    4. [Checksum](#annotation-checksum)
+    5. [Evaluate](#annotation-evaluate)
+    6. [PostProcess](#annotation-post-process)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -135,7 +129,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     5. [CompositeSubField](#annotation-compositesubfield)
     6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
     7. [AlternativeSubField](#annotation-alternativesubfield)
-5. [Descriptor](#descriptor)
+5. [Describer](#describer)
 6. [Extractor](#extractor)
 7. [How to write SpEL expressions](#how-to-spel)
 8. [How to extend the functionalities](#how-to-extend)
@@ -147,27 +141,30 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.5.1](#changelog-3.5.1)
-    2. [version 3.5.0](#changelog-3.5.0)
-    3. [version 3.4.0](#changelog-3.4.0)
-    4. [version 3.3.0](#changelog-3.3.0)
-    5. [version 3.2.0](#changelog-3.2.0)
-    6. [version 3.1.3](#changelog-3.1.3)
-    7. [version 3.1.2](#changelog-3.1.2)
-    8. [version 3.1.1](#changelog-3.1.1)
-    9. [version 3.1.0](#changelog-3.1.0)
-    10. [version 3.0.2](#changelog-3.0.2)
-    11. [version 3.0.1](#changelog-3.0.1)
-    12. [version 3.0.0](#changelog-3.0.0)
-    13. [version 2.1.2](#changelog-2.1.2)
-    14. [version 2.1.1](#changelog-2.1.1)
-    15. [version 2.1.0](#changelog-2.1.0)
-    16. [version 2.0.0](#changelog-2.0.0)
-    17. [version 1.1.0](#changelog-1.1.0)
-    18. [version 1.0.0](#changelog-1.0.0)
-    19. [version 0.0.2](#changelog-0.0.2)
-    20. [version 0.0.1](#changelog-0.0.1)
-    21. [version 0.0.0](#changelog-0.0.0)
+    1. [version 5.0.0](#changelog-5.0.0)
+    2. [version 4.0.0](#changelog-4.0.0)
+    3. [version 3.6.0](#changelog-3.6.0)
+    4. [version 3.5.1](#changelog-3.5.1)
+    5. [version 3.5.0](#changelog-3.5.0)
+    6. [version 3.4.0](#changelog-3.4.0)
+    7. [version 3.3.0](#changelog-3.3.0)
+    8. [version 3.2.0](#changelog-3.2.0)
+    9. [version 3.1.3](#changelog-3.1.3)
+    10. [version 3.1.2](#changelog-3.1.2)
+    11. [version 3.1.1](#changelog-3.1.1)
+    12. [version 3.1.0](#changelog-3.1.0)
+    13. [version 3.0.2](#changelog-3.0.2)
+    14. [version 3.0.1](#changelog-3.0.1)
+    15. [version 3.0.0](#changelog-3.0.0)
+    16. [version 2.1.2](#changelog-2.1.2)
+    17. [version 2.1.1](#changelog-2.1.1)
+    18. [version 2.1.0](#changelog-2.1.0)
+    19. [version 2.0.0](#changelog-2.0.0)
+    21. [version 1.1.0](#changelog-1.1.0)
+    22. [version 1.0.0](#changelog-1.0.0)
+    23. [version 0.0.2](#changelog-0.0.2)
+    24. [version 0.0.1](#changelog-0.0.1)
+    25. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -186,40 +183,35 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
 
-|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
-|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
-| BindList             |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindList |
-| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
-| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
-| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
+|                      | condition |  type   | charset | terminator /<br/>consumeTerminator |  size   | byteOrder | selectFrom /<br/>selectDefault | validator | converter /<br/>selectConverterFrom |                      |
+|----------------------|:---------:|:-------:|:-------:|:----------------------------------:|:-------:|:---------:|:------------------------------:|:---------:|:-----------------------------------:|---------------------:|
+| BindObject           |  &#9745;  | &#9745; |         |                                    |         |           |            &#9745;             |  &#9745;  |               &#9745;               |           BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |                                    | &#9745; |           |            &#9745;             |  &#9745;  |               &#9745;               |            BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |                                    | &#9745; |  &#9745;  |                                |  &#9745;  |               &#9745;               |   BindArrayPrimitive |
+| BindList             |  &#9745;  | &#9745; |         |                                    |         |           |            &#9745;             |  &#9745;  |               &#9745;               |             BindList |
+| BindBitSet           |  &#9745;  |         |         |                                    | &#9745; |  &#9745;  |                                |  &#9745;  |               &#9745;               |           BindBitSet |
+| BindInteger          |  &#9745;  |         |         |                                    | &#9745; |  &#9745;  |                                |  &#9745;  |               &#9745;               |          BindInteger |
+| BindString           |  &#9745;  |         | &#9745; |                                    | &#9745; |           |                                |  &#9745;  |               &#9745;               |           BindString |
+| BindStringTerminated |  &#9745;  |         | &#9745; |              &#9745;               |         |           |                                |  &#9745;  |               &#9745;               | BindStringTerminated |
 
-|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
-|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
-| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
-| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
-| Checksum         |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
-| Evaluate         |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
-| PostProcessField |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
+|                     | condition | start /<br/>end | charset |  value  | consumeTerminator | byteOrder | skipStart /<br/>skipEnd | algorithm |  value  | valueDecode /<br/>valueEncode |                     |
+|---------------------|:---------:|:---------------:|:-------:|:-------:|:-----------------:|:---------:|:-----------------------:|:---------:|:-------:|:-----------------------------:|--------------------:|
+| TemplateHeader      |           |     &#9745;     | &#9745; |         |                   |           |                         |           |         |                               |      TemplateHeader |
+| SkipBits            |  &#9745;  |                 |         | &#9745; |                   |           |                         |           |         |                               |            SkipBits |
+| SkipUntilTerminator |  &#9745;  |                 |         | &#9745; |      &#9745;      |           |                         |           |         |                               | SkipUntilTerminator |
+| Checksum            |  &#9745;  |                 |         |         |                   |  &#9745;  |         &#9745;         |  &#9745;  |         |                               |            Checksum |
+| Evaluate            |  &#9745;  |                 |         |         |                   |           |                         |           | &#9745; |                               |            Evaluate |
+| PostProcess         |  &#9745;  |                 |         |         |                   |           |                         |           |         |            &#9745;            |        ProcessField |
 
-|                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
-|-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
-| ConfigurationHeader           |     &#9745;      |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             |           ConfigurationHeader |
-| ConfigurationSkip             |                  |                 |   &#9745;   |   &#9745;   |         |         |         |  &#9745;   |               |           |          |         |             |              |         |             |             ConfigurationSkip |
-| ConfigurationField            |     &#9745;      |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  | &#9745;  | &#9745; |   &#9745;   |   &#9745;    | &#9745; |             |            ConfigurationField |
-| CompositeConfigurationField   |     &#9745;      |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |  &#9745;   |               |           |          | &#9745; |             |              |         |   &#9745;   |   CompositeConfigurationField |
-| CompositeSubField             |     &#9745;      |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |   &#9745;    |         |             |             CompositeSubField |
-| AlternativeConfigurationField |     &#9745;      |     &#9745;     |   &#9745;   |   &#9745;   |         |         |         |  &#9745;   |    &#9745;    |           |          |         |   &#9745;   |              |         |             | AlternativeConfigurationField |
-| AlternativeSubField           |                  |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  | &#9745;  | &#9745; |             |   &#9745;    | &#9745; |             |           AlternativeSubField |
+|                               | shortDescription | longDescription | minProtocol /<br/>maxProtocol | start /<br/>end | charset | terminator | unitOfMeasure | minValue /<br/>maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
+|-------------------------------|:----------------:|:---------------:|:-----------------------------:|:---------------:|:-------:|:----------:|:-------------:|:-----------------------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
+| ConfigurationHeader           |     &#9745;      |     &#9745;     |            &#9745;            |     &#9745;     | &#9745; |            |               |                         |         |             |              |         |             |           ConfigurationHeader |
+| ConfigurationSkip             |                  |                 |            &#9745;            |                 |         |  &#9745;   |               |                         |         |             |              |         |             |             ConfigurationSkip |
+| ConfigurationField            |     &#9745;      |     &#9745;     |            &#9745;            |                 | &#9745; |            |    &#9745;    |         &#9745;         | &#9745; |   &#9745;   |   &#9745;    | &#9745; |             |            ConfigurationField |
+| CompositeConfigurationField   |     &#9745;      |     &#9745;     |            &#9745;            |                 | &#9745; |  &#9745;   |               |                         | &#9745; |             |              |         |   &#9745;   |   CompositeConfigurationField |
+| CompositeSubField             |     &#9745;      |     &#9745;     |                               |                 |         |            |    &#9745;    |                         | &#9745; |             |   &#9745;    |         |             |             CompositeSubField |
+| AlternativeConfigurationField |     &#9745;      |     &#9745;     |            &#9745;            |                 |         |  &#9745;   |    &#9745;    |                         |         |   &#9745;   |              |         |             | AlternativeConfigurationField |
+| AlternativeSubField           |                  |     &#9745;     |            &#9745;            |                 | &#9745; |            |    &#9745;    |         &#9745;         | &#9745; |             |   &#9745;    | &#9745; |             |           AlternativeSubField |
 
 
 <a name="annotation-bindobject"></a>
@@ -229,8 +221,9 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
- - `selectFrom`: the selection from which to choose the instance type.
+ - `selectFrom`: the selection from which to choose the instance type using an `ObjectChoices` with a prefix of a predetermined length.
  - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
+ - `selectFromList`: the selection from which to choose the instance type using an `ObjectChoicesList` with a prefix consisting in a terminated string.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -247,9 +240,9 @@ This annotation is bounded to a variable.
 
 ```java
 class Version{
-    @BindByte
+    @BindInteger(size = "8")
     public byte major;
-    @BindByte
+    @BindInteger(size = "8")
     public byte minor;
     public byte build;
 }
@@ -261,19 +254,12 @@ private Version version;
 ```
 
 
-<a name="annotation-bindarray"></a>
-### BindArray
+<a name="annotation-bindasarray"></a>
+### BindAsArray
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
- - `selectFrom`: the selection from which to choose the instance type.
- - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
 
@@ -287,21 +273,22 @@ This annotation is bounded to a variable.
 
 ```java
 class Version{
-    @BindByte
+    @BindInteger(size = "8")
     public byte major;
-    @BindByte
+    @BindInteger(size = "8")
     public byte minor;
     public byte build;
 }
 
-@BindArray(size = "2", type = Version.class)
+@BindObject(type = Version.class)
+@BindAsArray(size = "2")
 private Version[] versions;
 ```
 
 ```java
-@BindByte
+@BindInteger(size = "8")
 private byte positionsCount;
-@BindArray(size = "positionsCount", type = Position.class,
+@BindObject(type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
         alternatives = {
           @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = "0", type = PositionInvalid.class),
@@ -311,6 +298,7 @@ private byte positionsCount;
        }
     ),
    converter = PositionsConverter.class)
+@BindAsArray(size = "positionsCount")
 private Position[] positions;
 ```
 
@@ -330,7 +318,7 @@ private Position[] positions;
 
 #### description
 
-Reads an array of primitives.
+Defines a parameter as an array.
 
 #### annotation type
 
@@ -339,39 +327,36 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindArrayPrimitive(size = "2", type = byte.class)
+@BindInteger(size = "8")
+@BindAsArray(size = "2")
 private byte[] array;
 ```
 
 ```java
 @BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean angularDataPresent;
-@BindArrayPrimitive(condition = "angularDataPresent", size = "dataLength", type = byte.class,
+@BindInteger(condition = "angularDataPresent", size = "8",
     selectConverterFrom = @ConverterChoices(
         alternatives = {
             @ConverterChoices.ConverterChoice(condition = "angularDataPresent", converter = CrashDataWithAngularDataConverter.class),
             @ConverterChoices.ConverterChoice(condition = "!angularDataPresent", converter = CrashDataWithoutAngularDataConverter.class)
         })
     )
+@BindAsArray(size = "dataLength")
 private BigDecimal[][] crashData;
 ```
 
 
-<a name="annotation-bindlist"></a>
-### BindList
+<a name="annotation-bindaslist"></a>
+### BindAsList
 
 #### parameters
 
-- `condition`: The SpEL expression that determines if this field has to be read.
-- `type`: the Class of primitive of the single element of the array.
-- `selectFrom`: the selection from which to choose the instance type.
-- `validator`: the Class of a validator (applied BEFORE the converter).
-- `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
-- `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
+None.
 
 #### description
 
-Reads a list of Objects.
+Defines a parameter as a list.
 
 #### annotation type
 
@@ -380,11 +365,12 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
+@BindObject(type = TestType3.class, selectFromList = @ObjectChoicesList(terminator = ',',
     alternatives = {
-        @ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
-        @ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
+        @ObjectChoices.ObjectChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+        @ObjectChoices.ObjectChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
     }))
+@BindAsList
 private List<TestType3> value;
 ```
 
@@ -416,113 +402,6 @@ private BitSet bitmap;
 ```
 
 
-<a name="annotation-bindbyte"></a>
-### BindByte
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a byte (or Byte).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindByte
-public Byte mask;
-```
-
-
-<a name="annotation-bindshort"></a>
-### BindShort
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a short (or Short).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindShort
-private short numberShort;
-```
-
-
-<a name="annotation-bindint"></a>
-### BindInt
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads an int (or Integer).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindInt
-private int numberInt;
-```
-
-
-<a name="annotation-bindlong"></a>
-### BindLong
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a long (or Long).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindLong
-private long numberLong;
-```
-
-
 <a name="annotation-bindinteger"></a>
 ### BindInteger
 
@@ -549,62 +428,8 @@ This annotation is bounded to a variable.
 @BindInteger(size = "3")
 private BigInteger number;
 
-@BindInteger(size = "Long.SIZE+10")
+@BindInteger(size = "Long.SIZE + 10")
 private BigInteger number;
-```
-
-
-<a name="annotation-bindfloat"></a>
-### BindFloat
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a float (or Float).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindFloat
-private float number;
-```
-
-
-<a name="annotation-binddouble"></a>
-### BindDouble
-
-#### parameters
-
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-
-Reads a double (or Double).
-
-#### annotation type
-
-This annotation is bounded to a variable.
-
-#### example
-
-```java
-@BindDouble
-private double number;
 ```
 
 
@@ -698,19 +523,17 @@ private class Message{
 ```
 
 
-<a name="annotation-skip"></a>
-### Skip
+<a name="annotation-skip-bits"></a>
+### SkipBits
 
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `size`: the number of bits to be skipped (can be a SpEL expression).
- - `terminator`: the byte that terminates the skip (defaults to `\0`).
- - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
+ - `value`: the number of bits to be skipped (can be a SpEL expression).
 
 #### description
 
-Skips `size` bits, or until a terminator is found.
+Skips `size` bits.
 
 If this should be placed at the end of the message, then a placeholder variable (that WILL NOT be read, and thus can be of any type) should be added.
 
@@ -721,17 +544,45 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Skip(size = "3")
-@Skip(size = "1")
+@SkipBits("3")
+@SkipBits("1")
 @BindString(size = "4")
 public String text1;
 
-@Skip(terminator = 'x', consumeTerminator = false)
+
+@SkipBits("10")
+public Void lastUnreadPlaceholder;
+```
+
+
+<a name="annotation-skip-until-terminator"></a>
+### SkipUntilTerminator
+
+#### parameters
+
+- `condition`: The SpEL expression that determines if this field has to be read.
+- `value`: the byte that terminates the skip.
+- `consumeTerminator`: whether to consume the terminator (defaults to `true`).
+
+#### description
+
+Skips bits until a terminator is found.
+
+If this should be placed at the end of the message, then a placeholder variable (that WILL NOT be read, and thus can be of any type) should be added.
+
+#### annotation type
+
+This annotation is bounded to a variable.
+
+#### example
+
+```java
+@SkipUntilTerminator('x')
 @BindString(size = "10")
 public String text2;
 
 
-@Skip(size = "10")
+@SkipUntilTerminator(value = '\0', consumeTerminator = false)
 public Void lastUnreadPlaceholder;
 ```
 
@@ -805,8 +656,8 @@ private String deviceTypeName;
 ```
 
 
-<a name="annotation-post-process-field"></a>
-### PostProcessField
+<a name="annotation-post-process"></a>
+### PostProcess
 
 #### parameters
 
@@ -830,7 +681,7 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 //this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
 //requires the read value of `messageHeader`, and '+BCK' means a buffered message)
-@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
+@PostProcess(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
 private String messageHeader;
 ```
 
@@ -848,16 +699,16 @@ Example:
 
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
-	.with((byte)0x46, "QUECLINK_GB200S");
+    .with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
     .withContext(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
-Descriptor descriptor = Descriptor.create(core);
+Describer describer = Describer.create(core);
 
-List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+List<Map<String, Object>> descriptions = describer.describeTemplates();
 ```
 
 gives as output the following
@@ -879,7 +730,8 @@ gives as output the following
       {
          "converter": "MessageTypeConverter",
          "name": "messageType",
-         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindByte",
+         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindInteger",
+         "size": "8",
          "fieldType": "java.lang.String"
       },
       {
@@ -907,6 +759,9 @@ gives as output the following
 
 Configurations are mainly used to compose a message.
 
+Note that currently only composing in ASCII text format is supported.
+
+<br />
 Firstly, load the configuration as shown below:
 
 ```java
@@ -1205,17 +1060,17 @@ private int downloadTimeout;
 
 <br/>
 
-<a name="descriptor"></a>
-## Descriptor
+<a name="describer"></a>
+## Describer
 
 Return a description of the loaded templates and configuration.
 It basically provides a description of the annotations in JSON format.
 
 ```java
-Descriptor descriptor = Descriptor.create(core);
+Describer describer = Describer.create(core);
 
-List<Map<String, Object>> templateDescriptions = descriptor.describeTemplates();
-List<Map<String, Object>> configurationDescriptions = descriptor.describeConfiguration();
+List<Map<String, Object>> templateDescriptions = describer.describeTemplates();
+List<Map<String, Object>> configurationDescriptions = describer.describeConfiguration();
 ```
 
 
@@ -1244,7 +1099,12 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) for the fields `condition`, and `size`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
+The root object is the outermost object.
+
+In order to evaluate a variable of a parent object the complete path should be used, from the root to the desired property, as in `object1.variable1`.
+
+In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`.<br />
+Note that the `#` prefix is intended to refer to the context (whether it is an object or a method), and the current object is stored in the context under the name `self`.
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
@@ -1252,7 +1112,7 @@ See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com
 
 ```java
 class A{
-    @BindByte
+    @BindInteger(size = "8")
     private byte value;
 
     @BindObject(type = OtherClass.class)
@@ -1289,18 +1149,18 @@ NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 
 ```java
-@BindLong(converter = DateTimeUnixConverter.class)
-private ZonedDateTime eventTime;
+@BindInteger(size = "64", converter = UnixTimestampConverter.class)
+private LocalDateTime eventTime;
 
-public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
+public class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
     @Override
-    public ZonedDateTime decode(final Long unixTimestamp){
-        return DateTimeUtils.createFrom(unixTimestamp);
+    public LocalDateTime decode(final Long unixTimestamp){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneOffset.UTC);
     }
 
     @Override
-    public Long encode(final ZonedDateTime value){
-        return value.toEpochSecond();
+    public Long encode(final LocalDateTime value){
+        return value.toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 }
 ```
@@ -1308,7 +1168,8 @@ public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
 #### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 
 ```java
-@BindArrayPrimitive(size = "7", type = byte.class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindInteger(size = "8", converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindAsArray(size = "7")
 private ZonedDateTime eventTime;
 
 public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
@@ -1341,7 +1202,8 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 #### IMEI converter (from 'nibble' array to String, that is, each nibble represents a character of the IMEI)
 
 ```java
-@BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindInteger(size = "8", converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindAsArray(size = "8")
 private String imei;
 
 public class IMEIConverter implements Converter<byte[], String>{
@@ -1368,7 +1230,7 @@ public class IMEIConverter implements Converter<byte[], String>{
 #### RSSI converter (from encoded byte to short value)
 
 ```java
-@BindByte(converter = RSSIConverter.class)
+@BindInteger(size = "8", converter = RSSIConverter.class)
 private short rssi;
 
 /**
@@ -1430,8 +1292,13 @@ Optionally, the method `String condition()` could be defined.
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
-class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
-    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
+class VariableLengthByteArray implements CodecInterface{
+
+   public Class<?> type(){
+      return VarLengthEncoded.class;
+   }
+
+   public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){
@@ -1580,12 +1447,40 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-5.0.0"></a>
+### version 5.0.0 - 20240423
+
+- Add support for `BindAsArray` and `BindAsList` instead of many `BindArray(Primitive)`, `BindList`, now removed.
+- Cleaning and refactoring of various codecs.
+- Major reorganization of the code, along with refactor to make it more modular and cohesive, and removal of duplicated code.
+- Simplified the exception handling.
+
+<a name="changelog-4.0.0"></a>
+### version 4.0.0 - 20240419
+
+- Incompatibility between read type, converter input, converter output, validator, and field type is now resolved during core construction, rather than at runtime.
+- Fixed error while handling of `SkipBits` and `SkipUntilTerminator` to allow processing multiple instances.
+- Removed useless `BindFloat` and `BindDouble` has they are rarely used and can be substituted by the appropriate converters (`IntegerToFloatConvert` and `LongToDoubleConverter`).
+- Removed useless `BindByte`, `BindShort`, `BindInt`, and `BindLong` as they can be substituted by `BindInteger`.
+- Renamed `Descriptor` into the more meaningful `Describer`.
+- Added builder to `Version`.
+- Many smells removed, major code refactor.
+
+<a name="changelog-3.6.0"></a>
+### version 3.6.0 - 20240413
+
+- Specialized `Skip` annotation into `SkipBits` and `SkipUntilTerminator`.
+- Added subtypes describer on `BindObject`, `BindArray`, `BindList`, `ObjectChoices.ObjectChoice`, and `ObjectChoicesList.ObjectChoiceList`.
+- Some minor improvements.
+
 <a name="changelog-3.5.1"></a>
-### version 3.5.1 - 202404??
+### version 3.5.1 - 20240409
 
 - Fix error while assessing size value.
 - Corrected `NullObjectChoice` and `NullObjectChoiceList` type value.
 - Fix error while putting numeric value in `NumberWriterManager`.
+- Removed the default on `Skip` size: it was intended to be mandatory.
+- Fixed bug on evaluating an expression on a deep nested object.
 - (minor) Fix missing field name in parser context in `TemplateParser.encode`.
 
 <a name="changelog-3.5.0"></a>

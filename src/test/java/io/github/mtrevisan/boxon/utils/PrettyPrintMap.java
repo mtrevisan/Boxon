@@ -33,14 +33,13 @@ public final class PrettyPrintMap{
 	private PrettyPrintMap(){}
 
 
-	@SuppressWarnings("unchecked")
 	public static String toString(final Object obj){
 		final StringBuilder sb = new StringBuilder(0);
 		final Class<?> type = obj.getClass();
 		if(Iterable.class.isAssignableFrom(type))
 			toStringAsIterable(sb, (Iterable<?>)obj);
-		else if(Map.class.isAssignableFrom(type))
-			toStringAsMap(sb, (Map<String, ?>)obj);
+		else if(obj instanceof final Map<?, ?> map)
+			toStringAsMap(sb, map);
 		else if(type.isArray())
 			toStringAsArray(sb, (Object[])obj);
 		else
@@ -58,9 +57,9 @@ public final class PrettyPrintMap{
 		sb.append(']');
 	}
 
-	private static void toStringAsMap(final StringBuilder sb, final Map<String, ?> map){
+	private static void toStringAsMap(final StringBuilder sb, final Map<?, ?> map){
 		sb.append('{');
-		for(final Map.Entry<String, ?> entry : map.entrySet()){
+		for(final Map.Entry<?, ?> entry : map.entrySet()){
 			addElementSeparator(sb);
 
 			sb.append(entry.getKey())

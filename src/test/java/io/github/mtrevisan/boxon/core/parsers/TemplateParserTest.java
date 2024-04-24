@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -55,7 +55,7 @@ import java.nio.charset.StandardCharsets;
 class TemplateParserTest{
 
 	@Test
-	void parseSingleMessageHex() throws NoSuchMethodException, FieldException{
+	void parseSingleMessageHex() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -85,7 +85,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
+	void parseSingleMessageHexByteChecksum() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -119,8 +119,8 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageASCII() throws FieldException{
-		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+	void parseSingleMessageASCII() throws BoxonException{
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -160,7 +160,7 @@ class TemplateParserTest{
 	private static class TestError1{
 		@BindString(size = "3")
 		String header;
-		@BindByte(condition = "e")
+		@BindInteger(size = "8", condition = "e")
 		byte type;
 	}
 
@@ -177,7 +177,8 @@ class TemplateParserTest{
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
+		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class,
+			() -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type '"
 			+ TemplateParserTest.TestError1.class.getName() + "' - maybe not public or not valid?", exc.getMessage());
 	}
@@ -186,7 +187,6 @@ class TemplateParserTest{
 	@TemplateHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
-
 			@Override
 			public String decode(final Byte value){
 				return "";
@@ -196,29 +196,22 @@ class TemplateParserTest{
 			public Byte encode(final String value){
 				return null;
 			}
-
 		}
+
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongOutputConverter.class)
+		@BindInteger(size = "8", converter = WrongOutputConverter.class)
 		byte type;
 	}
 
 	@Test
-	void parseWithConverterOutputError() throws AnnotationException{
-		byte[] payload = StringHelper.hexToByteArray("74633501");
-		BitReaderInterface reader = BitReader.wrap(payload);
-
+	void parseWithConverterOutputError(){
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set byte field to String in field "
+		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> loaderTemplate.createTemplate(TestError3.class));
+		Assertions.assertEquals("Type mismatch between converter output (String) and field type (byte) in field "
 			+ TemplateParserTest.TestError3.class.getName() + ".type", exc.getMessage());
 	}
 
@@ -226,7 +219,6 @@ class TemplateParserTest{
 	@TemplateHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
-
 			@Override
 			public Byte decode(final String value){
 				return null;
@@ -236,29 +228,21 @@ class TemplateParserTest{
 			public String encode(final Byte value){
 				return "";
 			}
-
 		}
+
 		@BindString(size = "3")
 		String header;
-		@BindByte(converter = WrongInputConverter.class)
+		@BindInteger(size = "8", converter = WrongInputConverter.class)
 		byte type;
 	}
 
 	@Test
-	void parseWithConverterInputError() throws AnnotationException{
-		byte[] payload = StringHelper.hexToByteArray("74633501");
-		BitReaderInterface reader = BitReader.wrap(payload);
-
+	void parseWithConverterInputError(){
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
-
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongInputConverter in field "
+		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> loaderTemplate.createTemplate(TestError4.class));
+		Assertions.assertEquals("Type mismatch between annotation output (BigInteger) and converter input (String) in field "
 			+ TemplateParserTest.TestError4.class.getName() + ".type", exc.getMessage());
 	}
 
@@ -266,25 +250,26 @@ class TemplateParserTest{
 	@TemplateHeader(start = "tm1")
 	static class TestComposition1{
 		static class TestSubComposition{
-			@BindByte
+			@BindInteger(size = "8")
 			byte subsubtype;
 			@BindString(condition = "type == 1", size = "1")
 			String field1;
 			@BindString(condition = "#self.subsubtype == 1", size = "1")
 			String field2;
 		}
+
 		@BindString(size = "3")
 		String header;
-		@BindByte
+		@BindInteger(size = "8")
 		byte type;
-		@BindByte(condition = "type == 1")
+		@BindInteger(size = "8", condition = "type == 1")
 		Byte subtype;
 		@BindObject(type = TestSubComposition.class)
 		TestSubComposition sub;
 	}
 
 	@Test
-	void parseCompositeMessage1() throws FieldException{
+	void parseCompositeMessage1() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("746D310102016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -315,27 +300,29 @@ class TemplateParserTest{
 	@TemplateHeader(start = "tm2")
 	static class TestComposition2{
 		static class TestSubCompositionBase{
-			@BindByte
+			@BindInteger(size = "8")
 			byte subsubtype;
-
 		}
+
 		static class TestSubComposition1 extends TestSubCompositionBase{
 			@BindString(condition = "type == 1", size = "1")
 			String field1;
 			@BindString(condition = "type == 1 && #self.subsubtype == 1", size = "1")
 			String field2;
 		}
+
 		static class TestSubComposition2 extends TestSubCompositionBase{
 			@BindString(condition = "type == 2", size = "1")
 			String field1;
-			@BindByte(condition = "#self.subsubtype == 2")
+			@BindInteger(size = "8", condition = "#self.subsubtype == 2")
 			byte field2;
 			@BindString(condition = "#self.field2 == 0x62", size = "1")
 			String field3;
 		}
+
 		@BindString(size = "3")
 		String header;
-		@BindByte
+		@BindInteger(size = "8")
 		byte type;
 		@BindObject(type = TestSubCompositionBase.class, selectFrom = @ObjectChoices(
 			alternatives = {
@@ -347,7 +334,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage21() throws FieldException{
+	void parseCompositeMessage21() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("746D3201016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -375,7 +362,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage22() throws FieldException{
+	void parseCompositeMessage22() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("7463320202616263");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
@@ -405,8 +392,7 @@ class TemplateParserTest{
 
 
 	private static void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
-		loaderCodec.injectFieldInCodecs(templateParser);
-		loaderCodec.injectFieldInCodecs(evaluator);
+		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 }

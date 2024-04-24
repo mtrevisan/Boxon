@@ -24,15 +24,16 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 
 import java.io.Serial;
+import java.util.Arrays;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * Thrown if an annotation has validation errors.
  */
-public final class AnnotationException extends FieldException{
+public final class AnnotationException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = 6429044852678473069L;
@@ -54,36 +55,72 @@ public final class AnnotationException extends FieldException{
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
 	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static AnnotationException create(final Throwable cause, final String message, final Object... parameters){
-		return new AnnotationException(StringHelper.format(message, parameters), cause);
+		return new AnnotationException(cause, message, parameters);
 	}
 
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted ({@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static AnnotationException create(final String message, final Object... parameters){
-		return new AnnotationException(StringHelper.format(message, parameters));
+		return new AnnotationException(message, parameters);
+	}
+
+	/**
+	 * Constructs a new exception when the wrong annotation is used for the value.
+	 *
+	 * @param fieldType	The field type.
+	 * @param bindingType	The binding type.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createBadAnnotation(final Class<?> fieldType, final Class<?> bindingType){
+		return create("Wrong annotation used for type {}, should have been used `{}.class`",
+			fieldType.getSimpleName(), bindingType.getSimpleName());
+	}
+
+	/**
+	 * Constructs a new exception when the value is not of a primitive type.
+	 *
+	 * @param type	The value type.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createNotPrimitiveValue(final Class<?> type){
+		return create("Argument cannot be a primitive: {}", type.getSimpleName());
+	}
+
+	/**
+	 * Constructs a new exception when the default value is not an enumeration.
+	 *
+	 * @param annotationName	The annotation name.
+	 * @param defaultValue	The default value.
+	 * @param enumConstants	The array of possible constants.
+	 * @return	An instance of this exception.
+	 */
+	public static AnnotationException createDefaultValueAsEnumeration(final String annotationName, final String defaultValue,
+			final ConfigurationEnum[] enumConstants){
+		return create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
+			annotationName, defaultValue, Arrays.toString(enumConstants));
 	}
 
 
-	private AnnotationException(final String message, final Throwable cause){
-		super(message, cause);
+	private AnnotationException(final Throwable cause, final String message, final Object[] parameters){
+		super(cause, message, parameters);
 	}
 
 	private AnnotationException(final Throwable cause){
 		super(cause);
 	}
 
-	private AnnotationException(final String message){
-		super(message);
+	private AnnotationException(final String message, final Object[] parameters){
+		super(message, parameters);
 	}
 
 }
