@@ -63,7 +63,7 @@ final class CodecDefault implements CodecInterface{
 
 
 	@Override
-	public Class<? extends Annotation> identifier(){
+	public Class<? extends Annotation> annotationType(){
 		return DefaultCodecIdentifier.class;
 	}
 

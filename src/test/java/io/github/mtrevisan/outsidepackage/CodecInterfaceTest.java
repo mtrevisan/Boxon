@@ -95,7 +95,7 @@ class CodecInterfaceTest{
 			private Evaluator evaluator;
 
 			@Override
-			public Class<?> identifier(){
+			public Class<? extends Annotation> annotationType(){
 				return BindCustomData.class;
 			}
 

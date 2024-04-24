@@ -40,7 +40,7 @@ import java.lang.annotation.Annotation;
 final class CodecAlternativeConfigurationField implements CodecInterface{
 
 	@Override
- 	public Class<? extends Annotation> identifier(){
+ 	public Class<? extends Annotation> annotationType(){
 		return AlternativeSubField.class;
 	}
 

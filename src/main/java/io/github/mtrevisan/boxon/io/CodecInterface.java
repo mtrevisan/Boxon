@@ -42,7 +42,7 @@ public interface CodecInterface{
 	 *
 	 * @return	The annotation type.
 	 */
-	Class<? extends Annotation> identifier();
+	Class<? extends Annotation> annotationType();
 
 	/**
 	 * Decode the next field of a message.

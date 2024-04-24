@@ -40,7 +40,7 @@ import java.nio.charset.Charset;
 final class CodecCompositeConfigurationField implements CodecInterface{
 
 	@Override
-	public Class<? extends Annotation> identifier(){
+	public Class<? extends Annotation> annotationType(){
 		return CompositeConfigurationField.class;
 	}
 
