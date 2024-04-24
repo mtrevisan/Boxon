@@ -89,8 +89,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * Loads all the codecs.
 	 */
 	public void loadDefaultCodecs(){
 		try{
@@ -137,7 +136,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Loads the given codec that extends {@link CodecInterface}.
+	 * Adds the given codec.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codec	The codec to be loaded.
@@ -154,7 +153,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Loads all the given codecs that extends {@link CodecInterface}.
+	 * Adds all the given codecs.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded.
