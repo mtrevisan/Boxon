@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManage
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
@@ -241,7 +242,7 @@ public final class LoaderConfiguration{
 	 * @throws DataException   If the value cannot be set to the field.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws AnnotationException, CodecException, EncodeException{
+			final Version protocol) throws BoxonException{
 		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
@@ -292,7 +293,7 @@ public final class LoaderConfiguration{
 	}
 
 	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
-			throws AnnotationException, CodecException, EncodeException{
+			throws BoxonException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 

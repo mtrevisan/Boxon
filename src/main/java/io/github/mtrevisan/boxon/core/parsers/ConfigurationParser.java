@@ -141,7 +141,7 @@ public final class ConfigurationParser{
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
 	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws AnnotationException, CodecException, EncodeException{
+			final Version protocol) throws BoxonException{
 		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}
 

@@ -163,7 +163,7 @@ public final class Describer{
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws BoxonException, EncodeException{
+	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws BoxonException{
 		return configurationDescriber.describeConfiguration(configurationClass);
 	}
 

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -101,7 +102,7 @@ public interface ConfigurationManagerInterface{
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	void validateValue(Field field, String dataKey, Object dataValue) throws AnnotationException, CodecException, EncodeException;
+	void validateValue(Field field, String dataKey, Object dataValue) throws BoxonException;
 
 	/**
 	 * Convert the given value to the type accepted by the field.
@@ -115,7 +116,6 @@ public interface ConfigurationManagerInterface{
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws AnnotationException, CodecException,
-		EncodeException;
+	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws BoxonException;
 
 }

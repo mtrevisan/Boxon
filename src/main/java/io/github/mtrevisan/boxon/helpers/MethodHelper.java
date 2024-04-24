@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import java.lang.reflect.InaccessibleObjectException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
@@ -60,8 +59,8 @@ public final class MethodHelper{
 	 * @param input	The input value.
 	 * @return	The value returned by the given method.
 	 */
-	public static Object invokeStaticMethod(final Class<?> type, final String methodName, final Object input) throws NoSuchMethodException,
-			InvocationTargetException, IllegalAccessException{
+	public static Object invokeStaticMethod(final Class<?> type, final String methodName, final Object input)
+			throws ReflectiveOperationException{
 		final Method method = type.getDeclaredMethod(methodName, input.getClass());
 		return method.invoke(null, input);
 	}
