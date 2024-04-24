@@ -136,7 +136,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Adds the given codec.
+	 * Loads the given codec.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codec	The codec to be loaded.
@@ -153,7 +153,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Adds all the given codecs.
+	 * Loads all the given codecs.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded.

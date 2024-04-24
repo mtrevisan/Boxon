@@ -182,7 +182,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Adds all the codecs that extends {@link CodecInterface}.
+	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
@@ -194,7 +194,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Adds the given codec.
+	 * Loads the given codec.
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
@@ -206,7 +206,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Adds all the given codecs.
+	 * Loads all the given codecs.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.

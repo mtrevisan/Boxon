@@ -175,7 +175,7 @@ public final class Core{
 	}
 
 	/**
-	 * Adds the given codec.
+	 * Loads the given codec.
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
@@ -187,7 +187,7 @@ public final class Core{
 	}
 
 	/**
-	 * Adds all the given codecs.
+	 * Loads all the given codecs.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
