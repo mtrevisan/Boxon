@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
 
-
 import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
 
@@ -120,9 +119,9 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 		if(length2 == 0)
 			return length1;
 
+		final int length = Math.min(length1, length2);
 		//remove prefix from both inputs
 		int startIndex = 0;
-		final int length = Math.min(length1, length2);
 		while(startIndex < length && input1.equalsAtIndex(startIndex, input2, startIndex))
 			startIndex ++;
 		//remove suffix from both inputs
@@ -137,24 +136,27 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 	}
 
 	private int distanceInternal(final D input1, final D input2, final int startIndex, final int endIndex){
+		//determine corrected lengths of the inputs
 		final int length1 = input1.length() - startIndex - endIndex;
 		final int length2 = input2.length() - startIndex - endIndex;
 
-		final int[] cost = new int[length2 + 1];
+		//initialize and fill the cost array
+		final int[] cost = initializeBaseCostArray(length2);
 
-		for(int j = 1; j <= length2; j ++)
-			cost[j] = j * deletionCost;
-
+		//define and compute the cost array for the general case
 		for(int i = 1; i <= length1; i ++){
 			cost[0] = i * deletionCost;
 
 			int previousAbove = i - 1;
 			for(int j = 1; j <= length2; j ++){
-				final int indicator = (input1.equalsAtIndex(startIndex + i - 1, input2, startIndex + j - 1)
-					? 0
-					: substitutionCost);
+				//determine whether characters match at current indices, assign appropriate cost
+				final boolean equalInput = input1.equalsAtIndex(startIndex + i - 1, input2, startIndex + j - 1);
+				final int indicator = (equalInput? 0: substitutionCost);
+
 				final int actual = previousAbove + indicator;
 				previousAbove = cost[j];
+
+				//calculate the total cost considering the possible operations
 				cost[j] = min(previousAbove + insertionCost,
 					cost[j - 1] + deletionCost,
 					actual);
@@ -162,6 +164,17 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 		}
 
 		return cost[length2];
+	}
+
+	private int[] initializeBaseCostArray(final int length){
+		//initialize the cost array
+		final int[] cost = new int[length + 1];
+
+		//fill the cost array for the base case (when `input1` is empty)
+		for(int j = 1; j <= length; j ++)
+			cost[j] = j * deletionCost;
+
+		return cost;
 	}
 
 	private static int min(final int a, final int b, final int c){
