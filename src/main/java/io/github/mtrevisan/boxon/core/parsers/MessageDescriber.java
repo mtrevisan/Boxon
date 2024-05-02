@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -71,7 +72,7 @@ public final class MessageDescriber{
 	 */
 	<M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
 			final FieldExtractor<F> fieldExtractor){
-		final Map<String, Object> description = new HashMap<>(6);
+		final Map<String, Object> description = new LinkedHashMap<>(6);
 
 		describeContext(description);
 
