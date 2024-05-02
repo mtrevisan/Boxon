@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.similarity.distances;
 
 
+//https://github.com/sergio-gomez/MultiDendrograms
 public interface DistanceDataInterface<D extends DistanceDataInterface<D>>{
 
 	int length();

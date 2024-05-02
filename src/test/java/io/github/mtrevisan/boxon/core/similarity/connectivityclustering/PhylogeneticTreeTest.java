@@ -28,11 +28,11 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
-import io.github.mtrevisan.boxon.core.Descriptor;
+import io.github.mtrevisan.boxon.core.Describer;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +77,7 @@ class PhylogeneticTreeTest{
 
 
 	@Test
-	void test() throws FieldException{
+	void test() throws BoxonException{
 		Core core = CoreBuilder.builder()
 			.withTemplate(Xero.class)
 			.withTemplate(Un.class)
@@ -91,8 +91,8 @@ class PhylogeneticTreeTest{
 		Assertions.assertEquals(2, clusters.size());
 	}
 
-	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws FieldException{
-		final Descriptor descriptor = Descriptor.create(core);
+	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws BoxonException{
+		final Describer descriptor = Describer.create(core);
 		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
 		final TemplateSpecies[] species = new TemplateSpecies[descriptions.size()];
 		for(int s = 0; s < species.length; s ++){
@@ -102,8 +102,8 @@ class PhylogeneticTreeTest{
 			for(int g = 0; g < parameters.size(); g ++){
 				final Map<String, Object> parameter = new HashMap<>(parameters.get(g));
 				parameter.remove(DescriberKey.FIELD_NAME.toString());
-				parameter.remove(DescriberKey.BIND_CONDITION.toString());
-				parameter.remove(DescriberKey.BIND_VALIDATOR.toString());
+				parameter.remove("condition");
+				parameter.remove("validator");
 				genome[g] = parameter.toString();
 			}
 			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), StringArrayDistanceData.of(genome));
