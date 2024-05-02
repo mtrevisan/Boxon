@@ -77,8 +77,8 @@ public final class VersionException extends IllegalArgumentException{
 	/**
 	 * Constructs a new exception with the specified message and cause.
 	 *
-	 * @param cause   The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 *                permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @param message The message.
 	 */
 	private VersionException(final Throwable cause, final String message, final Object... parameters){

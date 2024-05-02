@@ -182,7 +182,7 @@ public enum TemplateAnnotationValidator{
 	/**
 	 * Validate field and annotation.
 	 *
-	 * @param fieldType	The field class associated to the annotation.
+	 * @param fieldType	The field class associated with the annotation.
 	 * @param annotation	The annotation.
 	 * @throws AnnotationException	If an error is detected.
 	 */

@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 
 
 /**
- * Data associated to a directly evaluable field.
+ * Data associated with a directly evaluable field.
  *
  * @param <B>	One of {@link Evaluate} or {@link PostProcess}.
  */

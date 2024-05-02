@@ -87,21 +87,17 @@ final class LoaderTemplate{
 	private LoaderTemplate(final LoaderCodecInterface loaderCodec){
 		this.loaderCodec = loaderCodec;
 
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(null);
 	}
 
 
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener	The event listener.
-	 * @return	This instance, used for chaining.
+	 * @param eventListener The event listener.
 	 */
-	LoaderTemplate withEventListener(final EventListener eventListener){
-		if(eventListener != null)
-			this.eventListener = eventListener;
-
-		return this;
+	void withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
 	/**

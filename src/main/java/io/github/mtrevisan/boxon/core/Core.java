@@ -154,8 +154,7 @@ public final class Core{
 
 
 	/**
-	 * Loads all the default codecs that extends {@link CodecInterface}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * Loads all the default codecs.
 	 */
 	void useDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
@@ -176,7 +175,7 @@ public final class Core{
 	}
 
 	/**
-	 * Loads the given codec that extends {@link CodecInterface}.
+	 * Loads the given codec.
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
@@ -188,7 +187,7 @@ public final class Core{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the given codecs.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If the codec was already loaded.

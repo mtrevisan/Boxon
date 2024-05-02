@@ -50,7 +50,7 @@ class TemplateCoderBase{
 
 		this.evaluator = evaluator;
 
-		withEventListener(EventListener.getNoOpInstance());
+		withEventListener(null);
 	}
 
 
@@ -76,7 +76,7 @@ class TemplateCoderBase{
 	}
 
 	private void processField(final EvaluatedField<PostProcess> field, final ParserContext<?> parserContext, final String templateName,
-		final Function<PostProcess, String> valueExtractor){
+			final Function<PostProcess, String> valueExtractor){
 		final PostProcess binding = field.getBinding();
 		final String condition = binding.condition();
 		final Object rootObject = parserContext.getRootObject();

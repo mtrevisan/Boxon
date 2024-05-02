@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-/** Data associated to an annotated field. */
+/** Data associated with an annotated field. */
 public final class TemplateField implements FieldRetriever{
 
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */

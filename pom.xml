@@ -58,7 +58,7 @@
 
 		<!-- Profiles & Build -->
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
-		<maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+		<maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->

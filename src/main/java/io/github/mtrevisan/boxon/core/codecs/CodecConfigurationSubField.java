@@ -37,7 +37,7 @@ import java.nio.charset.Charset;
 final class CodecConfigurationSubField implements CodecInterface{
 
 	@Override
-	public Class<?> identifier(){
+	public Class<? extends Annotation> annotationType(){
 		return CompositeSubField.class;
 	}
 

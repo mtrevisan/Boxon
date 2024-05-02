@@ -74,7 +74,7 @@ public final class ConfigurationParser{
 
 		loaderConfiguration = LoaderConfiguration.create();
 
-		withEventListener(EventListener.getNoOpInstance());
+		withEventListener(null);
 	}
 
 
@@ -85,11 +85,9 @@ public final class ConfigurationParser{
 	 * @return	This instance, used for chaining.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){
-		if(eventListener != null){
-			this.eventListener = eventListener;
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
-			loaderConfiguration.withEventListener(eventListener);
-		}
+		loaderConfiguration.withEventListener(this.eventListener);
 
 		return this;
 	}
@@ -160,11 +158,11 @@ public final class ConfigurationParser{
 	/**
 	 * Encode the configuration using the given writer with the given object that contains the values.
 	 *
-	 * @param <T>	The class type of the current object.
 	 * @param configuration	The configuration to encode.
 	 * @param writer	The writer that holds the encoded template.
 	 * @param currentObject	The current object that holds the values.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @param <T>	The class type of the current object.
 	 * @throws CodecException	If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,

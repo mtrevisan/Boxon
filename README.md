@@ -49,7 +49,7 @@ Boxon...
    - Objects: custom-type DTOs.
    - Choices: supports integer keys.
  - User defined types (arbitrary combination of built-in types)
- - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
+ - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindObject` and a few others), no complicated chains of factories: it's just a parser that works.
  - Supports [SLF4J](http://www.slf4j.org/).
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
  - Can automatically scan and loads all the binding annotations and/or templates from a package.
@@ -1139,12 +1139,12 @@ Boxon can handle array of primitives, bit, byte, short, int, long, float, double
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
-Boxon already provides some build-in converters: BitsToBoolean, ShortToChar, UnsignedByte, UnsignedInt, and UnsignedShort.
+Boxon already provides some build-in converters for your convenience: BitSetToBoolean, IntegerToFloat, LongToDouble, ShortToCharacter, StringToBigDecimal, UnsignedByteToShort, UnsignedShortToInteger, and UnsignedIntegerToLong.
 
 <a name="how-to-converters"></a>
 ### Converters
 
-NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they MUST BE invertible (injective), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
+NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they MUST BE invertible ([injective](https://en.wikipedia.org/wiki/Injective_function)), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 
@@ -1448,12 +1448,13 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-5.0.0"></a>
-### version 5.0.0 - 20240423
+### version 5.0.0 - 20240424
 
 - Add support for `BindAsArray` and `BindAsList` instead of many `BindArray(Primitive)`, `BindList`, now removed.
 - Cleaning and refactoring of various codecs.
 - Major reorganization of the code, along with refactor to make it more modular and cohesive, and removal of duplicated code.
 - Simplified the exception handling.
+- Improved annotation validation by skipping validations for non-library annotations.
 
 <a name="changelog-4.0.0"></a>
 ### version 4.0.0 - 20240419

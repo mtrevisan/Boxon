@@ -74,10 +74,10 @@ final class TemplateDecoder extends TemplateCoderBase{
 	/**
 	 * Decodes a message using the provided template and reader.
 	 *
-	 * @param <T>	The type of the object to be returned as a result of decoding.
 	 * @param template	The template used for decoding the message.
 	 * @param reader	The reader used for reading the message.
 	 * @param parentObject	The parent object of the message being decoded.
+	 * @param <T>	The type of the object to be returned as a result of decoding.
 	 * @return	The decoded object.
 	 * @throws BoxonException	If there is an error decoding a field.
 	 */
@@ -165,10 +165,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		final Annotation binding = field.getBinding();
 		final Annotation collectionBinding = field.getCollectionBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		CodecInterface codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			//load default codec
-			codec = loaderCodec.getCodec(void.class);
+		final CodecInterface codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());

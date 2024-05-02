@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
@@ -73,7 +72,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 
 	private LoaderCodec(){
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(null);
 	}
 
 
@@ -84,18 +83,17 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @return	The current instance.
 	 */
 	public LoaderCodec withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * Loads all the codecs.
 	 */
 	public void loadDefaultCodecs(){
 		try{
-			loadCodecsFrom(ReflectiveClassLoader.extractCallerClasses());
+			loadCodecsFrom(CodecDefault.class);
 		}
 		catch(final CodecException ignored){}
 	}
@@ -138,7 +136,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Loads the given codec that extends {@link CodecInterface}.
+	 * Loads the given codec.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codec	The codec to be loaded.
@@ -155,7 +153,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Loads all the given codecs that extends {@link CodecInterface}.
+	 * Loads all the given codecs.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded.
@@ -196,7 +194,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	private void addCodecInner(final CodecInterface codec) throws CodecException{
-		final Class<?> codecType = codec.identifier();
+		final Class<?> codecType = codec.annotationType();
 		if(codecs.containsKey(codecType))
 			throw CodecException.create("Codec with type {} already added", codecType);
 
@@ -226,12 +224,12 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 	@Override
 	public boolean hasCodec(final Type type){
-		return codecs.containsKey(isDefaultBind(type)? DefaultCodecIdentifier.class: type);
+		return codecs.containsKey(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	@Override
 	public CodecInterface getCodec(final Type type){
-		return codecs.get(isDefaultBind(type)? DefaultCodecIdentifier.class: type);
+		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	private static boolean isDefaultBind(final Type type){

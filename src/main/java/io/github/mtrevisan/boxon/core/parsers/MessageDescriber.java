@@ -65,9 +65,9 @@ public final class MessageDescriber{
 	 * @param message	The message to describe.
 	 * @param messageExtractor	The message extractor to use.
 	 * @param fieldExtractor	The field extractor to use.
-	 * @return	A map containing the description of the message.
 	 * @param <M>	The type of the message.
 	 * @param <F>	The type of the fields.
+	 * @return	A map containing the description of the message.
 	 */
 	<M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
 			final FieldExtractor<F> fieldExtractor){

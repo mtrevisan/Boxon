@@ -47,12 +47,23 @@ import java.lang.reflect.Array;
  */
 final class CodecDefault implements CodecInterface{
 
+	/**
+	 * Identifies the default codec.
+	 */
+	static class DefaultCodecIdentifier implements Annotation{
+		@Override
+		public Class<? extends Annotation> annotationType(){
+			return DefaultCodecIdentifier.class;
+		}
+	}
+
+
 	@Injected
 	private Evaluator evaluator;
 
 
 	@Override
-	public Class<?> identifier(){
+	public Class<? extends Annotation> annotationType(){
 		return DefaultCodecIdentifier.class;
 	}
 
