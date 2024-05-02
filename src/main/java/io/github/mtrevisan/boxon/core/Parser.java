@@ -81,11 +81,11 @@ public final class Parser{
 	/**
 	 * Parse a message.
 	 *
-	 * @param array	The message to be parsed.
+	 * @param payload	The message to be parsed.
 	 * @return	The parse response.
 	 */
-	public List<Response<byte[], Object>> parse(final byte[] array){
-		final BitReader reader = BitReader.wrap(array);
+	public List<Response<byte[], Object>> parse(final byte[] payload){
+		final BitReader reader = BitReader.wrap(payload);
 		return parse(reader);
 	}
 
