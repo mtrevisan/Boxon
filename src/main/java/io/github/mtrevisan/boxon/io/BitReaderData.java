@@ -41,7 +41,6 @@ import java.util.BitSet;
  */
 abstract class BitReaderData{
 
-	//FIXME try to reduce the number of instances of this class
 	private static final class Snapshot{
 		/** The position in the byte buffer of the cached value. */
 		private int position;

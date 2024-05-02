@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
-import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -60,7 +59,7 @@ import java.util.BitSet;
 import java.util.List;
 
 
-class CodecInterfaceTest{
+class CustomCodecTest{
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)

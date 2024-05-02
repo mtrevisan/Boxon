@@ -167,7 +167,6 @@ public final class ConfigurationParser{
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
 			final Version protocol) throws BoxonException{
-		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = ParserContext.create(currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 

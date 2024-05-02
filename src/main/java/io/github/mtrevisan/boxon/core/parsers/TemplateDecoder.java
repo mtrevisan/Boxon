@@ -86,7 +86,6 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 		T currentObject = createEmptyObject(template);
 
-		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 

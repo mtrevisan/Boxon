@@ -67,7 +67,6 @@ final class TemplateEncoder extends TemplateCoderBase{
 	 */
 	<T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws BoxonException{
-		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 		parserContext.setClassName(template.getType().getName());

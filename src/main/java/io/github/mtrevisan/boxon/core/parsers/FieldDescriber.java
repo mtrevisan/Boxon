@@ -58,6 +58,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +103,7 @@ public final class FieldDescriber{
 			final String key){
 		final Method[] methods = objType.getDeclaredMethods();
 
-		final Map<String, Object> description = new HashMap<>(methods.length);
+		final Map<String, Object> description = new LinkedHashMap<>(methods.length);
 		extractObjectParameters(obj, methods, description);
 		if(!description.isEmpty())
 			rootDescription.put(key, Collections.unmodifiableMap(description));
@@ -140,7 +141,7 @@ public final class FieldDescriber{
 	 * @return	The description.
 	 */
 	public static Map<String, Object> describeRawMessage(final Class<?> boundClass){
-		final Map<String, Object> description = new HashMap<>(6);
+		final Map<String, Object> description = new LinkedHashMap<>(6);
 		try{
 			final Template<?> entity = Template.create(boundClass);
 			describeRawMessage(entity, MESSAGE_EXTRACTOR_BASIC_STRATEGY, FIELD_EXTRACTOR_STRATEGY, description);
@@ -201,7 +202,7 @@ public final class FieldDescriber{
 		final String fieldName = fieldExtractor.getFieldName(field);
 		final Class<?> fieldType = fieldExtractor.getFieldType(field);
 
-		final Map<String, Object> fieldDescription = new HashMap<>(3);
+		final Map<String, Object> fieldDescription = new LinkedHashMap<>(3);
 		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), fieldDescription);
 		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
@@ -220,7 +221,7 @@ public final class FieldDescriber{
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final SkipParams skip = skips[i];
 
-			final Map<String, Object> skipDescription = new HashMap<>(4);
+			final Map<String, Object> skipDescription = new LinkedHashMap<>(4);
 			extractObjectParameters(skip, skip.getClass(), skipDescription);
 			fieldsDescription.add(skipDescription);
 		}
@@ -295,7 +296,7 @@ public final class FieldDescriber{
 	}
 
 	private static Map<String, Object> describeAlternative(final Annotation alternative){
-		final Map<String, Object> alternativeDescription = new HashMap<>(2);
+		final Map<String, Object> alternativeDescription = new LinkedHashMap<>(2);
 
 		extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
 		if(alternative instanceof final ObjectChoices.ObjectChoice choice)
