@@ -80,6 +80,7 @@ public final class Template<T>{
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
+	/** Mapping of annotations to functions that extract skip parameters. */
 	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>(4);
 	static{
 		ANNOTATION_MAPPING.put(SkipBits.class, annotation
