@@ -94,7 +94,7 @@ class PhylogeneticTreeTest{
 	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws BoxonException{
 		final Describer descriptor = Describer.create(core);
 		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
-		final TemplateSpecies[] species = new TemplateSpecies[descriptions.size()];
+		final TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
 		for(int s = 0; s < species.length; s ++){
 			final Map<String, Object> description = descriptions.get(s);
 			final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));

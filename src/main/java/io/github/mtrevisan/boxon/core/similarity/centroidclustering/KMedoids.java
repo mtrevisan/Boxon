@@ -58,8 +58,8 @@ public final class KMedoids{
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	A set of sets where each data is grouped into.
 	 */
-	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Collection<Collection<String>> cluster(
-			final SpeciesInterface<S, D>[] dataset, final int numberOfClusters, final int maxIterations){
+	public static <D extends DistanceDataInterface<D>> Collection<Collection<String>> cluster(final SpeciesInterface<D>[] dataset,
+			final int numberOfClusters, final int maxIterations){
 		if(dataset == null || dataset.length == 0)
 			throw new IllegalArgumentException("Dataset cannot be empty");
 		if(numberOfClusters < 1)
@@ -87,8 +87,7 @@ public final class KMedoids{
 		return clusters.values();
 	}
 
-	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> int[] clusterEnumerated(
-			final SpeciesInterface<S, D>[] dataset, final int k){
+	private static <D extends DistanceDataInterface<D>> int[] clusterEnumerated(final SpeciesInterface<D>[] dataset, final int k){
 		final int m = dataset.length;
 
 		double minScore = Double.MAX_VALUE;
@@ -108,8 +107,8 @@ public final class KMedoids{
 		return minAssignment;
 	}
 
-	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> int[] clusterRandom(
-			final SpeciesInterface<S, D>[] dataset, final int k, final int maxIterations){
+	private static <D extends DistanceDataInterface<D>> int[] clusterRandom(final SpeciesInterface<D>[] dataset, final int k,
+			final int maxIterations){
 		final int m = dataset.length;
 
 		//initialize the medoids: select `k` random points out of the `n` data points
@@ -174,12 +173,12 @@ public final class KMedoids{
 	 * @param medoids	Candidate medoids.
 	 * @param dataset	The data to assign to the medoids.
 	 */
-	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> double assign(final int[] assignment,
-			final int[] medoids, final SpeciesInterface<S, D>[] dataset){
+	private static <D extends DistanceDataInterface<D>> double assign(final int[] assignment, final int[] medoids,
+			final SpeciesInterface<D>[] dataset){
 		double score = 0.;
 		final int n = dataset.length;
 		for(int j = 0; j < n; j ++){
-			final SpeciesInterface<S, D> data = dataset[j];
+			final SpeciesInterface<D> data = dataset[j];
 
 			double minDistance = Double.MAX_VALUE;
 			int minIndex = Integer.MAX_VALUE;

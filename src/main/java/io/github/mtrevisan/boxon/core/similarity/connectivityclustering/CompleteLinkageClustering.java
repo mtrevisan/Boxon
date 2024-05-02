@@ -48,8 +48,7 @@ public class CompleteLinkageClustering{
 	 * @param species	Set of species from which to infer the phylogenetic tree.
 	 * @return	The root of the tree.
 	 */
-	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> PhylogeneticTreeNode build(
-			final SpeciesInterface<S, D>[] species){
+	public static <D extends DistanceDataInterface<D>> PhylogeneticTreeNode build(final SpeciesInterface<D>[] species){
 		//create a tree for each species
 		final List<PhylogeneticTreeNode> forest = initializeForest(species);
 
@@ -66,28 +65,26 @@ public class CompleteLinkageClustering{
 	 * @param species	Set of species from which to infer the phylogenetic tree.
 	 * @return	A set of sets where each data is grouped into.
 	 */
-	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Collection<Collection<String>> cluster(
-			final SpeciesInterface<S, D>[] species){
+	public static <D extends DistanceDataInterface<D>> Collection<Collection<String>> cluster(final SpeciesInterface<D>[] species){
 		final PhylogeneticTreeNode root = build(species);
 
 		return PhylogeneticTreeNode.getSpeciesByLevel(root);
 	}
 
-	private static List<PhylogeneticTreeNode> initializeForest(final SpeciesInterface<?, ?>[] species){
+	private static List<PhylogeneticTreeNode> initializeForest(final SpeciesInterface<?>[] species){
 		final List<PhylogeneticTreeNode> forest = new ArrayList<>(0);
 		for(int i = 0, length = species.length; i < length; i ++)
 			forest.add(PhylogeneticTreeNode.create(species[i].getName()));
 		return forest;
 	}
 
-	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Map<String, Integer> createDistanceMatrix(
-			final SpeciesInterface<S, D>[] species){
+	private static <D extends DistanceDataInterface<D>> Map<String, Integer> createDistanceMatrix(final SpeciesInterface<D>[] species){
 		final int speciesCount = species.length;
 		final Map<String, Integer> distanceMatrix = new HashMap<>(speciesCount * (speciesCount - 1) / 2);
 		for(int i = 0; i < speciesCount; i ++){
-			final SpeciesInterface<S, D> speciesI = species[i];
+			final SpeciesInterface<D> speciesI = species[i];
 			for(int j = i + 1; j < speciesCount; j ++){
-				final SpeciesInterface<S, D> speciesJ = species[j];
+				final SpeciesInterface<D> speciesJ = species[j];
 				final String key = composeKey(speciesI.getName(), speciesJ.getName());
 				distanceMatrix.put(key, speciesI.distance(speciesJ));
 			}
@@ -95,22 +92,22 @@ public class CompleteLinkageClustering{
 		return distanceMatrix;
 	}
 
-	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Map<String, Integer> createDistanceMatrix(
-			final List<PhylogeneticTreeNode> forest, final SpeciesInterface<S, D>[] species){
+	private static <D extends DistanceDataInterface<D>> Map<String, Integer> createDistanceMatrix(final List<PhylogeneticTreeNode> forest,
+			final SpeciesInterface<D>[] species){
 		final int speciesCount = forest.size();
 		final Map<String, Integer> distanceMatrix = new HashMap<>(speciesCount * (speciesCount - 1) / 2);
 		for(int i = 0; i < speciesCount; i ++){
 			final String speciesILabel = forest.get(i).getLabel();
-			final List<SpeciesInterface<S, D>> speciesI = getSpecies(speciesILabel, species);
+			final List<SpeciesInterface<D>> speciesI = getSpecies(speciesILabel, species);
 			for(int j = i + 1; j < speciesCount; j ++){
 				final String speciesJLabel = forest.get(j).getLabel();
-				final List<SpeciesInterface<S, D>> speciesJ = getSpecies(speciesJLabel, species);
+				final List<SpeciesInterface<D>> speciesJ = getSpecies(speciesJLabel, species);
 				final String key = composeKey(speciesILabel, speciesJLabel);
 
 				//use group-average linkage
 				double distance = 0.;
-				for(final SpeciesInterface<S, D> spI : speciesI)
-					for(final SpeciesInterface<S, D> spJ : speciesJ)
+				for(final SpeciesInterface<D> spI : speciesI)
+					for(final SpeciesInterface<D> spJ : speciesJ)
 						distance += spI.distance(spJ);
 				distance /= speciesI.size() + speciesJ.size();
 
@@ -120,9 +117,9 @@ public class CompleteLinkageClustering{
 		return distanceMatrix;
 	}
 
-	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> List<SpeciesInterface<S, D>> getSpecies(
-			final String treeLabel, final SpeciesInterface<S, D>[] species){
-		final List<SpeciesInterface<S, D>> out = new ArrayList<>(1);
+	private static <D extends DistanceDataInterface<D>> List<SpeciesInterface<D>> getSpecies(final String treeLabel,
+			final SpeciesInterface<D>[] species){
+		final List<SpeciesInterface<D>> out = new ArrayList<>(1);
 		for(int i = 0, length = species.length; i < length; i ++)
 			if(treeLabel.contains(species[i].getName()))
 				out.add(species[i]);

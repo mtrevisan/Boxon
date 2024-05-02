@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -84,7 +85,7 @@ class KMedoidsTest{
 			.withTemplate(Do.class)
 			.withDefaultCodecs()
 			.create();
-		TemplateSpecies[] species = extractTemplateGenome(core);
+		TemplateSpecies<StringArrayDistanceData>[] species = extractTemplateGenome(core);
 
 		Collection<Collection<String>> clusters = KMedoids.cluster(species, 2, 1);
 
@@ -101,7 +102,7 @@ class KMedoidsTest{
 			.withTemplate(Do.class)
 			.withDefaultCodecs()
 			.create();
-		TemplateSpecies[] species = extractTemplateGenome(core);
+		TemplateSpecies<StringArrayDistanceData>[] species = extractTemplateGenome(core);
 
 		Collection<Collection<String>> assignments = KMedoids.cluster(species, 2, 3);
 
@@ -110,10 +111,10 @@ class KMedoidsTest{
 			Assertions.assertFalse(value.isEmpty());
 	}
 
-	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws BoxonException{
+	private static TemplateSpecies<StringArrayDistanceData>[] extractTemplateGenome(final Core core) throws BoxonException{
 		final Describer descriptor = Describer.create(core);
 		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
-		final TemplateSpecies[] species = new TemplateSpecies[descriptions.size()];
+		final TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
 		for(int s = 0; s < species.length; s ++){
 			final Map<String, Object> description = descriptions.get(s);
 			final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));

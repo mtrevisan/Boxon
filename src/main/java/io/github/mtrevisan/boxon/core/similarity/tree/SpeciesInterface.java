@@ -27,14 +27,14 @@ package io.github.mtrevisan.boxon.core.similarity.tree;
 import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
 
-public interface SpeciesInterface<S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>>{
+public interface SpeciesInterface<D extends DistanceDataInterface<D>>{
 
 	String getName();
 
 	D getSequence();
 
-	int distance(SpeciesInterface<S, D> other);
+	int distance(SpeciesInterface<D> other);
 
-	double similarity(SpeciesInterface<S, D> other);
+	double similarity(SpeciesInterface<D> other);
 
 }
