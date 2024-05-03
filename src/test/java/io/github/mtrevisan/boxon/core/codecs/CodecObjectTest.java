@@ -243,7 +243,7 @@ class CodecObjectTest{
 	void choice1() throws BoxonException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestChoice1.class)
+			.withTemplate(TestChoice1.class)
 			.create();
 		Parser parser = Parser.create(core);
 		Describer describer = Describer.create(core);
@@ -277,18 +277,18 @@ class CodecObjectTest{
 
 
 		List<Map<String, Object>> descriptions = describer.describeTemplate();
-		Assertions.assertEquals(10, descriptions.size());
-		Map<String, Object> description = descriptions.get(1);
+		Assertions.assertEquals(1, descriptions.size());
+		Map<String, Object> description = descriptions.getFirst();
 		String jsonDescription = PrettyPrintMap.toString(description);
-//		Assertions.assertEquals("{context:{},template:io.github.mtrevisan.boxon.core.codecs.CodecArrayTest$TestChoice4,header:{start:[tc4],charset:UTF-8},fields:[{name:header,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,charset:UTF-8,size:3,fieldType:java.lang.String},{collectionType:io.github.mtrevisan.boxon.annotations.bindings.BindAsArray,selectFrom:{prefixLength:8,byteOrder:BIG_ENDIAN,alternatives:[{condition:#prefix == 1,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,prefix:1,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,fields:[{name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:16,fieldType:short,byteOrder:BIG_ENDIAN}]}]},{condition:#prefix == 2,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,prefix:2,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,fields:[{name:value,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:32,fieldType:int,byteOrder:BIG_ENDIAN}]}]}]},selectDefault:void,name:value,collectionArraySize:3,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindObject,selectFromList:{charset:UTF-8,terminator:0},type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0,fieldType:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0[]}]}", jsonDescription);
-		Assertions.assertEquals(1527, jsonDescription.length());
+//		Assertions.assertEquals("{context:{},header:{charset:UTF-8,start:[tc1]},template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestChoice1,fields:[{name:header,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,size:3,charset:UTF-8},{name:value,fieldType:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindObject,type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0,selectFrom:{byteOrder:BIG_ENDIAN,prefixLength:8,alternatives:[{type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,prefix:1,condition:#prefix == 1,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType1,fields:[{name:value,fieldType:short,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:16,byteOrder:BIG_ENDIAN}]}]},{type:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,prefix:2,condition:#prefix == 2,subtypes:[{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType0},{template:io.github.mtrevisan.boxon.core.codecs.CodecObjectTest$TestType2,fields:[{name:value,fieldType:int,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:32,byteOrder:BIG_ENDIAN}]}]}]},selectDefault:void,selectFromList:{charset:UTF-8,terminator:0}}]}", jsonDescription);
+		Assertions.assertEquals(1430, jsonDescription.length());
 	}
 
 	@Test
 	void choice2() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestChoice2.class)
+			.withTemplate(TestChoice2.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -324,7 +324,7 @@ class CodecObjectTest{
 	void choice3() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestChoice3.class)
+			.withTemplate(TestChoice3.class)
 			.create();
 		Parser parser = Parser.create(core);
 
