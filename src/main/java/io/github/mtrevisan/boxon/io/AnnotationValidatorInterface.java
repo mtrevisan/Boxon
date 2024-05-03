@@ -1,6 +1,6 @@
-/*
- * Copyright (c) 2020-2024 Mauro Trevisan
- *
+/**
+ * Copyright (c) 2024 Mauro Trevisan
+ * <p>
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -9,10 +9,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -22,38 +22,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
+package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
-import java.lang.reflect.Type;
+import java.lang.annotation.Annotation;
 
 
-public interface LoaderCodecInterface{
-
-	/**
-	 * Whether there is a codec for the given class type.
-	 *
-	 * @param type	The class type.
-	 * @return	Whether there is a codec for the given class type.
-	 */
-	boolean hasCodec(Type type);
+public interface AnnotationValidatorInterface{
 
 	/**
-	 * Get the codec for the given class type.
+	 * Validate field and annotation.
 	 *
-	 * @param type	The class type.
-	 * @return	The codec for the given class type.
+	 * @param fieldType	The field class associated with the annotation.
+	 * @param annotation	The annotation.
+	 * @throws AnnotationException   If an error is detected.
 	 */
-	CodecInterface getCodec(Type type);
-
-	/**
-	 * Get the codec validator for the given class type.
-	 *
-	 * @param type	The class type.
-	 * @return	The codec validator for the given class type.
-	 */
-	AnnotationValidatorInterface getCustomCodecValidator(Type type);
+	void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
 
 }

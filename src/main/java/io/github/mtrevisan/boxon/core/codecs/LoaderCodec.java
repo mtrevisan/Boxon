@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -57,6 +58,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 
 	private final Map<Type, CodecInterface> codecs = new ConcurrentHashMap<>(0);
+	private final Map<Type, AnnotationValidatorInterface> customCodecValidators = new ConcurrentHashMap<>(0);
 
 	private EventListener eventListener;
 
@@ -147,7 +149,25 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 		eventListener.loadingCodec(codec.getClass());
 
-		addCodecInner(codec);
+		addCodecInner(codec, null);
+
+		eventListener.loadedCodecs(1);
+	}
+
+	/**
+	 * Loads the given codec.
+	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @param validator	The codec validator.
+	 * @throws CodecException	If the codec was already loaded.
+	 */
+	public void addCodec(final CodecInterface codec, final AnnotationValidatorInterface validator) throws CodecException{
+		Objects.requireNonNull(codec, "Codec cannot be null");
+
+		eventListener.loadingCodec(codec.getClass(), validator);
+
+		addCodecInner(codec, validator);
 
 		eventListener.loadedCodecs(1);
 	}
@@ -179,7 +199,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 			final CodecInterface codec = codecs.get(i);
 
 			if(codec != null)
-				addCodecInner(codec);
+				addCodecInner(codec, null);
 		}
 	}
 
@@ -189,16 +209,18 @@ public final class LoaderCodec implements LoaderCodecInterface{
 			final CodecInterface codec = codecs[i];
 
 			if(codec != null)
-				addCodecInner(codec);
+				addCodecInner(codec, null);
 		}
 	}
 
-	private void addCodecInner(final CodecInterface codec) throws CodecException{
+	private void addCodecInner(final CodecInterface codec, final AnnotationValidatorInterface validator) throws CodecException{
 		final Class<?> codecType = codec.annotationType();
 		if(codecs.containsKey(codecType))
 			throw CodecException.create("Codec with type {} already added", codecType);
 
 		codecs.put(codecType, codec);
+		if(validator != null)
+			customCodecValidators.put(codecType, validator);
 	}
 
 	/**
@@ -230,6 +252,11 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	@Override
 	public CodecInterface getCodec(final Type type){
 		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
+	}
+
+	@Override
+	public AnnotationValidatorInterface getCustomCodecValidator(final Type type){
+		return customCodecValidators.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	private static boolean isDefaultBind(final Type type){

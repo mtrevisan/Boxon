@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -52,7 +53,7 @@ import java.util.HashSet;
 /**
  * Container of all the validators of a message template.
  */
-public enum TemplateAnnotationValidator{
+public enum TemplateAnnotationValidator implements AnnotationValidatorInterface{
 
 	HEADER(TemplateHeader.class){
 		@Override
@@ -180,14 +181,5 @@ public enum TemplateAnnotationValidator{
 	public static TemplateAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
-
-	/**
-	 * Validate field and annotation.
-	 *
-	 * @param fieldType	The field class associated with the annotation.
-	 * @param annotation	The annotation.
-	 * @throws AnnotationException	If an error is detected.
-	 */
-	public abstract void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
 
 }

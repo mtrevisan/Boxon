@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
@@ -201,6 +202,19 @@ public final class CoreBuilder{
 	 */
 	public CoreBuilder withCodec(final CodecInterface codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
+
+		return this;
+	}
+
+	/**
+	 * Loads the given codec.
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @param validator	The codec validator.
+	 * @return	This instance, used for chaining.
+	 */
+	public CoreBuilder withCodec(final CodecInterface codec, final AnnotationValidatorInterface validator){
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec, validator));
 
 		return this;
 	}

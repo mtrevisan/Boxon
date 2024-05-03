@@ -1447,13 +1447,14 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-5.0.0"></a>
-### version 5.0.0 - 20240502
+### version 5.0.0 - 20240503
 
 - Add support for `BindAsArray` and `BindAsList` instead of many `BindArray`/`BindArrayPrimitive` and `BindList`, now removed.
 - Cleaning and refactoring of various codecs.
 - Major reorganization of the code, along with refactor to make it more modular and cohesive, and removal of duplicated code.
 - Simplified the exception handling.
 - Improved annotation validation by skipping validations for non-library annotations.
+- Added custom validation for custom codecs.
 
 <a name="changelog-4.0.0"></a>
 ### version 4.0.0 - 20240419
