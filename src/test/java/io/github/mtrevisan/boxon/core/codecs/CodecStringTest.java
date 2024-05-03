@@ -306,7 +306,6 @@ class CodecStringTest{
 		};
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
-		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123ABC", decoded);

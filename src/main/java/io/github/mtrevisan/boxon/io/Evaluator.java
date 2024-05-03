@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
