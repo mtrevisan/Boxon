@@ -245,7 +245,7 @@ public final class FieldAccessor{
 		}
 	}
 
-	public static boolean isStatic(final Member field){
+	private static boolean isStatic(final Member field){
 		return Modifier.isStatic(field.getModifiers());
 	}
 

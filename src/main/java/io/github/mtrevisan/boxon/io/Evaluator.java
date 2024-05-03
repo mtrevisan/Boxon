@@ -36,7 +36,9 @@ import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -265,11 +267,15 @@ public final class Evaluator{
 			for(int i = 0, length = declaredFields.length; i < length; i ++){
 				final Field field = declaredFields[i];
 
-				if(field.getName().equals(name) && (!mustBeStatic || FieldAccessor.isStatic(field)))
+				if(field.getName().equals(name) && (!mustBeStatic || isStatic(field)))
 					return field;
 			}
 			return null;
 		}
+	}
+
+	private static boolean isStatic(final Member field){
+		return Modifier.isStatic(field.getModifiers());
 	}
 
 }
