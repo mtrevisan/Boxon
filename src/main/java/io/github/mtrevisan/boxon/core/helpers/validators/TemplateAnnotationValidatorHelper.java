@@ -29,15 +29,14 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.List;
@@ -55,12 +54,6 @@ final class TemplateAnnotationValidatorHelper{
 
 	private TemplateAnnotationValidatorHelper(){}
 
-
-	static void validateType(final Class<?> bindingType, final Class<? extends Annotation> annotation) throws AnnotationException{
-		if(bindingType == Object.class)
-			throw AnnotationException.create("Field `type` in {} must not be `Object.class`",
-				annotation.getSimpleName());
-	}
 
 	static void validateConverter(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 			throws AnnotationException{

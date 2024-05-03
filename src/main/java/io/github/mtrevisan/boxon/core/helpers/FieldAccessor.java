@@ -22,9 +22,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.exceptions.DataException;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
+import io.github.mtrevisan.boxon.io.Injected;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -243,7 +245,7 @@ public final class FieldAccessor{
 		}
 	}
 
-	static boolean isStatic(final Member field){
+	private static boolean isStatic(final Member field){
 		return Modifier.isStatic(field.getModifiers());
 	}
 

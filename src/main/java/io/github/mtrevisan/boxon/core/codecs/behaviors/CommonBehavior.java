@@ -29,10 +29,10 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ParserDataType;
+import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -51,15 +51,6 @@ public abstract class CommonBehavior{
 		this.converterChoices = converterChoices;
 		this.defaultConverter = defaultConverter;
 		this.validator = validator;
-	}
-
-
-	public final ConverterChoices converterChoices(){
-		return converterChoices;
-	}
-
-	public final Class<? extends Converter<?, ?>> defaultConverter(){
-		return defaultConverter;
 	}
 
 

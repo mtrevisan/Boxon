@@ -24,10 +24,10 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
+import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
-import io.github.mtrevisan.boxon.helpers.FieldMapper;
+import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.MethodHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

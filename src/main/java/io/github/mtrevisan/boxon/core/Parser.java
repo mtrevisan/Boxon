@@ -24,11 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.io.BitReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -106,7 +106,7 @@ public final class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
 	 * @return	The operation result.
 	 */
-	public List<Response<byte[], Object>> parse(final BitReader reader){
+	private List<Response<byte[], Object>> parse(final BitReader reader){
 		final List<Response<byte[], Object>> response = new ArrayList<>(1);
 
 		while(reader.hasRemaining()){

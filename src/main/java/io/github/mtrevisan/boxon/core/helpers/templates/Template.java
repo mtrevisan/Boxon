@@ -32,9 +32,10 @@ import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -80,8 +81,11 @@ public final class Template<T>{
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
+	private static Function<Class<? extends Annotation>, AnnotationValidatorInterface> CUSTOM_CODEC_VALIDATOR_EXTRACTOR = type -> null;
+
 	/** Mapping of annotations to functions that extract skip parameters. */
-	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>(4);
+	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING
+		= new HashMap<>(4);
 	static{
 		ANNOTATION_MAPPING.put(SkipBits.class, annotation
 			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
@@ -95,6 +99,11 @@ public final class Template<T>{
 			-> Arrays.stream(((SkipUntilTerminator.Skips)annotation).value())
 				.map(SkipParams::create)
 				.collect(Collectors.toList()));
+	}
+
+	public static void setCustomCodecValidatorExtractor(
+			final Function<Class<? extends Annotation>, AnnotationValidatorInterface> customCodecValidatorExtractor){
+		CUSTOM_CODEC_VALIDATOR_EXTRACTOR = customCodecValidatorExtractor;
 	}
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
@@ -342,7 +351,18 @@ public final class Template<T>{
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
-			if(validateAnnotation(fieldType, annotation))
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			boolean validAnnotation = isCustomAnnotation(annotationType);
+			final AnnotationValidatorInterface validator = (validAnnotation
+				? CUSTOM_CODEC_VALIDATOR_EXTRACTOR.apply(annotationType)
+				: TemplateAnnotationValidator.fromAnnotationType(annotationType));
+			//validate with provided validator, if any
+			if(validator != null){
+				validator.validate(fieldType, annotation);
+				validAnnotation = true;
+			}
+
+			if(validAnnotation)
 				foundAnnotation = annotation;
 		}
 		return foundAnnotation;
@@ -366,16 +386,9 @@ public final class Template<T>{
 		return foundAnnotation;
 	}
 
-	private static boolean validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-		if(!annotation.annotationType().getPackageName().startsWith(LIBRARY_ROOT_PACKAGE_NAME))
-			return true;
-
-		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
-		if(validator != null){
-			validator.validate(fieldType, annotation);
-			return true;
-		}
-		return false;
+	private static boolean isCustomAnnotation(final Class<? extends Annotation> annotationType){
+		final String annotationPackageName = annotationType.getPackageName();
+		return !annotationPackageName.startsWith(LIBRARY_ROOT_PACKAGE_NAME);
 	}
 
 	private static String extractLibraryRootPackage(){

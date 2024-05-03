@@ -37,14 +37,16 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
-import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.Injected;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Evaluator;
+import io.github.mtrevisan.boxon.io.Injected;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -60,7 +62,7 @@ import java.util.BitSet;
 import java.util.List;
 
 
-class CodecInterfaceTest{
+class CustomCodecTest{
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
@@ -128,13 +130,13 @@ class CodecInterfaceTest{
 
 				int size = evaluator.evaluateSize(binding.size(), rootObject);
 
-				final BigInteger v = asciiToBigDecimal((String)value);
+				final BigInteger v = asciiToBigInteger((String)value);
 				final BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);
 
 				writer.putBitSet(bitmap, size * Byte.SIZE);
 			}
 
-			public static BigInteger asciiToBigDecimal(String asciiString){
+			public static BigInteger asciiToBigInteger(String asciiString){
 				StringBuilder hexBuilder = new StringBuilder();
 				for(int i = 0, length = asciiString.length(); i < length; i ++){
 					char asciiChar = asciiString.charAt(i);
@@ -145,9 +147,17 @@ class CodecInterfaceTest{
 			}
 		};
 
+		AnnotationValidatorInterface codecValidator = (fieldType, annotation) -> {
+			BindCustomData binding = (BindCustomData)annotation;
+			String sizeAsString = binding.size();
+			if(StringHelper.isBlank(sizeAsString))
+				throw AnnotationException.create("Size must be non-empty");
+			if(Integer.parseInt(sizeAsString) <= 0)
+				throw AnnotationException.create("Size must be a positive number");
+		};
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withCodec(codec)
+			.withCodec(codec, codecValidator)
 			.withTemplate(TestCustomCodec.class)
 			.create();
 		Parser parser = Parser.create(core);

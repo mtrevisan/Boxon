@@ -27,14 +27,16 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
@@ -71,6 +73,9 @@ public final class Core{
 
 	private Core(){
 		loaderCodec = LoaderCodec.create();
+
+		//FIXME ugliness
+		Template.setCustomCodecValidatorExtractor(loaderCodec::getCustomCodecValidator);
 
 		evaluator = Evaluator.create();
 
@@ -182,6 +187,19 @@ public final class Core{
 	 */
 	void addCodec(final CodecInterface codec) throws CodecException{
 		loaderCodec.addCodec(codec);
+
+		postProcessCodec(codec);
+	}
+
+	/**
+	 * Loads the given codec.
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @param validator	The codec validator.
+	 * @throws CodecException	If the codec was already loaded.
+	 */
+	void addCodec(final CodecInterface codec, final AnnotationValidatorInterface validator) throws CodecException{
+		loaderCodec.addCodec(codec, validator);
 
 		postProcessCodec(codec);
 	}

@@ -26,15 +26,16 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.MethodHelper;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
@@ -201,6 +202,19 @@ public final class CoreBuilder{
 	 */
 	public CoreBuilder withCodec(final CodecInterface codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
+
+		return this;
+	}
+
+	/**
+	 * Loads the given codec.
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @param validator	The codec validator.
+	 * @return	This instance, used for chaining.
+	 */
+	public CoreBuilder withCodec(final CodecInterface codec, final AnnotationValidatorInterface validator){
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec, validator));
 
 		return this;
 	}

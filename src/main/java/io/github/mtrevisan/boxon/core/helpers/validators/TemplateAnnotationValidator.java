@@ -34,10 +34,11 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
+import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.MethodHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
+import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -52,7 +53,7 @@ import java.util.HashSet;
 /**
  * Container of all the validators of a message template.
  */
-public enum TemplateAnnotationValidator{
+public enum TemplateAnnotationValidator implements AnnotationValidatorInterface{
 
 	HEADER(TemplateHeader.class){
 		@Override
@@ -84,7 +85,9 @@ public enum TemplateAnnotationValidator{
 			final BindObject binding = (BindObject)annotation;
 
 			final Class<?> type = binding.type();
-			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
+			if(type == Object.class)
+				throw AnnotationException.create("Field `type` in {} must not be `Object.class`",
+					BindObject.class.getSimpleName());
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Wrong annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
@@ -178,14 +181,5 @@ public enum TemplateAnnotationValidator{
 	public static TemplateAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
-
-	/**
-	 * Validate field and annotation.
-	 *
-	 * @param fieldType	The field class associated with the annotation.
-	 * @param annotation	The annotation.
-	 * @throws AnnotationException	If an error is detected.
-	 */
-	public abstract void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
 
 }

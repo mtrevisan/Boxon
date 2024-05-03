@@ -790,7 +790,6 @@ Moreover, to compose a configuration message (remember to also load the codecs),
 ```java
 Configurator configurator = Configurator.create(core);
 Map<String, Object> configurationData = new HashMap<>();
-configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
@@ -1321,8 +1320,8 @@ class VariableLengthByteArray implements CodecInterface{
 ```java
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
-core.withDefaultCodecs(); //loads all codecs from the package where this call was made
-core.withCodec(CodecCustomTest.class); //this class is where the custom codec resides
+core.withDefaultCodecs(); //loads all codecs from the library itself
+core.withCodecsFrom(CodecCustomTest.class);  //this class resides in the package where the custom codec(s) are
 core.withCodec(new VariableLengthByteArray());
 ```
 
@@ -1448,13 +1447,14 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-5.0.0"></a>
-### version 5.0.0 - 20240424
+### version 5.0.0 - 20240503
 
-- Add support for `BindAsArray` and `BindAsList` instead of many `BindArray(Primitive)`, `BindList`, now removed.
+- Add support for `BindAsArray` and `BindAsList` instead of many `BindArray`/`BindArrayPrimitive` and `BindList`, now removed.
 - Cleaning and refactoring of various codecs.
 - Major reorganization of the code, along with refactor to make it more modular and cohesive, and removal of duplicated code.
 - Simplified the exception handling.
 - Improved annotation validation by skipping validations for non-library annotations.
+- Added custom validation for custom codecs.
 
 <a name="changelog-4.0.0"></a>
 ### version 4.0.0 - 20240419

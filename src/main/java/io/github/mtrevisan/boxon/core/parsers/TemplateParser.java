@@ -31,9 +31,9 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.util.Collection;
@@ -62,8 +62,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		this.templateDecoder = TemplateDecoder.create(loaderCodec, evaluator);
-		this.templateEncoder = TemplateEncoder.create(loaderCodec, evaluator);
+		templateDecoder = TemplateDecoder.create(loaderCodec, evaluator);
+		templateEncoder = TemplateEncoder.create(loaderCodec, evaluator);
 
 		loaderTemplate = LoaderTemplate.create(loaderCodec);
 

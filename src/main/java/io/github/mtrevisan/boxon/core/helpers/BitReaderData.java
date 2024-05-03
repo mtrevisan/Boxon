@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -41,7 +41,6 @@ import java.util.BitSet;
  */
 abstract class BitReaderData{
 
-	//FIXME try to reduce the number of instances of this class
 	private static final class Snapshot{
 		/** The position in the byte buffer of the cached value. */
 		private int position;

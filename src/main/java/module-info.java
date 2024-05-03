@@ -73,6 +73,7 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.annotations.converters;
 	exports io.github.mtrevisan.boxon.annotations.validators;
 	exports io.github.mtrevisan.boxon.core;
+	exports io.github.mtrevisan.boxon.core.detect;
 	exports io.github.mtrevisan.boxon.core.keys;
 	exports io.github.mtrevisan.boxon.exceptions;
 	exports io.github.mtrevisan.boxon.io;

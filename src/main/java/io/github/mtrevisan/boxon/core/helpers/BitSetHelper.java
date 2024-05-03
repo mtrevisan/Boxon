@@ -22,9 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.helpers.converters.BigEndianConverter;
+import io.github.mtrevisan.boxon.helpers.converters.BitSetConverter;
+import io.github.mtrevisan.boxon.helpers.converters.LittleEndianConverter;
 
 import java.math.BigInteger;
 import java.util.BitSet;

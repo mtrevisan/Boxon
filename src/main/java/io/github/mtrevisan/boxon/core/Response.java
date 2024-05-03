@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 
 
 /**
