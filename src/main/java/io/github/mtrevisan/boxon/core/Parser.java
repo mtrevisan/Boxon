@@ -106,7 +106,7 @@ public final class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
 	 * @return	The operation result.
 	 */
-	public List<Response<byte[], Object>> parse(final BitReader reader){
+	private List<Response<byte[], Object>> parse(final BitReader reader){
 		final List<Response<byte[], Object>> response = new ArrayList<>(1);
 
 		while(reader.hasRemaining()){

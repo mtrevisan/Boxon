@@ -84,7 +84,9 @@ public enum TemplateAnnotationValidator{
 			final BindObject binding = (BindObject)annotation;
 
 			final Class<?> type = binding.type();
-			TemplateAnnotationValidatorHelper.validateType(type, BindObject.class);
+			if(type == Object.class)
+				throw AnnotationException.create("Field `type` in {} must not be `Object.class`",
+					BindObject.class.getSimpleName());
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Wrong annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());

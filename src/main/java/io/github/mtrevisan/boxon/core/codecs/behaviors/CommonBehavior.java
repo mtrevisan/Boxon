@@ -54,15 +54,6 @@ public abstract class CommonBehavior{
 	}
 
 
-	public final ConverterChoices converterChoices(){
-		return converterChoices;
-	}
-
-	public final Class<? extends Converter<?, ?>> defaultConverter(){
-		return defaultConverter;
-	}
-
-
 	public final Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
 		final Object array = createArray(arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
