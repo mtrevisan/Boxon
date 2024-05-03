@@ -1321,7 +1321,7 @@ class VariableLengthByteArray implements CodecInterface{
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
 core.withDefaultCodecs(); //loads all codecs from the library itself
-core.withCodec(CodecCustomTest.class); //this class is where the custom codec resides
+core.withCodecsFrom(CodecCustomTest.class);  //this class resides in the package where the custom codec(s) are
 core.withCodec(new VariableLengthByteArray());
 ```
 
