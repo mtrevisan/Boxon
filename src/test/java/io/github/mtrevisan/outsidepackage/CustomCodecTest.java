@@ -127,13 +127,13 @@ class CustomCodecTest{
 
 				int size = evaluator.evaluateSize(binding.size(), rootObject);
 
-				final BigInteger v = asciiToBigDecimal((String)value);
+				final BigInteger v = asciiToBigInteger((String)value);
 				final BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);
 
 				writer.putBitSet(bitmap, size * Byte.SIZE);
 			}
 
-			public static BigInteger asciiToBigDecimal(String asciiString){
+			public static BigInteger asciiToBigInteger(String asciiString){
 				StringBuilder hexBuilder = new StringBuilder();
 				for(int i = 0, length = asciiString.length(); i < length; i ++){
 					char asciiChar = asciiString.charAt(i);
