@@ -223,7 +223,7 @@ public final class FieldDescriber{
 
 			final Map<String, Object> skipDescription = new LinkedHashMap<>(4);
 			extractObjectParameters(skip, skip.getClass(), skipDescription);
-			fieldsDescription.add(skipDescription);
+			fieldsDescription.add(Collections.unmodifiableMap(skipDescription));
 		}
 	}
 
@@ -302,7 +302,7 @@ public final class FieldDescriber{
 		if(alternative instanceof final ObjectChoices.ObjectChoice choice)
 			describeChoiceType(choice.type(), alternativeDescription);
 
-		return alternativeDescription;
+		return Collections.unmodifiableMap(alternativeDescription);
 	}
 
 	private static void describeChoiceType(final Class<?> type, final Map<String, Object> rootDescription){

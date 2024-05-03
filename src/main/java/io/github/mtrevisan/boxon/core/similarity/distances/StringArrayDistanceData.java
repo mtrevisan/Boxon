@@ -32,7 +32,7 @@ public final class StringArrayDistanceData implements DistanceDataInterface<Stri
 	private final String[] data;
 
 
-	public static StringArrayDistanceData of(final String[] genome){
+	public static StringArrayDistanceData of(final String... genome){
 		return new StringArrayDistanceData(genome);
 	}
 

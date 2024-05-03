@@ -43,8 +43,8 @@ class LevenshteinMetricTest{
 	@Test
 	void emptyStringTest(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("");
-		final StringDistanceData data2 = StringDistanceData.of("");
+		StringDistanceData data1 = StringDistanceData.of("");
+		StringDistanceData data2 = StringDistanceData.of("");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -56,8 +56,8 @@ class LevenshteinMetricTest{
 	@Test
 	void testExactMatchSameCase(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("java");
-		final StringDistanceData data2 = StringDistanceData.of("java");
+		StringDistanceData data1 = StringDistanceData.of("java");
+		StringDistanceData data2 = StringDistanceData.of("java");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -69,8 +69,8 @@ class LevenshteinMetricTest{
 	@Test
 	void testNoSimilarity(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("abc");
-		final StringDistanceData data2 = StringDistanceData.of("def");
+		StringDistanceData data1 = StringDistanceData.of("abc");
+		StringDistanceData data2 = StringDistanceData.of("def");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -82,8 +82,8 @@ class LevenshteinMetricTest{
 	@Test
 	void score1(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("he");
-		final StringDistanceData data2 = StringDistanceData.of("head");
+		StringDistanceData data1 = StringDistanceData.of("he");
+		StringDistanceData data2 = StringDistanceData.of("head");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -95,8 +95,8 @@ class LevenshteinMetricTest{
 	@Test
 	void score2(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("hd");
-		final StringDistanceData data2 = StringDistanceData.of("head");
+		StringDistanceData data1 = StringDistanceData.of("hd");
+		StringDistanceData data2 = StringDistanceData.of("head");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -108,8 +108,8 @@ class LevenshteinMetricTest{
 	@Test
 	void score3(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("d");
-		final StringDistanceData data2 = StringDistanceData.of("head");
+		StringDistanceData data1 = StringDistanceData.of("d");
+		 StringDistanceData data2 = StringDistanceData.of("head");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -121,8 +121,8 @@ class LevenshteinMetricTest{
 	@Test
 	void score4(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("head");
-		final StringDistanceData data2 = StringDistanceData.of("he");
+		StringDistanceData data1 = StringDistanceData.of("head");
+		StringDistanceData data2 = StringDistanceData.of("he");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -134,8 +134,8 @@ class LevenshteinMetricTest{
 	@Test
 	void score5(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("kitten");
-		final StringDistanceData data2 = StringDistanceData.of("sitting");
+		StringDistanceData data1 = StringDistanceData.of("kitten");
+		StringDistanceData data2 = StringDistanceData.of("sitting");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -147,8 +147,8 @@ class LevenshteinMetricTest{
 	@Test
 	void score6(){
 		LevenshteinMetric<StringDistanceData> metric = LevenshteinMetric.create();
-		final StringDistanceData data1 = StringDistanceData.of("Saturday");
-		final StringDistanceData data2 = StringDistanceData.of("Sunday");
+		StringDistanceData data1 = StringDistanceData.of("Saturday");
+		StringDistanceData data2 = StringDistanceData.of("Sunday");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
