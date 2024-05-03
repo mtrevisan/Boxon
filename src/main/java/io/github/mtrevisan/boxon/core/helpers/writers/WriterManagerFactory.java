@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.writers;
 
+import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.nio.charset.Charset;
 

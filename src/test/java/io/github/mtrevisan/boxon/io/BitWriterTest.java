@@ -25,6 +25,8 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -22,8 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.core.helpers;
 
+import io.github.mtrevisan.boxon.helpers.Memoizer;
 import org.springframework.objenesis.Objenesis;
 import org.springframework.objenesis.ObjenesisException;
 import org.springframework.objenesis.ObjenesisStd;

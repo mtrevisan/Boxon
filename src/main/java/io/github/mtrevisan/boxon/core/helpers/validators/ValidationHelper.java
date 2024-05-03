@@ -24,12 +24,12 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.validators;
 
+import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.util.regex.Pattern;
 

@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
-import io.github.mtrevisan.boxon.helpers.FieldMapper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
