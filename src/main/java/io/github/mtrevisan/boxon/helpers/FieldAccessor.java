@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import io.github.mtrevisan.boxon.exceptions.DataException;
+import io.github.mtrevisan.boxon.io.Injected;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -243,7 +244,7 @@ public final class FieldAccessor{
 		}
 	}
 
-	static boolean isStatic(final Member field){
+	public static boolean isStatic(final Member field){
 		return Modifier.isStatic(field.getModifiers());
 	}
 
