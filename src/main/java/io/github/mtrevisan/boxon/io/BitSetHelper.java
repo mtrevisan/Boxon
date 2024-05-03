@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
+import io.github.mtrevisan.boxon.io.converters.BigEndianConverter;
+import io.github.mtrevisan.boxon.io.converters.BitSetConverter;
+import io.github.mtrevisan.boxon.io.converters.LittleEndianConverter;
 
 import java.math.BigInteger;
 import java.util.BitSet;

@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.io.converters;
 
 import java.math.BigInteger;
 import java.util.BitSet;
@@ -31,7 +31,7 @@ import java.util.BitSet;
 /**
  * Defines methods for converting between BitSet and primitive/objective types.
  */
-interface BitSetConverter{
+public interface BitSetConverter{
 
 	/**
 	 * Creates a {@link BitSet} with the given {@link BigInteger} value and `bitmapSize`.

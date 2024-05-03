@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.io.converters;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
@@ -30,7 +30,7 @@ import java.math.BigInteger;
 import java.util.BitSet;
 
 
-final class LittleEndianConverter implements BitSetConverter{
+public final class LittleEndianConverter implements BitSetConverter{
 
 	/**
 	 * Creates a {@link BitSet} with the given value.
