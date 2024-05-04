@@ -24,7 +24,17 @@
  */
 package io.github.mtrevisan.boxon.utils;
 
+import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
+import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
+
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -50,6 +60,27 @@ public final class TestHelper{
 
 	public static byte[] toByteArray(final String payload){
 		return payload.getBytes(StandardCharsets.ISO_8859_1);
+	}
+
+
+	public static TemplateSpecies<StringArrayDistanceData> extractTemplateGenome(final Map<String, Object> description){
+		final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description
+			.get(DescriberKey.FIELDS.toString()));
+		final String[] genome = new String[parameters.size()];
+		int gene = 0;
+		for(int g = 0, length = genome.length; g < length; g ++){
+			final Map<String, Object> parameter = new LinkedHashMap<>(parameters.get(g));
+			parameter.remove(DescriberKey.FIELD_NAME.toString());
+			parameter.remove("condition");
+			parameter.remove("validator");
+
+			if(parameter.containsKey(DescriberKey.COLLECTION_TYPE.toString()))
+				genome[gene] += parameter.toString();
+			else
+				genome[gene ++] = parameter.toString();
+		}
+		final StringArrayDistanceData sequence = StringArrayDistanceData.of(Arrays.copyOfRange(genome, 0, gene));
+		return TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), sequence);
 	}
 
 }

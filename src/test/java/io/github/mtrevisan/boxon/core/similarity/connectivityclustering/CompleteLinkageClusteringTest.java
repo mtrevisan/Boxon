@@ -29,16 +29,14 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Describer;
-import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,31 +82,17 @@ class CompleteLinkageClusteringTest{
 			.withTemplate(Do.class)
 			.withDefaultCodecs()
 			.create();
-		TemplateSpecies[] species = extractTemplateGenome(core);
+		Describer descriptor = Describer.create(core);
+		List<Map<String, Object>> descriptions = descriptor.describeTemplate();
+		TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
+		for(int s = 0, length = species.length; s < length; s ++){
+			Map<String, Object> description = descriptions.get(s);
+			species[s] = TestHelper.extractTemplateGenome(description);
+		}
 
 		Collection<Collection<String>> clusters = CompleteLinkageClustering.cluster(species);
 
 		Assertions.assertEquals(2, clusters.size());
-	}
-
-	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws BoxonException{
-		final Describer descriptor = Describer.create(core);
-		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
-		final TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
-		for(int s = 0; s < species.length; s ++){
-			final Map<String, Object> description = descriptions.get(s);
-			final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));
-			final String[] genome = new String[parameters.size()];
-			for(int g = 0; g < parameters.size(); g ++){
-				final Map<String, Object> parameter = new HashMap<>(parameters.get(g));
-				parameter.remove(DescriberKey.FIELD_NAME.toString());
-				parameter.remove("condition");
-				parameter.remove("validator");
-				genome[g] = parameter.toString();
-			}
-			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), StringArrayDistanceData.of(genome));
-		}
-		return species;
 	}
 
 }

@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.tree;
 
-import io.github.mtrevisan.boxon.core.similarity.distances.metrics.DamerauLevenshteinMetric;
 import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
+import io.github.mtrevisan.boxon.core.similarity.distances.metrics.DamerauLevenshteinMetric;
 
 
 public final class TemplateSpecies<D extends DistanceDataInterface<D>> implements SpeciesInterface<D>{

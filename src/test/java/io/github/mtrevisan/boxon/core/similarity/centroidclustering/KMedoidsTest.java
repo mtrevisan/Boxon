@@ -29,17 +29,14 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Describer;
-import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +82,13 @@ class KMedoidsTest{
 			.withTemplate(Do.class)
 			.withDefaultCodecs()
 			.create();
-		TemplateSpecies<StringArrayDistanceData>[] species = extractTemplateGenome(core);
+		Describer descriptor = Describer.create(core);
+		List<Map<String, Object>> descriptions = descriptor.describeTemplate();
+		TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
+		for(int s = 0, length = species.length; s < length; s ++){
+			Map<String, Object> description = descriptions.get(s);
+			species[s] = TestHelper.extractTemplateGenome(description);
+		}
 
 		Collection<Collection<String>> clusters = KMedoids.cluster(species, 2, 1);
 
@@ -102,42 +105,19 @@ class KMedoidsTest{
 			.withTemplate(Do.class)
 			.withDefaultCodecs()
 			.create();
-		TemplateSpecies<StringArrayDistanceData>[] species = extractTemplateGenome(core);
+		Describer descriptor = Describer.create(core);
+		List<Map<String, Object>> descriptions = descriptor.describeTemplate();
+		TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
+		for(int s = 0, length = species.length; s < length; s ++){
+			Map<String, Object> description = descriptions.get(s);
+			species[s] = TestHelper.extractTemplateGenome(description);
+		}
 
 		Collection<Collection<String>> assignments = KMedoids.cluster(species, 2, 3);
 
 		Assertions.assertEquals(2, assignments.size());
-		for(final Collection<String> value : assignments)
+		for(Collection<String> value : assignments)
 			Assertions.assertFalse(value.isEmpty());
-	}
-
-	private static TemplateSpecies<StringArrayDistanceData>[] extractTemplateGenome(final Core core) throws BoxonException{
-		final Describer descriptor = Describer.create(core);
-		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
-		final TemplateSpecies<StringArrayDistanceData>[] species = (TemplateSpecies<StringArrayDistanceData>[])(new TemplateSpecies[descriptions.size()]);
-		for(int s = 0; s < species.length; s ++){
-			final Map<String, Object> description = descriptions.get(s);
-			final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));
-			final String[] genome = new String[parameters.size()];
-			for(int g = 0; g < parameters.size(); g ++){
-				final Map<String, Object> parameter = new HashMap<>(parameters.get(g));
-				parameter.remove(DescriberKey.FIELD_NAME.toString());
-				parameter.remove("condition");
-				parameter.remove("validator");
-				genome[g] = parameter.toString();
-			}
-			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), StringArrayDistanceData.of(genome));
-		}
-		return species;
-	}
-
-	private static int sameNumber(final int[] array){
-		int count = 0;
-		for(int i = 0; i < array.length - 1; i ++)
-			for(int j = i + 1; j < array.length; j ++)
-				if(array[i] == array[j])
-					count ++;
-		return count;
 	}
 
 }

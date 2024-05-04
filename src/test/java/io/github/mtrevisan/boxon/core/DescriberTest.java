@@ -26,23 +26,18 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
-import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
-import io.github.mtrevisan.boxon.core.similarity.distances.StringDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.distances.metrics.LevenshteinMetric;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +91,7 @@ class DescriberTest{
 	}
 
 	@Test
-	void similaritiesBetweenTemplates() throws Exception{
+	void similarityBetweenTemplates() throws NoSuchMethodException, BoxonException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -107,36 +102,16 @@ class DescriberTest{
 		Describer describer = Describer.create(core);
 		LevenshteinMetric<StringArrayDistanceData> metric = LevenshteinMetric.create();
 
-		Map<String, Object> descriptionHex = describer.describeTemplate(ACKMessageHex.class);
-		TemplateSpecies<StringArrayDistanceData> dnaHex = extractTemplateGenome(descriptionHex);
-		Map<String, Object> descriptionASCII = describer.describeTemplate(ACKMessageASCII.class);
-		TemplateSpecies<StringArrayDistanceData> dnaASCII = extractTemplateGenome(descriptionASCII);
+		Map<String, Object> description1 = describer.describeTemplate(ACKMessageHex.class);
+		TemplateSpecies<StringArrayDistanceData> dna1 = TestHelper.extractTemplateGenome(description1);
+		Map<String, Object> description2 = describer.describeTemplate(ACKMessageHexByteChecksum.class);
+		TemplateSpecies<StringArrayDistanceData> dna2 = TestHelper.extractTemplateGenome(description2);
 
-		int distanceHex = metric.distance(dnaHex.getSequence(), dnaASCII.getSequence());
-		double similarityHex = metric.similarity(dnaHex.getSequence(), dnaASCII.getSequence());
+		int distance = metric.distance(dna1.getSequence(), dna2.getSequence());
+		double similarity = metric.similarity(dna1.getSequence(), dna2.getSequence());
 
-		Assertions.assertEquals(3502, 3502);
-	}
-
-	private static TemplateSpecies<StringArrayDistanceData> extractTemplateGenome(Map<String, Object> description){
-		List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));
-		String[] genome = new String[parameters.size()];
-		int gene = 0;
-		for(int i = 0; i < genome.length; i ++){
-			Map<String, Object> parameter = new LinkedHashMap<>(parameters.get(i));
-			parameter.remove(DescriberKey.FIELD_NAME.toString());
-			parameter.remove("condition");
-			parameter.remove("validator");
-
-			if(parameter.containsKey(DescriberKey.COLLECTION_TYPE.toString()))
-				genome[gene - 1] += parameter.toString();
-			else
-				genome[gene] = parameter.toString();
-
-			gene ++;
-		}
-		StringArrayDistanceData sequence = StringArrayDistanceData.of(Arrays.copyOfRange(genome, 0, gene));
-		return TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), sequence);
+		Assertions.assertEquals(1, distance);
+		Assertions.assertEquals(0.917, similarity, 0.001);
 	}
 
 	@Test

@@ -59,7 +59,7 @@ class ComposerThreadedTest{
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				final Object message = parseResult.getFirst()
+				Object message = parseResult.getFirst()
 					.getMessage();
 				return composer.compose(message);
 			},
@@ -88,7 +88,7 @@ class ComposerThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				final Object message = parseResult.getFirst()
+				Object message = parseResult.getFirst()
 					.getMessage();
 				return composer.compose(message);
 			},
@@ -118,7 +118,7 @@ class ComposerThreadedTest{
 				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				final Object message = parseResult.getFirst()
+				Object message = parseResult.getFirst()
 					.getMessage();
 				return composer.compose(message);
 			},
