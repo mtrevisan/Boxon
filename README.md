@@ -131,16 +131,17 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     7. [AlternativeSubField](#annotation-alternativesubfield)
 5. [Describer](#describer)
 6. [Extractor](#extractor)
-7. [How to write SpEL expressions](#how-to-spel)
-8. [How to extend the functionalities](#how-to-extend)
-9. [Digging into the code](#digging)
+7. [Comparator](#comparator)
+8. [How to write SpEL expressions](#how-to-spel)
+9. [How to extend the functionalities](#how-to-extend)
+10. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
-10. [Examples](#examples)
+11. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
-11. [Contributing](#contributing)
-12. [Changelog](#changelog)
+12. [Contributing](#contributing)
+13. [Changelog](#changelog)
     1. [version 5.0.0](#changelog-5.0.0)
     2. [version 4.0.0](#changelog-4.0.0)
     3. [version 3.6.0](#changelog-3.6.0)
@@ -1093,6 +1094,25 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 
 <br/>
 
+<a name="comparator"></a>
+## Comparator
+
+Uses [Levenshtein metric](https://en.wikipedia.org/wiki/Levenshtein_distance) to calculate the distance and the similarity between two templates.
+
+Useful for building [dendrograms](https://en.wikipedia.org/wiki/Dendrogram) and [Hierarchical clustering](https://en.wikipedia.org/wiki/Hierarchical_clustering), for example (see also [Cluster analysis](https://en.wikipedia.org/wiki/Cluster_analysis)).
+
+### Example:
+
+```java
+Comparator comparator = Comparator.create(core);
+
+int distance = comparator.distance(ACKMessageHex.class, ACKMessageHexByteChecksum.class);
+double similarity = comparator.similarity(ACKMessageHex.class, ACKMessageHexByteChecksum.class);
+```
+
+
+<br/>
+
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
 
@@ -1455,6 +1475,7 @@ Pull requests are welcomed.
 - Simplified the exception handling.
 - Improved annotation validation by skipping validations for non-library annotations.
 - Added custom validation for custom codecs.
+- Added similarity/distance calculation between descriptions.
 
 <a name="changelog-4.0.0"></a>
 ### version 4.0.0 - 20240419

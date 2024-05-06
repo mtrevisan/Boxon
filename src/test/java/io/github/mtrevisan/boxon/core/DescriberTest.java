@@ -26,14 +26,9 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
-import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
-import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
-import io.github.mtrevisan.boxon.core.similarity.distances.metrics.LevenshteinMetric;
-import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
-import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -87,30 +82,6 @@ class DescriberTest{
 		String jsonDescription = PrettyPrintMap.toString(description);
 //		Assertions.assertEquals("{context:{headerLength:private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength(),deviceTypes:[QUECLINK_GB200S (0x46)]},template:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex,header:{start:[+ACK],charset:UTF-8,end:\n" + "},fields:[{name:messageHeader,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,charset:UTF-8,size:#headerLength(),fieldType:java.lang.String},{name:messageType,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:8,fieldType:java.lang.String,byteOrder:BIG_ENDIAN,converter:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex$MessageTypeConverter},{name:mask,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:8,fieldType:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMaskHex,byteOrder:BIG_ENDIAN,converter:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMaskHex$ACKMaskConverter},{name:messageLength,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,condition:mask.hasLength(),size:8,fieldType:byte,byteOrder:BIG_ENDIAN},{name:deviceTypeCode,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,condition:mask.hasDeviceType(),size:8,fieldType:byte,byteOrder:BIG_ENDIAN},{condition:mask.hasProtocolVersion(),size:16,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$VersionConverter,name:protocolVersion,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,fieldType:io.github.mtrevisan.boxon.semanticversioning.Version,byteOrder:BIG_ENDIAN},{condition:mask.hasFirmwareVersion(),size:16,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$VersionConverter,name:firmwareVersion,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,fieldType:io.github.mtrevisan.boxon.semanticversioning.Version,byteOrder:BIG_ENDIAN},{collectionType:io.github.mtrevisan.boxon.annotations.bindings.BindAsArray,condition:mask.hasIMEI(),size:8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$IMEIConverter,name:imei,validator:io.github.mtrevisan.boxon.annotations.validators.IMEIValidator,collectionArraySize:8,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,fieldType:java.lang.String,byteOrder:BIG_ENDIAN},{name:deviceName,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,charset:UTF-8,condition:!mask.hasIMEI(),size:8,fieldType:java.lang.String},{name:id,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:8,fieldType:byte,byteOrder:BIG_ENDIAN},{name:correlationId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,size:16,fieldType:short,byteOrder:BIG_ENDIAN},{collectionType:io.github.mtrevisan.boxon.annotations.bindings.BindAsArray,condition:mask.hasEventTime(),size:8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$DateTimeYYYYMMDDHHMMSSConverter,name:eventTime,collectionArraySize:7,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,fieldType:java.time.LocalDateTime,byteOrder:BIG_ENDIAN},{name:messageId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindInteger,condition:mask.hasMessageId(),size:16,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:io.github.mtrevisan.boxon.annotations.Checksum,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE}]}", jsonDescription);
 		Assertions.assertEquals(3502, jsonDescription.length());
-	}
-
-	@Test
-	void similarityBetweenTemplates() throws NoSuchMethodException, BoxonException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with((byte)0x46, "QUECLINK_GB200S");
-		Core core = CoreBuilder.builder()
-			.withContext("deviceTypes", deviceTypes)
-			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
-			.withDefaultCodecs()
-			.create();
-		Describer describer = Describer.create(core);
-		LevenshteinMetric<StringArrayDistanceData> metric = LevenshteinMetric.create();
-
-		Map<String, Object> description1 = describer.describeTemplate(ACKMessageHex.class);
-		StringArrayDistanceData dna1 = TestHelper.extractTemplateGenome(description1);
-		Map<String, Object> description2 = describer.describeTemplate(ACKMessageHexByteChecksum.class);
-		StringArrayDistanceData dna2 = TestHelper.extractTemplateGenome(description2);
-
-		int distance = metric.distance(dna1, dna2);
-		double similarity = metric.similarity(dna1, dna2);
-
-		Assertions.assertEquals(1, distance);
-		Assertions.assertEquals(0.917, similarity, 0.001);
 	}
 
 	@Test
