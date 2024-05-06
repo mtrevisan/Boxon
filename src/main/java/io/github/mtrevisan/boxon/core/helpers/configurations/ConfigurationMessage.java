@@ -269,7 +269,7 @@ public final class ConfigurationMessage<T>{
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
 		final int length = fields.size();
-		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
+		final List<String> boundaries = new ArrayList<>((length << 1) + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 

@@ -271,10 +271,10 @@ public final class Evaluator{
 			}
 			return null;
 		}
-	}
 
-	private static boolean isStatic(final Member field){
-		return Modifier.isStatic(field.getModifiers());
+		private static boolean isStatic(final Member field){
+			return Modifier.isStatic(field.getModifiers());
+		}
 	}
 
 }

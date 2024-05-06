@@ -165,7 +165,21 @@ public final class GenericHelper{
 
 		@Override
 		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
-			return populateResolvedTypes((ParameterizedType)parameterizedType, typeVariables);
+			final Type[] actualTypeArguments = ((ParameterizedType)parameterizedType).getActualTypeArguments();
+			final int length = actualTypeArguments.length;
+			final Type[] resolvedTypes = new Type[length];
+			//loop through all type arguments and replace type variables with the actually known types
+			for(int i = 0; i < length; i ++)
+				resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
+			return resolvedTypes;
+		}
+
+		private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
+			final String key = (actualTypeArgument instanceof final TypeVariable<?> v
+				? v.getName()
+				: null
+			);
+			return typeVariables.getOrDefault(key, actualTypeArgument);
 		}
 	}
 
@@ -180,24 +194,6 @@ public final class GenericHelper{
 		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
 			return EMPTY_TYPE_ARRAY;
 		}
-	}
-
-	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
-		final Type[] actualTypeArguments = ancestorType.getActualTypeArguments();
-		final int length = actualTypeArguments.length;
-		final Type[] resolvedTypes = new Type[length];
-		//loop through all type arguments and replace type variables with the actually known types
-		for(int i = 0; i < length; i ++)
-			resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
-		return resolvedTypes;
-	}
-
-	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		final String key = (actualTypeArgument instanceof final TypeVariable<?> v
-			? v.getName()
-			: null
-		);
-		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
 	private static void processBase(final Type currentOffspring, final Type[] actualArgs, final Collection<Type> types){

@@ -161,12 +161,12 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     17. [version 2.1.1](#changelog-2.1.1)
     18. [version 2.1.0](#changelog-2.1.0)
     19. [version 2.0.0](#changelog-2.0.0)
-    21. [version 1.1.0](#changelog-1.1.0)
-    22. [version 1.0.0](#changelog-1.0.0)
-    23. [version 0.0.2](#changelog-0.0.2)
-    24. [version 0.0.1](#changelog-0.0.1)
-    25. [version 0.0.0](#changelog-0.0.0)
-13. [License](#license)
+    20. [version 1.1.0](#changelog-1.1.0)
+    21. [version 1.0.0](#changelog-1.0.0)
+    22. [version 0.0.2](#changelog-0.0.2)
+    23. [version 0.0.1](#changelog-0.0.1)
+    24. [version 0.0.0](#changelog-0.0.0)
+14. [License](#license)
 
 <br/>
 

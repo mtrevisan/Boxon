@@ -35,7 +35,7 @@ import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
@@ -106,7 +106,7 @@ class CodecFloatTest{
 		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -171,7 +171,7 @@ class CodecFloatTest{
 		String expected = StringHelper.toHexString(Integer.reverseBytes(Float.floatToIntBits(encodedValue)), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -236,7 +236,7 @@ class CodecFloatTest{
 		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -301,7 +301,7 @@ class CodecFloatTest{
 		String expected = StringHelper.toHexString(Float.floatToIntBits(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

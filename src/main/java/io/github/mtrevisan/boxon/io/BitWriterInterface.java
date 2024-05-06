@@ -33,7 +33,7 @@ import java.util.BitSet;
 
 
 /** Interface for a writer bit-by-bit. */
-public interface BitWriter{
+public interface BitWriterInterface{
 
 	/**
 	 * Writes the given value using the give byte order.

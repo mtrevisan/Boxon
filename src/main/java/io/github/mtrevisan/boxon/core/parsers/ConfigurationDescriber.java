@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -85,7 +86,7 @@ public final class ConfigurationDescriber{
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws BoxonException{
-		final EntityDescriber.ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
+		final ThrowingFunction<Class<?>, ConfigurationMessage<?>, EncodeException> extractor = cls -> {
 			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};

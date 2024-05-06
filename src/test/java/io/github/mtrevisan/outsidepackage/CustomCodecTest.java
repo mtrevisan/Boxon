@@ -42,8 +42,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.io.Injected;
@@ -102,7 +102,7 @@ class CustomCodecTest{
 			}
 
 			@Override
-			public Object decode(BitReader reader, Annotation annotation, Annotation collectionBinding, Object rootObject){
+			public Object decode(BitReaderInterface reader, Annotation annotation, Annotation collectionBinding, Object rootObject){
 				BindCustomData binding = (BindCustomData)annotation;
 
 				int size = evaluator.evaluateSize(binding.size(), rootObject);
@@ -124,7 +124,7 @@ class CustomCodecTest{
 			}
 
 			@Override
-			public void encode(BitWriter writer, Annotation annotation, Annotation collectionBinding, Object rootObject,
+			public void encode(BitWriterInterface writer, Annotation annotation, Annotation collectionBinding, Object rootObject,
 					Object value){
 				BindCustomData binding = (BindCustomData)annotation;
 

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +46,7 @@ import java.util.BitSet;
  *
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-public final class BitReader extends BitReaderData implements io.github.mtrevisan.boxon.io.BitReader{
+public final class BitReader extends BitReaderData implements BitReaderInterface{
 
 	/**
 	 * Wraps a {@link File} containing a binary stream into a buffer.

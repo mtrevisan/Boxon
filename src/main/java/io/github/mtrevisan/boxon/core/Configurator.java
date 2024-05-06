@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
@@ -137,7 +137,7 @@ public final class Configurator{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(! ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
+			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> map = new HashMap<>(3);
@@ -194,7 +194,7 @@ public final class Configurator{
 
 			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
-			if(! fieldMap.isEmpty())
+			if(!fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;
@@ -243,7 +243,7 @@ public final class Configurator{
 	 *
 	 * @return	The error, if any.
 	 */
-	private EncodeException composeConfiguration(final BitWriter writer, final String shortDescription,
+	private EncodeException composeConfiguration(final BitWriterInterface writer, final String shortDescription,
 			final Map<String, Object> data, final Version protocol){
 		try{
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(shortDescription);

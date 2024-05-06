@@ -87,7 +87,7 @@ public final class TextStatistics{
 		final int ascii = count(ASCII_START, ASCII_END);
 		final int safe = countSafeControl();
 		return (total > 0
-			&& (control - safe) * 100 < total * 2
+			&& (control - safe) * 100 < total << 1
 			&& (ascii + safe) * 100 > total * 90);
 	}
 
@@ -116,7 +116,7 @@ public final class TextStatistics{
 		return (utf8 > 0
 			&& expectedContinuation - 3 <= continuation && continuation <= expectedContinuation
 			&& count(0xF8, 0x100) == 0
-			&& (control - safe) * 100 < utf8 * 2);
+			&& (control - safe) * 100 < utf8 << 1);
 	}
 
 	/**

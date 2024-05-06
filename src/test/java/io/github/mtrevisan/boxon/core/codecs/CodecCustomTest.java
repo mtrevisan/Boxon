@@ -27,8 +27,8 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -58,7 +58,7 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public Object decode(final BitReader reader, final Annotation annotation, final Annotation collectionAnnotation,
+		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionAnnotation,
 				final Object rootObject){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
@@ -72,7 +72,7 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public void encode(final BitWriter writer, final Annotation annotation, final Annotation collectionAnnotation,
+		public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionAnnotation,
 				final Object rootObject, final Object value) throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
@@ -101,7 +101,7 @@ class CodecCustomTest{
 
 		Assertions.assertArrayEquals(new byte[]{(byte)0x81, (byte)0x82, 0x03}, writer.array());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		byte[] decoded = (byte[])codec.decode(reader, annotation, null, null);
 
 		Assertions.assertArrayEquals(encodedValue, decoded);

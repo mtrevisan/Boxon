@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.nio.charset.Charset;
 
@@ -50,7 +50,7 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 	}
 
 	@Override
-	public Object readValue(final BitReader reader){
+	public Object readValue(final BitReaderInterface reader){
 		final String text = reader.getTextUntilTerminator(terminator, charset);
 		if(consumeTerminator){
 			final int length = ParserDataType.getSize(terminator);
@@ -60,7 +60,7 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 	}
 
 	@Override
-	public void writeValue(final BitWriter writer, final Object value){
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		writer.putText((String)value, charset);
 		if(consumeTerminator)
 			writer.putByte(terminator);

@@ -35,7 +35,7 @@ import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
@@ -106,7 +106,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("1000", writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -171,7 +171,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("0010", writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -236,7 +236,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("1080", writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -302,7 +302,7 @@ class CodecShortTest{
 		String expected = StringHelper.toHexString(Short.reverseBytes(encodedValue), Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -367,7 +367,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("8F00", writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -432,7 +432,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("007F", writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -497,7 +497,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("7F00", writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -563,7 +563,7 @@ class CodecShortTest{
 		String expected = StringHelper.toHexString(encodedValue, Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 

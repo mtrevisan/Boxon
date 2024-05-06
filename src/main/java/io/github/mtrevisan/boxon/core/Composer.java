@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 
 /**
@@ -76,7 +76,7 @@ public final class Composer{
 	 * @param data	The message to be composed.
 	 * @return	The error, if any.
 	 */
-	private EncodeException compose(final BitWriter writer, final Object data){
+	private EncodeException compose(final BitWriterInterface writer, final Object data){
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 

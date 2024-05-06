@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -47,10 +47,10 @@ final class ParserWriterHelper{
 	 *
 	 * @param affix	The affix to be written.
 	 * @param charsetName	The name of the charset to be used.
-	 * @param writer	The {@link BitWriter} where the affix is written.
+	 * @param writer	The {@link BitWriterInterface} where the affix is written.
 	 * @throws UnsupportedCharsetException	If the specified charset name is not supported.
 	 */
-	static void writeAffix(final String affix, final String charsetName, final BitWriter writer) throws UnsupportedCharsetException{
+	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer) throws UnsupportedCharsetException{
 		if(!affix.isEmpty()){
 			final Charset charset = CharsetHelper.lookup(charsetName);
 			writer.putText(affix, charset);
@@ -67,7 +67,7 @@ final class ParserWriterHelper{
 	 * @throws CodecException	If no suitable codec was found.
 	 * @throws BoxonException	If an error occurs during field encoding.
 	 */
-	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodec loaderCodec,
+	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodec loaderCodec,
 			final EventListener eventListener) throws BoxonException{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();

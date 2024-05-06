@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.writers;
 
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.nio.charset.Charset;
 
@@ -49,7 +49,7 @@ public final class WriterManagerFactory{
 	 * @param charsetName	The charset name to be injected into the resulting manager.
 	 * @return	An instance of writer manager.
 	 */
-	public static WriterManager buildManager(final Class<?> valueClass, final BitWriter writer, final int radix,
+	public static WriterManager buildManager(final Class<?> valueClass, final BitWriterInterface writer, final int radix,
 			final String charsetName){
 		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(valueClass);
 

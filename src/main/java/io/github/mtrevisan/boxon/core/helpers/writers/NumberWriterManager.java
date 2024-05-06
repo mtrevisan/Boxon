@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.writers;
 
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -32,16 +32,16 @@ import java.math.BigInteger;
 
 final class NumberWriterManager implements WriterManager{
 
-	private final BitWriter writer;
+	private final BitWriterInterface writer;
 	private int radix;
 
 
-	static NumberWriterManager create(final BitWriter writer){
+	static NumberWriterManager create(final BitWriterInterface writer){
 		return new NumberWriterManager(writer);
 	}
 
 
-	private NumberWriterManager(final BitWriter writer){
+	private NumberWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 		radix = 10;
 	}

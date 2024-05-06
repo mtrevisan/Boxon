@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +79,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplate(ACKMessageHex.class);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
 		Template<?> template = loaderTemplate.getTemplate(reader);
 
 		Assertions.assertNotNull(template);
@@ -93,7 +93,7 @@ class LoaderTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 
 		byte[] payload = StringHelper.hexToByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
 		TemplateException exc = Assertions.assertThrows(TemplateException.class, () -> loaderTemplate.getTemplate(reader));
 		Assertions.assertEquals("Cannot find any template for given raw message", exc.getMessage());
 	}
@@ -106,7 +106,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplate(TemplateTest.Message.class);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
 		int position = loaderTemplate.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(36, position);
@@ -120,7 +120,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplate(TemplateTest.Message.class);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
 		int position = loaderTemplate.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(-1, position);

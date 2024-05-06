@@ -78,8 +78,8 @@ final class MinMaxDataValidator{
 			throws AnnotationException{
 		final BigDecimal def = JavaHelper.convertToBigDecimal(configData.getDefaultValue());
 
-		checkMinimumCompatibility(def, min, configData, VALUE_TYPE_DEFAULT);
-		checkMaximumCompatibility(def, max, configData, VALUE_TYPE_DEFAULT);
+		verifyMinimumCompatibility(def, min, configData, VALUE_TYPE_DEFAULT);
+		verifyMaximumCompatibility(def, max, configData, VALUE_TYPE_DEFAULT);
 	}
 
 	private static void validateDataAgainstMinAndMax(final BigDecimal min, final BigDecimal max, final Object dataValue,
@@ -87,12 +87,12 @@ final class MinMaxDataValidator{
 		if(isStringAssignableFrom(dataValue.getClass()) && !StringHelper.isBlank((String)dataValue)){
 			final BigDecimal val = JavaHelper.convertToBigDecimal((String)dataValue);
 
-			checkMinimumCompatibility(val, min, configData, VALUE_TYPE_DATA);
-			checkMaximumCompatibility(val, max, configData, VALUE_TYPE_DATA);
+			verifyMinimumCompatibility(val, min, configData, VALUE_TYPE_DATA);
+			verifyMaximumCompatibility(val, max, configData, VALUE_TYPE_DATA);
 		}
 	}
 
-	private static void checkMinimumCompatibility(final BigDecimal val, final BigDecimal min, final ConfigFieldData configData,
+	private static void verifyMinimumCompatibility(final BigDecimal val, final BigDecimal min, final ConfigFieldData configData,
 			final String valueType) throws AnnotationException{
 		if(min != null && isValueLessThanMinimum(val, min))
 			//`dataValue` compatible with `minValue`
@@ -100,7 +100,7 @@ final class MinMaxDataValidator{
 				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMinValue().getClass().getSimpleName());
 	}
 
-	private static void checkMaximumCompatibility(final BigDecimal val, final BigDecimal max, final ConfigFieldData configData,
+	private static void verifyMaximumCompatibility(final BigDecimal val, final BigDecimal max, final ConfigFieldData configData,
 			final String valueType) throws AnnotationException{
 		if(max != null && isValueGreaterThanMaximum(val, max))
 			//`dataValue` compatible with `maxValue`

@@ -39,10 +39,12 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 
 /**
@@ -135,7 +137,7 @@ public final class CoreBuilder{
 	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
 		final Method method = MethodHelper.getMethod(type, methodName, null);
 		if(method == null)
-			throw new NoSuchMethodException();
+			throw new NoSuchMethodException(methodToString(type, methodName));
 
 		return withContext(method);
 	}
@@ -153,9 +155,19 @@ public final class CoreBuilder{
 			throws NoSuchMethodException{
 		final Method method = MethodHelper.getMethod(type, methodName, null, parameterTypes);
 		if(method == null)
-			throw new NoSuchMethodException();
+			throw new NoSuchMethodException(methodToString(type, methodName, parameterTypes));
 
 		return withContext(method);
+	}
+
+	private static String methodToString(final Class<?> type, final String methodName, final Class<?>... parameterTypes){
+		return type.getName() + '.' + methodName
+			+ (parameterTypes == null || parameterTypes.length == 0
+			? "()"
+			: Arrays.stream(parameterTypes).map(c -> c == null
+				? "null"
+				: c.getName()).collect(Collectors.joining(",", "(", ")"))
+			);
 	}
 
 	/**

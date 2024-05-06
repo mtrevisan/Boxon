@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 
@@ -81,7 +81,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 	 * @return	The decoded object.
 	 * @throws BoxonException	If there is an error decoding a field.
 	 */
-	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws BoxonException{
+	<T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		final int startPosition = reader.position();
 
 		T currentObject = createEmptyObject(template);
@@ -114,7 +114,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			.get();
 	}
 
-	private <T> void decodeMessageFields(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext)
+	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)
 			throws BoxonException{
 		final Object rootObject = parserContext.getRootObject();
 
@@ -134,12 +134,12 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private void readSkips(final SkipParams[] skips, final BitReader reader, final Object rootObject){
+	private void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			readSkip(skips[i], reader, rootObject);
 	}
 
-	private void readSkip(final SkipParams skip, final BitReader reader, final Object rootObject){
+	private void readSkip(final SkipParams skip, final BitReaderInterface reader, final Object rootObject){
 		final boolean process = shouldProcessField(skip.condition(), rootObject);
 		if(!process)
 			return;
@@ -159,7 +159,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
+	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
 			final TemplateField field) throws BoxonException{
 		final Annotation binding = field.getBinding();
 		final Annotation collectionBinding = field.getCollectionBinding();
@@ -196,7 +196,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private static void readMessageTerminator(final Template<?> template, final BitReader reader) throws TemplateException{
+	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
 		final TemplateHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = CharsetHelper.lookup(header.charset());
@@ -209,7 +209,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition, final BitReader reader){
+	private <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition, final BitReaderInterface reader){
 		if(!template.isChecksumPresent())
 			return;
 
@@ -231,7 +231,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		return shouldProcessField(checksum.condition(), data);
 	}
 
-	private static short calculateChecksum(final int startPosition, final BitReader reader, final Checksum checksum){
+	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
 		final int skipStart = checksum.skipStart();
 		final int skipEnd = checksum.skipEnd();
 		final Class<? extends Checksummer> algorithm = checksum.algorithm();

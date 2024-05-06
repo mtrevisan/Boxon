@@ -45,7 +45,7 @@ import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import org.junit.jupiter.api.Assertions;
@@ -164,7 +164,7 @@ class CodecArrayTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		Object decoded = codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
@@ -264,7 +264,7 @@ class CodecArrayTest{
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParser templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
 		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
@@ -274,7 +274,7 @@ class CodecArrayTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
-		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		Version[] decoded = (Version[])codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);

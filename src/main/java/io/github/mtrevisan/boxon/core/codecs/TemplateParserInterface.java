@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 
-public interface TemplateParser{
+public interface TemplateParserInterface{
 
 	/**
 	 * Decode the template using the given reader with the parent object.
@@ -43,7 +43,7 @@ public interface TemplateParser{
 	 * @return	The data read.
 	 * @throws BoxonException	If a codec is not found.
 	 */
-	<T> T decode(Template<T> template, BitReader reader, Object parentObject) throws BoxonException;
+	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws BoxonException;
 
 	/**
 	 * Encode the template using the given writer with the given object that contains the values.
@@ -55,7 +55,7 @@ public interface TemplateParser{
 	 * @param <T>	The class type of the current object.
 	 * @throws BoxonException	If a codec is not found.
 	 */
-	<T> void encode(Template<?> template, BitWriter writer, Object parentObject, T currentObject) throws BoxonException;
+	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws BoxonException;
 
 	/**
 	 * Constructs a new {@link Template}.

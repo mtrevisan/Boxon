@@ -35,7 +35,7 @@ import java.util.BitSet;
 
 
 /** Interface for a reader bit-by-bit. */
-public interface BitReader{
+public interface BitReaderInterface{
 
 	/**
 	 * Returns the byte array that backs this reader.

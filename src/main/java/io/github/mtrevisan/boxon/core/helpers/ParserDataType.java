@@ -33,8 +33,8 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -62,12 +62,12 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object read(final BitReader reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getByte();
 		}
 
 		@Override
-		void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putByte((Byte)value);
 		}
 	},
@@ -85,12 +85,12 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object read(final BitReader reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getShort(byteOrder);
 		}
 
 		@Override
-		void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putShort((Short)value, byteOrder);
 		}
 	},
@@ -108,12 +108,12 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object read(final BitReader reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getInt(byteOrder);
 		}
 
 		@Override
-		void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putInt((Integer)value, byteOrder);
 		}
 	},
@@ -131,12 +131,12 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object read(final BitReader reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getLong(byteOrder);
 		}
 
 		@Override
-		void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putLong((Long)value, byteOrder);
 		}
 	},
@@ -154,13 +154,13 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object read(final BitReader reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			final int rawValue = reader.getInt(byteOrder);
 			return Float.intBitsToFloat(rawValue);
 		}
 
 		@Override
-		void write(final BitWriter writer, final Object rawValue, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
 			final int value = Float.floatToIntBits((Float)rawValue);
 			writer.putInt(value, byteOrder);
 		}
@@ -179,13 +179,13 @@ public enum ParserDataType{
 		}
 
 		@Override
-		Object read(final BitReader reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			final long rawValue = reader.getLong(byteOrder);
 			return Double.longBitsToDouble(rawValue);
 		}
 
 		@Override
-		void write(final BitWriter writer, final Object rawValue, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
 			final long value = Double.doubleToLongBits((Double)rawValue);
 			writer.putLong(value, byteOrder);
 		}
@@ -326,7 +326,7 @@ public enum ParserDataType{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value.
 	 */
-	abstract Object read(BitReader reader, ByteOrder byteOrder);
+	abstract Object read(BitReaderInterface reader, ByteOrder byteOrder);
 
 	/**
 	 * Write a specific data to the writer, using the given byte order.
@@ -334,7 +334,7 @@ public enum ParserDataType{
 	 * @param value	The value to be written.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	abstract void write(BitWriter writer, Object value, ByteOrder byteOrder);
+	abstract void write(BitWriterInterface writer, Object value, ByteOrder byteOrder);
 
 
 	/**

@@ -81,7 +81,7 @@ public final class Template<T>{
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
-	private static Function<Class<? extends Annotation>, AnnotationValidator> CUSTOM_CODEC_VALIDATOR_EXTRACTOR = type -> null;
+	private static Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor = type -> null;
 
 	/** Mapping of annotations to functions that extract skip parameters. */
 	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING
@@ -103,7 +103,7 @@ public final class Template<T>{
 
 	public static void setCustomCodecValidatorExtractor(
 			final Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor){
-		CUSTOM_CODEC_VALIDATOR_EXTRACTOR = customCodecValidatorExtractor;
+		Template.customCodecValidatorExtractor = customCodecValidatorExtractor;
 	}
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
@@ -202,7 +202,7 @@ public final class Template<T>{
 				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
-				if(validAnnotation != null || ! skips.isEmpty())
+				if(validAnnotation != null || !skips.isEmpty())
 					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips));
 			}
 			catch(final AnnotationException e){
@@ -225,7 +225,7 @@ public final class Template<T>{
 				.getSimpleName();
 
 			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
-					|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+				|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
@@ -354,7 +354,7 @@ public final class Template<T>{
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			boolean validAnnotation = isCustomAnnotation(annotationType);
 			final AnnotationValidator validator = (validAnnotation
-				? CUSTOM_CODEC_VALIDATOR_EXTRACTOR.apply(annotationType)
+				? customCodecValidatorExtractor.apply(annotationType)
 				: TemplateAnnotationValidator.fromAnnotationType(annotationType));
 			//validate with provided validator, if any
 			if(validator != null){

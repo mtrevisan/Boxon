@@ -31,8 +31,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
-import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.lang.annotation.Annotation;
 
@@ -94,12 +94,12 @@ public final class ObjectBehavior extends CommonBehavior{
 	}
 
 	@Override
-	public Object readValue(final BitReader reader){
+	public Object readValue(final BitReaderInterface reader){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void writeValue(final BitWriter writer, final Object value){
+	public void writeValue(final BitWriterInterface writer, final Object value){
 		throw new UnsupportedOperationException();
 	}
 

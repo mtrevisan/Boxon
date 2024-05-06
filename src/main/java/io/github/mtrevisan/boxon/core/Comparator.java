@@ -105,7 +105,7 @@ public final class Comparator{
 		return StringArrayMetricData.of(Arrays.copyOfRange(genome, 0, gene));
 	}
 
-	private static int populateGenome(final Collection<Map<String, Object>> fields, final String[] genome){
+	private static int populateGenome(final Iterable<Map<String, Object>> fields, final String[] genome){
 		int gene = 0;
 		for(final Map<String, Object> field : fields){
 			final Map<String, Object> parameter = removeUnwantedProperties(field);
