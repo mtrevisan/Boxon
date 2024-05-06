@@ -24,24 +24,24 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.writers;
 
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitWriter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 
-final class StringWriterManager implements WriterManagerInterface{
+final class StringWriterManager implements WriterManager{
 
-	private final BitWriterInterface writer;
+	private final BitWriter writer;
 	private Charset charset;
 
 
-	static StringWriterManager create(final BitWriterInterface writer){
+	static StringWriterManager create(final BitWriter writer){
 		return new StringWriterManager(writer);
 	}
 
 
-	private StringWriterManager(final BitWriterInterface writer){
+	private StringWriterManager(final BitWriter writer){
 		this.writer = writer;
 		charset = StandardCharsets.UTF_8;
 	}

@@ -31,13 +31,12 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -50,7 +49,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveLittleEndian() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -107,7 +106,7 @@ class CodecDoubleTest{
 		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToLongBits(encodedValue)), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -115,7 +114,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeLittleEndian() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -172,7 +171,7 @@ class CodecDoubleTest{
 		String expected = StringHelper.toHexString(Long.reverseBytes(Double.doubleToLongBits(encodedValue)), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -180,7 +179,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveBigEndian() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		double encodedValue = TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -237,7 +236,7 @@ class CodecDoubleTest{
 		String expected = StringHelper.toHexString(Double.doubleToLongBits(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -245,7 +244,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeBigEndian() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		double encodedValue = -TestHelper.RANDOM.nextDouble();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -302,7 +301,7 @@ class CodecDoubleTest{
 		String expected = StringHelper.toHexString(Double.doubleToLongBits(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

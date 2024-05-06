@@ -30,8 +30,8 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.lang.annotation.Annotation;
@@ -54,7 +54,7 @@ public abstract class CommonBehavior{
 	}
 
 
-	public final Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
+	public final Object readArrayWithoutAlternatives(final BitReader reader, final int arraySize){
 		final Object array = createArray(arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = readValue(reader);
@@ -64,7 +64,7 @@ public abstract class CommonBehavior{
 		return array;
 	}
 
-	public final void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array){
+	public final void writeArrayWithoutAlternatives(final BitWriter writer, final Object array){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
@@ -109,9 +109,9 @@ public abstract class CommonBehavior{
 
 	abstract Object createArray(int arraySize);
 
-	public abstract Object readValue(BitReaderInterface reader);
+	public abstract Object readValue(BitReader reader);
 
-	public abstract void writeValue(BitWriterInterface writer, Object value);
+	public abstract void writeValue(BitWriter writer, Object value);
 
 	public final Class<? extends Validator<?>> validator(){
 		return validator;

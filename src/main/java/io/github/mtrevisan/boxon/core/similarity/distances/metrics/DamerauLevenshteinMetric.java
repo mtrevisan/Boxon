@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
 
-import io.github.mtrevisan.boxon.core.similarity.distances.MetricDataInterface;
+import io.github.mtrevisan.boxon.core.similarity.distances.MetricData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +40,7 @@ import java.util.Map;
  * @see <a href="https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance">Damerau-Levenshtein distance</a>
  * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Damerau.java">Damerau.java</a>
  */
-public final class DamerauLevenshteinMetric<D extends MetricDataInterface<D>> implements Metric<D>{
+public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements Metric<D>{
 
 	private final int insertionCost;
 	private final int deletionCost;
@@ -50,11 +50,11 @@ public final class DamerauLevenshteinMetric<D extends MetricDataInterface<D>> im
 	private final int maxCost;
 
 
-	public static <D extends MetricDataInterface<D>> DamerauLevenshteinMetric<D> create(){
+	public static <D extends MetricData<D>> DamerauLevenshteinMetric<D> create(){
 		return new DamerauLevenshteinMetric<>(1, 1, 1, 1);
 	}
 
-	public static <D extends MetricDataInterface<D>> DamerauLevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
+	public static <D extends MetricData<D>> DamerauLevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
 			final int substitutionCost, final int transpositionCost){
 		return new DamerauLevenshteinMetric<>(insertionCost, deletionCost, substitutionCost, transpositionCost);
 	}

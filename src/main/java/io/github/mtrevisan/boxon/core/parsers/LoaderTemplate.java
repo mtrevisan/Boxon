@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
@@ -242,7 +242,7 @@ final class LoaderTemplate{
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 * @throws TemplateException	If no template cannot be found that is able to parse the given message.
 	 */
-	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
+	Template<?> getTemplate(final BitReader reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -329,7 +329,7 @@ final class LoaderTemplate{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The index of the next message.
 	 */
-	int findNextMessageIndex(final BitReaderInterface reader){
+	int findNextMessageIndex(final BitReader reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
 			final TemplateHeader header = template.getHeader();
@@ -339,7 +339,7 @@ final class LoaderTemplate{
 		return minOffset;
 	}
 
-	private static int findNextMessageIndex(final BitReaderInterface reader, final TemplateHeader header, int minOffset){
+	private static int findNextMessageIndex(final BitReader reader, final TemplateHeader header, int minOffset){
 		final Charset charset = CharsetHelper.lookup(header.charset());
 		final String[] starts = header.start();
 		//select the minimum index with a valid template
@@ -352,7 +352,7 @@ final class LoaderTemplate{
 		return minOffset;
 	}
 
-	private static int searchNextSequence(final BitReaderInterface reader, final byte[] startMessageSequence){
+	private static int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
 		final byte[] message = reader.array();
 		final int startIndex = reader.position();
 		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);

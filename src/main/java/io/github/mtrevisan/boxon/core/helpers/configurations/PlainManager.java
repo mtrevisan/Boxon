@@ -48,7 +48,7 @@ import java.util.Map;
 import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
-final class PlainManager implements ConfigurationManagerInterface{
+final class PlainManager implements ConfigurationManager{
 
 	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
 

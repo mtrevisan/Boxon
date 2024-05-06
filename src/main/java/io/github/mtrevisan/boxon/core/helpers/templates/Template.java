@@ -35,7 +35,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -81,7 +81,7 @@ public final class Template<T>{
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
-	private static Function<Class<? extends Annotation>, AnnotationValidatorInterface> CUSTOM_CODEC_VALIDATOR_EXTRACTOR = type -> null;
+	private static Function<Class<? extends Annotation>, AnnotationValidator> CUSTOM_CODEC_VALIDATOR_EXTRACTOR = type -> null;
 
 	/** Mapping of annotations to functions that extract skip parameters. */
 	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING
@@ -102,7 +102,7 @@ public final class Template<T>{
 	}
 
 	public static void setCustomCodecValidatorExtractor(
-			final Function<Class<? extends Annotation>, AnnotationValidatorInterface> customCodecValidatorExtractor){
+			final Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor){
 		CUSTOM_CODEC_VALIDATOR_EXTRACTOR = customCodecValidatorExtractor;
 	}
 
@@ -353,7 +353,7 @@ public final class Template<T>{
 
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			boolean validAnnotation = isCustomAnnotation(annotationType);
-			final AnnotationValidatorInterface validator = (validAnnotation
+			final AnnotationValidator validator = (validAnnotation
 				? CUSTOM_CODEC_VALIDATOR_EXTRACTOR.apply(annotationType)
 				: TemplateAnnotationValidator.fromAnnotationType(annotationType));
 			//validate with provided validator, if any

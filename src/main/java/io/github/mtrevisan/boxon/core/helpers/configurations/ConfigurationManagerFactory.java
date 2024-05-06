@@ -34,11 +34,11 @@ import java.util.function.Function;
 
 
 /**
- * Factory for the {@link ConfigurationManagerInterface configuration manager}.
+ * Factory for the {@link ConfigurationManager configuration manager}.
  */
 public final class ConfigurationManagerFactory{
 
-	private static final Map<Class<? extends Annotation>, Function<Annotation, ConfigurationManagerInterface>> MANAGERS = Map.of(
+	private static final Map<Class<? extends Annotation>, Function<Annotation, ConfigurationManager>> MANAGERS = Map.of(
 		ConfigurationField.class, annotation -> new PlainManager((ConfigurationField)annotation),
 		CompositeConfigurationField.class, annotation -> new CompositeManager((CompositeConfigurationField)annotation),
 		AlternativeConfigurationField.class, annotation -> new AlternativeManager((AlternativeConfigurationField)annotation)
@@ -54,7 +54,7 @@ public final class ConfigurationManagerFactory{
 	 * @param annotation	The annotation to generate the build manager from.
 	 * @return	An instance of the configuration manager.
 	 */
-	public static ConfigurationManagerInterface buildManager(final Annotation annotation){
+	public static ConfigurationManager buildManager(final Annotation annotation){
 		return MANAGERS.get(annotation.annotationType())
 			.apply(annotation);
 	}

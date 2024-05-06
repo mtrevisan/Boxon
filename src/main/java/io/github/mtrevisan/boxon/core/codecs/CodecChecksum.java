@@ -28,15 +28,15 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.Codec;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 
-final class CodecChecksum implements CodecInterface{
+final class CodecChecksum implements Codec{
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
@@ -44,7 +44,7 @@ final class CodecChecksum implements CodecInterface{
 	}
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+	public Object decode(final BitReader reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
@@ -54,7 +54,7 @@ final class CodecChecksum implements CodecInterface{
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+	public void encode(final BitWriter writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 

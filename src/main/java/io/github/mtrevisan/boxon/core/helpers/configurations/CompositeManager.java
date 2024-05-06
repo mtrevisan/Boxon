@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
-final class CompositeManager implements ConfigurationManagerInterface{
+final class CompositeManager implements ConfigurationManager{
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
 	private static final Configuration FREEMARKER_CONFIGURATION = new Configuration(Configuration.VERSION_2_3_31);

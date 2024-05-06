@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.util.List;
@@ -65,7 +65,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 	 * @param currentObject	The object to be encoded.
 	 * @throws BoxonException	If there is an error encoding a field.
 	 */
-	<T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
+	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws BoxonException{
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		parserContext.setClassName(template.getType().getName());
@@ -87,7 +87,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 		processFields(template, parserContext, PostProcess::valueEncode);
 	}
 
-	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
+	private <T> void encodeMessageFields(final Template<?> template, final BitWriter writer, final Object rootObject,
 			final ParserContext<T> parserContext) throws BoxonException{
 		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
@@ -111,12 +111,12 @@ final class TemplateEncoder extends TemplateCoderBase{
 		}
 	}
 
-	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){
+	private void writeSkips(final SkipParams[] skips, final BitWriter writer, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, rootObject);
 	}
 
-	private void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
+	private void writeSkip(final SkipParams skip, final BitWriter writer, final Object rootObject){
 		final boolean process = shouldProcessField(skip.condition(), rootObject);
 		if(!process)
 			return;

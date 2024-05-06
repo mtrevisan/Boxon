@@ -31,12 +31,11 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -50,7 +49,7 @@ class CodecByteTest{
 
 	@Test
 	void testByte() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		byte encodedValue = (byte)(TestHelper.RANDOM.nextInt() & 0x0000_00FF);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -107,7 +106,7 @@ class CodecByteTest{
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		byte decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.byteValue();
 

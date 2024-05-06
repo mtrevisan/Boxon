@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
 
-import io.github.mtrevisan.boxon.core.similarity.distances.MetricDataInterface;
+import io.github.mtrevisan.boxon.core.similarity.distances.MetricData;
 
 
 /**
@@ -37,7 +37,7 @@ import io.github.mtrevisan.boxon.core.similarity.distances.MetricDataInterface;
  * @see <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>
  * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Levenshtein.java">Levenstein.java</a>
  */
-public final class LevenshteinMetric<D extends MetricDataInterface<D>> implements Metric<D>{
+public final class LevenshteinMetric<D extends MetricData<D>> implements Metric<D>{
 
 	private final int insertionCost;
 	private final int deletionCost;
@@ -46,11 +46,11 @@ public final class LevenshteinMetric<D extends MetricDataInterface<D>> implement
 	private final int maxCost;
 
 
-	public static <D extends MetricDataInterface<D>> LevenshteinMetric<D> create(){
+	public static <D extends MetricData<D>> LevenshteinMetric<D> create(){
 		return new LevenshteinMetric<>(1, 1, 1);
 	}
 
-	public static <D extends MetricDataInterface<D>> LevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
+	public static <D extends MetricData<D>> LevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
 			final int substitutionCost){
 		return new LevenshteinMetric<>(insertionCost, deletionCost, substitutionCost);
 	}

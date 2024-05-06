@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.math.BigInteger;
@@ -36,7 +35,7 @@ import java.util.BitSet;
 
 
 /** Interface for a reader bit-by-bit. */
-public interface BitReaderInterface{
+public interface BitReader{
 
 	/**
 	 * Returns the byte array that backs this reader.
@@ -85,7 +84,7 @@ public interface BitReaderInterface{
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 * @return	A {@link BitSet} value at the {@link io.github.mtrevisan.boxon.core.helpers.BitReader}'s current position.
 	 */
 	BitSet getBitSet(int length);
 

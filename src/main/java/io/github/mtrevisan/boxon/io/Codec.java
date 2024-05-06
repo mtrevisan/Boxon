@@ -32,7 +32,7 @@ import java.lang.annotation.Annotation;
 /**
  * The interface every codec have to implement.
  */
-public interface CodecInterface{
+public interface Codec{
 
 	/**
 	 * Retrieves the type of the codec (MUST BE the class of the managed annotation!).
@@ -55,7 +55,7 @@ public interface CodecInterface{
 	 * @return	The object with the new value read and interpreted.
 	 * @throws BoxonException	If something bad happened while reading, validating, or converting the raw value.
 	 */
-	Object decode(BitReaderInterface reader, Annotation annotation, Annotation collectionBinding, Object rootObject) throws BoxonException;
+	Object decode(BitReader reader, Annotation annotation, Annotation collectionBinding, Object rootObject) throws BoxonException;
 
 	/**
 	 * Encode the next field of a message.
@@ -68,7 +68,7 @@ public interface CodecInterface{
 	 * @param value	The value that have to be encoded.
 	 * @throws BoxonException	If something bad happened while converting, validating, or writing the value.
 	 */
-	void encode(BitWriterInterface writer, Annotation annotation, Annotation collectionBinding, Object rootObject, Object value)
+	void encode(BitWriter writer, Annotation annotation, Annotation collectionBinding, Object rootObject, Object value)
 		throws BoxonException;
 
 }

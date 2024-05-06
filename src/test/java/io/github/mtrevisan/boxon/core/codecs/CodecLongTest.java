@@ -31,13 +31,12 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +50,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianNegative() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x8FFF_0000_FFFF_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -107,7 +106,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("0000FFFF0000FF8F", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -116,7 +115,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianSmall() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -172,7 +171,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("00FF007F00000000", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -181,7 +180,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianPositive() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -237,7 +236,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("0000000000FF007F", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -246,7 +245,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianRandom() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = TestHelper.RANDOM.nextLong();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -303,7 +302,7 @@ class CodecLongTest{
 		String expected = StringHelper.toHexString(Long.reverseBytes(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -312,7 +311,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianNegative() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x8FFF_0000_0000_0011l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -368,7 +367,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("8FFF000000000011", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -377,7 +376,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianSmall() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -433,7 +432,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("000000007F00FF00", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -442,7 +441,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianPositive() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -498,7 +497,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("7F00FF0000000000", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 
@@ -507,7 +506,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianRandom() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		long encodedValue = TestHelper.RANDOM.nextLong();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -563,7 +562,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Long.BYTES), writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.longValue();
 

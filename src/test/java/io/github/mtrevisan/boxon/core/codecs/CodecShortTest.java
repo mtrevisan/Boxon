@@ -31,13 +31,12 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +50,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive1() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = 0x0010;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -107,7 +106,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("1000", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -116,7 +115,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive2() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = 0x1000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -172,7 +171,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("0010", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -181,7 +180,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianNegative() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = (short)0x8010;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -237,7 +236,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("1080", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -246,7 +245,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianRandom() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -303,7 +302,7 @@ class CodecShortTest{
 		String expected = StringHelper.toHexString(Short.reverseBytes(encodedValue), Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -312,7 +311,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianNegative() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = (short)0x8F00;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -368,7 +367,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("8F00", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -377,7 +376,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianSmall() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = 0x007F;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -433,7 +432,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("007F", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -442,7 +441,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianPositive() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = 0x7F00;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -498,7 +497,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("7F00", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
@@ -507,7 +506,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianRandom() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -564,7 +563,7 @@ class CodecShortTest{
 		String expected = StringHelper.toHexString(encodedValue, Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.shortValue();
 

@@ -52,7 +52,7 @@ final class EnumerationValidator{
 
 		//enumeration can be encoded
 		final Class<? extends ConfigurationEnum> enumeration = configData.getEnumeration();
-		validateEnumerationInterface(enumeration, configData);
+		validateEnumeration(enumeration, configData);
 
 		//non-empty enumeration
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
@@ -61,7 +61,7 @@ final class EnumerationValidator{
 		validateEnumerationValues(enumConstants, configData);
 	}
 
-	private static void validateEnumerationInterface(final Class<? extends ConfigurationEnum> enumeration, final ConfigFieldData configData)
+	private static void validateEnumeration(final Class<? extends ConfigurationEnum> enumeration, final ConfigFieldData configData)
 			throws AnnotationException{
 		if(!ConfigurationEnum.class.isAssignableFrom(enumeration))
 			throw AnnotationException.create("Enumeration must implement interface {} in {} in field {}",

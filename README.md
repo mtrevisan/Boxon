@@ -182,7 +182,7 @@ You can use them as a starting point to build your own customized readers.
 
 Here is a brief summary of the parameters (described in detail below) for each annotation.
 
-Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
+Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParser` or `Evaluator` IF annotated with `@Injected`.
 
 |                      | condition |  type   | charset | terminator /<br/>consumeTerminator |  size   | byteOrder | selectFrom /<br/>selectDefault | validator | converter /<br/>selectConverterFrom |                      |
 |----------------------|:---------:|:-------:|:-------:|:----------------------------------:|:-------:|:---------:|:------------------------------:|:---------:|:-----------------------------------:|---------------------:|
@@ -1294,7 +1294,7 @@ public class RSSIConverter implements Converter<Byte, Short>{
 <a name="how-to-annotations"></a>
 ### Custom annotations
 
-You can also define your own annotation by define an annotation and implementing `CodecInterface` as in the following example.
+You can also define your own annotation by define an annotation and implementing `Codec` as in the following example.
 
 Optionally, the method `String condition()` could be defined.
 
@@ -1311,7 +1311,7 @@ Optionally, the method `String condition()` could be defined.
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
-class VariableLengthByteArray implements CodecInterface{
+class VariableLengthByteArray implements Codec{
 
    public Class<?> type(){
       return VarLengthEncoded.class;

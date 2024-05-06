@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import org.springframework.expression.EvaluationException;
 
@@ -172,7 +172,7 @@ public final class CodecHelper{
 	 * @return	The class type of the chosen alternative.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	public static Class<?> chooseAlternativeType(final BitReaderInterface reader, final Class<?> bindingType,
+	public static Class<?> chooseAlternativeType(final BitReader reader, final Class<?> bindingType,
 			final ObjectChoices objectChoices, final Class<?> defaultAlternativeType, final Evaluator evaluator, final Object rootObject)
 			throws CodecException{
 		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
@@ -189,7 +189,7 @@ public final class CodecHelper{
 	}
 
 
-	public static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
+	public static void writeHeader(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
 		//if `chosenAlternative.condition()` contains '#prefix', then write `@ObjectChoice.prefix()`
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
@@ -211,7 +211,7 @@ public final class CodecHelper{
 	 *
 	 * @param reader	The reader from which to read the prefix.
 	 */
-	private static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
+	private static void addPrefixToContext(final BitReader reader, final ObjectChoices objectChoices, final Evaluator evaluator){
 		final byte prefixSize = objectChoices.prefixLength();
 		if(prefixSize > 0){
 			final BitSet bitmap = reader.getBitSet(prefixSize);

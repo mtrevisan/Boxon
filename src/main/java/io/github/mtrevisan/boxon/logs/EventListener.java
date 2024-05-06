@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.logs;
 
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 
 /**
@@ -73,7 +73,7 @@ public class EventListener{
 	 * @param codecClass	Codec class.
 	 * @param validator	The codec validator.
 	 */
-	public void loadingCodec(final Class<?> codecClass, final AnnotationValidatorInterface validator){}
+	public void loadingCodec(final Class<?> codecClass, final AnnotationValidator validator){}
 
 	/**
 	 * Called when some codecs are loaded.

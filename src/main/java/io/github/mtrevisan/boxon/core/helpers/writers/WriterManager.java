@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,20 +22,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.distances;
+package io.github.mtrevisan.boxon.core.helpers.writers;
+
+import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 
 
-/**
- * @see <a href="https://github.com/sergio-gomez/MultiDendrograms">MultiDendrograms</a>
- */
-public interface MetricDataInterface<D extends MetricDataInterface<D>>{
+public interface WriterManager{
 
-	int length();
-
-	Object elementAt(int index);
-
-	boolean equals(D other);
-
-	boolean equalsAtIndex(int index, D other, int otherIndex);
+	/**
+	 * Writes a value.
+	 * <p>
+	 * NOTE: the object written is always in {@link ByteOrder#BIG_ENDIAN}.
+	 * </p>
+	 *
+	 * @param value	The value to write.
+	 */
+	void put(Object value);
 
 }

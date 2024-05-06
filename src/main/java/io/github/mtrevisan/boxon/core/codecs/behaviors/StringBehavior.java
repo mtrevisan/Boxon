@@ -27,8 +27,8 @@ package io.github.mtrevisan.boxon.core.codecs.behaviors;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
 
 import java.nio.charset.Charset;
 
@@ -47,12 +47,12 @@ public final class StringBehavior extends StringCommonBehavior{
 
 
 	@Override
-	public Object readValue(final BitReaderInterface reader){
+	public Object readValue(final BitReader reader){
 		return reader.getText(size, charset);
 	}
 
 	@Override
-	public void writeValue(final BitWriterInterface writer, final Object value){
+	public void writeValue(final BitWriter writer, final Object value){
 		String text = (String)value;
 		text = text.substring(0, Math.min(text.length(), size));
 		writer.putText(text, charset);

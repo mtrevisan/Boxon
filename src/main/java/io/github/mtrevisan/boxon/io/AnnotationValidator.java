@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import java.lang.annotation.Annotation;
 
 
-public interface AnnotationValidatorInterface{
+public interface AnnotationValidator{
 
 	/**
 	 * Validate field and annotation.

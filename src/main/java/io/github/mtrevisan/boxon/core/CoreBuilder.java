@@ -33,8 +33,8 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -183,7 +183,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the codecs that extends {@link Codec}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
@@ -200,7 +200,7 @@ public final class CoreBuilder{
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodec(final CodecInterface codec){
+	public CoreBuilder withCodec(final Codec codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
 
 		return this;
@@ -213,7 +213,7 @@ public final class CoreBuilder{
 	 * @param validator	The codec validator.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodec(final CodecInterface codec, final AnnotationValidatorInterface validator){
+	public CoreBuilder withCodec(final Codec codec, final AnnotationValidator validator){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec, validator));
 
 		return this;
@@ -225,7 +225,7 @@ public final class CoreBuilder{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodecs(final CodecInterface... codecs){
+	public CoreBuilder withCodecs(final Codec... codecs){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
 
 		return this;

@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
 
 import java.lang.reflect.Type;
 
@@ -46,7 +46,7 @@ public interface LoaderCodecInterface{
 	 * @param type	The class type.
 	 * @return	The codec for the given class type.
 	 */
-	CodecInterface getCodec(Type type);
+	Codec getCodec(Type type);
 
 	/**
 	 * Get the codec validator for the given class type.
@@ -54,6 +54,6 @@ public interface LoaderCodecInterface{
 	 * @param type	The class type.
 	 * @return	The codec validator for the given class type.
 	 */
-	AnnotationValidatorInterface getCustomCodecValidator(Type type);
+	AnnotationValidator getCustomCodecValidator(Type type);
 
 }

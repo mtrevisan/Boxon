@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -53,7 +53,7 @@ import java.util.HashSet;
 /**
  * Container of all the validators of a message template.
  */
-public enum TemplateAnnotationValidator implements AnnotationValidatorInterface{
+public enum TemplateAnnotationValidator implements AnnotationValidator{
 
 	HEADER(TemplateHeader.class){
 		@Override

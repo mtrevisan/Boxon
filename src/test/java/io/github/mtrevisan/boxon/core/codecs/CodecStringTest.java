@@ -31,12 +31,11 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -50,7 +49,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUS_ASCII() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
 			@Override
@@ -106,7 +105,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		String decoded = (String)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -114,7 +113,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUTF_8() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
 		BindString annotation = new BindString(){
 			@Override
@@ -175,7 +174,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		String decoded = (String)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -183,7 +182,7 @@ class CodecStringTest{
 
 	@Test
 	void stringTerminated() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
@@ -237,7 +236,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123AB", decoded);
@@ -251,7 +250,7 @@ class CodecStringTest{
 
 	@Test
 	void stringTerminatedButEndOfStream() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
@@ -305,7 +304,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123ABC", decoded);

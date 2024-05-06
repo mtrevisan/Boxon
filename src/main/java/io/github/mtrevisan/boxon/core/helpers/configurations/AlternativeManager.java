@@ -49,7 +49,7 @@ import java.util.Map;
 import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
-final class AlternativeManager implements ConfigurationManagerInterface{
+final class AlternativeManager implements ConfigurationManager{
 
 	private static final AlternativeSubField EMPTY_ALTERNATIVE = new NullAlternativeSubField();
 

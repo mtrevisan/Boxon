@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
 
 import java.util.BitSet;
 
@@ -53,12 +53,12 @@ public class BitSetBehavior extends CommonBehavior{
 	}
 
 	@Override
-	public Object readValue(final BitReaderInterface reader){
+	public Object readValue(final BitReader reader){
 		return reader.getBitSet(size);
 	}
 
 	@Override
-	public void writeValue(final BitWriterInterface writer, final Object value){
+	public void writeValue(final BitWriter writer, final Object value){
 		writer.putBitSet((BitSet)value, size);
 	}
 

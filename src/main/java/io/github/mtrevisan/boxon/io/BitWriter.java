@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
-import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.nio.charset.Charset;
@@ -34,7 +33,7 @@ import java.util.BitSet;
 
 
 /** Interface for a writer bit-by-bit. */
-public interface BitWriterInterface{
+public interface BitWriter{
 
 	/**
 	 * Writes the given value using the give byte order.
@@ -54,7 +53,7 @@ public interface BitWriterInterface{
 	void skipBits(int length);
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 * Writes {@code value} to this {@link io.github.mtrevisan.boxon.core.helpers.BitWriter} using {@code length} bits.
 	 *
 	 * @param bitmap	The value to write.
 	 * @param length	The amount of bits to use when writing the {@code bitmap}.

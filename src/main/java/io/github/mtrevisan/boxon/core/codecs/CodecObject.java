@@ -35,9 +35,9 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.io.Injected;
 
@@ -48,12 +48,12 @@ import java.util.Collection;
 import java.util.List;
 
 
-final class CodecObject implements CodecInterface{
+final class CodecObject implements Codec{
 
 	@Injected
 	private Evaluator evaluator;
 	@Injected
-	private TemplateParserInterface templateParser;
+	private TemplateParser templateParser;
 
 
 	@Override
@@ -62,7 +62,7 @@ final class CodecObject implements CodecInterface{
 	}
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+	public Object decode(final BitReader reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws BoxonException{
 		final ObjectBehavior behavior = ObjectBehavior.of(annotation);
 
@@ -87,7 +87,7 @@ final class CodecObject implements CodecInterface{
 		return convertedValue;
 	}
 
-	private Object decodeArray(final BitReaderInterface reader, final ObjectBehavior behavior, final int arraySize, final Object rootObject)
+	private Object decodeArray(final BitReader reader, final ObjectBehavior behavior, final int arraySize, final Object rootObject)
 			throws BoxonException{
 		final Object array = behavior.createArray(arraySize);
 
@@ -98,7 +98,7 @@ final class CodecObject implements CodecInterface{
 		return array;
 	}
 
-	private void readArrayWithAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
+	private void readArrayWithAlternatives(final BitReader reader, final Object array, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, behavior.objectType(), behavior.selectFrom(),
@@ -109,7 +109,7 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private void readArrayWithoutAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
+	private void readArrayWithoutAlternatives(final BitReader reader, final Object array, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
 		final Template<?> template = templateParser.createTemplate(behavior.objectType());
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
@@ -119,7 +119,7 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private List<Object> decodeList(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject)
+	private List<Object> decodeList(final BitReader reader, final ObjectBehavior behavior, final Object rootObject)
 			throws BoxonException{
 		final List<Object> list = CodecHelper.createList(behavior.objectType());
 
@@ -128,7 +128,7 @@ final class CodecObject implements CodecInterface{
 		return list;
 	}
 
-	private void readListWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final ObjectBehavior behavior,
+	private void readListWithAlternatives(final BitReader reader, final Collection<Object> list, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
 		Class<?> chosenAlternativeType;
 		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, behavior, rootObject)) != void.class){
@@ -138,13 +138,13 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private Object readValue(final BitReaderInterface reader, final Class<?> chosenAlternativeType, final Object rootObject)
+	private Object readValue(final BitReader reader, final Class<?> chosenAlternativeType, final Object rootObject)
 			throws BoxonException{
 		final Template<?> template = templateParser.createTemplate(chosenAlternativeType);
 		return readValue(reader, template, rootObject);
 	}
 
-	private Object readValue(final BitReaderInterface reader, final Template<?> template, final Object rootObject) throws BoxonException{
+	private Object readValue(final BitReader reader, final Template<?> template, final Object rootObject) throws BoxonException{
 		return templateParser.decode(template, reader, rootObject);
 	}
 
@@ -154,7 +154,7 @@ final class CodecObject implements CodecInterface{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
 	 */
-	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject){
+	private Class<?> chooseAlternativeSeparatedType(final BitReader reader, final ObjectBehavior behavior, final Object rootObject){
 		final ObjectChoices.ObjectChoice[] alternatives = behavior.objectChoicesList().alternatives();
 		if(!CodecHelper.hasSelectAlternatives((alternatives)))
 			return behavior.objectType();
@@ -172,7 +172,7 @@ final class CodecObject implements CodecInterface{
 	 * @param reader	The reader from which to read the header.
 	 * @return	Whether a prefix was retrieved.
 	 */
-	private boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
+	private boolean addListHeaderToContext(final BitReader reader, final ObjectChoicesList objectChoicesList){
 		final byte terminator = objectChoicesList.terminator();
 		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
 		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
@@ -182,7 +182,7 @@ final class CodecObject implements CodecInterface{
 
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+	public void encode(final BitWriter writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws BoxonException{
 		final ObjectBehavior behavior = ObjectBehavior.of(annotation);
 
@@ -219,7 +219,7 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private void encodeArray(final BitWriterInterface writer, final Object[] array, final ObjectBehavior behavior, final Object rootObject)
+	private void encodeArray(final BitWriter writer, final Object[] array, final ObjectBehavior behavior, final Object rootObject)
 			throws BoxonException{
 		final ObjectChoices objectChoices = behavior.selectFrom();
 		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
@@ -228,7 +228,7 @@ final class CodecObject implements CodecInterface{
 			writeArrayWithoutAlternatives(writer, array, behavior.objectType(), rootObject);
 	}
 
-	private void writeArrayWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom,
+	private void writeArrayWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom,
 			final Object rootObject) throws BoxonException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0, length = array.length; i < length; i ++){
@@ -243,7 +243,7 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final Class<?> type,
+	private void writeArrayWithoutAlternatives(final BitWriter writer, final Object array, final Class<?> type,
 			final Object rootObject) throws BoxonException{
 		final Template<?> template = templateParser.createTemplate(type);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
@@ -253,7 +253,7 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private void writeListWithAlternatives(final BitWriterInterface writer, final List<Object> list, final Object rootObject)
+	private void writeListWithAlternatives(final BitWriter writer, final List<Object> list, final Object rootObject)
 			throws BoxonException{
 		for(int i = 0, length = list.size(); i < length; i ++){
 			final Object element = list.get(i);
@@ -263,13 +263,13 @@ final class CodecObject implements CodecInterface{
 		}
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Class<?> type, final Object object, final Object rootObject)
+	private void writeValue(final BitWriter writer, final Class<?> type, final Object object, final Object rootObject)
 			throws BoxonException{
 		final Template<?> template = templateParser.createTemplate(type);
 		writeValue(writer, template, object, rootObject);
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Template<?> template, final Object object, final Object rootObject)
+	private void writeValue(final BitWriter writer, final Template<?> template, final Object object, final Object rootObject)
 			throws BoxonException{
 		templateParser.encode(template, writer, rootObject, object);
 	}

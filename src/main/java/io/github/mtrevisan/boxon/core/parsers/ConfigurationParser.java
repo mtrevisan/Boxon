@@ -29,15 +29,15 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManager;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
@@ -165,7 +165,7 @@ public final class ConfigurationParser{
 	 * @param <T>	The class type of the current object.
 	 * @throws CodecException	If a codec is not found.
 	 */
-	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
+	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
 			final Version protocol) throws BoxonException{
 		final ParserContext<T> parserContext = ParserContext.create(currentObject);
 		parserContext.setClassName(configuration.getType().getName());
@@ -179,7 +179,7 @@ public final class ConfigurationParser{
 			final ConfigurationField field = fields.get(i);
 
 			final Annotation binding = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(binding);
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() == Annotation.class)
 				continue;
@@ -204,12 +204,12 @@ public final class ConfigurationParser{
 		ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
-	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){
+	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, protocol);
 	}
 
-	private static void writeSkip(final ConfigurationSkip skip, final BitWriterInterface writer, final Version protocol){
+	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
 		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator());

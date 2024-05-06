@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.similarity.distances;
 import java.util.Arrays;
 
 
-public final class StringArrayMetricData implements MetricDataInterface<StringArrayMetricData>{
+public final class StringArrayMetricData implements MetricData<StringArrayMetricData>{
 
 	private final String[] data;
 

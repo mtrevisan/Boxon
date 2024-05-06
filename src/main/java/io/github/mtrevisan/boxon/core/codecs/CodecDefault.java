@@ -32,9 +32,9 @@ import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.IntegerBehavior;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.io.Injected;
 
@@ -45,7 +45,7 @@ import java.lang.reflect.Array;
 /**
  * Manages `BindBitSet`, `BindInteger`, `BindString`, and `BindStringTerminated`.
  */
-final class CodecDefault implements CodecInterface{
+final class CodecDefault implements Codec{
 
 	/**
 	 * Identifies the default codec.
@@ -68,7 +68,7 @@ final class CodecDefault implements CodecInterface{
 	}
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+	public Object decode(final BitReader reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
 		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
 
@@ -97,7 +97,7 @@ final class CodecDefault implements CodecInterface{
 
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+	public void encode(final BitWriter writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
 		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
 

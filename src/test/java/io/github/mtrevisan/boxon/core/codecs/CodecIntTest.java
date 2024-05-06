@@ -31,13 +31,12 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +50,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianNegative() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = 0x80FF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -107,7 +106,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("0000FF80", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -116,7 +115,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianSmall() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = 0x0000_7FFF;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -172,7 +171,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("FF7F0000", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -181,7 +180,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianPositive() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = 0x7FFF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -237,7 +236,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("0000FF7F", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -246,7 +245,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianRandom() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -303,7 +302,7 @@ class CodecIntTest{
 		String expected = StringHelper.toHexString(Integer.reverseBytes(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -312,7 +311,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianNegative() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = 0x80FF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -368,7 +367,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("80FF0000", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -377,7 +376,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianSmall() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = 0x0000_7FFF;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -433,7 +432,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("00007FFF", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -442,7 +441,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianPositive() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = 0x7FFF_0000;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -498,7 +497,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("7FFF0000", writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -507,7 +506,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianRandom() throws BoxonException{
-		CodecInterface codec = new CodecDefault();
+		Codec codec = new CodecDefault();
 		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -563,7 +562,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Integer.BYTES), writer.toString());
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 

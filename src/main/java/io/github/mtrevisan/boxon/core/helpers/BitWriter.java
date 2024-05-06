@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +37,7 @@ import java.nio.charset.StandardCharsets;
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks</a>
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
-public final class BitWriter extends BitWriterData implements BitWriterInterface{
+public final class BitWriter extends BitWriterData implements io.github.mtrevisan.boxon.io.BitWriter{
 
 	/**
 	 * Create an instance of this class.

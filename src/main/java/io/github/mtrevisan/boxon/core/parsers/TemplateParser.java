@@ -26,13 +26,12 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -42,7 +41,7 @@ import java.util.Collection;
 /**
  * Declarative data binding parser for message templates.
  */
-public final class TemplateParser implements TemplateParserInterface{
+public final class TemplateParser implements io.github.mtrevisan.boxon.core.codecs.TemplateParser{
 
 	private final TemplateDecoder templateDecoder;
 	private final TemplateEncoder templateEncoder;
@@ -133,7 +132,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param reader	The reader from which to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
+	public Template<?> getTemplate(final BitReader reader) throws TemplateException{
 		return loaderTemplate.getTemplate(reader);
 	}
 
@@ -153,7 +152,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The index of the next message.
 	 */
-	public int findNextMessageIndex(final BitReaderInterface reader){
+	public int findNextMessageIndex(final BitReader reader){
 		return loaderTemplate.findNextMessageIndex(reader);
 	}
 
@@ -190,7 +189,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws BoxonException	If there is an error decoding a field.
 	 */
 	@Override
-	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
+	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws BoxonException{
 		return templateDecoder.decode(template, reader, parentObject);
 	}
 
@@ -205,7 +204,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws BoxonException	If there is an error encoding a field.
 	 */
 	@Override
-	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
+	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws BoxonException{
 		templateEncoder.encode(template, writer, parentObject, currentObject);
 	}

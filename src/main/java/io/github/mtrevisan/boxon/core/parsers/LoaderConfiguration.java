@@ -29,8 +29,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManager;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -261,7 +261,7 @@ public final class LoaderConfiguration{
 			//find field in `configuration` that matches `dataKey` and `protocol`
 			final ConfigurationField foundField = findField(configurableFields, dataKey, protocol);
 			final Annotation foundFieldAnnotation = foundField.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
 			configurationObject = FieldAccessor.setFieldValue(configurationObject, foundField.getField(), dataValue);
@@ -297,7 +297,7 @@ public final class LoaderConfiguration{
 			final ConfigurationField field = fields.get(i);
 
 			final Annotation binding = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(binding);
 			final Field f = field.getField();
 			Object dataValue = manager.getDefaultValue(f.getType(), protocol);
 			dataValue = manager.convertValue(f, manager.getShortDescription(), dataValue, protocol);
@@ -312,7 +312,7 @@ public final class LoaderConfiguration{
 		for(int i = 0; i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(manager.isMandatory(annotation))
 				mandatoryFields.add(field);
@@ -325,7 +325,7 @@ public final class LoaderConfiguration{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				return field;
@@ -338,7 +338,7 @@ public final class LoaderConfiguration{
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(final ConfigurationField mandatoryField : mandatoryFields){
 				final Annotation annotation = mandatoryField.getBinding();
-				final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+				final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(annotation);
 				final String shortDescription = manager.getShortDescription();
 				sj.add(shortDescription);
 			}

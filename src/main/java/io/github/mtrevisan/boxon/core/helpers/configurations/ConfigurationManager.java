@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.Map;
 
 
-public interface ConfigurationManagerInterface{
+public interface ConfigurationManager{
 
 	/**
 	 * A short description of the field.

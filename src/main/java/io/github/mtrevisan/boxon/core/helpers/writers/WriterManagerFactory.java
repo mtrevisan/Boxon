@@ -26,13 +26,13 @@ package io.github.mtrevisan.boxon.core.helpers.writers;
 
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.BitWriter;
 
 import java.nio.charset.Charset;
 
 
 /**
- * Factory for the {@link WriterManagerInterface writer manager}.
+ * Factory for the {@link WriterManager writer manager}.
  */
 public final class WriterManagerFactory{
 
@@ -40,7 +40,7 @@ public final class WriterManagerFactory{
 
 
 	/**
-	 * Returns a {@link WriterManagerInterface writer manager} from the class type of the given value, filling it with the given writer,
+	 * Returns a {@link WriterManager writer manager} from the class type of the given value, filling it with the given writer,
 	 * radix, and charset name parameters.
 	 *
 	 * @param valueClass	The class type of the value.
@@ -49,11 +49,11 @@ public final class WriterManagerFactory{
 	 * @param charsetName	The charset name to be injected into the resulting manager.
 	 * @return	An instance of writer manager.
 	 */
-	public static WriterManagerInterface buildManager(final Class<?> valueClass, final BitWriterInterface writer, final int radix,
+	public static WriterManager buildManager(final Class<?> valueClass, final BitWriter writer, final int radix,
 			final String charsetName){
 		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(valueClass);
 
-		WriterManagerInterface manager = null;
+		WriterManager manager = null;
 		if(Number.class.isAssignableFrom(fieldClass))
 			manager = NumberWriterManager.create(writer)
 				.withRadix(radix);

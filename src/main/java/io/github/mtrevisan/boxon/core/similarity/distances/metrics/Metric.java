@@ -24,10 +24,10 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
 
-import io.github.mtrevisan.boxon.core.similarity.distances.MetricDataInterface;
+import io.github.mtrevisan.boxon.core.similarity.distances.MetricData;
 
 
-public interface Metric<D extends MetricDataInterface<D>>{
+public interface Metric<D extends MetricData<D>>{
 
 	/**
 	 * Finds the similarity between two inputs.

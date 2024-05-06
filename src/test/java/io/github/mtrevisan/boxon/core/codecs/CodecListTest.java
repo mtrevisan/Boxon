@@ -39,12 +39,10 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
-import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -205,7 +203,7 @@ class CodecListTest{
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParser templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
@@ -214,7 +212,7 @@ class CodecListTest{
 
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
-		BitReaderInterface reader = BitReader.wrap(writer);
+		BitReader reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
 		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, listAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());

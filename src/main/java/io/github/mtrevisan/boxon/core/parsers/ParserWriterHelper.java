@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
@@ -47,10 +47,10 @@ final class ParserWriterHelper{
 	 *
 	 * @param affix	The affix to be written.
 	 * @param charsetName	The name of the charset to be used.
-	 * @param writer	The BitWriterInterface where the affix is written.
+	 * @param writer	The {@link BitWriter} where the affix is written.
 	 * @throws UnsupportedCharsetException	If the specified charset name is not supported.
 	 */
-	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer) throws UnsupportedCharsetException{
+	static void writeAffix(final String affix, final String charsetName, final BitWriter writer) throws UnsupportedCharsetException{
 		if(!affix.isEmpty()){
 			final Charset charset = CharsetHelper.lookup(charsetName);
 			writer.putText(affix, charset);
@@ -67,7 +67,7 @@ final class ParserWriterHelper{
 	 * @throws CodecException	If no suitable codec was found.
 	 * @throws BoxonException	If an error occurs during field encoding.
 	 */
-	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec,
+	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodecInterface loaderCodec,
 			final EventListener eventListener) throws BoxonException{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();
@@ -75,7 +75,7 @@ final class ParserWriterHelper{
 		final Annotation collectionBinding = parserContext.getCollectionBinding();
 
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface codec = loaderCodec.getCodec(annotationType);
+		final Codec codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(className, fieldName);

@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.similarity.distances;
 
 
-public final class StringMetricData implements MetricDataInterface<StringMetricData>{
+public final class StringMetricData implements MetricData<StringMetricData>{
 
 	private final String data;
 

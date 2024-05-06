@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -168,7 +168,7 @@ public final class Core{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the codecs that extends {@link Codec}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @throws CodecException	If a codec was already loaded.
@@ -185,7 +185,7 @@ public final class Core{
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final CodecInterface codec) throws CodecException{
+	void addCodec(final Codec codec) throws CodecException{
 		loaderCodec.addCodec(codec);
 
 		postProcessCodec(codec);
@@ -198,7 +198,7 @@ public final class Core{
 	 * @param validator	The codec validator.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final CodecInterface codec, final AnnotationValidatorInterface validator) throws CodecException{
+	void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
 		loaderCodec.addCodec(codec, validator);
 
 		postProcessCodec(codec);
@@ -210,14 +210,14 @@ public final class Core{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodecs(final CodecInterface... codecs) throws CodecException{
+	void addCodecs(final Codec... codecs) throws CodecException{
 		loaderCodec.addCodecs(codecs);
 
 		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
 			postProcessCodec(codecs[i]);
 	}
 
-	private void postProcessCodec(final CodecInterface codec){
+	private void postProcessCodec(final Codec codec){
 		LoaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 

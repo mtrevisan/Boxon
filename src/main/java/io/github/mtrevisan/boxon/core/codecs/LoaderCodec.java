@@ -32,8 +32,8 @@ import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
-import io.github.mtrevisan.boxon.io.AnnotationValidatorInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Type;
@@ -57,8 +57,8 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		BindStringTerminated.class);
 
 
-	private final Map<Type, CodecInterface> codecs = new ConcurrentHashMap<>(0);
-	private final Map<Type, AnnotationValidatorInterface> customCodecValidators = new ConcurrentHashMap<>(0);
+	private final Map<Type, Codec> codecs = new ConcurrentHashMap<>(0);
+	private final Map<Type, AnnotationValidator> customCodecValidators = new ConcurrentHashMap<>(0);
 
 	private EventListener eventListener;
 
@@ -101,7 +101,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the codecs that extends {@link Codec}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @throws CodecException	If a codec was already loaded.
@@ -110,22 +110,22 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener.loadingCodecsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes that implements {@link CodecInterface}. */
-		final List<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(CodecInterface.class);
-		final List<CodecInterface> codecs = extractCodecs(derivedClasses);
+		/** extract all classes that implements {@link Codec}. */
+		final List<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(Codec.class);
+		final List<Codec> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
 		eventListener.loadedCodecs(codecs.size());
 	}
 
-	private List<CodecInterface> extractCodecs(final List<Class<?>> derivedClasses){
+	private List<Codec> extractCodecs(final List<Class<?>> derivedClasses){
 		final int length = derivedClasses.size();
-		final List<CodecInterface> codecs = new ArrayList<>(length);
+		final List<Codec> codecs = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Class<?> type = derivedClasses.get(i);
 
 			//for each extracted class, try to create an instance
-			final CodecInterface codec = (CodecInterface)ConstructorHelper.getEmptyCreator(type)
+			final Codec codec = (Codec)ConstructorHelper.getEmptyCreator(type)
 				.get();
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...
@@ -144,7 +144,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	public void addCodec(final CodecInterface codec) throws CodecException{
+	public void addCodec(final Codec codec) throws CodecException{
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
 		eventListener.loadingCodec(codec.getClass());
@@ -162,7 +162,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param validator	The codec validator.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	public void addCodec(final CodecInterface codec, final AnnotationValidatorInterface validator) throws CodecException{
+	public void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
 		eventListener.loadingCodec(codec.getClass(), validator);
@@ -179,7 +179,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If a codec was already loaded.
 	 */
-	public void addCodecs(final CodecInterface... codecs) throws CodecException{
+	public void addCodecs(final Codec... codecs) throws CodecException{
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
 		final int length = codecs.length;
@@ -193,27 +193,27 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener.loadedCodecs(length);
 	}
 
-	private void addCodecsInner(final List<CodecInterface> codecs) throws CodecException{
+	private void addCodecsInner(final List<Codec> codecs) throws CodecException{
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.size(); i < length; i ++){
-			final CodecInterface codec = codecs.get(i);
+			final Codec codec = codecs.get(i);
 
 			if(codec != null)
 				addCodecInner(codec, null);
 		}
 	}
 
-	private void addCodecsInner(final CodecInterface... codecs) throws CodecException{
+	private void addCodecsInner(final Codec... codecs) throws CodecException{
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.length; i < length; i ++){
-			final CodecInterface codec = codecs[i];
+			final Codec codec = codecs[i];
 
 			if(codec != null)
 				addCodecInner(codec, null);
 		}
 	}
 
-	private void addCodecInner(final CodecInterface codec, final AnnotationValidatorInterface validator) throws CodecException{
+	private void addCodecInner(final Codec codec, final AnnotationValidator validator) throws CodecException{
 		final Class<?> codecType = codec.annotationType();
 		if(codecs.containsKey(codecType))
 			throw CodecException.create("Codec with type {} already added", codecType);
@@ -230,7 +230,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 */
 	//FIXME is injection an ugliness?
 	public void injectDependenciesIntoCodecs(final Object... dependencies){
-		for(final CodecInterface codec : codecs.values())
+		for(final Codec codec : codecs.values())
 			injectDependenciesIntoCodec(codec, dependencies);
 	}
 
@@ -240,7 +240,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param codec	The codec to be injected into.
 	 * @param dependencies	The object(s) to be injected.
 	 */
-	public static void injectDependenciesIntoCodec(final CodecInterface codec, final Object... dependencies){
+	public static void injectDependenciesIntoCodec(final Codec codec, final Object... dependencies){
 		FieldAccessor.injectValues(codec, dependencies);
 	}
 
@@ -250,12 +250,12 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	@Override
-	public CodecInterface getCodec(final Type type){
+	public Codec getCodec(final Type type){
 		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	@Override
-	public AnnotationValidatorInterface getCustomCodecValidator(final Type type){
+	public AnnotationValidator getCustomCodecValidator(final Type type){
 		return customCodecValidators.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
