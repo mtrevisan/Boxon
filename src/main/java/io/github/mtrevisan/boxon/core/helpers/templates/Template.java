@@ -75,9 +75,9 @@ public final class Template<T>{
 	private static final String ANNOTATION_NAME_SKIP = "Skip";
 	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
 
-	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
-	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
-	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
+	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
+	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
