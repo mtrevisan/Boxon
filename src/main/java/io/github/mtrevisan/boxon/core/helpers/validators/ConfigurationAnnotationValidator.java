@@ -196,7 +196,7 @@ public enum ConfigurationAnnotationValidator{
 				validateCharset(binding.charset());
 			ValidationHelper.validateRadix(binding.radix());
 
-			validateMinimumParameters(binding);
+			validateMinimumParameters(configData);
 
 			final String defaultValue = binding.defaultValue();
 			ValidationHelper.validatePattern(defaultValue, configData);
@@ -206,19 +206,9 @@ public enum ConfigurationAnnotationValidator{
 			ProtocolValidator.validateProtocol(minProtocolVersion, maxProtocolVersion, configData);
 		}
 
-		private static void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
-			final String pattern = binding.pattern();
-			final String minValue = binding.minValue();
-			final String maxValue = binding.maxValue();
-
-			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
-			int set = 0;
-			if(!pattern.isEmpty())
-				set ++;
-			if(!minValue.isEmpty() || !maxValue.isEmpty())
-				set ++;
-			if(set > 1)
-				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
+		private static void validateMinimumParameters(final ConfigFieldData configData) throws AnnotationException{
+			if(configData.hasIncompatibleInputs())
+				throw AnnotationException.create("Only one of `pattern` or `minValue`/`maxValue` should be used in {}",
 					ConfigurationField.class.getSimpleName());
 		}
 	};

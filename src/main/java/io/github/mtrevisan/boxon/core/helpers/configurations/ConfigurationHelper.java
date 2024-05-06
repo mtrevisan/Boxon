@@ -141,7 +141,7 @@ public final class ConfigurationHelper{
 				enumValues[i] = enumConstants[i].name();
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
 			if(!fieldType.isArray())
-				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);
+				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, Boolean.TRUE, map);
 		}
 	}
 

@@ -36,6 +36,7 @@ public final class TextStatistics{
 	private static final int NEW_PAGE_CHARACTER = 0x0C;
 	private static final int ESCAPE_CHARACTER = 0x1B;
 
+	//FIXME large array allocation which is not checked for out-of-memory condition
 	private final int[] counts = new int[1 << Byte.SIZE];
 
 	/** Total number of bytes seen so far. */

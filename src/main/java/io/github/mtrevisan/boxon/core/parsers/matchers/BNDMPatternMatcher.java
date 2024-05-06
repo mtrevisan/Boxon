@@ -85,6 +85,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 			if(pattern[i] == wildcard)
 				j |= 1 << shift;
 
+		//FIXME large array allocation which is not checked for out-of-memory condition
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		if(j != 0)
 			Arrays.fill(preprocessedPattern, j);
@@ -104,6 +105,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	public int[] preProcessPattern(final byte[] pattern){
 		assertLength(pattern.length);
 
+		//FIXME large array allocation which is not checked for out-of-memory condition
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		return fill(pattern, preprocessedPattern);
 	}

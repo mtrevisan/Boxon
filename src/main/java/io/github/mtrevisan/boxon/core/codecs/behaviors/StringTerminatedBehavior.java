@@ -39,6 +39,8 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 	private final byte terminator;
 	private final boolean consumeTerminator;
 
+	private final int terminatorLength;
+
 
 	StringTerminatedBehavior(final byte terminator, final boolean consumeTerminator, final Charset charset,
 			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
@@ -47,15 +49,15 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 
 		this.terminator = terminator;
 		this.consumeTerminator = consumeTerminator;
+
+		terminatorLength = ParserDataType.getSize(terminator);
 	}
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
 		final String text = reader.getTextUntilTerminator(terminator, charset);
-		if(consumeTerminator){
-			final int length = ParserDataType.getSize(terminator);
-			reader.skip(length);
-		}
+		if(consumeTerminator)
+			reader.skip(terminatorLength);
 		return text;
 	}
 
