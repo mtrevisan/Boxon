@@ -106,15 +106,24 @@ final class ValidationHelper{
 		final Pattern formatPattern = extractPattern(pattern, configData);
 
 		//`defaultValue` compatible with field type
-		if(!isStringAssignableFrom(configData.getFieldType())
-				|| defaultValue != null
-				&& isStringAssignableFrom(defaultValue.getClass())
-				&& !((String)defaultValue).isEmpty()
-				&& !StringHelper.matches((String)defaultValue, formatPattern))
+		final Class<?> fieldType = configData.getFieldType();
+		if(isInvalidDefaultValue(defaultValue, fieldType, formatPattern))
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",
 				configData.getAnnotationName(), configData.getFieldType(), pattern);
 
 		validateMinMaxDefaultValuesToPattern(formatPattern, configData);
+	}
+
+	private static boolean isInvalidDefaultValue(final Object defaultValue, final Class<?> fieldType, final Pattern formatPattern){
+		return (!isStringAssignableFrom(fieldType)
+			|| isInvalidStringDefaultValue(defaultValue, formatPattern));
+	}
+
+	private static boolean isInvalidStringDefaultValue(final Object defaultValue, final Pattern formatPattern){
+		final boolean isDefaultValueNotNull = (defaultValue != null);
+		final boolean isValidString = (isDefaultValueNotNull && isStringAssignableFrom(defaultValue.getClass()));
+		final boolean isNonEmptyString = (isValidString && !((CharSequence)defaultValue).isEmpty());
+		return (isNonEmptyString && !StringHelper.matches((CharSequence)defaultValue, formatPattern));
 	}
 
 	private static Pattern extractPattern(final String pattern, final ConfigFieldData configData) throws AnnotationException{

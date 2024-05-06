@@ -337,11 +337,22 @@ public final class FieldDescriber{
 	 * @param map	The map in which to load the key-value pair.
 	 */
 	static void putIfNotEmpty(final Enum<?> key, final Object value, final Map<String, Object> map){
-		if(value != null
-			&& !(value instanceof final String v && StringHelper.isBlank(v))
-			&& !(value instanceof final Collection<?> c && c.isEmpty())
-		)
+		if(isValidValue(value))
 			map.put(key.toString(), (value instanceof final Class<?> cls? JavaHelper.prettyPrintClassName(cls): value));
+	}
+
+	private static boolean isValidValue(final Object value){
+		return (value != null
+			&& !isBlankString(value)
+			&& !isEmptyCollection(value));
+	}
+
+	private static boolean isBlankString(final Object value){
+		return (value instanceof final String v && StringHelper.isBlank(v));
+	}
+
+	private static boolean isEmptyCollection(final Object value){
+		return (value instanceof final Collection<?> c && c.isEmpty());
 	}
 
 }
