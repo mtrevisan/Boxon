@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManager;
@@ -51,7 +51,7 @@ import java.util.Map;
  */
 public final class ConfigurationParser{
 
-	private final LoaderCodecInterface loaderCodec;
+	private final LoaderCodec loaderCodec;
 
 	private final LoaderConfiguration loaderConfiguration;
 
@@ -64,12 +64,12 @@ public final class ConfigurationParser{
 	 * @param loaderCodec	A codec loader.
 	 * @return	A configuration parser.
 	 */
-	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec){
+	public static ConfigurationParser create(final LoaderCodec loaderCodec){
 		return new ConfigurationParser(loaderCodec);
 	}
 
 
-	private ConfigurationParser(final LoaderCodecInterface loaderCodec){
+	private ConfigurationParser(final LoaderCodec loaderCodec){
 		this.loaderCodec = loaderCodec;
 
 		loaderConfiguration = LoaderConfiguration.create();

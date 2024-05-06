@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.PostProcess;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.io.Evaluator;
@@ -37,7 +37,7 @@ import java.util.function.Function;
 
 class TemplateCoderBase{
 
-	protected final LoaderCodecInterface loaderCodec;
+	protected final LoaderCodec loaderCodec;
 
 	protected final Evaluator evaluator;
 
@@ -45,7 +45,7 @@ class TemplateCoderBase{
 
 
 
-	TemplateCoderBase(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	TemplateCoderBase(final LoaderCodec loaderCodec, final Evaluator evaluator){
 		this.loaderCodec = loaderCodec;
 
 		this.evaluator = evaluator;

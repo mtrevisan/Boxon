@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
@@ -67,7 +67,7 @@ final class ParserWriterHelper{
 	 * @throws CodecException	If no suitable codec was found.
 	 * @throws BoxonException	If an error occurs during field encoding.
 	 */
-	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodecInterface loaderCodec,
+	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodec loaderCodec,
 			final EventListener eventListener) throws BoxonException{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();

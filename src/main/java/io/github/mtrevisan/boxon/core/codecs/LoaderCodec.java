@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Loader for the codecs.
  */
-public final class LoaderCodec implements LoaderCodecInterface{
+public final class LoaderCodec{
 
 	private static final Set<Type> DEFAULT_BIND_TYPES = Set.of(
 		BindBitSet.class,
@@ -244,17 +244,32 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		FieldAccessor.injectValues(codec, dependencies);
 	}
 
-	@Override
+	/**
+	 * Whether there is a codec for the given class type.
+	 *
+	 * @param type	The class type.
+	 * @return	Whether there is a codec for the given class type.
+	 */
 	public boolean hasCodec(final Type type){
 		return codecs.containsKey(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
-	@Override
+	/**
+	 * Get the codec for the given class type.
+	 *
+	 * @param type	The class type.
+	 * @return	The codec for the given class type.
+	 */
 	public Codec getCodec(final Type type){
 		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
-	@Override
+	/**
+	 * Get the codec validator for the given class type.
+	 *
+	 * @param type	The class type.
+	 * @return	The codec validator for the given class type.
+	 */
 	public AnnotationValidator getCustomCodecValidator(final Type type){
 		return customCodecValidators.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}

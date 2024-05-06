@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -56,11 +56,11 @@ public final class TemplateParser implements io.github.mtrevisan.boxon.core.code
 	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	public static TemplateParser create(final LoaderCodec loaderCodec, final Evaluator evaluator){
 		return new TemplateParser(loaderCodec, evaluator);
 	}
 
-	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	private TemplateParser(final LoaderCodec loaderCodec, final Evaluator evaluator){
 		templateDecoder = TemplateDecoder.create(loaderCodec, evaluator);
 		templateEncoder = TemplateEncoder.create(loaderCodec, evaluator);
 

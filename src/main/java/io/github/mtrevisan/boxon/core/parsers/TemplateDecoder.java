@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
@@ -62,11 +62,11 @@ final class TemplateDecoder extends TemplateCoderBase{
 	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	static TemplateDecoder create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	static TemplateDecoder create(final LoaderCodec loaderCodec, final Evaluator evaluator){
 		return new TemplateDecoder(loaderCodec, evaluator);
 	}
 
-	private TemplateDecoder(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	private TemplateDecoder(final LoaderCodec loaderCodec, final Evaluator evaluator){
 		super(loaderCodec, evaluator);
 	}
 

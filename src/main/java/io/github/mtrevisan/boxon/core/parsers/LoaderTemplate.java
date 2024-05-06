@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
@@ -68,7 +68,7 @@ final class LoaderTemplate{
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 
-	private final LoaderCodecInterface loaderCodec;
+	private final LoaderCodec loaderCodec;
 
 	private EventListener eventListener;
 
@@ -79,12 +79,12 @@ final class LoaderTemplate{
 	 * @param loaderCodec	A codec loader.
 	 * @return	A template parser.
 	 */
-	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
+	static LoaderTemplate create(final LoaderCodec loaderCodec){
 		return new LoaderTemplate(loaderCodec);
 	}
 
 
-	private LoaderTemplate(final LoaderCodecInterface loaderCodec){
+	private LoaderTemplate(final LoaderCodec loaderCodec){
 		this.loaderCodec = loaderCodec;
 
 		withEventListener(null);
