@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
 import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
+import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
@@ -39,9 +40,6 @@ import java.util.Objects;
 
 /** Data associated with an annotated field. */
 public final class TemplateField implements FieldRetriever{
-
-	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
-	private static final String CONDITION = "condition";
 
 	/** An empty {@code SkipCore} array. */
 	private static final SkipParams[] EMPTY_SKIP_ARRAY = new SkipParams[0];
@@ -76,8 +74,8 @@ public final class TemplateField implements FieldRetriever{
 
 		if(binding != null){
 			//pre-fetch condition method
-			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(), CONDITION,
-				String.class);
+			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(),
+				DescriberKey.CONDITION.toString(), String.class);
 			condition = MethodHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 		}
 	}

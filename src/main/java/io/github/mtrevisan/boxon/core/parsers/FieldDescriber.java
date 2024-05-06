@@ -109,6 +109,13 @@ public final class FieldDescriber{
 			rootDescription.put(key, Collections.unmodifiableMap(description));
 	}
 
+	/**
+	 * Extracts the parameters of an object using reflection and adds them to the root description map.
+	 *
+	 * @param obj	The object from which to extract the parameters.
+	 * @param methods	An array of methods from the object's class.
+	 * @param rootDescription	The map where the parameters will be added.
+	 */
 	private static void extractObjectParameters(final Object obj, final Method[] methods, final Map<String, Object> rootDescription){
 		for(int i = 0, length = methods.length; i < length; i ++){
 			final Method method = methods[i];

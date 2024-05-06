@@ -121,8 +121,8 @@ public final class Comparator{
 	private static Map<String, Object> removeUnwantedProperties(final Map<String, Object> field){
 		final Map<String, Object> parameter = new HashMap<>(field);
 		parameter.remove(DescriberKey.FIELD_NAME.toString());
-		parameter.remove("condition");
-		parameter.remove("validator");
+		parameter.remove(DescriberKey.CONDITION.toString());
+		parameter.remove(DescriberKey.VALIDATOR.toString());
 		return parameter;
 	}
 

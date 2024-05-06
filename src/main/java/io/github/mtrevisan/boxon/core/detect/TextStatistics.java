@@ -20,7 +20,7 @@ package io.github.mtrevisan.boxon.core.detect;
 /**
  * Utility class for computing a histogram of the bytes seen in a stream.
  *
- * @since Apache Tika 1.2
+ * @since	Apache Tika 1.2
  *
  * @see <a href="https://github.com/apache/tika/">Apache Tika</a>.
  */

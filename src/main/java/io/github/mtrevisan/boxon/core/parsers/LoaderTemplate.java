@@ -94,7 +94,7 @@ final class LoaderTemplate{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener The event listener.
+	 * @param eventListener	The event listener.
 	 */
 	void withEventListener(final EventListener eventListener){
 		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
