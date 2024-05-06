@@ -25,8 +25,9 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
+import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayMetricData;
 import io.github.mtrevisan.boxon.core.similarity.distances.metrics.LevenshteinMetric;
+import io.github.mtrevisan.boxon.core.similarity.distances.metrics.Metric;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public final class Comparator{
 
 	private final Describer describer;
 
-	private final LevenshteinMetric<StringArrayDistanceData> metric = LevenshteinMetric.create();
+	private final Metric<StringArrayMetricData> metric = LevenshteinMetric.create();
 
 
 	/**
@@ -70,8 +71,8 @@ public final class Comparator{
 	 * @throws BoxonException	If an error occurs during the calculation.
 	 */
 	public int distance(final Class<?> templateClass1, final Class<?> templateClass2) throws BoxonException{
-		final StringArrayDistanceData dna1 = getTemplateGenome(templateClass1);
-		final StringArrayDistanceData dna2 = getTemplateGenome(templateClass2);
+		final StringArrayMetricData dna1 = getTemplateGenome(templateClass1);
+		final StringArrayMetricData dna2 = getTemplateGenome(templateClass2);
 
 		return metric.distance(dna1, dna2);
 	}
@@ -85,23 +86,23 @@ public final class Comparator{
 	 * @throws BoxonException	If an error occurs during the calculation.
 	 */
 	public double similarity(final Class<?> templateClass1, final Class<?> templateClass2) throws BoxonException{
-		final StringArrayDistanceData dna1 = getTemplateGenome(templateClass1);
-		final StringArrayDistanceData dna2 = getTemplateGenome(templateClass2);
+		final StringArrayMetricData dna1 = getTemplateGenome(templateClass1);
+		final StringArrayMetricData dna2 = getTemplateGenome(templateClass2);
 
 		return metric.similarity(dna1, dna2);
 	}
 
 
-	private StringArrayDistanceData getTemplateGenome(final Class<?> templateClass) throws BoxonException{
+	private StringArrayMetricData getTemplateGenome(final Class<?> templateClass) throws BoxonException{
 		final Map<String, Object> description = describer.describeTemplate(templateClass);
 		return extractGenomeParameters(description);
 	}
 
-	private static StringArrayDistanceData extractGenomeParameters(final Map<String, Object> description){
+	private static StringArrayMetricData extractGenomeParameters(final Map<String, Object> description){
 		final Collection<Map<String, Object>> fields = (Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
 		final String[] genome = new String[fields.size()];
 		final int gene = populateGenome(fields, genome);
-		return StringArrayDistanceData.of(Arrays.copyOfRange(genome, 0, gene));
+		return StringArrayMetricData.of(Arrays.copyOfRange(genome, 0, gene));
 	}
 
 	private static int populateGenome(final Collection<Map<String, Object>> fields, final String[] genome){

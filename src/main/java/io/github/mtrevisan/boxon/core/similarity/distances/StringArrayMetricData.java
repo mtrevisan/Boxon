@@ -27,17 +27,17 @@ package io.github.mtrevisan.boxon.core.similarity.distances;
 import java.util.Arrays;
 
 
-public final class StringArrayDistanceData implements DistanceDataInterface<StringArrayDistanceData>{
+public final class StringArrayMetricData implements MetricDataInterface<StringArrayMetricData>{
 
 	private final String[] data;
 
 
-	public static StringArrayDistanceData of(final String... genome){
-		return new StringArrayDistanceData(genome);
+	public static StringArrayMetricData of(final String... genome){
+		return new StringArrayMetricData(genome);
 	}
 
 
-	private StringArrayDistanceData(final String[] genome){
+	private StringArrayMetricData(final String[] genome){
 		data = genome;
 	}
 
@@ -53,12 +53,12 @@ public final class StringArrayDistanceData implements DistanceDataInterface<Stri
 	}
 
 	@Override
-	public boolean equals(final StringArrayDistanceData other){
+	public boolean equals(final StringArrayMetricData other){
 		return Arrays.equals(data, other.data);
 	}
 
 	@Override
-	public boolean equalsAtIndex(final int index, final StringArrayDistanceData other, final int otherIndex){
+	public boolean equalsAtIndex(final int index, final StringArrayMetricData other, final int otherIndex){
 		return (data[index].equals(other.data[otherIndex]));
 	}
 

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
 
-import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
+import io.github.mtrevisan.boxon.core.similarity.distances.MetricDataInterface;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +40,7 @@ import java.util.Map;
  * @see <a href="https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance">Damerau-Levenshtein distance</a>
  * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Damerau.java">Damerau.java</a>
  */
-public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
+public final class DamerauLevenshteinMetric<D extends MetricDataInterface<D>> implements Metric<D>{
 
 	private final int insertionCost;
 	private final int deletionCost;
@@ -50,14 +50,15 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 	private final int maxCost;
 
 
-	public static <D extends DistanceDataInterface<D>> DamerauLevenshteinMetric<D> create(){
+	public static <D extends MetricDataInterface<D>> DamerauLevenshteinMetric<D> create(){
 		return new DamerauLevenshteinMetric<>(1, 1, 1, 1);
 	}
 
-	public static <D extends DistanceDataInterface<D>> DamerauLevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
+	public static <D extends MetricDataInterface<D>> DamerauLevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
 			final int substitutionCost, final int transpositionCost){
 		return new DamerauLevenshteinMetric<>(insertionCost, deletionCost, substitutionCost, transpositionCost);
 	}
+
 
 	private DamerauLevenshteinMetric(final int insertionCost, final int deletionCost, final int substitutionCost,
 			final int transpositionCost){
@@ -79,14 +80,7 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 	}
 
 
-	/**
-	 * Finds the similarity between two inputs.
-	 *
-	 * @param input1	The first object, must not be {@code null}.
-	 * @param input2	The second object, must not be {@code null}.
-	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals) inclusive.
-	 * @throws IllegalArgumentException	If either input is {@code null}.
-	 */
+	@Override
 	public double similarity(final D input1, final D input2){
 		if(input1 == null || input2 == null)
 			throw new IllegalArgumentException("Inputs must not be null");
@@ -98,21 +92,7 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 		return 1. - (maxLength > 0? (double)distance(input1, input2) / maxDistance: 0.);
 	}
 
-	/**
-	 * Compute the distance between inputs: the minimum number of operations needed to transform one input into the other (insertion,
-	 * deletion, substitution, transposition of a single element).
-	 * <p>
-	 * It is always at least the difference of the sizes of the two inputs.
-	 * It is at most the length of the longer input (if all the costs are 1).
-	 * It is zero if and only if the inputs are equal.
-	 * If the inputs are the same size, the Hamming distance is an upper bound on the Levenshtein distance.
-	 * </p>
-	 *
-	 * @param input1	The first object, must not be {@code null}.
-	 * @param input2	The second object, must not be {@code null}.
-	 * @return	The computed distance.
-	 * @throws IllegalArgumentException	If either input is {@code null}.
-	 */
+	@Override
 	public int distance(final D input1, final D input2){
 		if(input1 == null || input2 == null)
 			throw new IllegalArgumentException("Inputs must not be null");
