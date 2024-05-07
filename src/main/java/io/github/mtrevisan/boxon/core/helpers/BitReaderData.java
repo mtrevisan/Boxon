@@ -145,17 +145,18 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
+	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a>
 	 * with a given offset.
 	 *
 	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
+	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
 	 */
 	private long readFromCache(long bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
-			bitmap |= 1l << (skip + offset);
+		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
+			skip = Byte.SIZE - 1 - skip;
+			bitmap |= 1l << (skip - offset);
 			cache ^= (byte)(1 << skip);
 		}
 		return bitmap;
@@ -186,23 +187,24 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
+	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a>
 	 * with a given offset.
 	 *
 	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
+	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
 	 */
 	private void readFromCache(final BitSet bitmap, final int offset, final int size){
 		int skip;
-		while(cache != 0 && (skip = cacheTrailingZeros()) < size){
-			bitmap.set(skip + offset);
+		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
+			bitmap.set(size - 1 - skip - offset);
+			skip = Byte.SIZE - 1 - skip;
 			cache ^= (byte)(1 << skip);
 		}
 	}
 
-	private int cacheTrailingZeros(){
-		return Integer.numberOfTrailingZeros(cache & 0xFF);
+	private int cacheLeadingZeros(){
+		return Integer.numberOfLeadingZeros(cache & 0xFF) - (Integer.SIZE - Byte.SIZE);
 	}
 
 	/**
@@ -226,7 +228,7 @@ abstract class BitReaderData{
 
 	private void consumeCache(final int size){
 		//remove read bits from the cache
-		cache >>= size;
+		cache <<= size;
 		remaining -= size;
 	}
 
