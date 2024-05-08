@@ -156,10 +156,15 @@ abstract class BitReaderData{
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
 			skip = Byte.SIZE - 1 - skip;
-			bitmap |= 1l << (skip + offset);
+			//FIXME ????
+			bitmap |= 1l << (skip + (isMultipleOfByte(offset)? offset: -offset));
 			cache ^= (byte)(1 << skip);
 		}
 		return bitmap;
+	}
+
+	private static boolean isMultipleOfByte(final int number){
+		return (number != 0 && number % Byte.SIZE == 0);
 	}
 
 	/**
