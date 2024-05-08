@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.queclink.NonByteMultipleLengthsHex;
 import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.TestHelper;
@@ -186,6 +187,32 @@ class ParserTest{
 			Assertions.fail(result.get(0).getError());
 		if(result.get(1).hasError())
 			Assertions.fail(result.get(1).getError());
+	}
+
+	@Test
+	void parseNonByteMultipleLengthsMessage() throws Exception{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplatesFrom(NonByteMultipleLengthsHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		//0x2B 0x55 0x4E 0x56 0b110 0x42 0x43 0x44 0b10110
+		//2B 55 4E 56 110 0100_0010 0100_0011 0100_0100 10110
+		//2B 55 4E 56 1100 1000 0100 1000 0110 1000 1001 0110
+		//2B 55 4E 56 C8 48 68 96
+		byte[] payload = StringHelper.hexToByteArray("2B554E56C8486896");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.getFirst();
+		if(response.hasError())
+			Assertions.fail(response.getError());
+		NonByteMultipleLengthsHex message = (NonByteMultipleLengthsHex)response.getMessage();
+		Assertions.assertEquals("+UNV", message.messageHeader);
+		Assertions.assertEquals((byte)0b0000_0110, message.number0);
+		Assertions.assertEquals("BCD", message.text);
+		Assertions.assertEquals(0b0001_0110, message.number1);
 	}
 
 

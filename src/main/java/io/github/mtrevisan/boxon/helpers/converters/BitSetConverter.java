@@ -59,6 +59,14 @@ public interface BitSetConverter{
 				bitmap.set(k);
 	}
 
+	static BigInteger toBigIntegerLittleEndian(final BitSet bitmap){
+		BigInteger result = BigInteger.ZERO;
+		int i = -1;
+		while((i = bitmap.nextSetBit(i + 1)) >= 0)
+			result = result.setBit(i);
+		return result;
+	}
+
 	static BigInteger negateValue(final BigInteger result, final int bitSize){
 		final BigInteger mask = BigInteger.ONE
 			.shiftLeft(bitSize)
