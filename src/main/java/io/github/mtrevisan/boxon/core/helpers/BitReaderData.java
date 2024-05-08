@@ -198,7 +198,6 @@ abstract class BitReaderData{
 		offset += size - 1;
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
-			//TODO invert endianness
 			bitmap.set(offset - skip);
 			cache ^= (byte)(1 << (Byte.SIZE - 1 - skip));
 		}

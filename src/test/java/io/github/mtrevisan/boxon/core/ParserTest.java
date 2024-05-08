@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.core.codecs.queclink.UnevenBoundariesHex;
+import io.github.mtrevisan.boxon.core.codecs.queclink.NonByteMultipleLengthsHex;
 import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.TestHelper;
@@ -190,10 +190,10 @@ class ParserTest{
 	}
 
 	@Test
-	void parseUnevenBoundariesMessage() throws Exception{
+	void parseNonByteMultipleLengthsMessage() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(UnevenBoundariesHex.class)
+			.withTemplatesFrom(NonByteMultipleLengthsHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -208,9 +208,9 @@ class ParserTest{
 		Response<byte[], Object> response = result.getFirst();
 		if(response.hasError())
 			Assertions.fail(response.getError());
-		UnevenBoundariesHex message = (UnevenBoundariesHex)response.getMessage();
+		NonByteMultipleLengthsHex message = (NonByteMultipleLengthsHex)response.getMessage();
 		Assertions.assertEquals("+UNV", message.messageHeader);
-		Assertions.assertEquals((byte)0b1111_1100, message.number0);
+		Assertions.assertEquals((byte)0b0000_0110, message.number0);
 		Assertions.assertEquals("BCD", message.text);
 		Assertions.assertEquals(0b0001_0110, message.number1);
 	}

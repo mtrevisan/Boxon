@@ -54,17 +54,22 @@ public final class LittleEndianConverter implements BitSetConverter{
 
 	@Override
 	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
-		final boolean negative = bitmap.get(bitmapSize - 1);
-		final BigInteger result = toBigInteger(bitmap);
-		return (negative? BitSetConverter.negateValue(result, bitmapSize): result);
+		BigInteger result;
+		if(BitSetConverter.isMultipleOfByte(bitmapSize)){
+			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
+			if(bitmap.get(bitmapSize - 1))
+				result = BitSetConverter.negateValue(result, bitmapSize);
+		}
+		else
+			result = BitSetConverter.toBigIntegerLittleEndian(invertBitSetOrder(bitmap, bitmapSize));
+		return result;
 	}
 
-	private static BigInteger toBigInteger(final BitSet bitmap){
-		BigInteger result = BigInteger.ZERO;
-		int i = -1;
-		while((i = bitmap.nextSetBit(i + 1)) >= 0)
-			result = result.setBit(i);
-		return result;
+	private static BitSet invertBitSetOrder(final BitSet bitmap, final int bitmapSize){
+		final BitSet invertedBitmap = new BitSet(bitmapSize);
+		for(int i = bitmap.nextSetBit(0); i >= 0; i = bitmap.nextSetBit(i + 1))
+			invertedBitmap.set(bitmapSize - i - 1);
+		return invertedBitmap;
 	}
 
 }

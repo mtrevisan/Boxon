@@ -25,13 +25,12 @@
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 
 
 @TemplateHeader(start = "+UNV")
-public class UnevenBoundariesHex{
+public class NonByteMultipleLengthsHex{
 
 	@BindString(size = "4")
 	public String messageHeader;
