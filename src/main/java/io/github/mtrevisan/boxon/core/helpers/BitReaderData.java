@@ -156,15 +156,11 @@ abstract class BitReaderData{
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
 			skip = Byte.SIZE - 1 - skip;
-			//FIXME ????
-			bitmap |= 1l << (skip + (isMultipleOfByte(offset)? offset: -offset));
+			//FIXME what????
+			bitmap |= 1l << (skip + (JavaHelper.isMultipleOfByte(offset)? offset: -offset));
 			cache ^= (byte)(1 << skip);
 		}
 		return bitmap;
-	}
-
-	private static boolean isMultipleOfByte(final int number){
-		return (number != 0 && number % Byte.SIZE == 0);
 	}
 
 	/**
@@ -281,6 +277,7 @@ abstract class BitReaderData{
 		baos.flush();
 	}
 
+	//FIXME remove creation of snapshot
 	private Byte peekByte(){
 		//make a copy of internal variables
 		final Snapshot originalSnapshot = createSnapshot();

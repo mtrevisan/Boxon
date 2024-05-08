@@ -117,6 +117,11 @@ public final class JavaHelper{
 	}
 
 
+	public static boolean isMultipleOfByte(final int number){
+		return (number != 0 && number % Byte.SIZE == 0);
+	}
+
+
 	/**
 	 * Checks if the given text is an integer number, either in decimal or hexadecimal format.
 	 *

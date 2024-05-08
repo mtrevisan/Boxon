@@ -55,7 +55,7 @@ public final class LittleEndianConverter implements BitSetConverter{
 	@Override
 	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
 		BigInteger result;
-		if(BitSetConverter.isMultipleOfByte(bitmapSize)){
+		if(JavaHelper.isMultipleOfByte(bitmapSize)){
 			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
 			if(bitmap.get(bitmapSize - 1))
 				result = BitSetConverter.negateValue(result, bitmapSize);

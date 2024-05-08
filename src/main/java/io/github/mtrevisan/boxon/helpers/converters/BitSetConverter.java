@@ -67,10 +67,6 @@ public interface BitSetConverter{
 		return result;
 	}
 
-	static boolean isMultipleOfByte(final int number){
-		return (number != 0 && number % Byte.SIZE == 0);
-	}
-
 	static BigInteger negateValue(final BigInteger result, final int bitSize){
 		final BigInteger mask = BigInteger.ONE
 			.shiftLeft(bitSize)
