@@ -152,15 +152,22 @@ abstract class BitReaderData{
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
 	 */
-	private long readFromCache(long bitmap, final int offset, final int size){
+	private long readFromCache(long bitmap, int offset, final int size){
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
-			skip = Byte.SIZE - 1 - skip;
 			//FIXME what????
-			bitmap |= 1l << (skip + (JavaHelper.isMultipleOfByte(offset)? offset: -offset));
-			cache ^= (byte)(1 << skip);
+			bitmap |= 1l << (Byte.SIZE - 1 - skip + (JavaHelper.isMultipleOfByte(offset)? offset: -offset));
+			cache ^= (byte)(0x80 >> skip);
 		}
 		return bitmap;
+
+//		offset += size - 1;
+//		int skip;
+//		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
+//			bitmap |= 1l << (offset - skip);
+//			cache ^= (byte)(0x80 >> skip);
+//		}
+//		return bitmap;
 	}
 
 	/**
@@ -200,7 +207,7 @@ abstract class BitReaderData{
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
 			bitmap.set(offset - skip);
-			cache ^= (byte)(1 << (Byte.SIZE - 1 - skip));
+			cache ^= (byte)(0x80 >> skip);
 		}
 	}
 
