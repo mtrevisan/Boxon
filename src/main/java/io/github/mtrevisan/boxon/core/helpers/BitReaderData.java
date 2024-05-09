@@ -152,7 +152,7 @@ abstract class BitReaderData{
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
 	 */
-	private long readFromCache(long bitmap, int offset, final int size){
+	private long readFromCache(long bitmap, final int offset, final int size){
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
 			//FIXME what????
@@ -160,14 +160,6 @@ abstract class BitReaderData{
 			cache ^= (byte)(0x80 >> skip);
 		}
 		return bitmap;
-
-//		offset += size - 1;
-//		int skip;
-//		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
-//			bitmap |= 1l << (offset - skip);
-//			cache ^= (byte)(0x80 >> skip);
-//		}
-//		return bitmap;
 	}
 
 	/**
@@ -235,8 +227,6 @@ abstract class BitReaderData{
 	}
 
 	private void consumeCache(final int size){
-		//remove read bits from the cache
-		cache <<= size;
 		remaining -= size;
 	}
 

@@ -57,7 +57,7 @@ public final class BitSetHelper{
 	 * @param value	The value to convert to {@link BitSet}.
 	 * @return	The created {@link BitSet}.
 	 */
-	public static BitSet createBitSet(final int bitmapSize, long value){
+	static BitSet createBitSet(final int bitmapSize, long value){
 		final BitSet bitmap = new BitSet(bitmapSize);
 
 		while(value != 0){
@@ -93,7 +93,7 @@ public final class BitSetHelper{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	public static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
+	static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
 			.toObjectiveType(bitmap, bitmapSize);
 	}

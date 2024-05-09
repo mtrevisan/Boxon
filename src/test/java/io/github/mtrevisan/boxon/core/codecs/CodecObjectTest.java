@@ -42,6 +42,7 @@ import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Describer;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -176,7 +177,7 @@ class CodecObjectTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		Version decoded = (Version)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertNotNull(decoded);

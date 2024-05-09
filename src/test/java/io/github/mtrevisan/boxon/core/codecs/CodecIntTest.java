@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -106,7 +107,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("0000FF80", writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -171,7 +172,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("FF7F0000", writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -236,7 +237,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("0000FF7F", writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -302,7 +303,7 @@ class CodecIntTest{
 		String expected = StringHelper.toHexString(Integer.reverseBytes(encodedValue), Integer.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -367,7 +368,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("80FF0000", writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -432,7 +433,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("00007FFF", writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -497,7 +498,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("7FFF0000", writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 
@@ -562,7 +563,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Integer.BYTES), writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
 			.intValue();
 

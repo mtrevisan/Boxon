@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -56,7 +57,7 @@ class TemplateParserTest{
 	@Test
 	void parseSingleMessageHex() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -86,7 +87,7 @@ class TemplateParserTest{
 	@Test
 	void parseSingleMessageHexByteChecksum() throws Exception{
 		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -120,7 +121,7 @@ class TemplateParserTest{
 	@Test
 	void parseSingleMessageASCII() throws BoxonException{
 		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -166,7 +167,7 @@ class TemplateParserTest{
 	@Test
 	void parseWithConditionError() throws AnnotationException{
 		byte[] payload = StringHelper.hexToByteArray("746335011234");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -270,7 +271,7 @@ class TemplateParserTest{
 	@Test
 	void parseCompositeMessage1() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("746D310102016162");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -335,7 +336,7 @@ class TemplateParserTest{
 	@Test
 	void parseCompositeMessage21() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("746D3201016162");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
@@ -363,7 +364,7 @@ class TemplateParserTest{
 	@Test
 	void parseCompositeMessage22() throws BoxonException{
 		byte[] payload = StringHelper.hexToByteArray("7463320202616263");
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();

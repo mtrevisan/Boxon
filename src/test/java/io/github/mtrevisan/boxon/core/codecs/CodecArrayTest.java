@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -164,7 +165,7 @@ class CodecArrayTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		Object decoded = codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
@@ -274,7 +275,7 @@ class CodecArrayTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		Version[] decoded = (Version[])codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);

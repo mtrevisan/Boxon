@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -113,7 +114,7 @@ class CodecDefaultTest{
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -179,7 +180,7 @@ class CodecDefaultTest{
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
-		BitReaderInterface reader = io.github.mtrevisan.boxon.core.helpers.BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
