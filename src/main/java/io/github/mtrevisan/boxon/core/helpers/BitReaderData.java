@@ -197,7 +197,14 @@ abstract class BitReaderData{
 	 *
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	final synchronized void skipBits(final int bitsToSkip){
+	final synchronized void skipBits(int bitsToSkip){
+		//skip multiple of bytes
+		final int bytesToSkip = bitsToSkip / Byte.SIZE;
+		if(bytesToSkip > 0)
+			buffer.position(buffer.position() + bytesToSkip);
+
+		//skip bits
+		bitsToSkip %= bytesToSkip;
 		int bitsSkipped = 0;
 		while(bitsSkipped < bitsToSkip){
 			//if cache is empty and there are more bits to be read, fill it
@@ -235,8 +242,7 @@ abstract class BitReaderData{
 	 * @throws IOException	If an I/O error occurs.
 	 */
 	final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
-		Byte byteRead;
-		while((byteRead = peekByte()) != null && byteRead != terminator)
+		while(hasNextByte(terminator))
 			baos.write(getByte());
 		baos.flush();
 	}
@@ -259,23 +265,39 @@ abstract class BitReaderData{
 		baos.flush();
 	}
 
-	//FIXME remove creation of snapshot (add a method `hasNextByte`)
-	private Byte peekByte(){
-		//make a copy of internal variables
-		final Snapshot originalSnapshot = createSnapshot();
+	//FIXME refactor
+	private boolean hasNextByte(final byte terminator){
+		byte bitmap = 0;
+		int bitsToRead = Byte.SIZE;
+		byte forecastCache = cache;
+		int forecastRemaining = remaining;
+		int offset = 0;
+		//cycle 1 or 2 times at most, since a byte can be split at most in two
+		while(bitsToRead > 0){
+			//if cache is empty and there are more bits to be read, fill it
+			if(forecastRemaining == 0){
+				if(buffer.position() + offset >= buffer.limit())
+					return false;
 
-		Byte b = null;
-		try{
-			b = getByte();
+				//fill cache
+				forecastCache = buffer.get(buffer.position() + offset);
+				forecastRemaining = Byte.SIZE;
+			}
+
+			final int length = Math.min(bitsToRead, forecastRemaining);
+			bitsToRead -= length;
+
+			final long mask = (0xFFl << (Byte.SIZE - length));
+			if(length >= forecastRemaining)
+				bitmap |= (byte)((forecastCache & mask & 0xFF) << bitsToRead);
+			else
+				bitmap |= (byte)((forecastCache & mask & 0xFF) >> (forecastRemaining - length));
+
+			forecastCache &= (byte)~mask;
+			forecastRemaining -= length;
+			offset ++;
 		}
-		catch(final BufferUnderflowException ignored){
-			//trap end-of-buffer
-		}
-		finally{
-			//restore original variables
-			restoreSnapshot(originalSnapshot);
-		}
-		return b;
+		return (bitmap != terminator);
 	}
 
 	private byte[] peekString(final byte[] peekBuffer){
