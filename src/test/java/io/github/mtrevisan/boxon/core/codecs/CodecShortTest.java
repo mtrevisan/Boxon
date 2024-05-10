@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 
 
 class CodecShortTest{
@@ -108,7 +107,7 @@ class CodecShortTest{
 		Assertions.assertEquals("1000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -173,7 +172,7 @@ class CodecShortTest{
 		Assertions.assertEquals("0010", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -238,7 +237,7 @@ class CodecShortTest{
 		Assertions.assertEquals("1080", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -304,7 +303,7 @@ class CodecShortTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -369,7 +368,7 @@ class CodecShortTest{
 		Assertions.assertEquals("8F00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -434,7 +433,7 @@ class CodecShortTest{
 		Assertions.assertEquals("007F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -499,7 +498,7 @@ class CodecShortTest{
 		Assertions.assertEquals("7F00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -565,7 +564,7 @@ class CodecShortTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		short decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.shortValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

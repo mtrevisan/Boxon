@@ -43,7 +43,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 
 
 class CodecByteTest{
@@ -108,7 +107,7 @@ class CodecByteTest{
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		byte decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		byte decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.byteValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

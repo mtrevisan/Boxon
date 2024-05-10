@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 
 
 class CodecLongTest{
@@ -108,7 +107,7 @@ class CodecLongTest{
 		Assertions.assertEquals("0000FFFF0000FF8F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -173,7 +172,7 @@ class CodecLongTest{
 		Assertions.assertEquals("00FF007F00000000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -238,7 +237,7 @@ class CodecLongTest{
 		Assertions.assertEquals("0000000000FF007F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -304,7 +303,7 @@ class CodecLongTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -369,7 +368,7 @@ class CodecLongTest{
 		Assertions.assertEquals("8FFF000000000011", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -434,7 +433,7 @@ class CodecLongTest{
 		Assertions.assertEquals("000000007F00FF00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -499,7 +498,7 @@ class CodecLongTest{
 		Assertions.assertEquals("7F00FF0000000000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -564,7 +563,7 @@ class CodecLongTest{
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Long.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

@@ -52,7 +52,7 @@ final class CodecDefault implements Codec{
 	 */
 	static class DefaultCodecIdentifier implements Annotation{
 		@Override
-		public Class<? extends Annotation> annotationType(){
+		public final Class<? extends Annotation> annotationType(){
 			return DefaultCodecIdentifier.class;
 		}
 	}

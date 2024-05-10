@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 
 
 class CodecIntTest{
@@ -108,7 +107,7 @@ class CodecIntTest{
 		Assertions.assertEquals("0000FF80", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -173,7 +172,7 @@ class CodecIntTest{
 		Assertions.assertEquals("FF7F0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -238,7 +237,7 @@ class CodecIntTest{
 		Assertions.assertEquals("0000FF7F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -304,7 +303,7 @@ class CodecIntTest{
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -369,7 +368,7 @@ class CodecIntTest{
 		Assertions.assertEquals("80FF0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -434,7 +433,7 @@ class CodecIntTest{
 		Assertions.assertEquals("00007FFF", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -499,7 +498,7 @@ class CodecIntTest{
 		Assertions.assertEquals("7FFF0000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -564,7 +563,7 @@ class CodecIntTest{
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Integer.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		int decoded = ((BigInteger)codec.decode(reader, annotation, null, null))
+		int decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.intValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

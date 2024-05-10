@@ -77,7 +77,7 @@ public abstract class CommonBehavior{
 		return convertValueType(collectionBinding, chosenConverter, validator, value);
 	}
 
-	public Class<? extends Converter<?, ?>> getChosenConverter(final Evaluator evaluator, final Object rootObject){
+	public final Class<? extends Converter<?, ?>> getChosenConverter(final Evaluator evaluator, final Object rootObject){
 		return CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator, rootObject);
 	}
 

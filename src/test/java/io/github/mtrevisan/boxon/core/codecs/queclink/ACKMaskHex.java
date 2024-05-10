@@ -28,9 +28,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 
 
-public class ACKMaskHex{
+public final class ACKMaskHex{
 
-	public static class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
+	public static final class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
 		@Override
 		public ACKMaskHex decode(final Byte value){
 			return new ACKMaskHex(value);

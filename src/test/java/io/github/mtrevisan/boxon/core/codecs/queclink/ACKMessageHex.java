@@ -42,7 +42,7 @@ import java.util.Map;
 
 
 @TemplateHeader(start = "+ACK", end = "\r\n")
-public class ACKMessageHex{
+public final class ACKMessageHex{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
 	static{
@@ -92,7 +92,7 @@ public class ACKMessageHex{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
-	public static class MessageTypeConverter implements Converter<Byte, String>{
+	public static final class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);

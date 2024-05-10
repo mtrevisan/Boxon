@@ -59,12 +59,13 @@ class TemplateCoderBase{
 	 *
 	 * @param eventListener	The event listener.
 	 */
-	void withEventListener(final EventListener eventListener){
+	final void withEventListener(final EventListener eventListener){
 		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
 
-	protected void processFields(final Template<?> template, final ParserContext<?> parserContext, final Function<PostProcess, String> valueExtractor){
+	protected final void processFields(final Template<?> template, final ParserContext<?> parserContext,
+			final Function<PostProcess, String> valueExtractor){
 		final String templateName = template.getType()
 			.getName();
 		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
@@ -96,7 +97,7 @@ class TemplateCoderBase{
 		eventListener.evaluatedField(templateName, fieldName, value);
 	}
 
-	protected boolean shouldProcessField(final String condition, final Object rootObject){
+	protected final boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 

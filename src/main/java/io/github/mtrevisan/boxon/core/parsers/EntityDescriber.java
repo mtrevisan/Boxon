@@ -29,7 +29,8 @@ final class EntityDescriber{
 	 * @throws BoxonException If a field exception occurs during the mapping process.
 	 * @return The list of descriptions for the entities.
 	 */
-	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities, final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException{
+	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
+			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException{
 		final List<Map<String, Object>> descriptions = new ArrayList<>(entities.size());
 		for(final T entity : entities)
 			descriptions.add(mapper.apply(entity));
@@ -78,7 +79,8 @@ final class EntityDescriber{
 			final Class<?> entityClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException, E{
 		if(!entityClass.isAnnotationPresent(annotationClass))
-			throw AnnotationException.create("Entity {} didn't have the `{}` annotation", entityClass.getSimpleName(), annotationClass.getSimpleName());
+			throw AnnotationException.create("Entity {} didn't have the `{}` annotation",
+				entityClass.getSimpleName(), annotationClass.getSimpleName());
 
 		final T entity = extractor.apply(entityClass);
 		return Collections.unmodifiableMap(mapper.apply(entity));
