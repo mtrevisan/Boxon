@@ -36,11 +36,11 @@ public interface BitSetConverter{
 	/**
 	 * Creates a {@link BitSet} with the given {@link BigInteger} value and `bitmapSize`.
 	 *
-	 * @param bitmapSize	The number of bits in the {@link BitSet}.
-	 * @param value	The {@link BigInteger} value used to initialize the {@link BitSet}.
-	 * @return	A new {@link BitSet} initialized with the given value and `bitmapSize`.
+	 * @param value      The {@link BigInteger} value used to initialize the {@link BitSet}.
+	 * @param bitmapSize The number of bits in the {@link BitSet}.
+	 * @return A new {@link BitSet} initialized with the given value and `bitmapSize`.
 	 */
-	BitSet createBitSet(int bitmapSize, BigInteger value);
+	BitSet createBitSet(BigInteger value, int bitmapSize);
 
 	/**
 	 * Converts a {@link BitSet} to a {@link BigInteger}.
@@ -57,6 +57,23 @@ public interface BitSetConverter{
 		for(int j = 0, k = index << 3; j < Byte.SIZE && k < size; j ++, k ++)
 			if(((currentByte >> j) & 1) != 0)
 				bitmap.set(k);
+	}
+
+
+	static BigInteger toBigIntegerBigEndian(final BitSet bitmap, final int bitmapSize){
+		BigInteger result = BigInteger.ZERO;
+		int i = -1;
+		while((i = bitmap.nextSetBit(i + 1)) >= 0)
+			result = result.setBit(calculateTrueIndex(i, bitmapSize));
+		return result;
+	}
+
+
+	private static int calculateTrueIndex(final int i, final int bitSize){
+		final int index = bitSize - 1 - i;
+		final int offsetByteIndex = index / Byte.SIZE + 1;
+		final int offsetBitIndex = index % Byte.SIZE + 1;
+		return offsetByteIndex * Byte.SIZE - offsetBitIndex;
 	}
 
 	static BigInteger toBigIntegerLittleEndian(final BitSet bitmap){

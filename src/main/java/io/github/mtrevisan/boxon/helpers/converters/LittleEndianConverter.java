@@ -35,16 +35,17 @@ public final class LittleEndianConverter implements BitSetConverter{
 	/**
 	 * Creates a {@link BitSet} with the given value.
 	 *
-	 * @param bitmapSize	The size in bits of the value.
-	 * @param value	The value, must not be {@code null}.
-	 * @return	A new bit set initialized with the given value.
+	 * @param value      The value, must not be {@code null}.
+	 * @param bitmapSize The size in bits of the value.
+	 * @return A new bit set initialized with the given value.
 	 */
 	@Override
-	public BitSet createBitSet(final int bitmapSize, final BigInteger value){
+	public BitSet createBitSet(final BigInteger value, final int bitmapSize){
 		final BitSet bitmap = new BitSet(bitmapSize);
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
 		for(int i = 0, length = JavaHelper.getSizeInBytes(bitmapSize); i < length; i ++){
-			final byte currentByte = value.shiftRight(i << 3)
+			final int byteIndex = length - 1 - i;
+			final byte currentByte = value.shiftRight(byteIndex << 3)
 				.byteValue();
 
 			BitSetConverter.fillBits(bitmap, currentByte, i, bitmapSize);
@@ -56,20 +57,13 @@ public final class LittleEndianConverter implements BitSetConverter{
 	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
 		BigInteger result;
 		if(JavaHelper.isMultipleOfByte(bitmapSize)){
-			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
-			if(bitmap.get(bitmapSize - 1))
+			result = BitSetConverter.toBigIntegerBigEndian(bitmap, bitmapSize);
+			if(bitmap.get(7))
 				result = BitSetConverter.negateValue(result, bitmapSize);
 		}
 		else
-			result = BitSetConverter.toBigIntegerLittleEndian(invertBitSetOrder(bitmap, bitmapSize));
+			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
 		return result;
-	}
-
-	private static BitSet invertBitSetOrder(final BitSet bitmap, final int bitmapSize){
-		final BitSet invertedBitmap = new BitSet(bitmapSize);
-		for(int i = bitmap.nextSetBit(0); i >= 0; i = bitmap.nextSetBit(i + 1))
-			invertedBitmap.set(bitmapSize - i - 1);
-		return invertedBitmap;
 	}
 
 }

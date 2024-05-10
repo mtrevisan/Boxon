@@ -112,7 +112,7 @@ class CodecDefaultTest{
 		// with `toByteArray`
 		if(bb.length != randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
-		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
+		Assertions.assertEquals(StringHelper.toHexString(TestHelper.reverseBytes(bb, bb.length)), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, null);
@@ -125,7 +125,7 @@ class CodecDefaultTest{
 		Codec codec = new CodecDefault();
 		byte[] randomBytes = new byte[123];
 		TestHelper.RANDOM.nextBytes(randomBytes);
-		BitSet encodedValue = BitSet.valueOf(randomBytes);
+		BitSet encodedValue = BitSet.valueOf(TestHelper.reverseBytes(randomBytes, randomBytes.length));
 		BindBitSet annotation = new BindBitSet(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -178,7 +178,7 @@ class CodecDefaultTest{
 		// with `toByteArray`
 		if(bb.length != randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
-		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
+		Assertions.assertEquals(StringHelper.toHexString(TestHelper.reverseBytes(bb, randomBytes.length)), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, null);

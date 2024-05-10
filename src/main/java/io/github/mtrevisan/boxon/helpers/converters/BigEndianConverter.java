@@ -35,17 +35,16 @@ public final class BigEndianConverter implements BitSetConverter{
 	/**
 	 * Creates a {@link BitSet} with the given value.
 	 *
-	 * @param bitmapSize	The size in bits of the value.
-	 * @param value	The value, must not be {@code null}.
-	 * @return	A new bit set initialized with the given value.
+	 * @param value      The value, must not be {@code null}.
+	 * @param bitmapSize The size in bits of the value.
+	 * @return A new bit set initialized with the given value.
 	 */
 	@Override
-	public BitSet createBitSet(final int bitmapSize, final BigInteger value){
+	public BitSet createBitSet(final BigInteger value, final int bitmapSize){
 		final BitSet bitmap = new BitSet(bitmapSize);
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
 		for(int i = 0, length = JavaHelper.getSizeInBytes(bitmapSize); i < length; i ++){
-			final int byteIndex = length - 1 - i;
-			final byte currentByte = value.shiftRight(byteIndex << 3)
+			final byte currentByte = value.shiftRight(i << 3)
 				.byteValue();
 
 			BitSetConverter.fillBits(bitmap, currentByte, i, bitmapSize);
@@ -57,29 +56,13 @@ public final class BigEndianConverter implements BitSetConverter{
 	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
 		BigInteger result;
 		if(JavaHelper.isMultipleOfByte(bitmapSize)){
-			result = toBigIntegerBigEndian(bitmap, bitmapSize);
-			if(bitmap.get(7))
+			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
+			if(bitmap.get(bitmapSize - 1))
 				result = BitSetConverter.negateValue(result, bitmapSize);
 		}
 		else
 			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
 		return result;
-	}
-
-	private static BigInteger toBigIntegerBigEndian(final BitSet bitmap, final int bitmapSize){
-		BigInteger result = BigInteger.ZERO;
-		int i = -1;
-		while((i = bitmap.nextSetBit(i + 1)) >= 0)
-			result = result.setBit(calculateTrueIndex(i, bitmapSize));
-		return result;
-	}
-
-
-	private static int calculateTrueIndex(final int i, final int bitSize){
-		final int index = bitSize - 1 - i;
-		final int offsetByteIndex = index / Byte.SIZE + 1;
-		final int offsetBitIndex = index % Byte.SIZE + 1;
-		return offsetByteIndex * Byte.SIZE - offsetBitIndex;
 	}
 
 }

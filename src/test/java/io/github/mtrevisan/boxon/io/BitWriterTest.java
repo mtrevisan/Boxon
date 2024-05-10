@@ -50,7 +50,7 @@ class BitWriterTest{
 		writer.putBitSet(value, Long.SIZE << 1);
 		BitReaderInterface reader = BitReader.wrap(writer);
 
-		Assertions.assertEquals("78563412785634129999888877776666", reader.toString());
+		Assertions.assertEquals("66667777888899991234567812345678", reader.toString());
 		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1));
 	}
 

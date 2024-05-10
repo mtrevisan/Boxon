@@ -52,4 +52,14 @@ public final class TestHelper{
 		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
+	public static byte[] reverseBytes(final byte[] array, final int arraySize){
+		if(array == null)
+			return null;
+
+		final byte[] reversedArray = new byte[arraySize];
+		for(int i = 0, length = Math.min(arraySize, array.length) ; i < length; i ++)
+			reversedArray[i + arraySize - array.length] = array[length - i - 1];
+		return reversedArray;
+	}
+
 }

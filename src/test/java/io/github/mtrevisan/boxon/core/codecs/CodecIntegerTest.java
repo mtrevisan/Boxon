@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -493,7 +494,8 @@ class CodecIntegerTest{
 		writer.flush();
 
 		BitSet bitmap = BitSetHelper.createBitSet(128, encodedValue, ByteOrder.LITTLE_ENDIAN);
-		Assertions.assertEquals(rightPad(StringHelper.toHexString(bitmap.toByteArray()), 32, '0'), writer.toString());
+		Assertions.assertEquals(rightPad(StringHelper.toHexString(TestHelper.reverseBytes(bitmap.toByteArray(), 128 / Byte.SIZE)),
+			32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null, null);

@@ -121,43 +121,29 @@ abstract class BitReaderData{
 
 
 	/**
-	 * Reads the next {@code length} bits and composes a long in little-endian notation.
+	 * Reads the next {@code length} bits and composes a long in big-endian notation.
 	 *
 	 * @param bitsToRead	The amount of bits to read.
 	 * @return	A long value at the {@link BitReader}'s current position.
 	 */
-	final synchronized long getNumber(final int bitsToRead){
+	final synchronized long getNumber(int bitsToRead){
 		long bitmap = 0l;
-
-		int bitsRead = 0;
-		while(bitsRead < bitsToRead){
+		while(bitsToRead > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remaining == 0)
 				fillCache();
 
-			final int length = Math.min(bitsToRead - bitsRead, remaining);
-			bitmap = readFromCache(bitmap, bitsRead, length);
-			bitsRead += length;
+			final int length = Math.min(bitsToRead, remaining);
+			bitsToRead -= length;
 
-			consumeCache(length);
-		}
-		return bitmap;
-	}
+			final long mask = (0xFFl << (Byte.SIZE - length));
+			if(length >= remaining)
+				bitmap |= (cache & mask & 0xFF) << bitsToRead;
+			else
+				bitmap |= (cache & mask & 0xFF) >> (remaining - length);
 
-	/**
-	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a>
-	 * with a given offset.
-	 *
-	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
-	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
-	 */
-	private long readFromCache(long bitmap, final int offset, final int size){
-		int skip;
-		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
-			//FIXME what????
-			bitmap |= 1l << (Byte.SIZE - 1 - skip + (JavaHelper.isMultipleOfByte(offset)? offset: -offset));
-			cache ^= (byte)(0x80 >> skip);
+			cache &= (byte)~mask;
+			remaining -= length;
 		}
 		return bitmap;
 	}
@@ -168,18 +154,16 @@ abstract class BitReaderData{
 	 * @param bitsToRead	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final synchronized BitSet getBitSet(final int bitsToRead){
+	public final synchronized BitSet getBitSet(int bitsToRead){
 		final BitSet bitmap = new BitSet(bitsToRead);
-
-		int bitsRead = 0;
-		while(bitsRead < bitsToRead){
+		while(bitsToRead > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remaining == 0)
 				fillCache();
 
-			final int length = Math.min(bitsToRead - bitsRead, remaining);
-			readFromCache(bitmap, bitsRead, length);
-			bitsRead += length;
+			final int length = Math.min(bitsToRead, remaining);
+			readFromCache(bitmap, bitsToRead - 1, length);
+			bitsToRead -= length;
 
 			consumeCache(length);
 		}
@@ -194,12 +178,13 @@ abstract class BitReaderData{
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
 	 */
-	private void readFromCache(final BitSet bitmap, int offset, final int size){
-		offset += size - 1;
+	private void readFromCache(final BitSet bitmap, final int offset, final int size){
+		final int consumed = Byte.SIZE - remaining;
 		int skip;
-		while(cache != 0 && (skip = cacheLeadingZeros()) < size){
+		while(cache != 0 && (skip = cacheLeadingZeros() - consumed) < size){
 			bitmap.set(offset - skip);
-			cache ^= (byte)(0x80 >> skip);
+
+			cache ^= (byte)(0x80 >> (skip + consumed));
 		}
 	}
 
@@ -274,7 +259,7 @@ abstract class BitReaderData{
 		baos.flush();
 	}
 
-	//FIXME remove creation of snapshot
+	//FIXME remove creation of snapshot (add a method `hasNextByte`)
 	private Byte peekByte(){
 		//make a copy of internal variables
 		final Snapshot originalSnapshot = createSnapshot();

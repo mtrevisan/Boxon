@@ -81,7 +81,7 @@ public final class BitSetHelper{
 	 */
 	public static BitSet createBitSet(final int bitmapSize, final BigInteger value, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
-			.createBitSet(bitmapSize, value);
+			.createBitSet(value, bitmapSize);
 	}
 
 

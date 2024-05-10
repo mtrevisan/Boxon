@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -247,7 +246,6 @@ class ParserTest{
 	}
 
 	@Test
-//	@Disabled
 	void parseNonByteMultipleLengths2Message() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
