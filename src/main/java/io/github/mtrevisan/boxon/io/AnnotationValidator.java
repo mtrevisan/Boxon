@@ -36,7 +36,7 @@ public interface AnnotationValidator{
 	 *
 	 * @param fieldType	The field class associated with the annotation.
 	 * @param annotation	The annotation.
-	 * @throws AnnotationException   If an error is detected.
+	 * @throws AnnotationException	If an error is detected.
 	 */
 	void validate(Class<?> fieldType, Annotation annotation) throws AnnotationException;
 

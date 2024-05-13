@@ -136,14 +136,15 @@ abstract class BitReaderData{
 			final int length = Math.min(bitsToRead, remaining);
 			bitsToRead -= length;
 
-			final long mask = (0xFFl << (Byte.SIZE - length));
-			if(length >= remaining)
-				bitmap |= (cache & mask & 0xFF) << bitsToRead;
+			final long mask = (0xFFl << byteComplement(length)) & 0xFFl;
+			final int shift = remaining - length;
+			if(shift == 0)
+				bitmap |= (cache & mask) << bitsToRead;
 			else
-				bitmap |= (cache & mask & 0xFF) >> (remaining - length);
+				bitmap |= (cache & mask) >>> shift;
 
 			cache &= (byte)~mask;
-			remaining -= length;
+			consumeCache(length);
 		}
 		return bitmap;
 	}
@@ -179,7 +180,7 @@ abstract class BitReaderData{
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
 	 */
 	private void readFromCache(final BitSet bitmap, final int offset, final int size){
-		final int consumed = Byte.SIZE - remaining;
+		final int consumed = byteComplement(remaining);
 		int skip;
 		while(cache != 0 && (skip = cacheLeadingZeros() - consumed) < size){
 			bitmap.set(offset - skip);
@@ -197,14 +198,7 @@ abstract class BitReaderData{
 	 *
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	final synchronized void skipBits(int bitsToSkip){
-		//skip multiple of bytes
-		final int bytesToSkip = bitsToSkip / Byte.SIZE;
-		if(bytesToSkip > 0)
-			buffer.position(buffer.position() + bytesToSkip);
-
-		//skip bits
-		bitsToSkip %= bytesToSkip;
+	final synchronized void skipBits(final int bitsToSkip){
 		int bitsSkipped = 0;
 		while(bitsSkipped < bitsToSkip){
 			//if cache is empty and there are more bits to be read, fill it
@@ -216,6 +210,10 @@ abstract class BitReaderData{
 
 			consumeCache(length);
 		}
+	}
+
+	private static int byteComplement(final int bits){
+		return Byte.SIZE - bits;
 	}
 
 	private void consumeCache(final int size){
@@ -267,8 +265,10 @@ abstract class BitReaderData{
 
 	//FIXME refactor
 	private boolean hasNextByte(final byte terminator){
-		byte bitmap = 0;
+		int bitmap = 0;
 		int bitsToRead = Byte.SIZE;
+		final int currentPosition = buffer.position();
+		final int maxOffset = buffer.limit() - currentPosition;
 		byte forecastCache = cache;
 		int forecastRemaining = remaining;
 		int offset = 0;
@@ -276,22 +276,23 @@ abstract class BitReaderData{
 		while(bitsToRead > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(forecastRemaining == 0){
-				if(buffer.position() + offset >= buffer.limit())
+				if(offset >= maxOffset)
 					return false;
 
 				//fill cache
-				forecastCache = buffer.get(buffer.position() + offset);
+				forecastCache = buffer.get(currentPosition + offset);
 				forecastRemaining = Byte.SIZE;
 			}
 
 			final int length = Math.min(bitsToRead, forecastRemaining);
 			bitsToRead -= length;
 
-			final long mask = (0xFFl << (Byte.SIZE - length));
-			if(length >= forecastRemaining)
-				bitmap |= (byte)((forecastCache & mask & 0xFF) << bitsToRead);
+			final byte mask = (byte)(0xFF << byteComplement(length));
+			final int shift = forecastRemaining - length;
+			if(shift == 0)
+				bitmap |= ((forecastCache & mask) << bitsToRead);
 			else
-				bitmap |= (byte)((forecastCache & mask & 0xFF) >> (forecastRemaining - length));
+				bitmap |= ((forecastCache & mask) >> shift);
 
 			forecastCache &= (byte)~mask;
 			forecastRemaining -= length;
