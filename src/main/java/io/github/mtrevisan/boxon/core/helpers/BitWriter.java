@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
  * A writer bit-by-bit to a byte array.
  *
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks</a>
- * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
+ * @see <a href="https://github.com/scemama/Bit-Twiddling-Hacks-By-Sean-Eron-Anderson">Bit Twiddling Hacks</a>
  */
 public final class BitWriter extends BitWriterData implements BitWriterInterface{
 

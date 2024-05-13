@@ -94,7 +94,7 @@ class BitWriterData{
 
 			final long mask = (1l << length) - 1;
 			cache |= (byte)((value >> bitsToWrite) & mask);
-			remaining -= length;
+			consumeCache(length);
 
 			//if cache is full, write it
 			if(remaining == 0){
@@ -117,8 +117,8 @@ class BitWriterData{
 			final int length = Math.min(bitsToWrite, remaining);
 
 			final byte nextCache = getNextByte(bitmap, bitsToWrite - 1, length);
-			cache = (byte)((cache << (Byte.SIZE - length)) | nextCache);
-			remaining -= length;
+			cache = (byte)((cache << byteComplement(length)) | nextCache);
+			consumeCache(length);
 			bitsToWrite -= length;
 
 			//if cache is full, write it
@@ -140,7 +140,7 @@ class BitWriterData{
 	 */
 	private byte getNextByte(final BitSet bitmap, final int offset, final int size){
 		byte valueRead = 0;
-		final int consumed = Byte.SIZE - remaining;
+		final int consumed = byteComplement(remaining);
 		int index = offset + 2;
 		while((index = bitmap.previousSetBit(index - 1) - consumed) >= 0 && offset - index < size)
 			valueRead |= (byte)(0x80 >> (offset - index));
@@ -150,16 +150,16 @@ class BitWriterData{
 	/**
 	 * Skip {@code length} bits.
 	 *
-	 * @param bitsToWrite	The amount of bits to skip.
+	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	public final synchronized void skipBits(int bitsToWrite){
-		while(bitsToWrite > 0){
+	public final synchronized void skipBits(int bitsToSkip){
+		while(bitsToSkip > 0){
 			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToWrite, remaining);
-			bitsToWrite -= length;
+			final int length = Math.min(bitsToSkip, remaining);
+			bitsToSkip -= length;
 
 			cache <<= length;
-			remaining -= length;
+			consumeCache(length);
 
 			//if cache is full, write it
 			if(remaining == 0){
@@ -174,12 +174,20 @@ class BitWriterData{
 	/** Flush a minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
 	public final synchronized void flush(){
 		//put the cache into the buffer
-		remaining = Byte.SIZE - remaining;
+		remaining = byteComplement(remaining);
 		if(remaining > 0)
 			//align the remaining bits in the cache
 			os.write(cache << remaining);
 
 		resetCache();
+	}
+
+	private static int byteComplement(final int bits){
+		return Byte.SIZE - bits;
+	}
+
+	private void consumeCache(final int size){
+		remaining -= size;
 	}
 
 	private void resetCache(){

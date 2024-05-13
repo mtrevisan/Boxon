@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core.codecs.behaviors;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
@@ -39,8 +38,6 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 	private final byte terminator;
 	private final boolean consumeTerminator;
 
-	private final int terminatorLength;
-
 
 	StringTerminatedBehavior(final byte terminator, final boolean consumeTerminator, final Charset charset,
 			final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
@@ -49,15 +46,14 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 
 		this.terminator = terminator;
 		this.consumeTerminator = consumeTerminator;
-
-		terminatorLength = ParserDataType.getSize(terminator);
 	}
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
 		final String text = reader.getTextUntilTerminator(terminator, charset);
 		if(consumeTerminator)
-			reader.skip(terminatorLength);
+			//`terminator` is a byte
+			reader.skip(Byte.SIZE);
 		return text;
 	}
 

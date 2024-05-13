@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
@@ -152,10 +151,9 @@ final class TemplateDecoder extends TemplateCoderBase{
 		else{
 			final byte terminator = skip.terminator();
 			reader.skipUntilTerminator(terminator);
-			if(skip.consumeTerminator()){
-				final int length = ParserDataType.getSize(terminator);
-				reader.skip(length);
-			}
+			if(skip.consumeTerminator())
+				//`terminator` is a byte
+				reader.skip(Byte.SIZE);
 		}
 	}
 
