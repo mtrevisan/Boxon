@@ -39,21 +39,51 @@ class PatternMatcherTest{
 	void indexOfBNDM(){
 		PatternMatcher pm = BNDMPatternMatcher.getInstance();
 
-		testIndexOf(pm);
+		testIndexOf1(pm);
+		testIndexOf2(pm);
+		testIndexOf3(pm);
+		testIndexOf4(pm);
+		testIndexOf5(pm);
+		testIndexOf6(pm);
+		testIndexOf7(pm);
+		testIndexOf8(pm);
+		testIndexOf9(pm);
+		testIndexOf10(pm);
+		testIndexOf11(pm);
 	}
 
 	@Test
 	void indexOfKMP(){
 		PatternMatcher pm = KMPPatternMatcher.getInstance();
 
-		testIndexOf(pm);
+		testIndexOf1(pm);
+		testIndexOf2(pm);
+		testIndexOf3(pm);
+		testIndexOf4(pm);
+		testIndexOf5(pm);
+		testIndexOf6(pm);
+		testIndexOf7(pm);
+		testIndexOf8(pm);
+		testIndexOf9(pm);
+		testIndexOf10(pm);
+		testIndexOf11(pm);
 	}
 
 	@Test
 	void indexOfKR(){
 		PatternMatcher pm = KRPatternMatcher.getInstance();
 
-		testIndexOf(pm);
+		testIndexOf1(pm);
+		testIndexOf2(pm);
+		testIndexOf3(pm);
+		testIndexOf4(pm);
+		testIndexOf5(pm);
+		testIndexOf6(pm);
+		testIndexOf7(pm);
+		testIndexOf8(pm);
+		testIndexOf9(pm);
+		testIndexOf10(pm);
+		testIndexOf11(pm);
 	}
 
 	@Test
@@ -85,7 +115,7 @@ class PatternMatcherTest{
 		}
 	}
 
-	private void testIndexOf(PatternMatcher pm){
+	private static void testIndexOf1(PatternMatcher pm){
 		byte[] source = "".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "".getBytes(StandardCharsets.US_ASCII);
 
@@ -94,7 +124,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(0, index);
 	}
 
-	private void testIndexOf2(PatternMatcher pm){
+	private static void testIndexOf2(PatternMatcher pm){
 		byte[] source = "ab".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "".getBytes(StandardCharsets.US_ASCII);
 
@@ -103,7 +133,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(0, index);
 	}
 
-	private void testIndexOf3(PatternMatcher pm){
+	private static void testIndexOf3(PatternMatcher pm){
 		byte[] source = "a".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "a".getBytes(StandardCharsets.US_ASCII);
 
@@ -112,7 +142,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(0, index);
 	}
 
-	private void testIndexOf4(PatternMatcher pm){
+	private static void testIndexOf4(PatternMatcher pm){
 		byte[] source = "b".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "a".getBytes(StandardCharsets.US_ASCII);
 
@@ -121,7 +151,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(-1, index);
 	}
 
-	private void testIndexOf5(PatternMatcher pm){
+	private static void testIndexOf5(PatternMatcher pm){
 		byte[] source = "aaaaa".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "aaa".getBytes(StandardCharsets.US_ASCII);
 
@@ -130,7 +160,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(0, index);
 	}
 
-	private void testIndexOf6(PatternMatcher pm){
+	private static void testIndexOf6(PatternMatcher pm){
 		byte[] source = "abaaba".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "aaa".getBytes(StandardCharsets.US_ASCII);
 
@@ -139,7 +169,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(-1, index);
 	}
 
-	private void testIndexOf7(PatternMatcher pm){
+	private static void testIndexOf7(PatternMatcher pm){
 		byte[] source = "abacababc".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "abab".getBytes(StandardCharsets.US_ASCII);
 
@@ -148,7 +178,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(4, index);
 	}
 
-	private void testIndexOf8(PatternMatcher pm){
+	private static void testIndexOf8(PatternMatcher pm){
 		byte[] source = "babacaba".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "abab".getBytes(StandardCharsets.US_ASCII);
 
@@ -157,7 +187,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(-1, index);
 	}
 
-	private void testIndexOf9(PatternMatcher pm){
+	private static void testIndexOf9(PatternMatcher pm){
 		byte[] source = "aaacacaacaaacaaaacaaaaac".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "aaacaaaaac".getBytes(StandardCharsets.US_ASCII);
 
@@ -166,7 +196,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(14, index);
 	}
 
-	private void testIndexOf10(PatternMatcher pm){
+	private static void testIndexOf10(PatternMatcher pm){
 		byte[] source = "ababcababdabababcababdaba".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "ababcababdabababcababdaba".getBytes(StandardCharsets.US_ASCII);
 
@@ -175,7 +205,7 @@ class PatternMatcherTest{
 		Assertions.assertEquals(0, index);
 	}
 
-	private void testIndexOf11(PatternMatcher pm){
+	private static void testIndexOf11(PatternMatcher pm){
 		byte[] source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "0d0a".getBytes(StandardCharsets.US_ASCII);
 
