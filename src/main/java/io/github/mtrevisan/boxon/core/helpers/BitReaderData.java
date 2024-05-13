@@ -265,18 +265,18 @@ abstract class BitReaderData{
 
 	//FIXME refactor
 	private boolean hasNextByte(final byte terminator){
-		int bitmap = 0;
+		long bitmap = 0l;
 		int bitsToRead = Byte.SIZE;
 		final int currentPosition = buffer.position();
-		final int maxOffset = buffer.limit() - currentPosition;
-		byte forecastCache = cache;
+		final int bytesRemaining = buffer.limit() - currentPosition;
+		long forecastCache = cache;
 		int forecastRemaining = remaining;
 		int offset = 0;
-		//cycle 1 or 2 times at most, since a byte can be split at most in two
+		//cycle 2 times at most, since a byte can be split at most in two
 		while(bitsToRead > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(forecastRemaining == 0){
-				if(offset >= maxOffset)
+				if(offset >= bytesRemaining)
 					return false;
 
 				//fill cache
@@ -287,14 +287,14 @@ abstract class BitReaderData{
 			final int length = Math.min(bitsToRead, forecastRemaining);
 			bitsToRead -= length;
 
-			final byte mask = (byte)(0xFF << byteComplement(length));
+			final long mask = (0xFFl << byteComplement(length)) & 0xFFl;
 			final int shift = forecastRemaining - length;
 			if(shift == 0)
-				bitmap |= ((forecastCache & mask) << bitsToRead);
+				bitmap |= (forecastCache & mask) << bitsToRead;
 			else
-				bitmap |= ((forecastCache & mask) >> shift);
+				bitmap |= (forecastCache & mask) >> shift;
 
-			forecastCache &= (byte)~mask;
+			forecastCache &= ~mask;
 			forecastRemaining -= length;
 			offset ++;
 		}
