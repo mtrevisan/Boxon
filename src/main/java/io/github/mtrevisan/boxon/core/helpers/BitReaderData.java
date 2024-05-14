@@ -84,6 +84,10 @@ abstract class BitReaderData{
 
 	/**
 	 * Create a fallback point that can later be restored (see {@link #restoreSavepoint()}).
+	 * <p>
+	 * If a savepoint already exists, it updates the current savepoint by updating the cache, buffer position, and remaining bits in cache.<br />
+	 * If a savepoint does not exist, it creates a new savepoint by creating a snapshot of the buffer state using createSnapshot method.
+	 * </p>
 	 */
 	public final synchronized void createSavepoint(){
 		if(savepoint != null)
