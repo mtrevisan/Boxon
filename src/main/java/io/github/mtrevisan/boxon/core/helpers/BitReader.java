@@ -119,11 +119,11 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public void skipUntilTerminator(final byte terminator){
-		getTextUntilTerminator(terminator, Charset.defaultCharset());
+		readTextUntilTerminator(terminator, Charset.defaultCharset());
 	}
 
 	@Override
-	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
+	public Object read(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(type);
 		if(pdt == null)
 			throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
@@ -133,59 +133,59 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
-	public byte getByte(){
-		return (byte)getNumber(Byte.SIZE);
+	public byte readByte(){
+		return (byte)readNumber(Byte.SIZE);
 	}
 
 	@Override
-	public byte[] getBytes(final int length){
+	public byte[] readBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
-			array[i] = getByte();
+			array[i] = readByte();
 		return array;
 	}
 
 	@Override
-	public short getShort(final ByteOrder byteOrder){
-		final short value = (short)getNumber(Short.SIZE);
+	public short readShort(final ByteOrder byteOrder){
+		final short value = (short)readNumber(Short.SIZE);
 		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
-	public int getInt(final ByteOrder byteOrder){
-		final int value = (int)getNumber(Integer.SIZE);
+	public int readInt(final ByteOrder byteOrder){
+		final int value = (int)readNumber(Integer.SIZE);
 		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
-	public long getLong(final ByteOrder byteOrder){
-		final long value = getNumber(Long.SIZE);
+	public long readLong(final ByteOrder byteOrder){
+		final long value = readNumber(Long.SIZE);
 		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
-	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
-		final BitSet bitmap = getBitSet(size);
+	public BigInteger readBigInteger(final int size, final ByteOrder byteOrder){
+		final BitSet bitmap = readBitSet(size);
 		return BitSetHelper.toObjectiveType(bitmap, size, byteOrder);
 	}
 
 	@Override
-	public String getText(final int length, final Charset charset){
-		return new String(getBytes(length), charset);
+	public String readText(final int length, final Charset charset){
+		return new String(readBytes(length), charset);
 	}
 
 	@Override
-	public String getText(final int length){
-		return getText(length, StandardCharsets.UTF_8);
+	public String readText(final int length){
+		return readText(length, StandardCharsets.UTF_8);
 	}
 
 	@Override
-	public String getTextUntilTerminator(final byte terminator){
-		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
+	public String readTextUntilTerminator(final byte terminator){
+		return readTextUntilTerminator(terminator, StandardCharsets.UTF_8);
 	}
 
 	@Override
-	public String getTextUntilTerminator(final byte terminator, final Charset charset){
+	public String readTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(final ByteArrayOutputStream baos = new ByteArrayOutputStream()){
 			getTextUntilTerminator(baos, terminator);
@@ -197,7 +197,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
-	public String getTextUntilTerminatorWithoutConsuming(final byte terminator, final Charset charset){
+	public String readTextUntilTerminatorWithoutConsuming(final byte terminator, final Charset charset){
 		String text = null;
 		try(final ByteArrayOutputStream baos = new ByteArrayOutputStream()){
 			getTextUntilTerminatorWithoutConsuming(baos, terminator);

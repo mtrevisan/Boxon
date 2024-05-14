@@ -43,7 +43,7 @@ public interface BitWriterInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
+	void write(Object value, ByteOrder byteOrder) throws AnnotationException;
 
 	/**
 	 * Skip {@code length} bits.
@@ -58,21 +58,21 @@ public interface BitWriterInterface{
 	 * @param bitmap	The value to write.
 	 * @param length	The amount of bits to use when writing the {@code bitmap}.
 	 */
-	void putBitSet(BitSet bitmap, int length);
+	void writeBitSet(BitSet bitmap, int length);
 
 	/**
 	 * Writes a value using {@link Byte#SIZE} bits.
 	 *
 	 * @param value	The {@code byte} to write.
 	 */
-	void putByte(byte value);
+	void writeByte(byte value);
 
 	/**
 	 * Writes an array of {@code byte}s using {@link Byte#SIZE} bits for each {@code byte}.
 	 *
 	 * @param array	The array of {@code byte}s to write.
 	 */
-	void putBytes(byte[] array);
+	void writeBytes(byte[] array);
 
 	/**
 	 * Writes a value with the specified {@link ByteOrder} using {@link Short#SIZE} bits.
@@ -80,7 +80,7 @@ public interface BitWriterInterface{
 	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	void putShort(short value, ByteOrder byteOrder);
+	void writeShort(short value, ByteOrder byteOrder);
 
 	/**
 	 * Writes a value with the specified {@link ByteOrder} using {@link Integer#SIZE} bits.
@@ -88,7 +88,7 @@ public interface BitWriterInterface{
 	 * @param value	The {@code int} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	void putInt(int value, ByteOrder byteOrder);
+	void writeInt(int value, ByteOrder byteOrder);
 
 	/**
 	 * Writes a value with the specified {@link ByteOrder} using {@link Long#SIZE} bits.
@@ -96,7 +96,7 @@ public interface BitWriterInterface{
 	 * @param value	The {@code long} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	void putLong(long value, ByteOrder byteOrder);
+	void writeLong(long value, ByteOrder byteOrder);
 
 	/**
 	 * Write the text into with a given {@link Charset}.
@@ -105,7 +105,7 @@ public interface BitWriterInterface{
 	 * @param text	The {@code String}s to be written.
 	 * @param charset	The charset.
 	 */
-	void putText(String text, Charset charset);
+	void writeText(String text, Charset charset);
 
 	/**
 	 * Write the text into with an {@link StandardCharsets#UTF_8 UTF-8} charset.
@@ -113,6 +113,6 @@ public interface BitWriterInterface{
 	 *
 	 * @param text	The {@code String}s to be written.
 	 */
-	void putText(String text);
+	void writeText(String text);
 
 }

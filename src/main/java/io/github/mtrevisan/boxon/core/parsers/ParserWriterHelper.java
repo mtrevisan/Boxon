@@ -53,7 +53,7 @@ final class ParserWriterHelper{
 	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer) throws UnsupportedCharsetException{
 		if(!affix.isEmpty()){
 			final Charset charset = CharsetHelper.lookup(charsetName);
-			writer.putText(affix, charset);
+			writer.writeText(affix, charset);
 		}
 	}
 

@@ -61,14 +61,14 @@ final class NumberWriterManager implements WriterManager{
 	@Override
 	public void put(final Object value){
 		switch(value){
-			case final Byte v -> writer.putText(Integer.toString(v & 0xFF, radix));
-			case final Short v -> writer.putText(Integer.toString(v & 0xFFFF, radix));
-			case final Integer v -> writer.putText(Integer.toString(v, radix));
-			case final Long v -> writer.putText(Long.toString(v, radix));
-			case final BigDecimal v -> writer.putText(v.toPlainString());
-			case final BigInteger v -> writer.putText(v.toString(radix));
-			case final Float v -> writer.putText(Float.toString(v));
-			case final Double v -> writer.putText(Double.toString(v));
+			case final Byte v -> writer.writeText(Integer.toString(v & 0xFF, radix));
+			case final Short v -> writer.writeText(Integer.toString(v & 0xFFFF, radix));
+			case final Integer v -> writer.writeText(Integer.toString(v, radix));
+			case final Long v -> writer.writeText(Long.toString(v, radix));
+			case final BigDecimal v -> writer.writeText(v.toPlainString());
+			case final BigInteger v -> writer.writeText(v.toString(radix));
+			case final Float v -> writer.writeText(Float.toString(v));
+			case final Double v -> writer.writeText(Double.toString(v));
 			case null, default -> {}
 		}
 	}

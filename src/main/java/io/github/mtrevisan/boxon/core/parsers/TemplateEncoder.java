@@ -128,7 +128,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 		}
 		else if(skip.consumeTerminator())
 			//skip until terminator
-			writer.putByte(skip.terminator());
+			writer.writeByte(skip.terminator());
 	}
 
 }

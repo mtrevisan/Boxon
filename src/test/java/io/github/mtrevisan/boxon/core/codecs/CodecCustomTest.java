@@ -64,7 +64,7 @@ class CodecCustomTest{
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
-				final byte b = reader.getByte();
+				final byte b = reader.readByte();
 				baos.write(b & 0x7F);
 
 				continuing = ((b & 0x80) != 0x00);
@@ -77,7 +77,7 @@ class CodecCustomTest{
 				final Object rootObject, final Object value) throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
-				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
+				writer.write((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
 		}
 	}
 

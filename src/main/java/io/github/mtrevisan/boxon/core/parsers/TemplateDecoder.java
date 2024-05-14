@@ -200,7 +200,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final byte[] messageTerminator = header.end()
 				.getBytes(charset);
-			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
+			final byte[] readMessageTerminator = reader.readBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
 				throw TemplateException.create("Message does not terminate with 0x{}", StringHelper.toHexString(messageTerminator));

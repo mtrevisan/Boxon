@@ -63,12 +63,12 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getByte();
+			return reader.readByte();
 		}
 
 		@Override
 		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putByte((Byte)value);
+			writer.writeByte((Byte)value);
 		}
 	},
 
@@ -86,12 +86,12 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getShort(byteOrder);
+			return reader.readShort(byteOrder);
 		}
 
 		@Override
 		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putShort((Short)value, byteOrder);
+			writer.writeShort((Short)value, byteOrder);
 		}
 	},
 
@@ -109,12 +109,12 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getInt(byteOrder);
+			return reader.readInt(byteOrder);
 		}
 
 		@Override
 		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putInt((Integer)value, byteOrder);
+			writer.writeInt((Integer)value, byteOrder);
 		}
 	},
 
@@ -132,12 +132,12 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.getLong(byteOrder);
+			return reader.readLong(byteOrder);
 		}
 
 		@Override
 		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.putLong((Long)value, byteOrder);
+			writer.writeLong((Long)value, byteOrder);
 		}
 	},
 
@@ -155,14 +155,14 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			final int rawValue = reader.getInt(byteOrder);
+			final int rawValue = reader.readInt(byteOrder);
 			return Float.intBitsToFloat(rawValue);
 		}
 
 		@Override
 		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
 			final int value = Float.floatToIntBits((Float)rawValue);
-			writer.putInt(value, byteOrder);
+			writer.writeInt(value, byteOrder);
 		}
 	},
 
@@ -180,14 +180,14 @@ public enum ParserDataType{
 
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			final long rawValue = reader.getLong(byteOrder);
+			final long rawValue = reader.readLong(byteOrder);
 			return Double.longBitsToDouble(rawValue);
 		}
 
 		@Override
 		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
 			final long value = Double.doubleToLongBits((Double)rawValue);
-			writer.putLong(value, byteOrder);
+			writer.writeLong(value, byteOrder);
 		}
 	};
 

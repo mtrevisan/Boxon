@@ -78,7 +78,7 @@ public interface BitReaderInterface{
 	 * @return	The read value of the given type.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
-	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
+	Object read(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
@@ -86,14 +86,14 @@ public interface BitReaderInterface{
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link io.github.mtrevisan.boxon.core.helpers.BitReader}'s current position.
 	 */
-	BitSet getBitSet(int length);
+	BitSet readBitSet(int length);
 
 	/**
 	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
 	 */
-	byte getByte();
+	byte readByte();
 
 	/**
 	 * Reads the specified amount of {@code byte}s into an array of {@code byte}s.
@@ -101,7 +101,7 @@ public interface BitReaderInterface{
 	 * @param length	The number of {@code byte}s to read.
 	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read.
 	 */
-	byte[] getBytes(int length);
+	byte[] readBytes(int length);
 
 	/**
 	 * Reads {@link Short#SIZE} bits and composes a {@code short} with the specified
@@ -110,7 +110,7 @@ public interface BitReaderInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code short}.
 	 */
-	short getShort(ByteOrder byteOrder);
+	short readShort(ByteOrder byteOrder);
 
 	/**
 	 * Reads {@link Integer#SIZE} bits and composes an {@code int} with the specified
@@ -119,7 +119,7 @@ public interface BitReaderInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An {@code int}.
 	 */
-	int getInt(ByteOrder byteOrder);
+	int readInt(ByteOrder byteOrder);
 
 	/**
 	 * Reads {@link Long#SIZE} bits and composes a {@code long} with the specified
@@ -128,7 +128,7 @@ public interface BitReaderInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code long}.
 	 */
-	long getLong(ByteOrder byteOrder);
+	long readLong(ByteOrder byteOrder);
 
 	/**
 	 * Reads the next {@code size} bits and composes a {@link BigInteger}.
@@ -137,7 +137,7 @@ public interface BitReaderInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the current position.
 	 */
-	BigInteger getBigInteger(int size, ByteOrder byteOrder);
+	BigInteger readBigInteger(int size, ByteOrder byteOrder);
 
 	/**
 	 * Reads the specified amount of {@code char}s with a given {@link Charset}.
@@ -146,7 +146,7 @@ public interface BitReaderInterface{
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
-	String getText(int length, Charset charset);
+	String readText(int length, Charset charset);
 
 	/**
 	 * Reads the specified amount of {@code char}s with an {@link StandardCharsets#UTF_8 UTF-8} charset.
@@ -154,7 +154,7 @@ public interface BitReaderInterface{
 	 * @param length	The number of {@code char}s to read.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
-	String getText(int length);
+	String readText(int length);
 
 	/**
 	 * Reads a string, with an {@link StandardCharsets#UTF_8 UTF-8} charset, until a terminator is found.
@@ -163,7 +163,7 @@ public interface BitReaderInterface{
 	 * @param terminator	The terminator of the string to be read.
 	 * @return	A {@link String} of length {@code n} coded in {@link StandardCharsets#UTF_8 UTF-8} that contains {@code char}s read.
 	 */
-	String getTextUntilTerminator(byte terminator);
+	String readTextUntilTerminator(byte terminator);
 
 	/**
 	 * Reads a string until a terminator is found.
@@ -173,7 +173,7 @@ public interface BitReaderInterface{
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
-	String getTextUntilTerminator(byte terminator, Charset charset);
+	String readTextUntilTerminator(byte terminator, Charset charset);
 
 	/**
 	 * Reads a string until a terminator is found without consuming the bytes read.
@@ -182,6 +182,6 @@ public interface BitReaderInterface{
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
-	String getTextUntilTerminatorWithoutConsuming(byte terminator, Charset charset);
+	String readTextUntilTerminatorWithoutConsuming(byte terminator, Charset charset);
 
 }

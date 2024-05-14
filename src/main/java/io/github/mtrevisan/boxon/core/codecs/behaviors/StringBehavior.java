@@ -48,14 +48,14 @@ public final class StringBehavior extends StringCommonBehavior{
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
-		return reader.getText(size, charset);
+		return reader.readText(size, charset);
 	}
 
 	@Override
 	public void writeValue(final BitWriterInterface writer, final Object value){
 		String text = (String)value;
 		text = text.substring(0, Math.min(text.length(), size));
-		writer.putText(text, charset);
+		writer.writeText(text, charset);
 	}
 
 }

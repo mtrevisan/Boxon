@@ -49,8 +49,8 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	final synchronized void putNumber(final byte value){
-		putNumber(value, Byte.SIZE);
+	final synchronized void writeNumber(final byte value){
+		writeNumber(value, Byte.SIZE);
 	}
 
 	/**
@@ -58,8 +58,8 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	final synchronized void putNumber(final short value){
-		putNumber(value, Short.SIZE);
+	final synchronized void writeNumber(final short value){
+		writeNumber(value, Short.SIZE);
 	}
 
 	/**
@@ -67,8 +67,8 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	final synchronized void putNumber(final int value){
-		putNumber(value, Integer.SIZE);
+	final synchronized void writeNumber(final int value){
+		writeNumber(value, Integer.SIZE);
 	}
 
 	/**
@@ -76,8 +76,8 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	final synchronized void putNumber(final long value){
-		putNumber(value, Long.SIZE);
+	final synchronized void writeNumber(final long value){
+		writeNumber(value, Long.SIZE);
 	}
 
 	/**
@@ -86,7 +86,7 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
 	 */
-	private void putNumber(final long value, int bitsToWrite){
+	private void writeNumber(final long value, int bitsToWrite){
 		while(bitsToWrite > 0){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite, remaining);
@@ -111,7 +111,7 @@ class BitWriterData{
 	 * @param bitmap	The value to write.
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
 	 */
-	public final synchronized void putBitSet(final BitSet bitmap, int bitsToWrite){
+	public final synchronized void writeBitSet(final BitSet bitmap, int bitsToWrite){
 		while(bitsToWrite > 0){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite, remaining);

@@ -53,7 +53,7 @@ final class CodecConfigurationSubField implements Codec{
 		if(!(value instanceof final String v))
 			throw UnhandledFieldException.create(value);
 
-		writer.putText(v, (Charset)charset);
+		writer.writeText(v, (Charset)charset);
 	}
 
 }

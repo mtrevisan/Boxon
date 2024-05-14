@@ -58,7 +58,7 @@ public final class IntegerBehavior extends BitSetBehavior{
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
-		return reader.getBigInteger(size, byteOrder);
+		return reader.readBigInteger(size, byteOrder);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public final class IntegerBehavior extends BitSetBehavior{
 		final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
-		writer.putBitSet(bitmap, size);
+		writer.writeBitSet(bitmap, size);
 	}
 
 }
