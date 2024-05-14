@@ -198,15 +198,14 @@ abstract class BitReaderData{
 	 *
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	final synchronized void skipBits(final int bitsToSkip){
-		int bitsSkipped = 0;
-		while(bitsSkipped < bitsToSkip){
+	final synchronized void skipBits(int bitsToSkip){
+		while(bitsToSkip > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remaining == 0)
 				fillCache();
 
-			final int length = Math.min(bitsToSkip - bitsSkipped, remaining);
-			bitsSkipped += length;
+			final int length = Math.min(bitsToSkip, remaining);
+			bitsToSkip -= length;
 
 			consumeCache(length);
 		}

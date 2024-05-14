@@ -212,7 +212,7 @@ public final class StringHelper{
 	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final long value, final int size){
-		final long mask = (size >= 8? -1L: (1l << (size << 3)) - 1);
+		final long mask = (size >= Byte.SIZE? -1l: (1l << (size << 3)) - 1);
 		final String hex = toHexString(value & mask);
 		return leftPad(hex, size << 1, '0');
 	}
