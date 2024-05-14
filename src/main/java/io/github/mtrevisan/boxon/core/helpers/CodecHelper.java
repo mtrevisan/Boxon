@@ -197,11 +197,11 @@ public final class CodecHelper{
 
 			final int prefix = evaluator.evaluateSize(chosenAlternative.prefix(), rootObject);
 			if(prefixSize == Byte.SIZE)
-				writer.putByte((byte)prefix);
+				writer.writeByte((byte)prefix);
 			else{
 				final BitSet bitmap = BitSetHelper.createBitSet(prefixSize, prefix);
 
-				writer.putBitSet(bitmap, prefixSize);
+				writer.writeBitSet(bitmap, prefixSize);
 			}
 		}
 	}
@@ -214,7 +214,7 @@ public final class CodecHelper{
 	private static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
 		final byte prefixSize = objectChoices.prefixLength();
 		if(prefixSize > 0){
-			final BitSet bitmap = reader.getBitSet(prefixSize);
+			final BitSet bitmap = reader.readBitSet(prefixSize);
 			final ByteOrder byteOrder = objectChoices.byteOrder();
 			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
 

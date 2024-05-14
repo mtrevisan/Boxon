@@ -111,7 +111,7 @@ public final class Parser{
 
 		while(reader.hasRemaining()){
 			//save state of the reader (restored upon a decoding error)
-			reader.createFallbackPoint();
+			reader.createSavepoint();
 
 			if(parse(reader, response))
 				break;
@@ -138,7 +138,7 @@ public final class Parser{
 			response.add(partialResponse);
 
 			//restore state of the reader
-			reader.restoreFallbackPoint();
+			reader.restoreSavepoint();
 
 			final int position = templateParser.findNextMessageIndex(reader);
 			if(position < 0)

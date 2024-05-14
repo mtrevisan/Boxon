@@ -175,7 +175,7 @@ final class CodecObject implements Codec{
 	private boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
 		final byte terminator = objectChoicesList.terminator();
 		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
-		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
+		final String prefix = reader.readTextUntilTerminatorWithoutConsuming(terminator, charset);
 		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
 	}

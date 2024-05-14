@@ -106,7 +106,7 @@ class CustomCodecTest{
 				BindCustomData binding = (BindCustomData)annotation;
 
 				int size = evaluator.evaluateSize(binding.size(), rootObject);
-				BigInteger value = reader.getBigInteger(size * Byte.SIZE, ByteOrder.BIG_ENDIAN);
+				BigInteger value = reader.readBigInteger(size * Byte.SIZE, ByteOrder.BIG_ENDIAN);
 
 				return bigIntegerToAscii(value);
 			}
@@ -133,7 +133,7 @@ class CustomCodecTest{
 				final BigInteger v = asciiToBigInteger((String)value);
 				final BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);
 
-				writer.putBitSet(bitmap, size * Byte.SIZE);
+				writer.writeBitSet(bitmap, size * Byte.SIZE);
 			}
 
 			public static BigInteger asciiToBigInteger(String asciiString){

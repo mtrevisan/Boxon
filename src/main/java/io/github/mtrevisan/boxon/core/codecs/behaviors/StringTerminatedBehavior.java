@@ -50,7 +50,7 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
-		final String text = reader.getTextUntilTerminator(terminator, charset);
+		final String text = reader.readTextUntilTerminator(terminator, charset);
 		if(consumeTerminator)
 			//`terminator` is a byte
 			reader.skip(Byte.SIZE);
@@ -59,9 +59,9 @@ public final class StringTerminatedBehavior extends StringCommonBehavior{
 
 	@Override
 	public void writeValue(final BitWriterInterface writer, final Object value){
-		writer.putText((String)value, charset);
+		writer.writeText((String)value, charset);
 		if(consumeTerminator)
-			writer.putByte(terminator);
+			writer.writeByte(terminator);
 	}
 
 }

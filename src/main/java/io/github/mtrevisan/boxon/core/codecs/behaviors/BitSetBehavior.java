@@ -54,12 +54,12 @@ public class BitSetBehavior extends CommonBehavior{
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
-		return reader.getBitSet(size);
+		return reader.readBitSet(size);
 	}
 
 	@Override
 	public void writeValue(final BitWriterInterface writer, final Object value){
-		writer.putBitSet((BitSet)value, size);
+		writer.writeBitSet((BitSet)value, size);
 	}
 
 }

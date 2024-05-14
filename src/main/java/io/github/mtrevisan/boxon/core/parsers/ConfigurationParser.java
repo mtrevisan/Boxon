@@ -212,7 +212,7 @@ public final class ConfigurationParser{
 	private static void writeSkip(final ConfigurationSkip skip, final BitWriterInterface writer, final Version protocol){
 		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
-			writer.putText(skip.terminator());
+			writer.writeText(skip.terminator());
 	}
 
 

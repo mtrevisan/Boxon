@@ -63,12 +63,12 @@ final class CodecCompositeConfigurationField implements Codec{
 			if(!(value instanceof final String v))
 				throw UnhandledFieldException.create(value);
 
-			writer.putText(v, charset);
+			writer.writeText(v, charset);
 		}
 
 		final String terminator = binding.terminator();
 		if(!terminator.isEmpty())
-			writer.putText(terminator);
+			writer.writeText(terminator);
 	}
 
 }

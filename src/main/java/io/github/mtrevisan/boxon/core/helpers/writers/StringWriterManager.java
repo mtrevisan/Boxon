@@ -60,7 +60,7 @@ final class StringWriterManager implements WriterManager{
 	 */
 	@Override
 	public void put(final Object value){
-		writer.putText((String)value, charset);
+		writer.writeText((String)value, charset);
 	}
 
 }

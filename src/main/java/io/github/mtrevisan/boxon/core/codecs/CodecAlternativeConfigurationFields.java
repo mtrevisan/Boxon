@@ -52,7 +52,7 @@ final class CodecAlternativeConfigurationFields implements Codec{
 
 		final String terminator = binding.terminator();
 		if(!terminator.isEmpty())
-			writer.putText(terminator);
+			writer.writeText(terminator);
 	}
 
 }

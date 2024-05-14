@@ -54,7 +54,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 
 	@Override
-	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
+	public void write(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(value.getClass());
 		if(pdt == null)
 			throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
@@ -63,39 +63,39 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 	}
 
 	@Override
-	public void putByte(final byte value){
-		putNumber(value);
+	public void writeByte(final byte value){
+		writeNumber(value);
 	}
 
 	@Override
-	public void putBytes(final byte[] array){
+	public void writeBytes(final byte[] array){
 		for(int i = 0, length = array.length; i < length; i ++)
-			putByte(array[i]);
+			writeByte(array[i]);
 	}
 
 	@Override
-	public void putShort(final short value, final ByteOrder byteOrder){
-		putNumber(byteOrder.correctEndianness(value));
+	public void writeShort(final short value, final ByteOrder byteOrder){
+		writeNumber(byteOrder.correctEndianness(value));
 	}
 
 	@Override
-	public void putInt(final int value, final ByteOrder byteOrder){
-		putNumber(byteOrder.correctEndianness(value));
+	public void writeInt(final int value, final ByteOrder byteOrder){
+		writeNumber(byteOrder.correctEndianness(value));
 	}
 
 	@Override
-	public void putLong(final long value, final ByteOrder byteOrder){
-		putNumber(byteOrder.correctEndianness(value));
+	public void writeLong(final long value, final ByteOrder byteOrder){
+		writeNumber(byteOrder.correctEndianness(value));
 	}
 
 	@Override
-	public void putText(final String text, final Charset charset){
-		putBytes(text.getBytes(charset));
+	public void writeText(final String text, final Charset charset){
+		writeBytes(text.getBytes(charset));
 	}
 
 	@Override
-	public void putText(final String text){
-		putText(text, StandardCharsets.UTF_8);
+	public void writeText(final String text){
+		writeText(text, StandardCharsets.UTF_8);
 	}
 
 }

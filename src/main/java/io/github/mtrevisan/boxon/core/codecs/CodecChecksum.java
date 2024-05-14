@@ -50,7 +50,7 @@ final class CodecChecksum implements Codec{
 
 		final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
 		final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
-		return reader.get(interfaceReturnType, binding.byteOrder());
+		return reader.read(interfaceReturnType, binding.byteOrder());
 	}
 
 	@Override
@@ -58,7 +58,7 @@ final class CodecChecksum implements Codec{
 			final Object rootObject, final Object value) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
-		writer.put(value, binding.byteOrder());
+		writer.write(value, binding.byteOrder());
 	}
 
 }
