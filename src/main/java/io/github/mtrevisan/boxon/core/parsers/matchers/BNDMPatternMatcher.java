@@ -74,9 +74,10 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
 	 * @param wildcard	The wildcard {@code byte} character.
+	 * @throws OutOfMemoryError	If there is insufficient memory to allocate the pre-processed pattern array.
 	 * @return	An array of pre-processed pattern.
 	 */
-	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
+	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard) throws OutOfMemoryError{
 		final int length = pattern.length;
 		assertLength(length);
 
@@ -85,7 +86,6 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 			if(pattern[i] == wildcard)
 				j |= 1 << shift;
 
-		//FIXME large array allocation which is not checked for out-of-memory condition
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		if(j != 0)
 			Arrays.fill(preprocessedPattern, j);
@@ -94,10 +94,9 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	}
 
 	@Override
-	public int[] preProcessPattern(final byte[] pattern){
+	public int[] preProcessPattern(final byte[] pattern) throws OutOfMemoryError{
 		assertLength(pattern.length);
 
-		//FIXME large array allocation which is not checked for out-of-memory condition
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		return fill(pattern, preprocessedPattern);
 	}

@@ -43,9 +43,6 @@ import java.util.function.BiConsumer;
  */
 abstract class BitReaderData{
 
-	private static final BiConsumer<Integer, Integer> SKIP_BUFFER_CONSUMER = (bitsToProcess, length) -> {};
-
-
 	private static final class BufferState{
 		/** The position in the byte buffer of the cached value. */
 		private int position;
@@ -198,7 +195,8 @@ abstract class BitReaderData{
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
 	final synchronized void skipBits(final int bitsToSkip){
-		readBits(bitsToSkip, SKIP_BUFFER_CONSUMER);
+		final BiConsumer<Integer, Integer> skipBufferConsumer = (bitsToProcess, length) -> {};
+		readBits(bitsToSkip, skipBufferConsumer);
 	}
 
 	private void readBits(int bitsToProcess, final BiConsumer<Integer, Integer> bitConsumer){
