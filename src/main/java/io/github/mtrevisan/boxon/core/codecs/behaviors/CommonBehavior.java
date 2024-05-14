@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.BitSet;
 
 
 public abstract class CommonBehavior{
@@ -54,6 +55,13 @@ public abstract class CommonBehavior{
 	}
 
 
+	/**
+	 * Reads an array of objects from a {@link BitReaderInterface} without alternatives.
+	 *
+	 * @param reader	The {@link BitReaderInterface} used to read the array.
+	 * @param arraySize	The size of the array to be read.
+	 * @return	The array of objects read from the {@link BitReaderInterface}.
+	 */
 	public final Object readArrayWithoutAlternatives(final BitReaderInterface reader, final int arraySize){
 		final Object array = createArray(arraySize);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
@@ -64,6 +72,12 @@ public abstract class CommonBehavior{
 		return array;
 	}
 
+	/**
+	 * Writes an array of objects to a {@link BitWriterInterface} without alternatives.
+	 *
+	 * @param writer	The {@link BitWriterInterface} used to write the array.
+	 * @param array	The array of objects to be written.
+	 */
 	public final void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array){
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
@@ -72,11 +86,26 @@ public abstract class CommonBehavior{
 		}
 	}
 
+	/**
+	 * Converts the value to the input type of the chosen converter based on the collection binding.
+	 *
+	 * @param value	The value to be converted.
+	 * @param chosenConverter	The chosen converter to be used for the conversion.
+	 * @param collectionBinding	The collection binding annotation.
+	 * @return	The converted value.
+	 */
 	public final Object convertValueType(final Object value, final Class<? extends Converter<?, ?>> chosenConverter,
 			final Annotation collectionBinding){
 		return convertValueType(collectionBinding, chosenConverter, validator, value);
 	}
 
+	/**
+	 * Retrieves the chosen converter for the given evaluator and root object.
+	 *
+	 * @param evaluator	The evaluator used for the conversion.
+	 * @param rootObject	The root object being converted.
+	 * @return	The chosen converter for the given evaluator and root object.
+	 */
 	public final Class<? extends Converter<?, ?>> getChosenConverter(final Evaluator evaluator, final Object rootObject){
 		return CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator, rootObject);
 	}
@@ -107,12 +136,35 @@ public abstract class CommonBehavior{
 	}
 
 
+	/**
+	 * Creates an array of {@link BitSet} objects.
+	 *
+	 * @param arraySize	The size of the array to be created.
+	 * @return	An array of {@link BitSet} objects with the specified size.
+	 */
 	abstract Object createArray(int arraySize);
 
+	/**
+	 * Reads the specified number of bits from the given {@link BitReaderInterface} and composes a {@link BitSet} value.
+	 *
+	 * @param reader	The {@link BitReaderInterface} used to read the bits.
+	 * @return	A {@link BitSet} value at the current position of the {@link BitReaderInterface}.
+	 */
 	public abstract Object readValue(BitReaderInterface reader);
 
+	/**
+	 * Writes a value to the given {@link BitWriterInterface} using the specified length.
+	 *
+	 * @param writer	The {@link BitWriterInterface} used to write the value.
+	 * @param value	The value to be written.
+	 */
 	public abstract void writeValue(BitWriterInterface writer, Object value);
 
+	/**
+	 * Retrieves the validator to be applied to converted values read from a bind annotation.
+	 *
+	 * @return	The validator to be applied.
+	 */
 	public final Class<? extends Validator<?>> validator(){
 		return validator;
 	}

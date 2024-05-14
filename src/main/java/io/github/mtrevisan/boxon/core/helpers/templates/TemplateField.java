@@ -81,6 +81,11 @@ public final class TemplateField implements FieldRetriever{
 	}
 
 
+	/**
+	 * Returns the field associated with this object.
+	 *
+	 * @return	The field associated with this object.
+	 */
 	public Field getField(){
 		return field;
 	}
@@ -103,12 +108,6 @@ public final class TemplateField implements FieldRetriever{
 		return field.getType();
 	}
 
-	/**
-	 * The value of the field in the given object.
-	 *
-	 * @param obj	The object from which to retrieve the value.
-	 * @return	The value of the field.
-	 */
 	@Override
 	public Object getFieldValue(final Object obj){
 		return FieldMapper.getFieldValue(obj, field);

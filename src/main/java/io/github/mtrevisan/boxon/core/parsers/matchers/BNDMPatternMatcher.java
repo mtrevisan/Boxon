@@ -93,14 +93,6 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 		return fill(pattern, preprocessedPattern);
 	}
 
-	/**
-	 * Pre-processing of the pattern.
-	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
-	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	An array of pre-processed pattern.
-	 * @throws DataException	If the pattern is too long.
-	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
 		assertLength(pattern.length);

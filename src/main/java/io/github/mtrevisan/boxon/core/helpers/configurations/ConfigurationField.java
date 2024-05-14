@@ -87,12 +87,6 @@ public final class ConfigurationField implements FieldRetriever{
 		return field.getName();
 	}
 
-	/**
-	 * The value of the field in the given object.
-	 *
-	 * @param obj	The object from which to retrieve the value.
-	 * @return	The value of the field.
-	 */
 	@Override
 	public Object getFieldValue(final Object obj){
 		return FieldMapper.getFieldValue(obj, field);

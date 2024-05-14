@@ -101,6 +101,11 @@ public final class Template<T>{
 				.collect(Collectors.toList()));
 	}
 
+	/**
+	 * Sets a custom codec validator extractor.
+	 *
+	 * @param customCodecValidatorExtractor	A function that extracts a custom codec validator based on the annotation class.
+	 */
 	public static void setCustomCodecValidatorExtractor(
 			final Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor){
 		Template.customCodecValidatorExtractor = customCodecValidatorExtractor;

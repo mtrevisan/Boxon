@@ -46,11 +46,25 @@ public final class StringHelper{
 	private StringHelper(){}
 
 
+	/**
+	 * Checks whether the provided text matches the given pattern.
+	 *
+	 * @param text	The text to check against the pattern.
+	 * @param pattern	The pattern to match against the text.
+	 * @return	Whether the text matches the pattern.
+	 */
 	public static boolean matches(final CharSequence text, final Pattern pattern){
 		return pattern.matcher(text)
 			.matches();
 	}
 
+	/**
+	 * Checks whether the provided text matches the given pattern or is blank.
+	 *
+	 * @param text	The text to check against the pattern.
+	 * @param pattern	The pattern to match against the text.
+	 * @return	Whether the text matches the pattern or is blank.
+	 */
 	public static boolean matchesOrBlank(final String text, final Pattern pattern){
 		return (isBlank(text) || matches(text, pattern));
 	}
@@ -185,6 +199,12 @@ public final class StringHelper{
 		return true;
 	}
 
+	/**
+	 * Checks if the provided value is an empty string, empty collection, or void.
+	 *
+	 * @param value	The value to check.
+	 * @return	Whether the value is an empty string, empty collection, or void.
+	 */
 	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
 		return ((value instanceof final String v && isBlank(v))
 			|| (value instanceof final Collection<?> c && c.isEmpty())

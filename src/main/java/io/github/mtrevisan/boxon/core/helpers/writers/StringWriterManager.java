@@ -53,11 +53,6 @@ final class StringWriterManager implements WriterManager{
 		return this;
 	}
 
-	/**
-	 * Writes a string value to the writer.
-	 *
-	 * @param value	The value to write.
-	 */
 	@Override
 	public void put(final Object value){
 		writer.writeText((String)value, charset);

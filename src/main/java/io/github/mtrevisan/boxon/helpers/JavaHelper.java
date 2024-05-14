@@ -71,6 +71,12 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Calculates the size in bytes for a given number of bits.
+	 *
+	 * @param bits	The number of bits.
+	 * @return	The size in bytes.
+	 */
 	public static int getSizeInBytes(final int bits){
 		return (bits + Byte.SIZE - 1) >>> 3;
 	}
@@ -117,6 +123,12 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Checks if the given number is a multiple of a byte (8 bits).
+	 *
+	 * @param number	The number to check if it is a multiple of a byte.
+	 * @return	Whether the number is a multiple of a byte.
+	 */
 	public static boolean isMultipleOfByte(final int number){
 		return (number != 0 && number % Byte.SIZE == 0);
 	}
@@ -217,6 +229,15 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Pretty prints the name of the given class.
+	 * <p>
+	 * If the class represents an array, the brackets are properly formatted.
+	 * </p>
+	 *
+	 * @param cls	The class.
+	 * @return	The pretty printed class name.
+	 */
 	public static String prettyPrintClassName(final Class<?> cls){
 		final String className = cls.getName();
 		final int count = countLeadingSquareBrackets(className);

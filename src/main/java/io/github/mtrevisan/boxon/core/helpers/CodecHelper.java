@@ -86,16 +86,38 @@ public final class CodecHelper{
 		return evaluatedSize;
 	}
 
+	/**
+	 * Asserts that the expected size matches the given size.
+	 *
+	 * @param expectedSize	The expected size.
+	 * @param size	The actual size.
+	 * @throws DataException	If the sizes do not match.
+	 */
 	public static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
 	}
 
 
+	/**
+	 * Creates a new array of the specified type and length.
+	 *
+	 * @param type	The class type of the array elements.
+	 * @param length	The length of the array.
+	 * @return	A new array of the specified type and length.
+	 */
 	public static Object createArray(final Class<?> type, final int length){
 		return Array.newInstance(type, length);
 	}
 
+	/**
+	 * Creates a new list of the specified type.
+	 *
+	 * @param type	The class type of the list elements.
+	 * @param <T>	The type of the list elements.
+	 * @return	A new list of the specified type.
+	 * @throws AnnotationException	If the type is not a primitive type.
+	 */
 	public static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
 			throw AnnotationException.createNotPrimitiveValue(type);
@@ -135,6 +157,19 @@ public final class CodecHelper{
 		return (alternatives.length > 0);
 	}
 
+	/**
+	 * Chooses the alternative type based on the given alternatives, default alternative, evaluator, and root object.
+	 * <p>
+	 * It evaluates the condition of each alternative using the evaluator with the root object and returns the type of the first alternative
+	 * that evaluates to true.
+	 * </p>
+	 *
+	 * @param alternatives	An array of ObjectChoices.ObjectChoice representing the alternatives.
+	 * @param defaultAlternative	The default alternative type.
+	 * @param evaluator	An instance of the Evaluator interface for evaluating the condition.
+	 * @param rootObject	The root object for the evaluator.
+	 * @return	The chosen alternative type. If none of the alternatives evaluate to {@code true}, it returns the default alternative type.
+	 */
 	public static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
 			final Evaluator evaluator, final Object rootObject){
 		Class<?> chosenAlternativeType = defaultAlternative;
@@ -148,6 +183,14 @@ public final class CodecHelper{
 		return chosenAlternativeType;
 	}
 
+	/**
+	 * Chooses the alternative from an array of {@link ObjectChoices.ObjectChoice} based on the given type.
+	 *
+	 * @param alternatives	An array of {@link ObjectChoices.ObjectChoice} representing the alternatives.
+	 * @param type	The type to match against the alternatives.
+	 * @return	The matching {@link ObjectChoices.ObjectChoice} if found.
+	 * @throws CodecException	If no matching alternative is found.
+	 */
 	public static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
 			throws CodecException{
 		for(int i = 0, length = alternatives.length; i < length; i ++){
@@ -189,6 +232,20 @@ public final class CodecHelper{
 	}
 
 
+	/**
+	 * Writes the header based on the chosen alternative, selectFrom choices, evaluator, and root object.
+	 * <p>
+	 * The method checks if the chosen alternative condition contains the '{@code #prefix}' token. If it does, it writes the prefix
+	 * value to the writer. The prefix value is evaluated using the evaluator with the root object, and the size of the prefix
+	 * is determined by {@code selectFrom.prefixLength()} in bits.
+	 * </p>
+	 *
+	 * @param writer	The {@link BitWriterInterface} object to write the header to.
+	 * @param chosenAlternative	The {@link ObjectChoices.ObjectChoice} representing the chosen alternative.
+	 * @param selectFrom	The {@link ObjectChoices} representing the choices to select from.
+	 * @param evaluator	The {@link Evaluator} interface for evaluating expressions.
+	 * @param rootObject	The root object for the evaluator.
+	 */
 	public static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
 		//if `chosenAlternative.condition()` contains '#prefix', then write `@ObjectChoice.prefix()`
@@ -223,6 +280,16 @@ public final class CodecHelper{
 	}
 
 
+	/**
+	 * Decodes data using the specified converter type.
+	 *
+	 * @param <IN>	The type of the input data.
+	 * @param <OUT>	The type of the decoded data.
+	 * @param converterType	The class type of the converter.
+	 * @param data	The input data to be decoded.
+	 * @return	The decoded data.
+	 * @throws DataException	If an error occurs during decoding.
+	 */
 	public static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
@@ -236,6 +303,16 @@ public final class CodecHelper{
 		}
 	}
 
+	/**
+	 * Encodes the given data using the specified converter type.
+	 *
+	 * @param <IN>	The type of the input data.
+	 * @param <OUT>	The type of the encoded data.
+	 * @param converterType	The class type of the converter.
+	 * @param data	The data to be encoded.
+	 * @return	The encoded data.
+	 * @throws DataException	If an error occurs during encoding.
+	 */
 	public static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
@@ -248,6 +325,14 @@ public final class CodecHelper{
 		}
 	}
 
+	/**
+	 * Interprets the given value based on the specified field type.
+	 *
+	 * @param value	The value to be interpreted.
+	 * @param fieldType	The class type of the field.
+	 * @return	The interpreted value.
+	 * @throws CodecException	If an error occurs during the interpretation.
+	 */
 	public static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){

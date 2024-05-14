@@ -27,22 +27,54 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.util.List;
 
 
 public abstract class MessageExtractor<M, H, F>{
 
+	/**
+	 * Returns the type name of a given message.
+	 *
+	 * @param message	the message for which to retrieve the type name.
+	 * @return	The type name of the given message.
+	 */
 	public abstract String getTypeName(M message);
 
+	/**
+	 * Retrieves the header of a given message.
+	 *
+	 * @param message	The message for which to retrieve the header.
+	 * @return	The header of the given message.
+	 */
 	public abstract H getHeader(M message);
 
+	/**
+	 * Retrieves the list of {@link TemplateField}s from a given {@link Template} message.
+	 *
+	 * @param message	The {@link Template} message from which to retrieve the {@link TemplateField}s.
+	 * @return	The list of {@link TemplateField}s from the given {@link Template} message.
+	 */
 	public abstract List<F> getFields(M message);
 
+	/**
+	 * Retrieves the evaluated fields from a given message template.
+	 *
+	 * @param message	The message template from which to retrieve the evaluated fields.
+	 * @return	The list of evaluated fields in the message template.
+	 */
 	public List<EvaluatedField<Evaluate>> getEvaluatedFields(final M message){
 		return null;
 	}
 
+	/**
+	 * Retrieves the post-processed fields from a given message template.
+	 *
+	 * @param message	The message template from which to retrieve the post-processed fields.
+	 * @return	The list of post-processed fields in the message template.
+	 */
 	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final M message){
 		return null;
 	}

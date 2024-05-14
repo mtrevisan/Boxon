@@ -52,6 +52,11 @@ public final class EvaluatedField<B>{
 	}
 
 
+	/**
+	 * Retrieves the {@link Field} associated with the evaluated field.
+	 *
+	 * @return	The {@link Field} associated with the evaluated field.
+	 */
 	public Field getField(){
 		return field;
 	}

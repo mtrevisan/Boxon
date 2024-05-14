@@ -41,11 +41,28 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
+/**
+ * The BehaviorBuilder class is responsible for creating instances of {@link CommonBehavior} based on the provided {@link Annotation}.
+ * <p>
+ * It provides static methods to handle different types of {@link Annotation}s and create the corresponding {@link CommonBehavior} objects.
+ * </p>
+ *
+ * @see CommonBehavior
+ */
 public final class BehaviorBuilder{
 
 	private BehaviorBuilder(){}
 
 
+	/**
+	 * Creates and returns a {@link CommonBehavior} instance based on the given {@link Annotation} and parameters.
+	 *
+	 * @param annotation	The {@link Annotation} to be used for creating the {@link CommonBehavior} instance.
+	 * @param evaluator	The {@link Evaluator} instance to be used for evaluating the annotation.
+	 * @param rootObject	The root object for which the {@link CommonBehavior} instance is created.
+	 * @return	The {@link CommonBehavior} instance created based on the given parameters.
+	 * @throws AnnotationException	If an exception occurs while creating the {@link CommonBehavior} instance.
+	 */
 	public static CommonBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
 			throws AnnotationException{
 		return switch(annotation){

@@ -114,14 +114,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param type	The class of the object to be returned as a {@link Template}.
-	 * @param <T>	The type of the object to be returned as a {@link Template}.
-	 * @return	The {@link Template} for the given type.
-	 * @throws AnnotationException	If an annotation error occurs.
-	 */
 	@Override
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return loaderTemplate.createTemplate(type);
@@ -179,31 +171,12 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
-	/**
-	 * Decodes a message using the provided template and reader.
-	 *
-	 * @param template	The template used for decoding the message.
-	 * @param reader	The reader used for reading the message.
-	 * @param parentObject	The parent object of the message being decoded.
-	 * @param <T>	The type of the object to be returned as a result of decoding.
-	 * @return	The decoded object.
-	 * @throws BoxonException	If there is an error decoding a field.
-	 */
 	@Override
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		return templateDecoder.decode(template, reader, parentObject);
 	}
 
 
-	/**
-	 * Encodes a message using the provided template and writer.
-	 *
-	 * @param template	The template used for encoding the message.
-	 * @param writer	The writer used for writing the encoded message.
-	 * @param parentObject	The parent object of the message being encoded.
-	 * @param currentObject	The object to be encoded.
-	 * @throws BoxonException	If there is an error encoding a field.
-	 */
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws BoxonException{

@@ -34,6 +34,9 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import java.util.BitSet;
 
 
+/**
+ * Represents the behavior of a {@link BitSet} object.
+ */
 public class BitSetBehavior extends CommonBehavior{
 
 	protected final int size;

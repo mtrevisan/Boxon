@@ -206,6 +206,13 @@ public final class GenericHelper{
 	}
 
 
+	/**
+	 * Adds arrays to the given type by specifying the number of dimensions.
+	 *
+	 * @param cls	The base type to add arrays to.
+	 * @param arraysCount	The number of arrays to add.
+	 * @return	The resulting type with added arrays.
+	 */
 	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
 		final int[] dimensions = new int[arraysCount];
 		Arrays.fill(dimensions, 1);

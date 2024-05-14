@@ -25,14 +25,19 @@
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
+
 /** The base class for pattern matching algorithm implementations. */
 public interface PatternMatcher{
 
 	/**
-	 * Pre-processes the pattern.
+	 * Pre-processing of the pattern.
+	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
 	 * @return	An array of pre-processed pattern.
+	 * @throws DataException   If the pattern is too long.
 	 */
 	int[] preProcessPattern(byte[] pattern);
 

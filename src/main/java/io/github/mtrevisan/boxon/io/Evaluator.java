@@ -61,6 +61,11 @@ public final class Evaluator{
 		}
 
 
+		/**
+		 * Removes a variable from the evaluation context.
+		 *
+		 * @param name	The name of the variable to remove.
+		 */
 		public void removeVariable(final String name){
 			handleVariableUpdate(name, null);
 		}

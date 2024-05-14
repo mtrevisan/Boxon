@@ -45,6 +45,12 @@ public final class ObjectBehavior extends CommonBehavior{
 	private final ObjectChoicesList objectChoicesList;
 
 
+	/**
+	 * Creates an instance of this class based on the given annotation.
+	 *
+	 * @param annotation	The annotation to create the behavior from.
+	 * @return	An instance of this class.
+	 */
 	public static ObjectBehavior of(final Annotation annotation){
 		final BindObject binding = (BindObject)annotation;
 
@@ -71,18 +77,38 @@ public final class ObjectBehavior extends CommonBehavior{
 	}
 
 
+	/**
+	 * Returns the type of the object, as defined in the annotation.
+	 *
+	 * @return	The type of the object.
+	 */
 	public Class<?> objectType(){
 		return objectType;
 	}
 
+	/**
+	 * Retrieves the selected choices from the {@link ObjectChoices} annotation.
+	 *
+	 * @return	The selected choices from the {@link ObjectChoices} annotation.
+	 */
 	public ObjectChoices selectFrom(){
 		return selectFrom;
 	}
 
+	/**
+	 * Retrieves the default class type.
+	 *
+	 * @return	The default class type.
+	 */
 	public Class<?> selectDefault(){
 		return selectDefault;
 	}
 
+	/**
+	 * Returns the {@link ObjectChoicesList} annotation object associated with this method.
+	 *
+	 * @return	The {@link ObjectChoicesList} annotation object.
+	 */
 	public ObjectChoicesList objectChoicesList(){
 		return objectChoicesList;
 	}

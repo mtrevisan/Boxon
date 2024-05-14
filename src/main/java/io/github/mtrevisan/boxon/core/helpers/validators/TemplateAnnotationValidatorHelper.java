@@ -75,6 +75,7 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static class NullConverterValidationStrategy implements ValidationStrategy{
+		@Override
 		public final void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 				throws AnnotationException{
 			fieldType = (fieldType != List.class
@@ -88,6 +89,7 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static class NonNullConverterValidationStrategy implements ValidationStrategy{
+		@Override
 		public final void validate(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
 				throws AnnotationException{
 			final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter, Converter.class);

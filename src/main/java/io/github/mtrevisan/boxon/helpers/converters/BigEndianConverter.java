@@ -32,13 +32,6 @@ import java.util.BitSet;
 
 public final class BigEndianConverter implements BitSetConverter{
 
-	/**
-	 * Creates a {@link BitSet} with the given value.
-	 *
-	 * @param value	The value, must not be {@code null}.
-	 * @param bitmapSize	The size in bits of the value.
-	 * @return	A new bit set initialized with the given value.
-	 */
 	@Override
 	public BitSet createBitSet(final BigInteger value, final int bitmapSize){
 		final BitSet bitmap = new BitSet(bitmapSize);
