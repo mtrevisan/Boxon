@@ -83,7 +83,7 @@ abstract class BitReaderData{
 
 
 	/**
-	 * Create a fallback point that can later be restored (see {@link BitReaderData#restoreSavepoint()}).
+	 * Create a fallback point that can later be restored (see {@link #restoreSavepoint()}).
 	 */
 	public final synchronized void createSavepoint(){
 		if(savepoint != null)
@@ -95,7 +95,7 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Restore a fallback point created with {@link BitReaderData#createSavepoint()}.
+	 * Restore a fallback point created with {@link #createSavepoint()}.
 	 */
 	public final synchronized void restoreSavepoint(){
 		if(savepoint != null){
@@ -108,7 +108,7 @@ abstract class BitReaderData{
 
 	/**
 	 * Clear fallback point data.
-	 * <p>After calling this method, no restoring is possible (see {@link BitReaderData#restoreSavepoint()}).</p>
+	 * <p>After calling this method, no restoring is possible (see {@link #restoreSavepoint()}).</p>
 	 */
 	private synchronized void clearSavepoint(){
 		savepoint = null;
