@@ -115,11 +115,11 @@ class BitWriterData{
 		while(bitsToWrite > 0){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite, remaining);
-
-			final byte nextCache = getNextByte(bitmap, bitsToWrite - 1, length);
-			cache = (byte)((cache << byteComplement(length)) | nextCache);
-			consumeCache(length);
 			bitsToWrite -= length;
+
+			cache <<= byteComplement(length);
+			cache |= writeToCache(bitmap, bitsToWrite, length);
+			consumeCache(length);
 
 			//if cache is full, write it
 			if(remaining == 0){
@@ -138,7 +138,8 @@ class BitWriterData{
 	 * @param size	The amount of bits to use when writing the {@code bitmap} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
-	private byte getNextByte(final BitSet bitmap, final int offset, final int size){
+	private byte writeToCache(final BitSet bitmap, int offset, final int size){
+		offset += size - 1;
 		byte valueRead = 0;
 		final int consumed = byteComplement(remaining);
 		int index = offset + 2;

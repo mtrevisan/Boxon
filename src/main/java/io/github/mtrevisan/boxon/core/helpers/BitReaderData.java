@@ -54,14 +54,14 @@ abstract class BitReaderData{
 		/** The number of bits available (to read) within the cache. */
 		private int remainingBitsInCache;
 
-		BufferState(final int position, final byte cache, final int remainingBitsInCache){
-			set(position, cache, remainingBitsInCache);
+		BufferState(final ByteBuffer buffer, final byte cache, final int remainingBitsInCache){
+			update(buffer, cache, remainingBitsInCache);
 		}
 
-		void set(final int position, final byte cache, final int remaining){
-			this.position = position;
+		void update(final ByteBuffer buffer, final byte cache, final int remainingBitsInCache){
+			position = buffer.position();
 			this.cache = cache;
-			this.remainingBitsInCache = remaining;
+			this.remainingBitsInCache = remainingBitsInCache;
 		}
 	}
 
@@ -88,7 +88,7 @@ abstract class BitReaderData{
 	public final synchronized void createSavepoint(){
 		if(savepoint != null)
 			//update current mark:
-			savepoint.set(buffer.position(), cache, remainingBitsInCache);
+			savepoint.update(buffer, cache, remainingBitsInCache);
 		else
 			//create new mark
 			savepoint = createSnapshot();
@@ -115,7 +115,7 @@ abstract class BitReaderData{
 	}
 
 	private BufferState createSnapshot(){
-		return new BufferState(buffer.position(), cache, remainingBitsInCache);
+		return new BufferState(buffer, cache, remainingBitsInCache);
 	}
 
 	private void restoreSnapshot(final BufferState snapshot){
