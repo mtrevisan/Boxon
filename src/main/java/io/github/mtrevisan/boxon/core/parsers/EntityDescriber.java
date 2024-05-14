@@ -23,11 +23,11 @@ final class EntityDescriber{
 	 * <p>Each entity is transformed into a map representation where the keys are the field names and the values are the corresponding field
 	 * values.</p>
 	 *
-	 * @param entities The collection of entities to be described.
-	 * @param mapper   A function that takes an entity of type T and returns its corresponding map representation.
-	 * @param <T>      The type of the entities.
-	 * @throws BoxonException If a field exception occurs during the mapping process.
-	 * @return The list of descriptions for the entities.
+	 * @param entities	The collection of entities to be described.
+	 * @param mapper	A function that takes an entity of type T and returns its corresponding map representation.
+	 * @param <T>	The type of the entities.
+	 * @throws BoxonException	If a field exception occurs during the mapping process.
+	 * @return	The list of descriptions for the entities.
 	 */
 	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
 			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException{
@@ -40,15 +40,15 @@ final class EntityDescriber{
 	/**
 	 * Describes the entities by mapping them to a list of maps using the provided mapper function.
 	 *
-	 * @param annotationClass The annotation class to check for annotated entities.
-	 * @param entitiesClass   The array of entity classes to be described.
-	 * @param extractor       The function to extract the entity.
-	 * @param mapper          The function that maps the entity to its corresponding map representation.
-	 * @param <T>             The type of the entities.
-	 * @param <E>             The type of the exception.
-	 * @throws BoxonException If a field exception occurs during the mapping process.
-	 * @throws E              If any other exception occurs during the extraction or mapping process.
-	 * @return The list of descriptions for the entities.
+	 * @param annotationClass	The annotation class to check for annotated entities.
+	 * @param entitiesClass	The array of entity classes to be described.
+	 * @param extractor	The function to extract the entity.
+	 * @param mapper	The function that maps the entity to its corresponding map representation.
+	 * @param <T>	The type of the entities.
+	 * @param <E>	The type of the exception.
+	 * @throws BoxonException	If a field exception occurs during the mapping process.
+	 * @throws E	If any other exception occurs during the extraction or mapping process.
+	 * @return	The list of descriptions for the entities.
 	 */
 	static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
@@ -65,15 +65,15 @@ final class EntityDescriber{
 	/**
 	 * Describes an entity by mapping it to a map representation using the provided mapper function.
 	 *
-	 * @param annotationClass The annotation class to check for the entity.
-	 * @param entityClass     The entity class to be described.
-	 * @param extractor       The function to extract the entity.
-	 * @param mapper          The function that maps the entity to its corresponding map representation.
-	 * @param <T>             The type of the entity.
-	 * @param <E>             The type of the exception.
-	 * @throws BoxonException If a field exception occurs during the mapping process.
-	 * @throws E              If any other exception occurs during the extraction or mapping process.
-	 * @return The map representation of the entity.
+	 * @param annotationClass	The annotation class to check for the entity.
+	 * @param entityClass	The entity class to be described.
+	 * @param extractor	The function to extract the entity.
+	 * @param mapper	The function that maps the entity to its corresponding map representation.
+	 * @param <T>	The type of the entity.
+	 * @param <E>	The type of the exception.
+	 * @throws BoxonException	If a field exception occurs during the mapping process.
+	 * @throws E	If any other exception occurs during the extraction or mapping process.
+	 * @return	The map representation of the entity.
 	 */
 	static <T, E extends Exception> Map<String, Object> describeEntity(final Class<? extends Annotation> annotationClass,
 			final Class<?> entityClass, final ThrowingFunction<Class<?>, T, E> extractor,
