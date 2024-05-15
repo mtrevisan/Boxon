@@ -88,11 +88,13 @@ class BitWriterData{
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
 	 */
 	private void writeNumber(final long value, final int bitsToWrite){
-		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> {
-			final long mask = (1l << length) - 1;
-			cache |= (byte)((value >> bitsToProcess) & mask);
-		};
+		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> writeToCache(value, bitsToProcess, length);
 		writeBits(bitsToWrite, cacheUpdater);
+	}
+
+	private void writeToCache(final long value, final int bitsToProcess, final int length){
+		final long mask = (1l << length) - 1;
+		cache |= (byte)((value >> bitsToProcess) & mask);
 	}
 
 	/**
@@ -102,10 +104,7 @@ class BitWriterData{
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
 	 */
 	public final synchronized void writeBitSet(final BitSet bitmap, final int bitsToWrite){
-		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> {
-			cache <<= byteComplement(length);
-			cache |= writeToCache(bitmap, bitsToProcess, length);
-		};
+		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> writeToCache(bitmap, bitsToProcess, length);
 		writeBits(bitsToWrite, cacheUpdater);
 	}
 
@@ -115,16 +114,15 @@ class BitWriterData{
 	 * @param bitmap	The bit set.
 	 * @param offset	The bit offset to start the extraction.
 	 * @param size	The amount of bits to use when writing the {@code bitmap} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
-	 * @return	A long starting at a given offset and of a given length.
 	 */
-	private byte writeToCache(final BitSet bitmap, int offset, final int size){
+	private void writeToCache(final BitSet bitmap, int offset, final int size){
 		offset += size - 1;
 		byte valueRead = 0;
 		final int consumed = byteComplement(remaining);
 		int index = offset + 2;
 		while((index = bitmap.previousSetBit(index - 1) - consumed) >= 0 && offset - index < size)
 			valueRead |= (byte)(0x80 >> (offset - index));
-		return valueRead;
+		cache |= valueRead;
 	}
 
 	/**
@@ -133,7 +131,7 @@ class BitWriterData{
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
 	public final synchronized void skipBits(final int bitsToSkip){
-		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> cache <<= length;
+		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> {};
 		writeBits(bitsToSkip, cacheUpdater);
 	}
 
@@ -153,7 +151,10 @@ class BitWriterData{
 			final int length = Math.min(bitsToWrite, remaining);
 			bitsToWrite -= length;
 
+			cache <<= length;
+
 			cacheUpdater.accept(bitsToWrite, length);
+
 			consumeCache(length);
 
 			//if cache is full, write it

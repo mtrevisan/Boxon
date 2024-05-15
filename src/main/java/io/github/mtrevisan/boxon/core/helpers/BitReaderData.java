@@ -70,7 +70,7 @@ abstract class BitReaderData{
 
 	/** The cache used when reading bits. */
 	private byte cache;
-	/** The number of bits available (to read) within the cache. */
+	/** The number of bits available (to read) within {@code cache}. */
 	private int remainingBitsInCache;
 
 	private final BufferState savepoint = new BufferState();
