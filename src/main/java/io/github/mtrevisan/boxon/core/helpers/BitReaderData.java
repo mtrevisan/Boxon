@@ -140,10 +140,10 @@ abstract class BitReaderData{
 	}
 
 	private void readFromCache(final AtomicLong atomicBitmap, final int bitsToRead, final int length){
-		long bitmap = atomicBitmap.get();
-
 		final long mask = (0xFFl << byteComplement(length)) & 0xFFl;
 		final int shift = remainingBitsInCache - length;
+
+		long bitmap = atomicBitmap.get();
 		if(shift == 0)
 			bitmap |= (cache & mask) << bitsToRead;
 		else
