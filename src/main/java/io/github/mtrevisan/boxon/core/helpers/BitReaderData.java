@@ -256,32 +256,32 @@ abstract class BitReaderData{
 		final int currentPosition = buffer.position();
 		final int bytesRemaining = buffer.limit() - currentPosition;
 		long forecastCache = cache;
-		int forecastRemaining = remainingBitsInCache;
+		int forecastRemainingBitsInCache = remainingBitsInCache;
 		int offset = 0;
 		//cycle 2 times at most, since a byte can be split at most in two
 		while(bitsToRead > 0){
 			//if cache is empty and there are more bits to be read, fill it
-			if(forecastRemaining == 0){
+			if(forecastRemainingBitsInCache == 0){
 				if(offset >= bytesRemaining)
 					return false;
 
 				//fill cache
 				forecastCache = buffer.get(currentPosition + offset);
-				forecastRemaining = Byte.SIZE;
+				forecastRemainingBitsInCache = Byte.SIZE;
 			}
 
-			final int length = Math.min(bitsToRead, forecastRemaining);
+			final int length = Math.min(bitsToRead, forecastRemainingBitsInCache);
 			bitsToRead -= length;
 
 			final long mask = (0xFFl << byteComplement(length)) & 0xFFl;
-			final int shift = forecastRemaining - length;
+			final int shift = forecastRemainingBitsInCache - length;
 			if(shift == 0)
 				bitmap |= (forecastCache & mask) << bitsToRead;
 			else
 				bitmap |= (forecastCache & mask) >> shift;
 
 			forecastCache &= ~mask;
-			forecastRemaining -= length;
+			forecastRemainingBitsInCache -= length;
 			offset ++;
 		}
 		return (bitmap != terminator);
