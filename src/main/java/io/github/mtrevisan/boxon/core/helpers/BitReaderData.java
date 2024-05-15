@@ -51,6 +51,8 @@ abstract class BitReaderData{
 		/** The number of bits available (to read) within the cache. */
 		private int remainingBitsInCache;
 
+		BufferState(){}
+
 		BufferState(final BitReaderData bitReaderData){
 			update(bitReaderData);
 		}
@@ -71,8 +73,7 @@ abstract class BitReaderData{
 	/** The number of bits available (to read) within the cache. */
 	private int remainingBitsInCache;
 
-	private BufferState savepoint;
-	private boolean hasSavepoint;
+	private final BufferState savepoint = new BufferState();
 
 
 	BitReaderData(final ByteBuffer buffer){
@@ -88,27 +89,15 @@ abstract class BitReaderData{
 	 * </p>
 	 */
 	public final synchronized void createSavepoint(){
-		if(savepoint != null)
-			//update current mark:
-			savepoint.update(this);
-		else
-			//create new mark
-			savepoint = createSnapshot();
-
-		hasSavepoint = true;
+		savepoint.update(this);
 	}
 
 	/**
 	 * Restore a fallback point created with {@link #createSavepoint()}.
 	 */
 	public final synchronized void restoreSavepoint(){
-		if(hasSavepoint){
-			//a fallback point has been marked before
-			restoreSnapshot(savepoint);
-
-			//clear savepoint
-			hasSavepoint = false;
-		}
+		//precondition: a fallback point has been marked before
+		restoreSnapshot(savepoint);
 	}
 
 	private BufferState createSnapshot(){
