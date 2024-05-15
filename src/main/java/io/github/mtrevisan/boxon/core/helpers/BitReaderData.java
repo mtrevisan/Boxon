@@ -199,6 +199,12 @@ abstract class BitReaderData{
 		readBits(bitsToSkip, skipBufferConsumer);
 	}
 
+	/**
+	 * Reads the specified number of bits from the buffer and processes them using the provided bi-consumer.
+	 *
+	 * @param bitsToProcess	The number of bits to process.
+	 * @param bitConsumer	The bi-consumer function to process the bits.
+	 */
 	private void readBits(int bitsToProcess, final BiConsumer<Integer, Integer> bitConsumer){
 		while(bitsToProcess > 0){
 			//if cache is empty and there are more bits to be read, fill it

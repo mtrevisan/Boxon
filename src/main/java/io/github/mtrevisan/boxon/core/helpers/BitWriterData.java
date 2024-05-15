@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
+import java.util.function.BiConsumer;
 
 
 /**
@@ -86,23 +87,12 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
 	 */
-	private void writeNumber(final long value, int bitsToWrite){
-		while(bitsToWrite > 0){
-			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToWrite, remaining);
-			bitsToWrite -= length;
-
+	private void writeNumber(final long value, final int bitsToWrite){
+		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> {
 			final long mask = (1l << length) - 1;
-			cache |= (byte)((value >> bitsToWrite) & mask);
-			consumeCache(length);
-
-			//if cache is full, write it
-			if(remaining == 0){
-				os.write(cache);
-
-				resetCache();
-			}
-		}
+			cache |= (byte)((value >> bitsToProcess) & mask);
+		};
+		writeBits(bitsToWrite, cacheUpdater);
 	}
 
 	/**
@@ -111,23 +101,12 @@ class BitWriterData{
 	 * @param bitmap	The value to write.
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
 	 */
-	public final synchronized void writeBitSet(final BitSet bitmap, int bitsToWrite){
-		while(bitsToWrite > 0){
-			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToWrite, remaining);
-			bitsToWrite -= length;
-
+	public final synchronized void writeBitSet(final BitSet bitmap, final int bitsToWrite){
+		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> {
 			cache <<= byteComplement(length);
-			cache |= writeToCache(bitmap, bitsToWrite, length);
-			consumeCache(length);
-
-			//if cache is full, write it
-			if(remaining == 0){
-				os.write(cache);
-
-				resetCache();
-			}
-		}
+			cache |= writeToCache(bitmap, bitsToProcess, length);
+		};
+		writeBits(bitsToWrite, cacheUpdater);
 	}
 
 	/**
@@ -153,13 +132,28 @@ class BitWriterData{
 	 *
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	public final synchronized void skipBits(int bitsToSkip){
-		while(bitsToSkip > 0){
-			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToSkip, remaining);
-			bitsToSkip -= length;
+	public final synchronized void skipBits(final int bitsToSkip){
+		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> cache <<= length;
+		writeBits(bitsToSkip, cacheUpdater);
+	}
 
-			cache <<= length;
+	/**
+	 * Writes the specified number of bits using the given cache updater.
+	 * <p>
+	 * The cache updater is a function that updates the cache with a chunk of bits.<br />
+	 * Once the cache is full, it is written to the output stream.
+	 * </p>
+	 *
+	 * @param bitsToWrite	The number of bits to write.
+	 * @param cacheUpdater	The function that updates the cache with bits.
+	 */
+	private void writeBits(int bitsToWrite, final BiConsumer<Integer, Integer> cacheUpdater){
+		while(bitsToWrite > 0){
+			//fill the cache one chunk of bits at a time
+			final int length = Math.min(bitsToWrite, remaining);
+			bitsToWrite -= length;
+
+			cacheUpdater.accept(bitsToWrite, length);
 			consumeCache(length);
 
 			//if cache is full, write it

@@ -37,7 +37,7 @@ public interface PatternMatcher{
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
 	 * @return	An array of pre-processed pattern.
-	 * @throws DataException   If the pattern is too long.
+	 * @throws DataException	If the pattern is too long.
 	 */
 	int[] preProcessPattern(byte[] pattern);
 
