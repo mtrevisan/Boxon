@@ -51,14 +51,14 @@ abstract class BitReaderData{
 		/** The number of bits available (to read) within the cache. */
 		private int remainingBitsInCache;
 
-		BufferState(final ByteBuffer buffer, final byte cache, final int remainingBitsInCache){
-			update(buffer, cache, remainingBitsInCache);
+		BufferState(final BitReaderData bitReaderData){
+			update(bitReaderData);
 		}
 
-		void update(final ByteBuffer buffer, final byte cache, final int remainingBitsInCache){
-			position = buffer.position();
-			this.cache = cache;
-			this.remainingBitsInCache = remainingBitsInCache;
+		void update(final BitReaderData bitReaderData){
+			position = bitReaderData.buffer.position();
+			cache = bitReaderData.cache;
+			remainingBitsInCache = bitReaderData.remainingBitsInCache;
 		}
 	}
 
@@ -72,6 +72,7 @@ abstract class BitReaderData{
 	private int remainingBitsInCache;
 
 	private BufferState savepoint;
+	private boolean hasSavepoint;
 
 
 	BitReaderData(final ByteBuffer buffer){
@@ -89,34 +90,29 @@ abstract class BitReaderData{
 	public final synchronized void createSavepoint(){
 		if(savepoint != null)
 			//update current mark:
-			savepoint.update(buffer, cache, remainingBitsInCache);
+			savepoint.update(this);
 		else
 			//create new mark
 			savepoint = createSnapshot();
+
+		hasSavepoint = true;
 	}
 
 	/**
 	 * Restore a fallback point created with {@link #createSavepoint()}.
 	 */
 	public final synchronized void restoreSavepoint(){
-		if(savepoint != null){
+		if(hasSavepoint){
 			//a fallback point has been marked before
 			restoreSnapshot(savepoint);
 
-			clearSavepoint();
+			//clear savepoint
+			hasSavepoint = false;
 		}
 	}
 
-	/**
-	 * Clear fallback point data.
-	 * <p>After calling this method, no restoring is possible (see {@link #restoreSavepoint()}).</p>
-	 */
-	private synchronized void clearSavepoint(){
-		savepoint = null;
-	}
-
 	private BufferState createSnapshot(){
-		return new BufferState(buffer, cache, remainingBitsInCache);
+		return new BufferState(this);
 	}
 
 	private void restoreSnapshot(final BufferState snapshot){
