@@ -72,6 +72,12 @@ public interface Codec{
 		throws BoxonException;
 
 
+	/**
+	 * Create an Unsupported Operation exception for a given annotation.
+	 *
+	 * @param annotationType	The annotation type.
+	 * @return	The exception.
+	 */
 	default UnsupportedOperationException createUnsupportedOperationException(final Class<?> annotationType){
 		return new UnsupportedOperationException("Cannot decode this type of annotation: " + annotationType.getSimpleName());
 	}

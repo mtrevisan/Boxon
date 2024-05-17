@@ -78,6 +78,12 @@ public class EncodeException extends BoxonException{
 		super(cause, message, parameters);
 	}
 
+	/**
+	 * Constructs a new exception with the specified message, possibly with parameters.
+	 *
+	 * @param message	The message to be formatted.
+	 * @param parameters	The parameters of the message.
+	 */
 	protected EncodeException(final String message, final Object... parameters){
 		super(message, parameters);
 	}

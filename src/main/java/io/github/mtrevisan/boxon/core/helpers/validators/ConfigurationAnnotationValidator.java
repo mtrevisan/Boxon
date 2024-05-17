@@ -228,7 +228,7 @@ public enum ConfigurationAnnotationValidator{
 	/**
 	 * Get the validator for the given annotation.
 	 *
-	 * @param annotationType	The annotation class type.
+	 * @param annotationType	The annotation type.
 	 * @return	The validator for the given annotation.
 	 */
 	public static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
