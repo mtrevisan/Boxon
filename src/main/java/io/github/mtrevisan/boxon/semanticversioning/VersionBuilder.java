@@ -31,6 +31,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 
+/**
+ * This class is responsible for constructing instances of the {@link Version} class.
+ * <p>
+ * It provides several overloaded static "of" methods that create a new `Version` instance based on different combinations of version
+ * numbers, pre-release identifiers, and build identifiers.</p>
+ */
 public final class VersionBuilder{
 
 	private static final String KEY_MAJOR = "major";
@@ -96,8 +102,6 @@ public final class VersionBuilder{
 	 * @throws VersionException	If the given version is not valid.
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease) throws VersionException{
-		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
-
 		return createVersion(major, minor, patch, preRelease, Version.EMPTY_STRING_ARRAY);
 	}
 
@@ -114,9 +118,6 @@ public final class VersionBuilder{
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease, final String[] build)
 			throws VersionException{
-		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
-		Objects.requireNonNull(build, "Build identifier cannot be null");
-
 		return createVersion(major, minor, patch, preRelease, build);
 	}
 
@@ -126,15 +127,16 @@ public final class VersionBuilder{
 
 	private static Version createVersion(final int major, final Integer minor, final Integer patch, final String[] preRelease,
 			final String[] build) throws VersionException{
+		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
+		Objects.requireNonNull(build, "Build identifier cannot be null");
+
 		validateToken(KEY_MAJOR, String.valueOf(major));
 		if(minor != null)
 			validateToken(KEY_MINOR, minor.toString());
 		if(patch != null)
 			validateToken(KEY_PATCH, patch.toString());
-		if(preRelease != null)
-			validatePreRelease(preRelease);
-		if(build != null)
-			validateBuild(build);
+		validatePreRelease(preRelease);
+		validateBuild(build);
 
 		return Version.create(major, minor, patch, preRelease, build);
 	}

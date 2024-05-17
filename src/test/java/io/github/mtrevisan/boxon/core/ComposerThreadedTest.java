@@ -26,16 +26,12 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 class ComposerThreadedTest{
@@ -44,8 +40,7 @@ class ComposerThreadedTest{
 
 
 	@Test
-	void concurrencySingleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
-			ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -64,7 +59,7 @@ class ComposerThreadedTest{
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				final Object message = parseResult.getFirst()
+				Object message = parseResult.getFirst()
 					.getMessage();
 				return composer.compose(message);
 			},
@@ -74,8 +69,7 @@ class ComposerThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
-			ExecutionException, InterruptedException{
+	void concurrencyMultipleParserSingleCore() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -94,7 +88,7 @@ class ComposerThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				final Object message = parseResult.getFirst()
+				Object message = parseResult.getFirst()
 					.getMessage();
 				return composer.compose(message);
 			},
@@ -104,7 +98,7 @@ class ComposerThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 
@@ -124,7 +118,7 @@ class ComposerThreadedTest{
 				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				final Object message = parseResult.getFirst()
+				Object message = parseResult.getFirst()
 					.getMessage();
 				return composer.compose(message);
 			},

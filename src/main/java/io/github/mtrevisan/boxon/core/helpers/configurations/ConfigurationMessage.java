@@ -26,10 +26,11 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
@@ -60,10 +61,6 @@ public final class ConfigurationMessage<T>{
 	private static final String CONFIGURATION_NAME_COMPOSITE = "CompositeConfigurationField";
 	private static final String CONFIGURATION_NAME_FIELD = "ConfigurationField";
 	private static final String CONFIGURATION_NAME_SKIP = "ConfigurationSkip";
-
-	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
-	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
-	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
 
 	private final Class<T> type;
@@ -178,56 +175,56 @@ public final class ConfigurationMessage<T>{
 
 	private static void validateAlternativeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
 				CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_FIELD);
 	}
 
 	private static void validateCompositeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
 				CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_FIELD);
 	}
 
 	private static void validateFieldAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
 				CONFIGURATION_NAME_FIELD);
 	}
 
 	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_FIELD);
 	}
 
 
 	private void validateShortDescriptionUniqueness(final Annotation annotation, final Collection<String> uniqueShortDescription,
 			final Class<T> type) throws AnnotationException{
-		final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+		final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(annotation);
 		final String shortDescription = manager.getShortDescription();
 		if(!uniqueShortDescription.add(shortDescription))
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
@@ -269,7 +266,7 @@ public final class ConfigurationMessage<T>{
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
 		final int length = fields.size();
-		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
+		final List<String> boundaries = new ArrayList<>((length << 1) + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
@@ -277,7 +274,7 @@ public final class ConfigurationMessage<T>{
 			final ConfigurationField field = fields.get(i);
 
 			final Annotation binding = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(binding);
 			manager.addProtocolVersionBoundaries(boundaries);
 
 			final ConfigurationSkip[] skips = field.getSkips();

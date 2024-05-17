@@ -28,13 +28,13 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,8 +45,8 @@ import java.lang.annotation.Annotation;
 class CodecChecksumTest{
 
 	@Test
-	void checksumShort() throws FieldException{
-		CodecInterface<Checksum> codec = new CodecChecksum();
+	void checksumShort() throws BoxonException{
+		Codec codec = new CodecChecksum();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		Checksum annotation = new Checksum(){
 			@Override
@@ -81,14 +81,14 @@ class CodecChecksumTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(encodedValue, Short.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		short decoded = (short)codec.decode(reader, annotation, null);
+		short decoded = (short)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

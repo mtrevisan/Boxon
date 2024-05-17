@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadFromScan() throws AnnotationException, TemplateException{
+	void loadFromScan() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 
@@ -55,7 +55,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadFromScanWithBasePackage() throws AnnotationException, TemplateException{
+	void loadFromScanWithBasePackage() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 
@@ -73,7 +73,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadTemplate() throws AnnotationException, TemplateException{
+	void loadTemplate() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
@@ -100,7 +100,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void findNextTemplate() throws AnnotationException, TemplateException{
+	void findNextTemplate() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
@@ -114,7 +114,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void cannotFindNextTemplate() throws AnnotationException, TemplateException{
+	void cannotFindNextTemplate() throws Exception{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);

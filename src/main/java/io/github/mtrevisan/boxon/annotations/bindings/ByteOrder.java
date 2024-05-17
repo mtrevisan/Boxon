@@ -32,23 +32,6 @@ public enum ByteOrder{
 	LITTLE_ENDIAN{
 		@Override
 		public short correctEndianness(final short value){
-			return value;
-		}
-
-		@Override
-		public int correctEndianness(final int value){
-			return value;
-		}
-
-		@Override
-		public long correctEndianness(final long value){
-			return value;
-		}
-	},
-	/** Big-endian byte order. */
-	BIG_ENDIAN{
-		@Override
-		public short correctEndianness(final short value){
 			return Short.reverseBytes(value);
 		}
 
@@ -61,13 +44,48 @@ public enum ByteOrder{
 		public long correctEndianness(final long value){
 			return Long.reverseBytes(value);
 		}
+	},
+	/** Big-endian byte order. */
+	BIG_ENDIAN{
+		@Override
+		public short correctEndianness(final short value){
+			return value;
+		}
+
+		@Override
+		public int correctEndianness(final int value){
+			return value;
+		}
+
+		@Override
+		public long correctEndianness(final long value){
+			return value;
+		}
 	};
 
 
+	/**
+	 * Corrects the endianness of a short value according to the specified byte order.
+	 *
+	 * @param value	The short value to correct the endianness of.
+	 * @return	The corrected short value.
+	 */
 	public abstract short correctEndianness(short value);
 
+	/**
+	 * Corrects the endianness of an int value according to the specified byte order.
+	 *
+	 * @param value	The int value to correct the endianness of.
+	 * @return	The corrected int value.
+	 */
 	public abstract int correctEndianness(int value);
 
+	/**
+	 * Corrects the endianness of a long value according to the specified byte order.
+	 *
+	 * @param value	The long value to correct the endianness of.
+	 * @return	The corrected long value.
+	 */
 	public abstract long correctEndianness(long value);
 
 }

@@ -35,6 +35,8 @@ public interface FieldExtractor<F>{
 
 	Annotation getBinding(F field);
 
+	Annotation getCollectionBinding(F field);
+
 	String getFieldName(F field);
 
 	Class<?> getFieldType(F field);

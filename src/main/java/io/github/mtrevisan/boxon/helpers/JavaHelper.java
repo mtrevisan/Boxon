@@ -28,7 +28,9 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 /**
@@ -71,6 +73,12 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Calculates the size in bytes for a given number of bits.
+	 *
+	 * @param bits	The number of bits.
+	 * @return	The size in bytes.
+	 */
 	public static int getSizeInBytes(final int bits){
 		return (bits + Byte.SIZE - 1) >>> 3;
 	}
@@ -114,6 +122,17 @@ public final class JavaHelper{
 	 */
 	public static <T> int sizeOrZero(final Collection<T> array){
 		return (array != null? array.size(): 0);
+	}
+
+
+	/**
+	 * Checks if the given number is a multiple of a byte (8 bits).
+	 *
+	 * @param number	The number to check if it is a multiple of a byte.
+	 * @return	Whether the number is a multiple of a byte.
+	 */
+	public static boolean isMultipleOfByte(final int number){
+		return (number != 0 && number % Byte.SIZE == 0);
 	}
 
 
@@ -212,6 +231,36 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Pretty prints the name of the given method.
+	 * <p>
+	 * The format is "ClassName.methodName(parameterTypes)".
+	 * </p>
+	 *
+	 * @param type	The class containing the method.
+	 * @param methodName	The name of the method.
+	 * @param parameterTypes	The parameter types of the method.
+	 * @return	The pretty printed method name.
+	 */
+	public static String prettyPrintMethodName(final Class<?> type, final String methodName, final Class<?>... parameterTypes){
+		return type.getName() + '.' + methodName
+			+ (parameterTypes == null || parameterTypes.length == 0
+			? "()"
+			: Arrays.stream(parameterTypes).map(c -> c == null
+			? "null"
+			: c.getName()).collect(Collectors.joining(",", "(", ")"))
+		);
+	}
+
+	/**
+	 * Pretty prints the name of the given class.
+	 * <p>
+	 * If the class represents an array, the brackets are properly formatted.
+	 * </p>
+	 *
+	 * @param cls	The class.
+	 * @return	The pretty printed class name.
+	 */
 	public static String prettyPrintClassName(final Class<?> cls){
 		final String className = cls.getName();
 		final int count = countLeadingSquareBrackets(className);

@@ -31,6 +31,12 @@ import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import java.util.List;
 
 
+/**
+ * Extracts information from a {@link Template} message.
+ * <p>
+ * It provides implementations for retrieving the type name, header, and fields of a {@link Template} message.
+ * </p>
+ */
 public class MessageExtractorBasicStrategy extends MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
 
 	@Override

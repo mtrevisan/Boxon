@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
@@ -42,7 +42,7 @@ import java.util.Map;
 
 
 @TemplateHeader(start = "+ACK", end = "\r\n")
-public class ACKMessageHex{
+public final class ACKMessageHex{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
 	static{
@@ -92,7 +92,7 @@ public class ACKMessageHex{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
-	public static class MessageTypeConverter implements Converter<Byte, String>{
+	public static final class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);
@@ -118,14 +118,12 @@ public class ACKMessageHex{
 	private byte messageLength;
 	@BindInteger(size = "8", condition = "mask.hasDeviceType()")
 	private byte deviceTypeCode;
-	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class,
-		converter = QueclinkHelper.VersionConverter.class)
+	@BindInteger(condition = "mask.hasProtocolVersion()", size = "16", converter = QueclinkHelper.VersionConverter.class)
 	private Version protocolVersion;
-	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte.class,
-		converter = QueclinkHelper.VersionConverter.class)
+	@BindInteger(condition = "mask.hasFirmwareVersion()", size = "16", converter = QueclinkHelper.VersionConverter.class)
 	private Version firmwareVersion;
-	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte.class,
-		converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
+	@BindInteger(condition = "mask.hasIMEI()", size = "8", converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
+	@BindAsArray(size = "8")
 	private String imei;
 	@BindString(condition = "!mask.hasIMEI()", size = "8")
 	private String deviceName;
@@ -133,8 +131,8 @@ public class ACKMessageHex{
 	private byte id;
 	@BindInteger(size = "16")
 	private short correlationId;
-	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte.class,
-		converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
+	@BindInteger(condition = "mask.hasEventTime()", size = "8", converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
+	@BindAsArray(size = "7")
 	private LocalDateTime eventTime;
 	@BindInteger(size = "16", condition = "mask.hasMessageId()")
 	private short messageId;

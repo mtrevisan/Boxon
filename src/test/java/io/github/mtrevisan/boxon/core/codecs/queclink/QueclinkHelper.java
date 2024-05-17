@@ -29,29 +29,31 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 
-public final class QueclinkHelper{
+final class QueclinkHelper{
 
 	private QueclinkHelper(){}
 
 
-	public static class VersionConverter implements Converter<byte[], Version>{
+	public static final class VersionConverter implements Converter<BigInteger, Version>{
 		@Override
-		public Version decode(final byte[] value){
-			return VersionBuilder.of(value[0], value[1]);
+		public Version decode(final BigInteger value){
+			final byte[] array = value.toByteArray();
+			return VersionBuilder.of(array[0], array[1]);
 		}
 
 		@Override
-		public byte[] encode(final Version value){
-			return new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()};
+		public BigInteger encode(final Version value){
+			return new BigInteger(new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()});
 		}
 	}
 
-	static class HexStringVersionConverter implements Converter<String, Version>{
+	static final class HexStringVersionConverter implements Converter<String, Version>{
 		@Override
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
@@ -73,7 +75,7 @@ public final class QueclinkHelper{
 	}
 
 
-	public static class IMEIConverter implements Converter<byte[], String>{
+	public static final class IMEIConverter implements Converter<byte[], String>{
 
 		private static final Pattern PATTERN = Pattern.compile("(?<=\\G\\d{2})");
 
@@ -102,7 +104,7 @@ public final class QueclinkHelper{
 	}
 
 
-	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], LocalDateTime>{
+	public static final class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], LocalDateTime>{
 		@Override
 		public LocalDateTime decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
@@ -128,7 +130,7 @@ public final class QueclinkHelper{
 		}
 	}
 
-	static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, LocalDateTime>{
+	static final class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, LocalDateTime>{
 		@Override
 		public LocalDateTime decode(final String value){
 			final int year = Integer.parseInt(value.substring(0, 4));
@@ -152,7 +154,7 @@ public final class QueclinkHelper{
 	}
 
 
-	static class HexStringToByteConverter implements Converter<String, Byte>{
+	static final class HexStringToByteConverter implements Converter<String, Byte>{
 		@Override
 		public Byte decode(final String value){
 			return (byte)Integer.parseInt(value, 16);
@@ -165,7 +167,7 @@ public final class QueclinkHelper{
 	}
 
 
-	static class HexStringToShortConverter implements Converter<String, Short>{
+	static final class HexStringToShortConverter implements Converter<String, Short>{
 		@Override
 		public Short decode(final String value){
 			return (short)Integer.parseInt(value, 16);

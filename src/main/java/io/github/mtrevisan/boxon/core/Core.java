@@ -27,13 +27,16 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
@@ -70,6 +73,9 @@ public final class Core{
 
 	private Core(){
 		loaderCodec = LoaderCodec.create();
+
+		//FIXME ugliness
+		Template.setCustomCodecValidatorExtractor(loaderCodec::getCustomCodecValidator);
 
 		evaluator = Evaluator.create();
 
@@ -153,8 +159,7 @@ public final class Core{
 
 
 	/**
-	 * Loads all the default codecs that extends {@link CodecInterface}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * Loads all the default codecs.
 	 */
 	void useDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
@@ -163,40 +168,56 @@ public final class Core{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the codecs that extends {@link Codec}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
+	 * @throws CodecException	If a codec was already loaded.
 	 */
-	void addCodecsFrom(final Class<?>... basePackageClasses){
+	void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
 		loaderCodec.loadCodecsFrom(basePackageClasses);
 
 		postProcessCodecs();
 	}
 
 	/**
-	 * Loads the given codec that extends {@link CodecInterface}.
+	 * Loads the given codec.
 	 *
 	 * @param codec	The codec to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final CodecInterface<?> codec){
+	void addCodec(final Codec codec) throws CodecException{
 		loaderCodec.addCodec(codec);
 
 		postProcessCodec(codec);
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads the given codec.
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @param validator	The codec validator.
+	 * @throws CodecException	If the codec was already loaded.
+	 */
+	void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
+		loaderCodec.addCodec(codec, validator);
+
+		postProcessCodec(codec);
+	}
+
+	/**
+	 * Loads all the given codecs.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
+	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodecs(final CodecInterface<?>... codecs){
+	void addCodecs(final Codec... codecs) throws CodecException{
 		loaderCodec.addCodecs(codecs);
 
 		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
 			postProcessCodec(codecs[i]);
 	}
 
-	private void postProcessCodec(final CodecInterface<?> codec){
+	private void postProcessCodec(final Codec codec){
 		LoaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 

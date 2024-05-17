@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
@@ -171,7 +171,7 @@ public final class JSONPath{
 		return SLASH + String.join(SLASH, path);
 	}
 
-	private static Object extractPath(final Object data, final Integer idx, final Object defaultValue){
+	private static Object extractPath(final Object data, final int idx, final Object defaultValue){
 		final IndexExtractor extractor = selectPathExtractor(data);
 		return (extractor.isValidIndex(idx, data)
 			? extractor.getValueAt(idx, data)
@@ -187,31 +187,31 @@ public final class JSONPath{
 	}
 
 	private interface IndexExtractor{
-		boolean isValidIndex(Integer idx, Object data);
+		boolean isValidIndex(int idx, Object data);
 
-		Object getValueAt(Integer idx, Object data);
+		Object getValueAt(int idx, Object data);
 	}
 
 	private static class ListIndexExtractor implements IndexExtractor{
 		@Override
-		public final boolean isValidIndex(final Integer idx, final Object data){
+		public final boolean isValidIndex(final int idx, final Object data){
 			return (idx >= 0 && idx < ((Collection<?>)data).size());
 		}
 
 		@Override
-		public final Object getValueAt(final Integer idx, final Object data){
+		public final Object getValueAt(final int idx, final Object data){
 			return ((List<?>)data).get(idx);
 		}
 	}
 
 	private static class ArrayIndexExtractor implements IndexExtractor{
 		@Override
-		public final boolean isValidIndex(final Integer idx, final Object data){
+		public final boolean isValidIndex(final int idx, final Object data){
 			return (idx >= 0 && idx < Array.getLength(data));
 		}
 
 		@Override
-		public final Object getValueAt(final Integer idx, final Object data){
+		public final Object getValueAt(final int idx, final Object data){
 			return Array.get(data, idx);
 		}
 	}

@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 
 
 /**
- * Data associated to a directly evaluable field.
+ * Data associated with a directly evaluable field.
  *
  * @param <B>	One of {@link Evaluate} or {@link PostProcess}.
  */
@@ -52,6 +52,11 @@ public final class EvaluatedField<B>{
 	}
 
 
+	/**
+	 * Retrieves the {@link Field} associated with the evaluated field.
+	 *
+	 * @return	The {@link Field} associated with the evaluated field.
+	 */
 	public Field getField(){
 		return field;
 	}

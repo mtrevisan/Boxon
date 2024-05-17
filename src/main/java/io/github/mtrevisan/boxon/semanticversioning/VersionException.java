@@ -59,7 +59,7 @@ public final class VersionException extends IllegalArgumentException{
 	 * @return	An instance of this exception.
 	 */
 	public static VersionException create(final Throwable cause, final String message, final Object... parameters){
-		return new VersionException(StringHelper.format(message, parameters), cause);
+		return new VersionException(cause, message, parameters);
 	}
 
 	/**
@@ -70,28 +70,19 @@ public final class VersionException extends IllegalArgumentException{
 	 * @return	An instance of this exception.
 	 */
 	public static VersionException create(final String message, final Object... parameters){
-		return new VersionException(StringHelper.format(message, parameters));
+		return new VersionException(null, message, parameters);
 	}
 
-
-	/**
-	 * Constructs a new exception with the specified message.
-	 *
-	 * @param message	The message.
-	 */
-	private VersionException(final String message){
-		super(message);
-	}
 
 	/**
 	 * Constructs a new exception with the specified message and cause.
 	 *
-	 * @param message	The message.
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
 	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @param message	The message.
 	 */
-	private VersionException(final String message, final Throwable cause){
-		super(message, cause);
+	private VersionException(final Throwable cause, final String message, final Object... parameters){
+		super(StringHelper.format(message, parameters), cause);
 	}
 
 	/**

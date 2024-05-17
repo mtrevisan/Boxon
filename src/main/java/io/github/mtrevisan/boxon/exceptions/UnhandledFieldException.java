@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.Serial;
 
@@ -33,7 +32,7 @@ import java.io.Serial;
 /**
  * Thrown if an unhandled field type is found.
  */
-public final class UnhandledFieldException extends IllegalArgumentException{
+public final class UnhandledFieldException extends EncodeException{
 
 	@Serial
 	private static final long serialVersionUID = -111445518565658393L;
@@ -46,14 +45,13 @@ public final class UnhandledFieldException extends IllegalArgumentException{
 	 * @return	An instance of this exception.
 	 */
 	public static UnhandledFieldException create(final Object value){
-		return new UnhandledFieldException(
-			StringHelper.format("Cannot handle this type of field: {}, please report to the developer",
-				JavaHelper.prettyPrintClassName(value.getClass())));
+		return new UnhandledFieldException("Cannot handle this type of field: {}, please report to the developer",
+			JavaHelper.prettyPrintClassName(value.getClass()));
 	}
 
 
-	private UnhandledFieldException(final String message){
-		super(message);
+	private UnhandledFieldException(final String message, final Object... parameters){
+		super(message, parameters);
 	}
 
 }

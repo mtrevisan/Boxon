@@ -67,22 +67,48 @@ public final class SkipParams{
 	}
 
 
+	/**
+	 * Returns the annotation type of this skip parameter.
+	 *
+	 * @return	The annotation type of this skip parameter, either ̧̧{@code {@link SkipUntilTerminator}.class} or
+	 * 	{@code {@link SkipBits}.class}.
+	 */
 	public Class<? extends Annotation> annotationType(){
 		return (StringHelper.isBlank(size)? SkipUntilTerminator.class: SkipBits.class);
 	}
 
+	/**
+	 * Returns the condition of the skip parameter.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made.
+	 */
 	public String condition(){
 		return condition;
 	}
 
+	/**
+	 * Returns the size value of the SkipParams object.
+	 *
+	 * @return	The size value of the SkipParams object.
+	 */
 	public String size(){
 		return size;
 	}
 
+	/**
+	 * Returns the byte value of the terminator used in the skip operation.
+	 *
+	 * @return	The byte value of the terminator.
+	 */
 	public byte terminator(){
 		return terminator;
 	}
 
+	/**
+	 * Indicates whether the terminator should be consumed or not.
+	 *
+	 * @return	Whether the terminator should be consumed.
+	 */
 	public boolean consumeTerminator(){
 		return consumeTerminator;
 	}

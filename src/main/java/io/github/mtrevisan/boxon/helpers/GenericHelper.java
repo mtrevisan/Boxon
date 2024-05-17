@@ -65,7 +65,6 @@ public final class GenericHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
-	@SuppressWarnings("DataFlowIssue")
 	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... argumentsType){
 		//initialize list to store resolved types
 		final List<Type> types = new ArrayList<>(0);
@@ -166,7 +165,21 @@ public final class GenericHelper{
 
 		@Override
 		public final Type[] getResolvedTypes(final Type parameterizedType, final Map<String, Type> typeVariables){
-			return populateResolvedTypes((ParameterizedType)parameterizedType, typeVariables);
+			final Type[] actualTypeArguments = ((ParameterizedType)parameterizedType).getActualTypeArguments();
+			final int length = actualTypeArguments.length;
+			final Type[] resolvedTypes = new Type[length];
+			//loop through all type arguments and replace type variables with the actually known types
+			for(int i = 0; i < length; i ++)
+				resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
+			return resolvedTypes;
+		}
+
+		private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
+			final String key = (actualTypeArgument instanceof final TypeVariable<?> v
+				? v.getName()
+				: null
+			);
+			return typeVariables.getOrDefault(key, actualTypeArgument);
 		}
 	}
 
@@ -183,24 +196,6 @@ public final class GenericHelper{
 		}
 	}
 
-	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
-		final Type[] actualTypeArguments = ancestorType.getActualTypeArguments();
-		final int length = actualTypeArguments.length;
-		final Type[] resolvedTypes = new Type[length];
-		//loop through all type arguments and replace type variables with the actually known types
-		for(int i = 0; i < length; i ++)
-			resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
-		return resolvedTypes;
-	}
-
-	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		final String key = (actualTypeArgument instanceof final TypeVariable<?> v
-			? v.getName()
-			: null
-		);
-		return typeVariables.getOrDefault(key, actualTypeArgument);
-	}
-
 	private static void processBase(final Type currentOffspring, final Type[] actualArgs, final Collection<Type> types){
 		//there is a result if the base class is reached
 		for(int i = 0, length = actualArgs.length; i < length; i ++)
@@ -211,6 +206,13 @@ public final class GenericHelper{
 	}
 
 
+	/**
+	 * Adds arrays to the given type by specifying the number of dimensions.
+	 *
+	 * @param cls	The base type to add arrays to.
+	 * @param arraysCount	The number of arrays to add.
+	 * @return	The resulting type with added arrays.
+	 */
 	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
 		final int[] dimensions = new int[arraysCount];
 		Arrays.fill(dimensions, 1);

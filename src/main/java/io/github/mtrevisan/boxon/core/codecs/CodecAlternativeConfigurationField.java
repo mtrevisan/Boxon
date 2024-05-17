@@ -25,32 +25,39 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerFactory;
-import io.github.mtrevisan.boxon.core.helpers.codecs.WriterManagerInterface;
+import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
+import io.github.mtrevisan.boxon.core.helpers.writers.WriterManager;
+import io.github.mtrevisan.boxon.core.helpers.writers.WriterManagerFactory;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
 
 import java.lang.annotation.Annotation;
 
 
-final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
+final class CodecAlternativeConfigurationField implements Codec{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
-		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
+ 	public Class<? extends Annotation> annotationType(){
+		return AlternativeSubField.class;
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
-			throws CodecException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+			final Object rootObject){
+		throw createUnsupportedOperationException(annotationType());
+	}
+
+	@Override
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object fieldType, Object value) throws CodecException, UnhandledFieldException{
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
 		if(value != null){
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
-			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
+			final WriterManager writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
 				binding.charset());
 			if(writerManager == null)
 				throw UnhandledFieldException.create(value);

@@ -26,13 +26,16 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.MethodHelper;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
@@ -58,7 +61,7 @@ public final class CoreBuilder{
 
 	@FunctionalInterface
 	private interface RunnableThrowable{
-		void execute() throws AnnotationException, TemplateException, ConfigurationException;
+		void execute() throws BoxonException;
 	}
 
 
@@ -132,7 +135,7 @@ public final class CoreBuilder{
 	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
 		final Method method = MethodHelper.getMethod(type, methodName, null);
 		if(method == null)
-			throw new NoSuchMethodException();
+			throw new NoSuchMethodException(JavaHelper.prettyPrintMethodName(type, methodName));
 
 		return withContext(method);
 	}
@@ -150,7 +153,7 @@ public final class CoreBuilder{
 			throws NoSuchMethodException{
 		final Method method = MethodHelper.getMethod(type, methodName, null, parameterTypes);
 		if(method == null)
-			throw new NoSuchMethodException();
+			throw new NoSuchMethodException(JavaHelper.prettyPrintMethodName(type, methodName, parameterTypes));
 
 		return withContext(method);
 	}
@@ -169,8 +172,7 @@ public final class CoreBuilder{
 
 
 	/**
-	 * Loads all the default codecs that extends {@link CodecInterface}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * Loads all the default codecs.
 	 *
 	 * @return	This instance, used for chaining.
 	 */
@@ -181,7 +183,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the codecs that extends {@link Codec}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
@@ -193,24 +195,37 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Loads the given codec that extends {@link CodecInterface}.
+	 * Loads the given codec.
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodec(final CodecInterface<?> codec){
+	public CoreBuilder withCodec(final Codec codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
 
 		return this;
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads the given codec.
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @param validator	The codec validator.
+	 * @return	This instance, used for chaining.
+	 */
+	public CoreBuilder withCodec(final Codec codec, final AnnotationValidator validator){
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec, validator));
+
+		return this;
+	}
+
+	/**
+	 * Loads all the given codecs.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withCodecs(final CodecInterface<?>... codecs){
+	public CoreBuilder withCodecs(final Codec... codecs){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
 
 		return this;
@@ -278,10 +293,11 @@ public final class CoreBuilder{
 	 *
 	 * @return	{@link Core Core} data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws CodecException	If a codec was already loaded.
 	 * @throws TemplateException	If a template error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
-	public Core create() throws AnnotationException, TemplateException, ConfigurationException{
+	public Core create() throws BoxonException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
@@ -291,8 +307,7 @@ public final class CoreBuilder{
 		return core;
 	}
 
-	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
-			ConfigurationException{
+	private static void executeCommands(final List<RunnableThrowable> executors) throws BoxonException{
 		for(int i = 0, length = JavaHelper.sizeOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 

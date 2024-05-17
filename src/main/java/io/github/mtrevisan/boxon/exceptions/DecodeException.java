@@ -32,7 +32,7 @@ import java.io.Serial;
 /**
  * Thrown if a parsing (decoding) went bad.
  */
-public final class DecodeException extends Exception{
+public final class DecodeException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = 5375434179637246605L;

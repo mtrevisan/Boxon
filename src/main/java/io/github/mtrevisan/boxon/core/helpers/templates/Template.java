@@ -30,8 +30,12 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -41,6 +45,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,6 +63,7 @@ public final class Template<T>{
 	private static final int ORDER_POST_PROCESS_INDEX = 3;
 
 	private static final String ANNOTATION_NAME_BIND = "Bind";
+	private static final String ANNOTATION_NAME_BIND_AS = "BindAs";
 	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = "ConverterChoices";
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
 	private static final String STAR = "*";
@@ -69,11 +75,17 @@ public final class Template<T>{
 	private static final String ANNOTATION_NAME_SKIP = "Skip";
 	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
 
-	private static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
-	private static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
-	private static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
+	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
+	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
-	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING = new HashMap<>();
+	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
+
+	private static Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor = type -> null;
+
+	/** Mapping of annotations to functions that extract skip parameters. */
+	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING
+		= new HashMap<>(4);
 	static{
 		ANNOTATION_MAPPING.put(SkipBits.class, annotation
 			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
@@ -87,6 +99,16 @@ public final class Template<T>{
 			-> Arrays.stream(((SkipUntilTerminator.Skips)annotation).value())
 				.map(SkipParams::create)
 				.collect(Collectors.toList()));
+	}
+
+	/**
+	 * Sets a custom codec validator extractor.
+	 *
+	 * @param customCodecValidatorExtractor	A function that extracts a custom codec validator based on the annotation class.
+	 */
+	public static void setCustomCodecValidatorExtractor(
+			final Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor){
+		Template.customCodecValidatorExtractor = customCodecValidatorExtractor;
 	}
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
@@ -138,7 +160,6 @@ public final class Template<T>{
 	}
 
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		this.type = type;
@@ -184,9 +205,10 @@ public final class Template<T>{
 
 			try{
 				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
+				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
-				if(validAnnotation != null || ! skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation, skips));
+				if(validAnnotation != null || !skips.isEmpty())
+					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
@@ -207,8 +229,8 @@ public final class Template<T>{
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
 
-			if(annotationName.startsWith(ANNOTATION_NAME_BIND) || annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES)
-					|| annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
+				|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
@@ -330,22 +352,57 @@ public final class Template<T>{
 	 */
 	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType, final List<? extends Annotation> annotations)
 			throws AnnotationException{
-		/** return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
-			validateAnnotation(fieldType, annotation);
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			boolean validAnnotation = isCustomAnnotation(annotationType);
+			final AnnotationValidator validator = (validAnnotation
+				? customCodecValidatorExtractor.apply(annotationType)
+				: TemplateAnnotationValidator.fromAnnotationType(annotationType));
+			//validate with provided validator, if any
+			if(validator != null){
+				validator.validate(fieldType, annotation);
+				validAnnotation = true;
+			}
 
-			foundAnnotation = annotation;
+			if(validAnnotation)
+				foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
 
-	private static void validateAnnotation(final Class<?> fieldType, final Annotation annotation) throws AnnotationException{
-		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotationType(annotation.annotationType());
-		if(validator != null)
-			validator.validate(fieldType, annotation);
+	/**
+	 * Return the first collection binding annotation.
+	 *
+	 * @param annotations	The list of annotations on the field.
+	 * @return	The first collection binding annotation, or {@code null} if none are found.
+	 */
+	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations){
+		Annotation foundAnnotation = null;
+		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
+			final Annotation annotation = annotations.get(i);
+
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if(annotationType == BindAsArray.class || annotationType == BindAsList.class)
+				foundAnnotation = annotation;
+		}
+		return foundAnnotation;
+	}
+
+	private static boolean isCustomAnnotation(final Class<? extends Annotation> annotationType){
+		final String annotationPackageName = annotationType.getPackageName();
+		return !annotationPackageName.startsWith(LIBRARY_ROOT_PACKAGE_NAME);
+	}
+
+	private static String extractLibraryRootPackage(){
+		final String packageName = Template.class.getPackageName();
+		final String[] packageParts = packageName.split("\\.");
+		final StringJoiner sj = new StringJoiner(".");
+		for(int i = 0, length = Math.min(4, packageParts.length); i < length; i ++)
+			sj.add(packageParts[i]);
+		return sj.toString();
 	}
 
 	/**

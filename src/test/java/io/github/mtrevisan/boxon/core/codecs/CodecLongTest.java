@@ -31,27 +31,26 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 
 
 class CodecLongTest{
 
 	@Test
-	void longLittleEndianNegative() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longLittleEndianNegative() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x8FFF_0000_FFFF_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -102,21 +101,21 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0000FFFF0000FF8F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longLittleEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longLittleEndianSmall() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -167,21 +166,21 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("00FF007F00000000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longLittleEndianPositive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longLittleEndianPositive() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -232,21 +231,21 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0000000000FF007F", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longLittleEndianRandom() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longLittleEndianRandom() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = TestHelper.RANDOM.nextLong();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -297,22 +296,22 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		String expected = StringHelper.toHexString(Long.reverseBytes(encodedValue), Long.BYTES);
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longBigEndianNegative() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longBigEndianNegative() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x8FFF_0000_0000_0011l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -363,21 +362,21 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("8FFF000000000011", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longBigEndianSmall() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longBigEndianSmall() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -428,21 +427,21 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("000000007F00FF00", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longBigEndianPositive() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longBigEndianPositive() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -493,21 +492,21 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7F00FF0000000000", writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void longBigEndianRandom() throws FieldException{
-		CodecInterface<BindInteger> codec = new CodecInteger();
+	void longBigEndianRandom() throws BoxonException{
+		Codec codec = new CodecDefault();
 		long encodedValue = TestHelper.RANDOM.nextLong();
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -558,13 +557,13 @@ class CodecLongTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringHelper.toHexString(encodedValue, Long.BYTES), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		long decoded = ((BigInteger)codec.decode(reader, annotation, null))
+		long decoded = ((Number)codec.decode(reader, annotation, null, null))
 			.longValue();
 
 		Assertions.assertEquals(encodedValue, decoded);

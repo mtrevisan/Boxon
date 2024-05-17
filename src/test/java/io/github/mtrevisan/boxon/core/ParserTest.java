@@ -24,13 +24,12 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.JSONPathException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.utils.TimeWatch;
@@ -44,7 +43,7 @@ import java.util.Map;
 
 class ParserTest{
 
-	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	public static void main(String[] args) throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -66,7 +65,8 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		//20220301: 213-223 µs/msg = 4.5-4.7 kHz
-		//20240410: 86.6-92.9 µs/msg = 10.8-11.5 kHz (2.4×)
+		//20240424: 99.6-108 µs/msg = 9.3-10 kHz (2.1×)
+		//20240513: 98.2-101 µs/msg = 9.9-10.2 kHz (2.2×)
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 		//warm-up
@@ -86,8 +86,44 @@ class ParserTest{
 	}
 
 
+	@TemplateHeader(start = "+UNV")
+	static class NonByteMultipleLengths{
+		@BindString(size = "4")
+		String messageHeader;
+		@BindInteger(size = "3")
+		byte number0;
+		@BindString(size = "3")
+		public String text;
+		@BindInteger(size = "5")
+		byte number1;
+	}
+
+	@TemplateHeader(start = "+UNV")
+	static class NonByteMultipleLengths2{
+		@BindString(size = "4")
+		String messageHeader;
+		@BindInteger(size = "11")
+		short number0;
+		@BindString(size = "3")
+		public String text;
+		@BindInteger(size = "5")
+		byte number1;
+	}
+
+	@TemplateHeader(start = "+UNV")
+	static class NonByteMultipleLengths3{
+		@BindString(size = "4")
+		String messageHeader;
+		@BindInteger(size = "19")
+		int number0;
+		@BindString(size = "3")
+		public String text;
+		@BindInteger(size = "5")
+		byte number1;
+	}
+
 	@Test
-	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	void parseMultipleMessagesHex() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -110,7 +146,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseMultipleMessagesASCII() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -132,8 +168,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
-			JSONPathException{
+	void parseMultipleMessagesHexASCII() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
@@ -167,7 +202,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException, ConfigurationException{
+	void parseMultipleMessagesASCIIHex() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
@@ -192,6 +227,84 @@ class ParserTest{
 			Assertions.fail(result.get(1).getError());
 	}
 
+	@Test
+	void parseNonByteMultipleLengthsMessage() throws Exception{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplate(NonByteMultipleLengths.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		//0x2B 0x55 0x4E 0x56 0b110 0x42 0x43 0x44 0b10110
+		//2B 55 4E 56 110 0100_0010 0100_0011 0100_0100 10110
+		//2B 55 4E 56 1100_1000 0100_1000 0110_1000 1001_0110
+		//2B 55 4E 56 C8 48 68 96
+		byte[] payload = StringHelper.hexToByteArray("2B554E56C8486896");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.getFirst();
+		if(response.hasError())
+			Assertions.fail(response.getError());
+		NonByteMultipleLengths message = (NonByteMultipleLengths)response.getMessage();
+		Assertions.assertEquals("+UNV", message.messageHeader);
+		Assertions.assertEquals(0b0000_0110, message.number0);
+		Assertions.assertEquals("BCD", message.text);
+		Assertions.assertEquals(0b0001_0110, message.number1);
+	}
+
+	@Test
+	void parseNonByteMultipleLengths2Message() throws Exception{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplate(NonByteMultipleLengths2.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		//0x2B 0x55 0x4E 0x56 0b110 0x00 0x42 0x43 0x44 0b10110
+		//2B 55 4E 56 110 0000_0000 0100_0010 0100_0011 0100_0100 10110
+		//2B 55 4E 56 1100_0000 0000_1000 0100_1000 0110_1000 1001_0110
+		//2B 55 4E 56 C0 08 48 68 96
+		byte[] payload = StringHelper.hexToByteArray("2B554E56C008486896");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.getFirst();
+		if(response.hasError())
+			Assertions.fail(response.getError());
+		NonByteMultipleLengths2 message = (NonByteMultipleLengths2)response.getMessage();
+		Assertions.assertEquals("+UNV", message.messageHeader);
+		Assertions.assertEquals(0b0000_0110_0000_0000, message.number0);
+		Assertions.assertEquals("BCD", message.text);
+		Assertions.assertEquals(0b0001_0110, message.number1);
+	}
+
+	@Test
+	void parseNonByteMultipleLengths3Message() throws Exception{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplate(NonByteMultipleLengths3.class)
+			.create();
+		Parser parser = Parser.create(core);
+
+		//0x2B 0x55 0x4E 0x56 0b110 0x00 0x42 0x43 0x44 0b10110
+		//2B 55 4E 56 110 0000_0000 0100_0010 0100_0011 0100_0100 10110
+		//2B 55 4E 56 1100_0000 0000_1000 0100_1000 0110_1000 1001_0110
+		//2B 55 4E 56 C0 08 48 68 96
+		byte[] payload = StringHelper.hexToByteArray("2B554E56C00008486896");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.getFirst();
+		if(response.hasError())
+			Assertions.fail(response.getError());
+		NonByteMultipleLengths3 message = (NonByteMultipleLengths3)response.getMessage();
+		Assertions.assertEquals("+UNV", message.messageHeader);
+		Assertions.assertEquals(0b0000_0110_0000_0000_0000_0000, message.number0);
+		Assertions.assertEquals("BCD", message.text);
+		Assertions.assertEquals(0b0001_0110, message.number1);
+	}
+
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){
 		final byte[] joinedArray = new byte[array1.length + array2.length];
@@ -203,7 +316,7 @@ class ParserTest{
 
 
 	@Test
-	void parseTeltonika08_1() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_1() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -219,7 +332,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika08_2() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_2() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -235,7 +348,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika08_3() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika08_3() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -251,7 +364,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika8E() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika8E() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)
@@ -267,7 +380,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseTeltonika10() throws AnnotationException, TemplateException, ConfigurationException{
+	void parseTeltonika10() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(MessageHex.class)

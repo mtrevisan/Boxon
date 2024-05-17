@@ -25,15 +25,15 @@
 package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
-import io.github.mtrevisan.boxon.helpers.FieldMapper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
 
-/** Data associated to an annotated field. */
+/** Data associated with an annotated field. */
 public final class ConfigurationField implements FieldRetriever{
 
 	/** An empty {@code ConfigurationSkip} array. */
@@ -87,12 +87,6 @@ public final class ConfigurationField implements FieldRetriever{
 		return field.getName();
 	}
 
-	/**
-	 * The value of the field in the given object.
-	 *
-	 * @param obj	The object from which to retrieve the value.
-	 * @return	The value of the field.
-	 */
 	@Override
 	public Object getFieldValue(final Object obj){
 		return FieldMapper.getFieldValue(obj, field);

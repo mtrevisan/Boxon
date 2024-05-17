@@ -25,30 +25,35 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class CodecConfigurationSubField implements CodecInterface<CompositeSubField>{
+final class CodecConfigurationSubField implements Codec{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
-		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
+	public Class<? extends Annotation> annotationType(){
+		return CompositeSubField.class;
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object charset, final Object value)
-			throws ConfigurationException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+			final Object rootObject){
+		throw createUnsupportedOperationException(annotationType());
+	}
+
+	@Override
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object charset, final Object value) throws UnhandledFieldException{
 		if(!(value instanceof final String v))
 			throw UnhandledFieldException.create(value);
 
-		writer.putText(v, (Charset)charset);
+		writer.writeText(v, (Charset)charset);
 	}
 
 }

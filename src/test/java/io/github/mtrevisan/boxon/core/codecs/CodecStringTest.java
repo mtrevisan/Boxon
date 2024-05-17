@@ -31,13 +31,13 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.io.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,8 +49,8 @@ import java.nio.charset.StandardCharsets;
 class CodecStringTest{
 
 	@Test
-	void stringUS_ASCII() throws FieldException{
-		CodecInterface<BindString> codec = new CodecString();
+	void stringUS_ASCII() throws BoxonException{
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
 			@Override
@@ -101,20 +101,20 @@ class CodecStringTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		String decoded = (String)codec.decode(reader, annotation, null);
+		String decoded = (String)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void stringUTF_8() throws FieldException{
-		CodecInterface<BindString> codec = new CodecString();
+	void stringUTF_8() throws BoxonException{
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
 		BindString annotation = new BindString(){
 			@Override
@@ -170,20 +170,20 @@ class CodecStringTest{
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
-		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		String decoded = (String)codec.decode(reader, annotation, null);
+		String decoded = (String)codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void stringTerminated() throws FieldException{
-		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
+	void stringTerminated() throws BoxonException{
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
@@ -238,20 +238,20 @@ class CodecStringTest{
 		};
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
-		Object decoded = codec.decode(reader, annotation, null);
+		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123AB", decoded);
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, decoded);
+		codec.encode(writer, annotation, null, null, decoded);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66}, writer.array());
 	}
 
 	@Test
-	void stringTerminatedButEndOfStream() throws FieldException{
-		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
+	void stringTerminatedButEndOfStream() throws BoxonException{
+		Codec codec = new CodecDefault();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
@@ -306,13 +306,12 @@ class CodecStringTest{
 		};
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
-		Evaluator evaluator = Evaluator.create();
-		Object decoded = codec.decode(reader, annotation, null);
+		Object decoded = codec.decode(reader, annotation, null, null);
 
 		Assertions.assertEquals("123ABC", decoded);
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, decoded);
+		codec.encode(writer, annotation, null, null, decoded);
 		writer.flush();
 
 		//this seems strange, but it has to work like this

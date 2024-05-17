@@ -24,10 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
+import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
-import io.github.mtrevisan.boxon.helpers.FieldMapper;
+import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
+import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.MethodHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -37,11 +38,8 @@ import java.util.List;
 import java.util.Objects;
 
 
-/** Data associated to an annotated field. */
+/** Data associated with an annotated field. */
 public final class TemplateField implements FieldRetriever{
-
-	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
-	private static final String CONDITION = "condition";
 
 	/** An empty {@code SkipCore} array. */
 	private static final SkipParams[] EMPTY_SKIP_ARRAY = new SkipParams[0];
@@ -51,35 +49,43 @@ public final class TemplateField implements FieldRetriever{
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
 	private final SkipParams[] skips;
 	private final Annotation binding;
+	private final Annotation collectionBinding;
 
 	private String condition;
 
 
 	static TemplateField create(final Field field, final Annotation binding){
-		return new TemplateField(field, binding, Collections.emptyList());
+		return new TemplateField(field, binding, null, Collections.emptyList());
 	}
 
-	static TemplateField create(final Field field, final Annotation binding, final List<SkipParams> skips){
-		return new TemplateField(field, binding, skips);
+	static TemplateField create(final Field field, final Annotation binding, final Annotation collectionBinding,
+			final List<SkipParams> skips){
+		return new TemplateField(field, binding, collectionBinding, skips);
 	}
 
 
-	private TemplateField(final Field field, final Annotation binding, final List<SkipParams> skips){
+	private TemplateField(final Field field, final Annotation binding, final Annotation collectionBinding, final List<SkipParams> skips){
 		Objects.requireNonNull(skips, "Skips must not be null");
 
 		this.field = field;
 		this.binding = binding;
+		this.collectionBinding = collectionBinding;
 		this.skips = (!skips.isEmpty()? skips.toArray(EMPTY_SKIP_ARRAY): EMPTY_SKIP_ARRAY);
 
 		if(binding != null){
 			//pre-fetch condition method
-			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(), CONDITION,
-				String.class);
+			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(),
+				DescriberKey.CONDITION.toString(), String.class);
 			condition = MethodHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 		}
 	}
 
 
+	/**
+	 * Returns the field associated with this object.
+	 *
+	 * @return	The field associated with this object.
+	 */
 	public Field getField(){
 		return field;
 	}
@@ -102,12 +108,6 @@ public final class TemplateField implements FieldRetriever{
 		return field.getType();
 	}
 
-	/**
-	 * The value of the field in the given object.
-	 *
-	 * @param obj	The object from which to retrieve the value.
-	 * @return	The value of the field.
-	 */
 	@Override
 	public Object getFieldValue(final Object obj){
 		return FieldMapper.getFieldValue(obj, field);
@@ -129,6 +129,15 @@ public final class TemplateField implements FieldRetriever{
 	 */
 	public Annotation getBinding(){
 		return binding;
+	}
+
+	/**
+	 * The collection annotation bound to the field.
+	 *
+	 * @return	The collection annotation bound to the field.
+	 */
+	public Annotation getCollectionBinding(){
+		return collectionBinding;
 	}
 
 	/**

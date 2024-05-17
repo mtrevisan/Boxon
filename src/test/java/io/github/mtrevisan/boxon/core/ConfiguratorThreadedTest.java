@@ -26,23 +26,18 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 
 class ConfiguratorThreadedTest{
 
 	@Test
-	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException,
-			ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -68,8 +63,7 @@ class ConfiguratorThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException,
-			ExecutionException, InterruptedException{
+	void concurrencyMultipleParserSingleCore() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -98,7 +92,7 @@ class ConfiguratorThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws Exception{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Core core = CoreBuilder.builder()

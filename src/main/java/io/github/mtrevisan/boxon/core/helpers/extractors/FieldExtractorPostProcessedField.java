@@ -44,6 +44,11 @@ public final class FieldExtractorPostProcessedField implements FieldExtractor<Ev
 	}
 
 	@Override
+	public Annotation getCollectionBinding(final EvaluatedField<PostProcess> field){
+		return null;
+	}
+
+	@Override
 	public String getFieldName(final EvaluatedField<PostProcess> field){
 		return field.getFieldName();
 	}

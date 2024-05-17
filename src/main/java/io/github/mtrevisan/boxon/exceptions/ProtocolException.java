@@ -24,15 +24,13 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
-
 import java.io.Serial;
 
 
 /**
  * Thrown if an invalid protocol is found.
  */
-public final class ProtocolException extends IllegalArgumentException{
+public final class ProtocolException extends ConfigurationException{
 
 	@Serial
 	private static final long serialVersionUID = 6566811782511878387L;
@@ -41,17 +39,17 @@ public final class ProtocolException extends IllegalArgumentException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static ProtocolException create(final String message, final Object... parameters){
-		return new ProtocolException(StringHelper.format(message, parameters));
+		return new ProtocolException(message, parameters);
 	}
 
 
-	private ProtocolException(final String message){
-		super(message);
+	private ProtocolException(final String message, final Object... parameters){
+		super(message, parameters);
 	}
 
 }

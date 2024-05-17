@@ -48,7 +48,7 @@ public final class JSONPathException extends Exception{
 	 * @return	An instance of this exception.
 	 */
 	public static JSONPathException create(final Throwable cause, final String message, final Object... parameters){
-		return new JSONPathException(StringHelper.format(message, parameters), cause);
+		return new JSONPathException(cause, message, parameters);
 	}
 
 	/**
@@ -59,16 +59,12 @@ public final class JSONPathException extends Exception{
 	 * @return	An instance of this exception.
 	 */
 	public static JSONPathException create(final String message, final Object... parameters){
-		return new JSONPathException(StringHelper.format(message, parameters));
+		return new JSONPathException(null, message, parameters);
 	}
 
 
-	private JSONPathException(final String message){
-		super(message);
-	}
-
-	private JSONPathException(final String message, final Throwable cause){
-		super(message, cause);
+	private JSONPathException(final Throwable cause, final String message, final Object... parameters){
+		super(StringHelper.format(message, parameters), cause);
 	}
 
 }

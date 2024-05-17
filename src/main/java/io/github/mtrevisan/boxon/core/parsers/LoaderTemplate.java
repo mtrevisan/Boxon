@@ -25,7 +25,9 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
@@ -66,7 +68,7 @@ final class LoaderTemplate{
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 
-	private final LoaderCodecInterface loaderCodec;
+	private final LoaderCodec loaderCodec;
 
 	private EventListener eventListener;
 
@@ -77,15 +79,15 @@ final class LoaderTemplate{
 	 * @param loaderCodec	A codec loader.
 	 * @return	A template parser.
 	 */
-	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
+	static LoaderTemplate create(final LoaderCodec loaderCodec){
 		return new LoaderTemplate(loaderCodec);
 	}
 
 
-	private LoaderTemplate(final LoaderCodecInterface loaderCodec){
+	private LoaderTemplate(final LoaderCodec loaderCodec){
 		this.loaderCodec = loaderCodec;
 
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(null);
 	}
 
 
@@ -93,13 +95,9 @@ final class LoaderTemplate{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	This instance, used for chaining.
 	 */
-	LoaderTemplate withEventListener(final EventListener eventListener){
-		if(eventListener != null)
-			this.eventListener = eventListener;
-
-		return this;
+	void withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
 	/**
@@ -316,7 +314,10 @@ final class LoaderTemplate{
 		final List<Annotation> annotations = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation declaredAnnotation = declaredAnnotations[i];
-			if(loaderCodec.hasCodec(declaredAnnotation.annotationType()))
+
+			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
+			if(loaderCodec.hasCodec(annotationType)
+					|| annotationType == BindAsArray.class || annotationType == BindAsList.class)
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;

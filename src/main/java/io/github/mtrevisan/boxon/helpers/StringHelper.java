@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.math.BigInteger;
@@ -47,11 +46,25 @@ public final class StringHelper{
 	private StringHelper(){}
 
 
+	/**
+	 * Checks whether the provided text matches the given pattern.
+	 *
+	 * @param text	The text to check against the pattern.
+	 * @param pattern	The pattern to match against the text.
+	 * @return	Whether the text matches the pattern.
+	 */
 	public static boolean matches(final CharSequence text, final Pattern pattern){
 		return pattern.matcher(text)
 			.matches();
 	}
 
+	/**
+	 * Checks whether the provided text matches the given pattern or is blank.
+	 *
+	 * @param text	The text to check against the pattern.
+	 * @param pattern	The pattern to match against the text.
+	 * @return	Whether the text matches the pattern or is blank.
+	 */
 	public static boolean matchesOrBlank(final String text, final Pattern pattern){
 		return (isBlank(text) || matches(text, pattern));
 	}
@@ -186,6 +199,12 @@ public final class StringHelper{
 		return true;
 	}
 
+	/**
+	 * Checks if the provided value is an empty string, empty collection, or void.
+	 *
+	 * @param value	The value to check.
+	 * @return	Whether the value is an empty string, empty collection, or void.
+	 */
 	public static boolean isEmptyStringOrCollectionOrVoid(final Object value){
 		return ((value instanceof final String v && isBlank(v))
 			|| (value instanceof final Collection<?> c && c.isEmpty())
@@ -213,7 +232,7 @@ public final class StringHelper{
 	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final long value, final int size){
-		final long mask = (size >= 8? -1L: (1l << (size << 3)) - 1);
+		final long mask = (size >= Byte.SIZE? -1l: (1l << (size << 3)) - 1);
 		final String hex = toHexString(value & mask);
 		return leftPad(hex, size << 1, '0');
 	}
@@ -255,7 +274,7 @@ public final class StringHelper{
 	 *
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
-	 * @throws DataException	If the input has an odd length.
+	 * @throws IllegalArgumentException	If the input has an odd length.
 	 */
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.sizeOrZero(hexString);

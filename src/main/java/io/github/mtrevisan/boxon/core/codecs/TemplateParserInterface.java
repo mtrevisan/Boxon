@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
@@ -41,9 +41,9 @@ public interface TemplateParserInterface{
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
 	 * @param <T>	The class type of the template.
 	 * @return	The data read.
-	 * @throws FieldException	If a codec is not found.
+	 * @throws BoxonException	If a codec is not found.
 	 */
-	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws FieldException;
+	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws BoxonException;
 
 	/**
 	 * Encode the template using the given writer with the given object that contains the values.
@@ -53,9 +53,9 @@ public interface TemplateParserInterface{
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
 	 * @param currentObject	The current object that holds the values.
 	 * @param <T>	The class type of the current object.
-	 * @throws FieldException	If a codec is not found.
+	 * @throws BoxonException	If a codec is not found.
 	 */
-	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws FieldException;
+	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws BoxonException;
 
 	/**
 	 * Constructs a new {@link Template}.

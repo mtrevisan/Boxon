@@ -24,12 +24,12 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
@@ -47,13 +47,13 @@ final class ParserWriterHelper{
 	 *
 	 * @param affix	The affix to be written.
 	 * @param charsetName	The name of the charset to be used.
-	 * @param writer	The BitWriterInterface where the affix is written.
+	 * @param writer	The {@link BitWriterInterface} where the affix is written.
 	 * @throws UnsupportedCharsetException	If the specified charset name is not supported.
 	 */
 	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer) throws UnsupportedCharsetException{
 		if(!affix.isEmpty()){
 			final Charset charset = CharsetHelper.lookup(charsetName);
-			writer.putText(affix, charset);
+			writer.writeText(affix, charset);
 		}
 	}
 
@@ -64,16 +64,18 @@ final class ParserWriterHelper{
 	 * @param writer	The bit writer to write the encoded field to.
 	 * @param loaderCodec	The loader codec used for encoding the field.
 	 * @param eventListener	The event listener.
-	 * @throws FieldException	If an error occurs during field encoding.
+	 * @throws CodecException	If no suitable codec was found.
+	 * @throws BoxonException	If an error occurs during field encoding.
 	 */
-	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec,
-			final EventListener eventListener) throws FieldException{
+	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodec loaderCodec,
+			final EventListener eventListener) throws BoxonException{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();
 		final Annotation binding = parserContext.getBinding();
+		final Annotation collectionBinding = parserContext.getCollectionBinding();
 
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		final Codec codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(className, fieldName);
@@ -84,16 +86,16 @@ final class ParserWriterHelper{
 			//encode value from current object
 			final Object value = parserContext.getFieldValue();
 			//write value to raw message
-			codec.encode(writer, binding, parserContext.getRootObject(), value);
+			codec.encode(writer, binding, collectionBinding, parserContext.getRootObject(), value);
 
 			eventListener.writtenField(className, fieldName, value);
 		}
-		catch(final FieldException fe){
+		catch(final BoxonException fe){
 			fe.withClassNameAndFieldName(className, fieldName);
 			throw fe;
 		}
 		catch(final Exception e){
-			throw FieldException.create(e)
+			throw BoxonException.create(e)
 				.withClassNameAndFieldName(className, fieldName);
 		}
 	}

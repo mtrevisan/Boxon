@@ -26,33 +26,39 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.Codec;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 
-final class CodecChecksum implements CodecInterface<Checksum>{
+final class CodecChecksum implements Codec{
 
 	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
+	public Class<? extends Annotation> annotationType(){
+		return Checksum.class;
+	}
+
+	@Override
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
+			final Object rootObject) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
 		final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
 		final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
-		return reader.get(interfaceReturnType, binding.byteOrder());
+		return reader.read(interfaceReturnType, binding.byteOrder());
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws AnnotationException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
+			final Object rootObject, final Object value) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
-		writer.put(value, binding.byteOrder());
+		writer.write(value, binding.byteOrder());
 	}
 
 }

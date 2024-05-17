@@ -26,17 +26,18 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManager;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
@@ -78,7 +79,7 @@ public final class LoaderConfiguration{
 
 
 	private LoaderConfiguration(){
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(null);
 	}
 
 
@@ -89,7 +90,7 @@ public final class LoaderConfiguration{
 	 * @return	This instance, used for chaining.
 	 */
 	LoaderConfiguration withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;
 	}
@@ -237,9 +238,10 @@ public final class LoaderConfiguration{
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws AnnotationException, CodecException, EncodeException{
+			final Version protocol) throws BoxonException{
 		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
@@ -259,7 +261,7 @@ public final class LoaderConfiguration{
 			//find field in `configuration` that matches `dataKey` and `protocol`
 			final ConfigurationField foundField = findField(configurableFields, dataKey, protocol);
 			final Annotation foundFieldAnnotation = foundField.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
 			configurationObject = FieldAccessor.setFieldValue(configurationObject, foundField.getField(), dataValue);
@@ -290,12 +292,12 @@ public final class LoaderConfiguration{
 	}
 
 	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
-			throws AnnotationException, CodecException, EncodeException{
+			throws BoxonException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
 			final Annotation binding = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(binding);
 			final Field f = field.getField();
 			Object dataValue = manager.getDefaultValue(f.getType(), protocol);
 			dataValue = manager.convertValue(f, manager.getShortDescription(), dataValue, protocol);
@@ -310,7 +312,7 @@ public final class LoaderConfiguration{
 		for(int i = 0; i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(manager.isMandatory(annotation))
 				mandatoryFields.add(field);
@@ -323,7 +325,7 @@ public final class LoaderConfiguration{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				return field;
@@ -336,7 +338,7 @@ public final class LoaderConfiguration{
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(final ConfigurationField mandatoryField : mandatoryFields){
 				final Annotation annotation = mandatoryField.getBinding();
-				final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+				final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(annotation);
 				final String shortDescription = manager.getShortDescription();
 				sj.add(shortDescription);
 			}

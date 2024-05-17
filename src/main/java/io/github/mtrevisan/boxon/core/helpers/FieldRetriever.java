@@ -27,6 +27,12 @@ package io.github.mtrevisan.boxon.core.helpers;
 
 public interface FieldRetriever{
 
+	/**
+	 * The value of the field in the given object.
+	 *
+	 * @param obj	The object from which to retrieve the value.
+	 * @return	The value of the field.
+	 */
 	Object getFieldValue(Object obj);
 
 }

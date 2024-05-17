@@ -24,15 +24,13 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
-
 import java.io.Serial;
 
 
 /**
  * Thrown if no codec is found.
  */
-public final class CodecException extends FieldException{
+public final class CodecException extends BoxonException{
 
 	@Serial
 	private static final long serialVersionUID = 2879230296103139872L;
@@ -41,12 +39,12 @@ public final class CodecException extends FieldException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted.
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static CodecException create(final String message, final Object... parameters){
-		return new CodecException(StringHelper.format(message, parameters));
+		return new CodecException(message, parameters);
 	}
 
 	/**
@@ -56,8 +54,7 @@ public final class CodecException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static CodecException createNoCodecForBinding(final Class<?> annotationType){
-		return new CodecException(StringHelper.format("Cannot find a codec for binding {}",
-			annotationType.getSimpleName()));
+		return new CodecException("Cannot find a codec for binding {}", annotationType.getSimpleName());
 	}
 
 	/**
@@ -67,13 +64,12 @@ public final class CodecException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static CodecException createNoCodecForAlternatives(final Class<?> rootObjectType){
-		return new CodecException(StringHelper.format("Cannot find a valid codec from given alternatives for type {}",
-			rootObjectType.getSimpleName()));
+		return new CodecException("Cannot find a valid codec from given alternatives for type {}", rootObjectType.getSimpleName());
 	}
 
 
-	private CodecException(final String message){
-		super(message);
+	private CodecException(final String message, final Object... parameters){
+		super(message, parameters);
 	}
 
 }
