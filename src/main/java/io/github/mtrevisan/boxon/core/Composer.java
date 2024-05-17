@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -64,7 +65,7 @@ public final class Composer{
 	 * @return	The composition response.
 	 */
 	public <T> Response<T, byte[]> compose(final T data){
-		final io.github.mtrevisan.boxon.core.helpers.BitWriter writer = io.github.mtrevisan.boxon.core.helpers.BitWriter.create();
+		final BitWriter writer = BitWriter.create();
 		final EncodeException error = compose(writer, data);
 
 		return Response.create(data, writer, error);

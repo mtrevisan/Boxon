@@ -28,7 +28,9 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 /**
@@ -228,6 +230,27 @@ public final class JavaHelper{
 		}
 	}
 
+
+	/**
+	 * Pretty prints the name of the given method.
+	 * <p>
+	 * The format is "ClassName.methodName(parameterTypes)".
+	 * </p>
+	 *
+	 * @param type	The class containing the method.
+	 * @param methodName	The name of the method.
+	 * @param parameterTypes	The parameter types of the method.
+	 * @return	The pretty printed method name.
+	 */
+	public static String prettyPrintMethodName(final Class<?> type, final String methodName, final Class<?>... parameterTypes){
+		return type.getName() + '.' + methodName
+			+ (parameterTypes == null || parameterTypes.length == 0
+			? "()"
+			: Arrays.stream(parameterTypes).map(c -> c == null
+			? "null"
+			: c.getName()).collect(Collectors.joining(",", "(", ")"))
+		);
+	}
 
 	/**
 	 * Pretty prints the name of the given class.

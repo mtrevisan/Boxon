@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
-
 import io.github.mtrevisan.boxon.exceptions.DataException;
 
 

@@ -27,8 +27,6 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
-import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.util.List;
 
@@ -52,10 +50,10 @@ public abstract class MessageExtractor<M, H, F>{
 	public abstract H getHeader(M message);
 
 	/**
-	 * Retrieves the list of {@link TemplateField}s from a given {@link Template} message.
+	 * Retrieves the list of {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s from a given {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message.
 	 *
-	 * @param message	The {@link Template} message from which to retrieve the {@link TemplateField}s.
-	 * @return	The list of {@link TemplateField}s from the given {@link Template} message.
+	 * @param message	The {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message from which to retrieve the {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s.
+	 * @return	The list of {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s from the given {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message.
 	 */
 	public abstract List<F> getFields(M message);
 

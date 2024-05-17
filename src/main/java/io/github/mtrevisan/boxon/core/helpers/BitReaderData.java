@@ -125,10 +125,11 @@ abstract class BitReaderData{
 	}
 
 	private void readFromCache(final AtomicLong atomicBitmap, final int bitsToRead, final int length){
-		final long mask = (0xFFl << byteComplement(length)) & 0xFFl;
+		long bitmap = atomicBitmap.get();
+
+		final long mask = composeMask(length);
 		final int shift = remainingBitsInCache - length;
 
-		long bitmap = atomicBitmap.get();
 		if(shift == 0)
 			bitmap |= (cache & mask) << bitsToRead;
 		else
@@ -252,13 +253,13 @@ abstract class BitReaderData{
 	//FIXME refactor
 	private boolean hasNextByte(final byte terminator){
 		long bitmap = 0l;
-		int bitsToRead = Byte.SIZE;
 		final int currentPosition = buffer.position();
 		final int bytesRemaining = buffer.limit() - currentPosition;
 		long forecastCache = cache;
 		int forecastRemainingBitsInCache = remainingBitsInCache;
+		int bitsToRead = Byte.SIZE;
 		int offset = 0;
-		//cycle 2 times at most, since a byte can be split at most in two
+		//cycle two times at most, since a byte can be split at most in two
 		while(bitsToRead > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(forecastRemainingBitsInCache == 0){
@@ -273,18 +274,21 @@ abstract class BitReaderData{
 			final int length = Math.min(bitsToRead, forecastRemainingBitsInCache);
 			bitsToRead -= length;
 
-			final long mask = (0xFFl << byteComplement(length)) & 0xFFl;
-			final int shift = forecastRemainingBitsInCache - length;
-			if(shift == 0)
+			final long mask = composeMask(length);
+			forecastRemainingBitsInCache -= length;
+			if(forecastRemainingBitsInCache == 0)
 				bitmap |= (forecastCache & mask) << bitsToRead;
 			else
-				bitmap |= (forecastCache & mask) >> shift;
-
+				bitmap |= (forecastCache & mask) >> forecastRemainingBitsInCache;
 			forecastCache &= ~mask;
-			forecastRemainingBitsInCache -= length;
+
 			offset ++;
 		}
 		return (bitmap != terminator);
+	}
+
+	private static long composeMask(final int length){
+		return (0xFFl << byteComplement(length)) & 0xFFl;
 	}
 
 	private byte[] peekString(final byte[] peekBuffer){

@@ -84,7 +84,7 @@ public interface BitReaderInterface{
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link io.github.mtrevisan.boxon.core.helpers.BitReader}'s current position.
+	 * @return	A {@link BitSet} value at the {@link io.github.mtrevisan.boxon.core.helpers.BitReader BitReader}'s current position.
 	 */
 	BitSet readBitSet(int length);
 

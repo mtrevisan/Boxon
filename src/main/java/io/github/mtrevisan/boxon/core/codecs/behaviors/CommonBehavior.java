@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.BitSet;
 
 
 public abstract class CommonBehavior{
@@ -137,18 +136,18 @@ public abstract class CommonBehavior{
 
 
 	/**
-	 * Creates an array of {@link BitSet} objects.
+	 * Creates an array of objects.
 	 *
 	 * @param arraySize	The size of the array to be created.
-	 * @return	An array of {@link BitSet} objects with the specified size.
+	 * @return	An array of objects with the specified size.
 	 */
 	abstract Object createArray(int arraySize);
 
 	/**
-	 * Reads the specified number of bits from the given {@link BitReaderInterface} and composes a {@link BitSet} value.
+	 * Reads the specified number of bits from the given {@link BitReaderInterface} and composes a value.
 	 *
 	 * @param reader	The {@link BitReaderInterface} used to read the bits.
-	 * @return	A {@link BitSet} value at the current position of the {@link BitReaderInterface}.
+	 * @return	A value at the current position of the {@link BitReaderInterface}.
 	 */
 	public abstract Object readValue(BitReaderInterface reader);
 

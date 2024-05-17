@@ -14,8 +14,7 @@ import java.util.Map;
 
 final class EntityDescriber{
 
-	private EntityDescriber(){
-	}
+	private EntityDescriber(){}
 
 
 	/**

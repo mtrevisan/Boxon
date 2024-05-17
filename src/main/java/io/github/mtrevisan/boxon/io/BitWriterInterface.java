@@ -53,7 +53,7 @@ public interface BitWriterInterface{
 	void skipBits(int length);
 
 	/**
-	 * Writes {@code value} to this {@link io.github.mtrevisan.boxon.core.helpers.BitWriter} using {@code length} bits.
+	 * Writes {@code value} to this {@link io.github.mtrevisan.boxon.core.helpers.BitWriter BitWriter} using {@code length} bits.
 	 *
 	 * @param bitmap	The value to write.
 	 * @param length	The amount of bits to use when writing the {@code bitmap}.

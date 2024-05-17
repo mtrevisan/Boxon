@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
@@ -232,7 +233,7 @@ public final class Configurator{
 		if(protocol.isEmpty())
 			throw ProtocolException.create("Invalid protocol version: {}", protocolVersion);
 
-		final io.github.mtrevisan.boxon.core.helpers.BitWriter writer = io.github.mtrevisan.boxon.core.helpers.BitWriter.create();
+		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeConfiguration(writer, shortDescription, data, protocol);
 
 		return Response.create(shortDescription, writer, error);
