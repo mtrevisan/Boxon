@@ -75,8 +75,8 @@ public final class TextStatistics{
 
 
 	/**
-	 * Checks whether at least one byte was seen and that the bytes that were seen were mostly plain text (i.e. < 2% control, > 90% ASCII
-	 * range).
+	 * Checks whether at least one byte was seen and that the bytes that were seen were mostly plain text (i.e. &lt; 2% control, &gt; 90%
+	 * ASCII range).
 	 *
 	 * @return	Whether the seen bytes were mostly safe ASCII.
 	 *
@@ -131,7 +131,7 @@ public final class TextStatistics{
 	}
 
 	/**
-	 * Counts control characters (i.e. < 0x20, excluding tab, CR, LF, page feed and escape).
+	 * Counts control characters (i.e. &lt; 0x20, excluding tab, CR, LF, page feed and escape).
 	 * <p>
 	 * This definition of control characters is based on section 4 of the "Content-Type Processing Model" Internet-draft
 	 * (<a href="http://webblaze.cs.berkeley.edu/2009/mime-sniff/mime-sniff.txt">draft-abarth-mime-sniff-01</a>).

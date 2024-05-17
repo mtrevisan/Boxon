@@ -73,6 +73,7 @@ public class BoxonException extends Exception{
 	 * Constructs a new exception with the specified message.
 	 *
 	 * @param message	The message.
+	 * @param parameters	The parameters of the message.
 	 */
 	protected BoxonException(final String message, final Object... parameters){
 		this(null, message, parameters);
@@ -84,6 +85,7 @@ public class BoxonException extends Exception{
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is permitted,
 	 * 	and indicates that the cause is nonexistent or unknown.)
 	 * @param message	The message.
+	 * @param parameters	The parameters of the message.
 	 */
 	protected BoxonException(final Throwable cause, final String message, final Object... parameters){
 		super(StringHelper.format(message, parameters), cause);

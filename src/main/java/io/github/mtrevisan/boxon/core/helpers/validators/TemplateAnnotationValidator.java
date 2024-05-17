@@ -175,7 +175,7 @@ public enum TemplateAnnotationValidator implements AnnotationValidator{
 	/**
 	 * Get the validator for the given annotation.
 	 *
-	 * @param annotationType	The annotation class type.
+	 * @param annotationType	The annotation type.
 	 * @return	The validator for the given annotation.
 	 */
 	public static TemplateAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){

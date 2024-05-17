@@ -5,7 +5,7 @@
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.0.0</version>
 
 	<packaging>jar</packaging>
 
@@ -130,7 +130,7 @@
 			</build>
 		</profile>
 		<profile>
-			<!-- mvn clean deploy -Prelease -U -Dmaven.test.skip=true -->
+			<!-- mvn clean deploy -U -Dmaven.test.skip=true -P release -->
 			<!-- https://stackoverflow.com/questions/41265266/how-to-solve-inaccessibleobjectexception-unable-to-make-member-accessible-m/41265267#41265267 -->
 			<id>release</id>
 			<properties>

@@ -15,7 +15,8 @@
 
 ## Forewords
 
-This is a declarative, bit-level, message parser. All you have to do is write a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
+A comprehensive library designed for declarative parsing of messages at the bit level. This tool allows developers to efficiently define and interpret the structure and content of binary data streams, facilitating tasks such as network protocol analysis, embedded system communication, and data serialization. By using a high-level declarative approach, the library simplifies the process of specifying complex message formats, enabling precise and reliable extraction of information from raw binary data.
+All you have to do is write a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
 If you want to use the parser straight away, just go [here](#examples).
 
