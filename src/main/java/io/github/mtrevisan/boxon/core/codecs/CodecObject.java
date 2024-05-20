@@ -68,8 +68,7 @@ final class CodecObject implements Codec{
 
 		final Object instance;
 		if(collectionBinding == null){
-			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, behavior.objectType(), behavior.selectFrom(),
-				behavior.selectDefault(), evaluator, rootObject);
+			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, behavior, evaluator, rootObject);
 			instance = readValue(reader, chosenAlternativeType, rootObject);
 		}
 		else if(collectionBinding instanceof final BindAsArray superBinding){
@@ -101,8 +100,7 @@ final class CodecObject implements Codec{
 	private void readArrayWithAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, behavior.objectType(), behavior.selectFrom(),
-				behavior.selectDefault(), evaluator, rootObject);
+			final Class<?> chosenAlternativeType = CodecHelper.chooseAlternativeType(reader, behavior, evaluator, rootObject);
 			final Object element = readValue(reader, chosenAlternativeType, rootObject);
 
 			Array.set(array, i, element);

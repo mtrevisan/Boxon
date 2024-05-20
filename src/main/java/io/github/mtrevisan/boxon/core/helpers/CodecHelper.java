@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.codecs.behaviors.ObjectBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
@@ -207,24 +208,22 @@ public final class CodecHelper{
 	 * Gets the alternative class type that parses the next data.
 	 *
 	 * @param reader	The reader from which to read the data from.
-	 * @param bindingType	Bind annotation type.
-	 * @param objectChoices	Choices annotation.
-	 * @param defaultAlternativeType	Default alternative type.
+	 * @param behavior	The object behavior containing the alternative choices.
 	 * @param evaluator	The evaluator.
 	 * @param rootObject	Root object for the evaluator.
-	 * @return	The class type of the chosen alternative.
+	 * @return	The class type of the chosen alternative, or the default alternative type if no alternative was found.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	public static Class<?> chooseAlternativeType(final BitReaderInterface reader, final Class<?> bindingType,
-			final ObjectChoices objectChoices, final Class<?> defaultAlternativeType, final Evaluator evaluator, final Object rootObject)
-			throws CodecException{
+	public static Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Evaluator evaluator,
+			final Object rootObject) throws CodecException{
+		final ObjectChoices objectChoices = behavior.selectFrom();
 		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
 		if(!hasSelectAlternatives(alternatives))
-			return bindingType;
+			return behavior.objectType();
 
 		addPrefixToContext(reader, objectChoices, evaluator);
 
-		final Class<?> chosenAlternativeType = chooseAlternativeType(alternatives, defaultAlternativeType, evaluator, rootObject);
+		final Class<?> chosenAlternativeType = chooseAlternativeType(alternatives, behavior.selectDefault(), evaluator, rootObject);
 		if(chosenAlternativeType != void.class)
 			return chosenAlternativeType;
 
