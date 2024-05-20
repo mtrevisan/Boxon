@@ -24,24 +24,20 @@
  */
 package io.github.mtrevisan.boxon.core.helpers;
 
-import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.codecs.behaviors.ObjectBehavior;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.reflect.Array;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -159,32 +155,6 @@ public final class CodecHelper{
 	}
 
 	/**
-	 * Chooses the alternative type based on the given alternatives, default alternative, evaluator, and root object.
-	 * <p>
-	 * It evaluates the condition of each alternative using the evaluator with the root object and returns the type of the first alternative
-	 * that evaluates to true.
-	 * </p>
-	 *
-	 * @param alternatives	An array of ObjectChoices.ObjectChoice representing the alternatives.
-	 * @param defaultAlternative	The default alternative type.
-	 * @param evaluator	An instance of the Evaluator interface for evaluating the condition.
-	 * @param rootObject	The root object for the evaluator.
-	 * @return	The chosen alternative type. If none of the alternatives evaluate to {@code true}, it returns the default alternative type.
-	 */
-	public static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
-			final Evaluator evaluator, final Object rootObject){
-		Class<?> chosenAlternativeType = defaultAlternative;
-		for(int i = 0, length = alternatives.length; chosenAlternativeType == defaultAlternative && i < length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-
-			final String condition = alternative.condition();
-			if(evaluator.evaluateBoolean(condition, rootObject))
-				chosenAlternativeType = alternative.type();
-		}
-		return chosenAlternativeType;
-	}
-
-	/**
 	 * Chooses the alternative from an array of {@link ObjectChoices.ObjectChoice} based on the given type.
 	 *
 	 * @param alternatives	An array of {@link ObjectChoices.ObjectChoice} representing the alternatives.
@@ -202,32 +172,6 @@ public final class CodecHelper{
 		}
 
 		throw CodecException.create("Cannot find a valid codec for type {}", type.getSimpleName());
-	}
-
-	/**
-	 * Gets the alternative class type that parses the next data.
-	 *
-	 * @param reader	The reader from which to read the data from.
-	 * @param behavior	The object behavior containing the alternative choices.
-	 * @param evaluator	The evaluator.
-	 * @param rootObject	Root object for the evaluator.
-	 * @return	The class type of the chosen alternative, or the default alternative type if no alternative was found.
-	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
-	 */
-	public static Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Evaluator evaluator,
-			final Object rootObject) throws CodecException{
-		final ObjectChoices objectChoices = behavior.selectFrom();
-		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
-		if(!hasSelectAlternatives(alternatives))
-			return behavior.objectType();
-
-		addPrefixToContext(reader, objectChoices, evaluator);
-
-		final Class<?> chosenAlternativeType = chooseAlternativeType(alternatives, behavior.selectDefault(), evaluator, rootObject);
-		if(chosenAlternativeType != void.class)
-			return chosenAlternativeType;
-
-		throw CodecException.createNoCodecForAlternatives(rootObject.getClass());
 	}
 
 
@@ -259,22 +203,6 @@ public final class CodecHelper{
 
 				writer.writeBitSet(bitmap, prefixSize);
 			}
-		}
-	}
-
-	/**
-	 * Add the prefix to the evaluator context if needed.
-	 *
-	 * @param reader	The reader from which to read the prefix.
-	 */
-	private static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
-		final byte prefixSize = objectChoices.prefixLength();
-		if(prefixSize > 0){
-			final BitSet bitmap = reader.readBitSet(prefixSize);
-			final ByteOrder byteOrder = objectChoices.byteOrder();
-			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
-
-			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 	}
 

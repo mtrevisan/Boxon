@@ -93,7 +93,7 @@ public final class BitSetHelper{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
+	public static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
 			.toObjectiveType(bitmap, bitmapSize);
 	}
