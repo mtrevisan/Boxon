@@ -46,6 +46,20 @@ public interface TemplateParserInterface{
 	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws BoxonException;
 
 	/**
+	 * Decode the template using the given reader with the parent object.
+	 *
+	 * @param template	The template to decode.
+	 * @param reader	The reader that holds the decoded template.
+	 * @param exitWhenParameterFound	Terminate parsing when this parameter is found.
+	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
+	 * @param <T>	The class type of the template.
+	 * @return	The data read.
+	 * @throws BoxonException	If a codec is not found.
+	 */
+	<T> T decode(Template<T> template, BitReaderInterface reader, final String exitWhenParameterFound, Object parentObject)
+		throws BoxonException;
+
+	/**
 	 * Encode the template using the given writer with the given object that contains the values.
 	 *
 	 * @param template	The template to encode.

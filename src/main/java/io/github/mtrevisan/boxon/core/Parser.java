@@ -92,6 +92,18 @@ public final class Parser{
 	/**
 	 * Parse a message.
 	 *
+	 * @param payload	The message to be parsed.
+	 * @param exitWhenParameterFound	Terminate parsing when this parameter is found.
+	 * @return	The parse response.
+	 */
+	public List<Response<byte[], Object>> parse(final byte[] payload, final String exitWhenParameterFound){
+		final BitReader reader = BitReader.wrap(payload);
+		return parse(reader, exitWhenParameterFound);
+	}
+
+	/**
+	 * Parse a message.
+	 *
 	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}.
 	 * @return	The parse response.
 	 */
@@ -123,11 +135,62 @@ public final class Parser{
 		return response;
 	}
 
+	/**
+	 * Parse a message.
+	 *
+	 * @param reader	The message to be parsed backed by a {@link BitReader}.
+	 * @param exitWhenParameterFound	Terminate parsing when this parameter is found.
+	 * @return	The operation result.
+	 */
+	private List<Response<byte[], Object>> parse(final BitReader reader, final String exitWhenParameterFound){
+		final List<Response<byte[], Object>> response = new ArrayList<>(1);
+
+		while(reader.hasRemaining()){
+			//save state of the reader (restored upon a decoding error)
+			reader.createSavepoint();
+
+			if(parse(reader, exitWhenParameterFound, response))
+				break;
+		}
+
+		//check if there are unread bytes
+		assertNoLeftBytes(reader, response);
+
+		return response;
+	}
+
 	private boolean parse(final BitReader reader, final Collection<Response<byte[], Object>> response){
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
 			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
+
+			final Response<byte[], Object> partialResponse = Response.create(reader, partialDecodedMessage);
+			response.add(partialResponse);
+		}
+		catch(final Exception e){
+			final DecodeException de = DecodeException.create(reader.position(), e);
+			final Response<byte[], Object> partialResponse = Response.create(reader, de);
+			response.add(partialResponse);
+
+			//restore state of the reader
+			reader.restoreSavepoint();
+
+			final int position = templateParser.findNextMessageIndex(reader);
+			if(position < 0)
+				//cannot find any template for message
+				return true;
+
+			reader.position(position);
+		}
+		return false;
+	}
+
+	private boolean parse(final BitReader reader, final String exitWhenParameterFound, final Collection<Response<byte[], Object>> response){
+		try{
+			final Template<?> template = templateParser.getTemplate(reader);
+
+			final Object partialDecodedMessage = templateParser.decode(template, reader, exitWhenParameterFound, null);
 
 			final Response<byte[], Object> partialResponse = Response.create(reader, partialDecodedMessage);
 			response.add(partialResponse);

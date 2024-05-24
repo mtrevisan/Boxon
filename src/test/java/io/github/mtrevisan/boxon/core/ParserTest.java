@@ -67,6 +67,7 @@ class ParserTest{
 		//20220301: 213-223 µs/msg = 4.5-4.7 kHz
 		//20240424: 99.6-108 µs/msg = 9.3-10 kHz (2.1×)
 		//20240513: 98.2-101 µs/msg = 9.9-10.2 kHz (2.2×)
+		//earlyExi: 65.9-68.2 µs/msg = 14.7-15.2 kHz (1.5× wrt previous)
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 		//warm-up
@@ -75,7 +76,7 @@ class ParserTest{
 
 		TimeWatch watch = TimeWatch.start();
 		for(int i = 0; i < 20_000; i ++)
-			parser.parse(payload);
+			parser.parse(payload, "deviceTypeCode");
 		watch.stop();
 
 		System.out.println(watch.toString(20_000));

@@ -108,6 +108,46 @@ final class TemplateDecoder extends TemplateCoderBase{
 		return currentObject;
 	}
 
+	/**
+	 * Decodes a message using the provided template and reader.
+	 *
+	 * @param template	The template used for decoding the message.
+	 * @param reader	The reader used for reading the message.
+	 * @param exitWhenParameterFound	Terminate parsing when this parameter is found.
+	 * @param parentObject	The parent object of the message being decoded.
+	 * @param <T>	The type of the object to be returned as a result of decoding.
+	 * @return	The decoded object.
+	 * @throws BoxonException	If there is an error decoding a field.
+	 */
+	<T> T decode(final Template<T> template, final BitReaderInterface reader, final String exitWhenParameterFound, final Object parentObject)
+			throws BoxonException{
+		final int startPosition = reader.position();
+
+		T currentObject = createEmptyObject(template);
+
+		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
+		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+
+		//decode message fields:
+		decodeMessageFields(template, reader, exitWhenParameterFound, parserContext);
+
+		processEvaluatedFields(template, parserContext);
+
+		try{
+			postProcessFields(template, parserContext);
+		}
+		catch(final Exception e){
+			postProcessFields(template, parserContext);
+		}
+
+		readMessageTerminator(template, reader);
+
+		currentObject = parserContext.getCurrentObject();
+		verifyChecksum(template, currentObject, startPosition, reader);
+
+		return currentObject;
+	}
+
 	private static <T> T createEmptyObject(final Template<T> template){
 		return ConstructorHelper.getEmptyCreator(template.getType())
 			.get();
@@ -130,6 +170,29 @@ final class TemplateDecoder extends TemplateCoderBase{
 			if(shouldProcessField)
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
+		}
+	}
+
+	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final String exitWhenParameterFound,
+			final ParserContext<T> parserContext) throws BoxonException{
+		final Object rootObject = parserContext.getRootObject();
+
+		final List<TemplateField> fields = template.getTemplateFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final TemplateField field = fields.get(i);
+
+			//process skip annotations:
+			final SkipParams[] skips = field.getSkips();
+			readSkips(skips, reader, rootObject);
+
+			//check if field has to be processed...
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
+			if(shouldProcessField)
+				//... and if so, process it
+				decodeField(template, reader, parserContext, field);
+
+			if(field.getFieldName().equals(exitWhenParameterFound))
+				break;
 		}
 	}
 
