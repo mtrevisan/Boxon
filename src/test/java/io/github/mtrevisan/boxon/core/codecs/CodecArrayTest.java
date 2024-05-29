@@ -289,7 +289,7 @@ class CodecArrayTest{
 	void arrayOfDifferentObjects() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
-			.withTemplatesFrom(TestChoice4.class)
+			.withTemplate(TestChoice4.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -316,7 +316,7 @@ class CodecArrayTest{
 	void arrayOfDifferentObjectsWithNoPrefix() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(TestChoice5.class)
+			.withTemplate(TestChoice5.class)
 			.create();
 		Parser parser = Parser.create(core);
 
