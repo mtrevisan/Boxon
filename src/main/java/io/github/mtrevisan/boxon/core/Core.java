@@ -272,6 +272,18 @@ public final class Core{
 	}
 
 
+	Object evaluate(final String expression){
+		return evaluator.evaluate(expression, null, Object.class);
+	}
+
+	int evaluateSize(final String expression){
+		return evaluator.evaluateSize(expression, null);
+	}
+
+	boolean evaluateBoolean(final String expression){
+		return evaluator.evaluateBoolean(expression, null);
+	}
+
 	TemplateParser getTemplateParser(){
 		return templateParser;
 	}

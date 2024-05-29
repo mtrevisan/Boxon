@@ -32,11 +32,15 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.expression.spel.SpelEvaluationException;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -145,6 +149,62 @@ class ParserTest{
 			Assertions.fail(result.get(0).getError());
 		if(result.get(1).hasError())
 			Assertions.fail(result.get(1).getError());
+	}
+
+	@Test
+	void inferDeviceTypeCode() throws Exception{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+		Core core = CoreBuilder.builder()
+			.withContext(context)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withTemplate(ACKMessageHex.class)
+			.create();
+		Describer describer = Describer.create(core);
+
+		String fieldName = "deviceTypeCode";
+		Collection<Map<String, Object>> fields = (Collection<Map<String, Object>>)describer.describeTemplate()
+			.getFirst()
+			.get("fields");
+		int index = -1;
+		for(Map<String, Object> field : fields){
+			if(fieldName.equals(field.get("name"))){
+				//TODO
+				break;
+			}
+
+			Class<?> annotationType = Class.forName((String)field.get("annotationType"));
+			String condition = (String)field.get("condition");
+			Boolean parseField = (condition == null);
+			if(!parseField){
+				try{
+					parseField = core.evaluateBoolean(condition);
+				}
+				catch(final SpelEvaluationException see){
+					parseField = null;
+				}
+			}
+			int size = core.evaluateSize((String)field.get("size"));
+			if(annotationType == BindString.class)
+				size <<= 3;
+			if(index < 0)
+				index = 0;
+			index += size;
+		}
+
+//		idx = null | 6*8 | 7*8 ... 5-6?
+//		len = 8
+//		chr = hex
+//
+//		ter = :, ... 1
+//		len = 2*8
+//		chr = ascii
+//
+//		50/255=20%
+//		10, 26, 52, 78, 32, 69, 14
+//		10,     52
 	}
 
 	@Test
