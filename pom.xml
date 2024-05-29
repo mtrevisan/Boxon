@@ -62,7 +62,7 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-		<sonatype.nexus-staging-maven-plugin.version>1.6.13</sonatype.nexus-staging-maven-plugin.version>
+		<sonatype.nexus-staging-maven-plugin.version>1.7.0</sonatype.nexus-staging-maven-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 		<maven-source-plugin.version>3.3.1</maven-source-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
@@ -80,7 +80,7 @@
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>6.1.7</springframework.spring-expression.version>
+		<springframework.spring-expression.version>6.1.8</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->

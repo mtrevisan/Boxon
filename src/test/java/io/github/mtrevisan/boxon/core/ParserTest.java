@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.teltonika.MessageHex;
@@ -132,7 +133,7 @@ class ParserTest{
 			.withContext(context)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.withTemplatesFrom(ACKMessageHex.class)
+			.withTemplate(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -154,7 +155,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withTemplatesFrom(ACKMessageHex.class)
+			.withTemplate(ACKMessageASCII.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -178,7 +179,8 @@ class ParserTest{
 			.withContext(context)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.withTemplatesFrom(ACKMessageHex.class)
+			.withTemplate(ACKMessageHex.class)
+			.withTemplate(ACKMessageASCII.class)
 			.create();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
@@ -212,7 +214,8 @@ class ParserTest{
 			.withContext(context)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.withTemplatesFrom(ACKMessageHex.class)
+			.withTemplate(ACKMessageHex.class)
+			.withTemplate(ACKMessageASCII.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -320,7 +323,7 @@ class ParserTest{
 	void parseTeltonika08_1() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(MessageHex.class)
+			.withTemplate(MessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -336,7 +339,7 @@ class ParserTest{
 	void parseTeltonika08_2() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(MessageHex.class)
+			.withTemplate(MessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -352,7 +355,7 @@ class ParserTest{
 	void parseTeltonika08_3() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(MessageHex.class)
+			.withTemplate(MessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -368,7 +371,7 @@ class ParserTest{
 	void parseTeltonika8E() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(MessageHex.class)
+			.withTemplate(MessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -384,7 +387,7 @@ class ParserTest{
 	void parseTeltonika10() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplatesFrom(MessageHex.class)
+			.withTemplate(MessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 

@@ -229,7 +229,7 @@ class CodecListTest{
 	void listOfDifferentObjects() throws Exception{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
-			.withTemplatesFrom(TestChoice6.class)
+			.withTemplate(TestChoice6.class)
 			.create();
 		Parser parser = Parser.create(core);
 
