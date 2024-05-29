@@ -160,7 +160,7 @@ class TemplateParserTest{
 	private static class TestError1{
 		@BindString(size = "3")
 		String header;
-		@BindInteger(size = "8", condition = "e")
+		@BindInteger(condition = "e", size = "8")
 		byte type;
 	}
 
@@ -262,7 +262,7 @@ class TemplateParserTest{
 		String header;
 		@BindInteger(size = "8")
 		byte type;
-		@BindInteger(size = "8", condition = "type == 1")
+		@BindInteger(condition = "type == 1", size = "8")
 		Byte subtype;
 		@BindObject(type = TestSubComposition.class)
 		TestSubComposition sub;
@@ -314,7 +314,7 @@ class TemplateParserTest{
 		static class TestSubComposition2 extends TestSubCompositionBase{
 			@BindString(condition = "type == 2", size = "1")
 			String field1;
-			@BindInteger(size = "8", condition = "#self.subsubtype == 2")
+			@BindInteger(condition = "#self.subsubtype == 2", size = "8")
 			byte field2;
 			@BindString(condition = "#self.field2 == 0x62", size = "1")
 			String field3;

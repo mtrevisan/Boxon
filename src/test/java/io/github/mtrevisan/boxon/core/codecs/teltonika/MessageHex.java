@@ -83,7 +83,7 @@ public class MessageHex{
 		//IO property that has changed, zero if it's not a record caused by an event
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
 		private int eventIOID;
-		@BindInteger(size = "8", condition = "codecID == 0x10")
+		@BindInteger(condition = "codecID == 0x10", size = "8")
 		private int generationType;
 		//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
 		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
@@ -108,7 +108,7 @@ public class MessageHex{
 		@BindObject(type = TeltonikaHelper.EightBytesProperty.class)
 		@BindAsArray(size = "#self.eightBytesPropertiesCount")
 		private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
-		@BindInteger(size = "16", condition = "codecID == -114")
+		@BindInteger(condition = "codecID == -114", size = "16")
 		private int variableBytesPropertiesCount;
 		@BindObject(condition = "codecID == -114", type = TeltonikaHelper.VariableBytesProperty.class)
 		@BindAsArray(size = "#self.variableBytesPropertiesCount")

@@ -47,9 +47,9 @@ public class ACKMessageHexByteChecksum{
 	private String messageType;
 	@BindInteger(size = "8", converter = ACKMaskHex.ACKMaskConverter.class)
 	private ACKMaskHex mask;
-	@BindInteger(size = "8", condition = "mask.hasLength()")
+	@BindInteger(condition = "mask.hasLength()", size = "8")
 	private byte messageLength;
-	@BindInteger(size = "8", condition = "mask.hasDeviceType()")
+	@BindInteger(condition = "mask.hasDeviceType()", size = "8")
 	private byte deviceTypeCode;
 	@BindInteger(condition = "mask.hasProtocolVersion()", size = "16", converter = QueclinkHelper.VersionConverter.class)
 	private Version protocolVersion;
@@ -67,7 +67,7 @@ public class ACKMessageHexByteChecksum{
 	@BindInteger(condition = "mask.hasEventTime()", size = "8", converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
 	@BindAsArray(size = "7")
 	private LocalDateTime eventTime;
-	@BindInteger(size = "16", condition = "mask.hasMessageId()")
+	@BindInteger(condition = "mask.hasMessageId()", size = "16")
 	private short messageId;
 
 	@Checksum(skipStart = 4, skipEnd = 4, algorithm = BSD16.class)
