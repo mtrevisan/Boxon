@@ -37,6 +37,8 @@ import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.List;
@@ -109,8 +111,22 @@ final class TemplateAnnotationValidatorHelper{
 	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
 		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
 		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
-		return (checkTypeObjective.isAssignableFrom(baseTypeObjective)
-			|| Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
+		final boolean assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
+		final boolean bothNumberTypes = Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective);
+
+		boolean hasConstructor = false;
+		//if checkType is a class or a record
+
+		if(!assignableFrom && !bothNumberTypes
+				&& (checkType.isRecord() || !checkType.isInterface() && !Modifier.isAbstract(checkType.getModifiers()))){
+			try{
+				final Constructor<?>[] constructors = checkType.getDeclaredConstructors();
+				hasConstructor = true;
+			}
+			catch(final NoSuchMethodException ignored){}
+		}
+
+		return (hasConstructor || assignableFrom || bothNumberTypes);
 	}
 
 	private static void validateConverterToList(final Class<?> fieldType, final Class<?> bindingType,
