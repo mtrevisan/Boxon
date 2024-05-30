@@ -112,7 +112,7 @@ public final class ACKMessageHex{
 	private String messageHeader;
 	@BindInteger(size = "8", converter = MessageTypeConverter.class)
 	private String messageType;
-//	@BindInteger(size = "8", converter = ACKMaskHex.ACKMaskConverter.class)
+	@BindInteger(size = "8", converter = ACKMaskHex.ACKMaskConverter.class)
 	@BindInteger(size = "8")
 	private ACKMaskHex mask;
 	@BindInteger(condition = "mask.hasLength()", size = "8")

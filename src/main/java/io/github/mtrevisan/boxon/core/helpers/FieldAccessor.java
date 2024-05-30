@@ -29,12 +29,15 @@ import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.io.Injected;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -83,18 +86,82 @@ public final class FieldAccessor{
 	//FIXME ugliness (set & create... also a cycle between classes...)
 	private static <T> T updateObjectFieldValue(final T obj, final Field field, final Object value) throws IllegalArgumentException,
 			ReflectiveOperationException{
-		return (isRecordClass(obj)
+		return (isRecord(obj)
 			? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
 			: updateField(obj, field, value)
 		);
 	}
 
-	private static <T> T updateField(final T obj, final Field field, final Object value) throws IllegalAccessException{
-		field.set(obj, value);
+	private static <T> T updateField(final T obj, final Field field, final Object value) throws IllegalAccessException,
+			InvocationTargetException, InstantiationException{
+		try{
+			field.set(obj, value);
+		}
+		catch(final IllegalArgumentException iae){
+			final Class<?> fieldType = field.getType();
+			if(!isClassOrRecord(fieldType))
+				throw iae;
+
+			//extract constructor for field and pass the value to it
+			final Class<?> valueType = value.getClass();
+			final Constructor<?> constructor = extractCompatibleConstructor(fieldType, valueType);
+			if(constructor == null)
+				throw iae;
+
+			constructor.setAccessible(true);
+
+			//convert type of value to constructor input type:
+			final Class<?> parameterType = constructor.getParameterTypes()[0];
+			final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(parameterType);
+			final boolean bothNumberTypes = BigInteger.class.isAssignableFrom(value.getClass());
+			if(bothNumberTypes){
+				//convert value into a feasible input for the constructor
+				final Number convertedValue = ParserDataType.castValue((BigInteger)value, parameterType);
+				field.set(obj, constructor.newInstance(convertedValue));
+			}
+			else
+				field.set(obj, constructor.newInstance(value));
+		}
 		return obj;
 	}
 
-	private static boolean isRecordClass(final Object obj){
+	public static Constructor<?> extractCompatibleConstructor(final Class<?> checkType, final Class<?> baseTypeObjective){
+		final Constructor<?>[] constructors = checkType.getDeclaredConstructors();
+		for(int i = 0, length = constructors.length; i < length; i ++){
+			final Constructor<?> constructor = constructors[i];
+
+			if(isFunctionParameterSuitable(baseTypeObjective, constructor))
+				return constructor;
+		}
+		return null;
+	}
+
+	private static boolean isFunctionParameterSuitable(final Class<?> baseTypeObjective, final Constructor<?> constructor){
+		final Class<?>[] parameterTypes = constructor.getParameterTypes();
+		if(parameterTypes.length == 1){
+			final Class<?> parameterType = parameterTypes[0];
+
+			return checkAssignmentCompatibility(parameterType, baseTypeObjective);
+		}
+		return false;
+	}
+
+	private static boolean checkAssignmentCompatibility(final Class<?> parameterType, final Class<?> baseTypeObjective){
+		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(parameterType);
+		final boolean assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
+		final boolean bothNumberTypes = isBothNumberTypes(checkTypeObjective, baseTypeObjective);
+		return (assignableFrom || bothNumberTypes);
+	}
+
+	private static boolean isBothNumberTypes(final Class<?> checkTypeObjective, final Class<?> baseTypeObjective){
+		return (Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
+	}
+
+	public static boolean isClassOrRecord(final Class<?> type){
+		return (type.isRecord() || !type.isInterface() && !Modifier.isAbstract(type.getModifiers()));
+	}
+
+	private static boolean isRecord(final Object obj){
 		return obj.getClass()
 			.isRecord();
 	}

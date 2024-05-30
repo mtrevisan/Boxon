@@ -52,6 +52,7 @@ public final class ConstructorHelper{
 
 	private ConstructorHelper(){}
 
+
 	/**
 	 * Gets the creator function for the given class.
 	 *

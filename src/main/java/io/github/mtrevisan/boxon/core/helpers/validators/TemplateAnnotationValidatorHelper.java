@@ -37,8 +37,6 @@ import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.List;
@@ -111,38 +109,9 @@ final class TemplateAnnotationValidatorHelper{
 	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
 		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
 		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
-		boolean validType = checkAssignmentCompatibility(checkTypeObjective, baseTypeObjective);
-
-		if(!validType && isClassOrRecord(checkType))
-			validType = checkConstructorsCompatibility(checkType, baseTypeObjective);
-
-		return validType;
-	}
-
-	private static boolean isClassOrRecord(final Class<?> type){
-		return (type.isRecord() || !type.isInterface() && !Modifier.isAbstract(type.getModifiers()));
-	}
-
-	private static boolean checkConstructorsCompatibility(final Class<?> checkType, final Class<?> baseTypeObjective){
-		final Constructor<?>[] constructors = checkType.getDeclaredConstructors();
-		for(int i = 0, length = constructors.length; i < length; i ++){
-			final Constructor<?> constructor = constructors[i];
-
-			if(isFunctionParameterSuitable(baseTypeObjective, constructor))
-				return true;
-		}
-		return false;
-	}
-
-	private static boolean isFunctionParameterSuitable(final Class<?> baseTypeObjective, final Constructor<?> constructor){
-		boolean validType = false;
-		final Class<?>[] parameterTypes = constructor.getParameterTypes();
-		if(parameterTypes.length == 1){
-			final Class<?> parameterType = parameterTypes[0];
-
-			validType = checkAssignmentCompatibility(parameterType, baseTypeObjective);
-		}
-		return validType;
+		final boolean validType = checkAssignmentCompatibility(checkTypeObjective, baseTypeObjective);
+		return (validType || !FieldAccessor.isClassOrRecord(checkType)
+			|| FieldAccessor.extractCompatibleConstructor(checkType, baseTypeObjective) != null);
 	}
 
 	private static boolean checkAssignmentCompatibility(final Class<?> parameterType, final Class<?> baseTypeObjective){
