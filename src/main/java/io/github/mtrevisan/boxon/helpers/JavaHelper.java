@@ -25,11 +25,13 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -42,6 +44,17 @@ public final class JavaHelper{
 	public static final String EMPTY_STRING = "";
 
 	private static final String ARRAY_VARIABLE = "[]";
+	private static final Map<Character, String> DESCRIPTOR_MAP = Map.of(
+		'B', "byte",
+		'C', "char",
+		'D', "double",
+		'F', "float",
+		'I', "int",
+		'J', "long",
+		'S', "short",
+		'Z', "boolean",
+		'L', "class"
+	);
 
 	private static final String HEXADECIMAL_PREFIX = "0x";
 
@@ -237,7 +250,7 @@ public final class JavaHelper{
 	 * The format is "ClassName.methodName(parameterTypes)".
 	 * </p>
 	 *
-	 * @param type	The class containing the method.
+	 * @param type	The class type containing the method.
 	 * @param methodName	The name of the method.
 	 * @param parameterTypes	The parameter types of the method.
 	 * @return	The pretty printed method name.
@@ -258,7 +271,7 @@ public final class JavaHelper{
 	 * If the class represents an array, the brackets are properly formatted.
 	 * </p>
 	 *
-	 * @param cls	The class.
+	 * @param cls	The class type.
 	 * @return	The pretty printed class name.
 	 */
 	public static String prettyPrintClassName(final Class<?> cls){
@@ -266,6 +279,7 @@ public final class JavaHelper{
 		final int count = countLeadingSquareBrackets(className);
 		if(count > 0){
 			final StringBuilder sb = new StringBuilder(className);
+			//remove semicolon
 			sb.deleteCharAt(sb.length() - 1);
 			sb.delete(0, count + 1);
 			sb.append(ARRAY_VARIABLE.repeat(count));
@@ -291,11 +305,34 @@ public final class JavaHelper{
 				count ++;
 				continue;
 			}
+			//NOTE: 'L' is the descriptor of a class
 			if(chr != 'L')
 				count = 0;
 			break;
 		}
 		return count;
+	}
+
+	/**
+	 * Pretty prints the name of the given variable.
+	 * <p>
+	 * If the class represents an array, the brackets are properly formatted.
+	 * </p>
+	 *
+	 * @param cls	The variable type.
+	 * @return	The pretty printed variable name.
+	 */
+	public static String prettyPrintVariableName(final Class<?> cls){
+		if(isClassOrRecord(cls))
+			return prettyPrintClassName(cls);
+
+		final String variableName = cls.getName();
+		final int length = variableName.length();
+		return DESCRIPTOR_MAP.get(variableName.charAt(length - 1)) + ARRAY_VARIABLE.repeat(length - 1);
+	}
+
+	private static boolean isClassOrRecord(final Class<?> type){
+		return (type.isRecord() || !type.isInterface() && ! Modifier.isAbstract(type.getModifiers()));
 	}
 
 }

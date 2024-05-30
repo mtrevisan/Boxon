@@ -33,11 +33,13 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -225,8 +227,10 @@ public final class CodecHelper{
 			return converter.decode(data);
 		}
 		catch(final Exception e){
-			throw DataException.create("Can not input {} ({}) to decode method of converter {}",
-				data.getClass().getSimpleName(), data, converterType.getSimpleName(), e);
+			final Class<?> inputType = extractConverterMethodParameterType(converterType, "decode");
+			throw DataException.create("Can not input {} ({}) to decode method of converter {}, expected `{}`",
+				data.getClass().getSimpleName(), data, converterType.getSimpleName(), JavaHelper.prettyPrintVariableName(inputType),
+				e);
 		}
 	}
 
@@ -247,9 +251,26 @@ public final class CodecHelper{
 			return converter.encode(data);
 		}
 		catch(final Exception e){
-			throw DataException.create("Can not input {} ({}) to encode method of converter {}",
-				data.getClass().getSimpleName(), data, converterType.getSimpleName(), e);
+			final Class<?> inputType = extractConverterMethodParameterType(converterType, "encode");
+			throw DataException.create("Can not input {} ({}) to encode method of converter {}, expected `{}`",
+				data.getClass().getSimpleName(), data, converterType.getSimpleName(), JavaHelper.prettyPrintVariableName(inputType), e);
 		}
+	}
+
+	private static Class<?> extractConverterMethodParameterType(final Class<? extends Converter<?, ?>> converterType,
+			final String methodName){
+		Class<?> inputType = Object.class;
+		final Method[] methods = converterType.getDeclaredMethods();
+		for(int i = 0, length = methods.length; i < length; i ++){
+			final Method method = methods[i];
+			if(!methodName.equals(method.getName()))
+				continue;
+
+			inputType = method.getParameterTypes()[0];
+			if(inputType != Object.class)
+				break;
+		}
+		return inputType;
 	}
 
 	/**

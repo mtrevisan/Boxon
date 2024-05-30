@@ -103,7 +103,7 @@ class ConverterTest{
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input BigInteger (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input BigInteger (1) to decode method of converter WrongConverterInput, expected `byte[]` in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
 			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
@@ -114,7 +114,8 @@ class ConverterTest{
 				.withDefaultCodecs()
 				.withTemplate(TestConverter2.class)
 				.create());
-		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value", exc.getMessage());
+		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value",
+			exc.getMessage());
 	}
 
 	@Test
