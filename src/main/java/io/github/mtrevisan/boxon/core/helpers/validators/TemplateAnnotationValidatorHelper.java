@@ -109,21 +109,29 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
-		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
+		Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
 		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
-		final boolean assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
-		final boolean bothNumberTypes = Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective);
+		boolean assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
+		boolean bothNumberTypes = Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective);
 
 		boolean hasConstructor = false;
-		//if checkType is a class or a record
-
-		if(!assignableFrom && !bothNumberTypes
-				&& (checkType.isRecord() || !checkType.isInterface() && !Modifier.isAbstract(checkType.getModifiers()))){
-			try{
+		if(!assignableFrom && !bothNumberTypes){
+			final boolean classOrRecord = (checkType.isRecord() || ! checkType.isInterface() && ! Modifier.isAbstract(checkType.getModifiers()));
+			if(classOrRecord){
 				final Constructor<?>[] constructors = checkType.getDeclaredConstructors();
-				hasConstructor = true;
+				for(int i = 0, length = constructors.length; !hasConstructor && i < length; i ++){
+					final Constructor<?> constructor = constructors[i];
+					final Class<?>[] parameterTypes = constructor.getParameterTypes();
+					if(parameterTypes.length == 1){
+						final Class<?> parameterType = parameterTypes[0];
+
+						checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(parameterType);
+						assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
+						bothNumberTypes = Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective);
+						hasConstructor = (assignableFrom || bothNumberTypes);
+					}
+				}
 			}
-			catch(final NoSuchMethodException ignored){}
 		}
 
 		return (hasConstructor || assignableFrom || bothNumberTypes);
