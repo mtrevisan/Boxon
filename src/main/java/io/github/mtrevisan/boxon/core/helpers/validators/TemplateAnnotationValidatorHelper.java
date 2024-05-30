@@ -109,32 +109,51 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
-		Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
+		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
 		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
-		boolean assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
-		boolean bothNumberTypes = Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective);
+		boolean validType = checkAssignmentCompatibility(checkTypeObjective, baseTypeObjective);
 
-		boolean hasConstructor = false;
-		if(!assignableFrom && !bothNumberTypes){
-			final boolean classOrRecord = (checkType.isRecord() || ! checkType.isInterface() && ! Modifier.isAbstract(checkType.getModifiers()));
-			if(classOrRecord){
-				final Constructor<?>[] constructors = checkType.getDeclaredConstructors();
-				for(int i = 0, length = constructors.length; !hasConstructor && i < length; i ++){
-					final Constructor<?> constructor = constructors[i];
-					final Class<?>[] parameterTypes = constructor.getParameterTypes();
-					if(parameterTypes.length == 1){
-						final Class<?> parameterType = parameterTypes[0];
+		if(!validType && isClassOrRecord(checkType))
+			validType = checkConstructorsCompatibility(checkType, baseTypeObjective);
 
-						checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(parameterType);
-						assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
-						bothNumberTypes = Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective);
-						hasConstructor = (assignableFrom || bothNumberTypes);
-					}
-				}
-			}
+		return validType;
+	}
+
+	private static boolean isClassOrRecord(final Class<?> type){
+		return (type.isRecord() || !type.isInterface() && !Modifier.isAbstract(type.getModifiers()));
+	}
+
+	private static boolean checkConstructorsCompatibility(final Class<?> checkType, final Class<?> baseTypeObjective){
+		final Constructor<?>[] constructors = checkType.getDeclaredConstructors();
+		for(int i = 0, length = constructors.length; i < length; i ++){
+			final Constructor<?> constructor = constructors[i];
+
+			if(isFunctionParameterSuitable(baseTypeObjective, constructor))
+				return true;
 		}
+		return false;
+	}
 
-		return (hasConstructor || assignableFrom || bothNumberTypes);
+	private static boolean isFunctionParameterSuitable(final Class<?> baseTypeObjective, final Constructor<?> constructor){
+		boolean validType = false;
+		final Class<?>[] parameterTypes = constructor.getParameterTypes();
+		if(parameterTypes.length == 1){
+			final Class<?> parameterType = parameterTypes[0];
+
+			validType = checkAssignmentCompatibility(parameterType, baseTypeObjective);
+		}
+		return validType;
+	}
+
+	private static boolean checkAssignmentCompatibility(final Class<?> parameterType, final Class<?> baseTypeObjective){
+		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(parameterType);
+		final boolean assignableFrom = checkTypeObjective.isAssignableFrom(baseTypeObjective);
+		final boolean bothNumberTypes = isBothNumberTypes(checkTypeObjective, baseTypeObjective);
+		return (assignableFrom || bothNumberTypes);
+	}
+
+	private static boolean isBothNumberTypes(final Class<?> checkTypeObjective, final Class<?> baseTypeObjective){
+		return (Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
 	}
 
 	private static void validateConverterToList(final Class<?> fieldType, final Class<?> bindingType,
