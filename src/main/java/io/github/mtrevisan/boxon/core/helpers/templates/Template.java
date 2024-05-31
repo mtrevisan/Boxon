@@ -183,9 +183,9 @@ public final class Template<T>{
 		}
 
 		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
-		templateFields = Collections.unmodifiableList(fields.templateFields);
-		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
-		postProcessedFields = Collections.unmodifiableList(fields.postProcessedFields);
+		templateFields = fields.templateFields;
+		evaluatedFields = fields.evaluatedFields;
+		postProcessedFields = fields.postProcessedFields;
 
 		if(templateFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
@@ -196,9 +196,9 @@ public final class Template<T>{
 			throws AnnotationException{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int length = fields.size();
-		final List<TemplateField> templateFields = new ArrayList<>(length);
-		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
-		final List<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
+		final ArrayList<TemplateField> templateFields = new ArrayList<>(length);
+		final ArrayList<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
+		final ArrayList<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
 		for(final Field field : fields){
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			validateAnnotationsOrder(declaredAnnotations);
@@ -227,7 +227,14 @@ public final class Template<T>{
 				throw e;
 			}
 		}
-		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
+		templateFields.trimToSize();
+		evaluatedFields.trimToSize();
+		postProcessedFields.trimToSize();
+		return Triplet.of(
+			Collections.unmodifiableList(templateFields),
+			Collections.unmodifiableList(evaluatedFields),
+			Collections.unmodifiableList(postProcessedFields)
+		);
 	}
 
 
@@ -359,7 +366,7 @@ public final class Template<T>{
 
 	private static List<ContextParameter> extractContextParameters(final List<? extends Annotation> annotations){
 		final int length = Math.max(annotations.size() - 1, 0);
-		final List<ContextParameter> contextParameters = new ArrayList<>(length);
+		final ArrayList<ContextParameter> contextParameters = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
@@ -367,6 +374,7 @@ public final class Template<T>{
 			if(annotationType == ContextParameter.class)
 				contextParameters.add((ContextParameter)annotation);
 		}
+		contextParameters.trimToSize();
 		return Collections.unmodifiableList(contextParameters);
 	}
 

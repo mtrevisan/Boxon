@@ -114,7 +114,7 @@ public final class ReflectiveClassLoader{
 	}
 
 	private List<Class<?>> extractClassesWithInfo(final Class<?> type, final Function<ScanResult, ClassInfoList> filter){
-		final List<Class<?>> loadedClasses = getStoredClasses(type);
+		final ArrayList<Class<?>> loadedClasses = getStoredClasses(type);
 
 		if(loadedClasses.isEmpty()){
 			try(final ScanResult scanResult = classGraph.scan()){
@@ -124,11 +124,12 @@ public final class ReflectiveClassLoader{
 				loadedClasses.addAll(list);
 			}
 		}
+		loadedClasses.trimToSize();
 		return Collections.unmodifiableList(loadedClasses);
 	}
 
-	private List<Class<?>> getStoredClasses(final Class<?> type){
-		return (List<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(0));
+	private ArrayList<Class<?>> getStoredClasses(final Class<?> type){
+		return (ArrayList<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(0));
 	}
 
 	private void storeClasses(final Class<?> type, final Collection<Class<?>> list){

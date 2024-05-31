@@ -99,9 +99,10 @@ public final class Configurator{
 	 */
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		final ArrayList<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
+		protocolVersionBoundaries.trimToSize();
 		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 

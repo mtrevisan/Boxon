@@ -96,11 +96,9 @@ public final class ConfigurationMessage<T>{
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
 			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
 
-			final List<ConfigurationField> configurationFields = loadAnnotatedFields(type, minProtocolVersion, maxProtocolVersion);
-			this.configurationFields = Collections.unmodifiableList(configurationFields);
+			configurationFields = loadAnnotatedFields(type, minProtocolVersion, maxProtocolVersion);
 
-			final List<String> boundaries = extractProtocolVersionBoundaries(configurationFields);
-			protocolVersionBoundaries = Collections.unmodifiableList(boundaries);
+			protocolVersionBoundaries = extractProtocolVersionBoundaries(configurationFields);
 
 			if(configurationFields.isEmpty())
 				throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
@@ -116,7 +114,7 @@ public final class ConfigurationMessage<T>{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int size = fields.size();
 		final Collection<String> uniqueShortDescription = new HashSet<>(size);
-		final List<ConfigurationField> configurationFields = new ArrayList<>(size);
+		final ArrayList<ConfigurationField> configurationFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 
@@ -139,7 +137,8 @@ public final class ConfigurationMessage<T>{
 				throw e;
 			}
 		}
-		return configurationFields;
+		configurationFields.trimToSize();
+		return Collections.unmodifiableList(configurationFields);
 	}
 
 
@@ -266,7 +265,7 @@ public final class ConfigurationMessage<T>{
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
 		final int length = fields.size();
-		final List<String> boundaries = new ArrayList<>((length << 1) + 2);
+		final ArrayList<String> boundaries = new ArrayList<>((length << 1) + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
@@ -284,7 +283,8 @@ public final class ConfigurationMessage<T>{
 		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
-		return boundaries;
+		boundaries.trimToSize();
+		return Collections.unmodifiableList(boundaries);
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){
