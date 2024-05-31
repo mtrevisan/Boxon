@@ -54,9 +54,11 @@ public class MessageHex{
 	}
 
 	private static final class GPSElement{
+		//[°]
 		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal longitude;
+		//[°]
 		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal latitude;
@@ -71,11 +73,12 @@ public class MessageHex{
 		@BindInteger(size = "8")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
 		private Byte satellitesCount;
+		//[km/h]
 		@BindInteger(size = "16")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short speed;
 
-		@Evaluate("#self.speed == 0")
+		@Evaluate("#self.satellitesCount == 0")
 		private boolean invalidPosition;
 	}
 
