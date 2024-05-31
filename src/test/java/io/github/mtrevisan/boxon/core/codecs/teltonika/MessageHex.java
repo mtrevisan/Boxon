@@ -42,7 +42,7 @@ import java.time.ZonedDateTime;
 @TemplateHeader(start = "\0\0\0\0")
 public class MessageHex{
 
-	public static final class AVLData{
+	private static final class AVLData{
 		@BindInteger(size = "64", converter = TeltonikaHelper.UnixTimestampConverter.class)
 		private LocalDateTime eventTime;
 		@BindInteger(size = "8")
@@ -53,7 +53,7 @@ public class MessageHex{
 		private IOElement ioElement;
 	}
 
-	public static final class GPSElement{
+	private static final class GPSElement{
 		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal longitude;
@@ -79,7 +79,7 @@ public class MessageHex{
 		private boolean invalidPosition;
 	}
 
-	public static final class IOElement{
+	private static final class IOElement{
 		//IO property that has changed, zero if it's not a record caused by an event
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int eventIOID;
@@ -123,15 +123,11 @@ public class MessageHex{
 	@BindInteger(size = "8")
 	private byte codecID;
 	@BindInteger(size = "8")
-	private byte dataCount1;
+	private byte dataCount;
 	@BindObject(type = AVLData.class)
-	@BindAsArray(size = "dataCount1")
+	@BindAsArray(size = "dataCount")
 	private AVLData[] data;
-	@BindInteger(size = "8")
-	//should be same as `dataCount1`
-	private byte dataCount2;
-
-	@SkipBits("16")
+	@SkipBits("24")
 	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class)
 	private short checksum;
 
