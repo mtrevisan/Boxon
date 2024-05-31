@@ -82,43 +82,29 @@ final class TeltonikaHelper{
 	}
 
 
-	static final class BigIntegerToIntConverter implements Converter<BigInteger, Integer>{
-
-		@Override
-		public Integer decode(final BigInteger value){
-			return value.intValue();
-		}
-
-		@Override
-		public BigInteger encode(final Integer value){
-			return BigInteger.valueOf(value);
-		}
-	}
-
-
 	static class OneByteProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int key;
 		@BindInteger(size = "8")
 		private int value;
 	}
 
 	static class TwoBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int key;
 		@BindInteger(size = "16")
 		private int value;
 	}
 
 	static class FourBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int key;
 		@BindInteger(size = "32")
 		private int value;
 	}
 
 	static class EightBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int key;
 		@BindInteger(size = "64")
 		private long value;

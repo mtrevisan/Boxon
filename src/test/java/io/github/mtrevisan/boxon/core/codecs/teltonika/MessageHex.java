@@ -81,29 +81,29 @@ public class MessageHex{
 
 	public static final class IOElement{
 		//IO property that has changed, zero if it's not a record caused by an event
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int eventIOID;
 		@BindInteger(condition = "codecID == 0x10", size = "8")
 		private int generationType;
 		//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int propertiesCount;
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int oneBytePropertiesCount;
 		@BindObject(type = TeltonikaHelper.OneByteProperty.class)
 		@BindAsArray(size = "#self.oneBytePropertiesCount")
 		private TeltonikaHelper.OneByteProperty[] oneByteProperties;
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int twoBytesPropertiesCount;
 		@BindObject(type = TeltonikaHelper.TwoBytesProperty.class)
 		@BindAsArray(size = "#self.twoBytesPropertiesCount")
 		private TeltonikaHelper.TwoBytesProperty[] twoBytesProperties;
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int fourBytesPropertiesCount;
 		@BindObject(type = TeltonikaHelper.FourBytesProperty.class)
 		@BindAsArray(size = "#self.fourBytesPropertiesCount")
 		private TeltonikaHelper.FourBytesProperty[] fourBytesProperties;
-		@BindInteger(size = "(codecID == -114? 16: 8)", converter = TeltonikaHelper.BigIntegerToIntConverter.class)
+		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int eightBytesPropertiesCount;
 		@BindObject(type = TeltonikaHelper.EightBytesProperty.class)
 		@BindAsArray(size = "#self.eightBytesPropertiesCount")
