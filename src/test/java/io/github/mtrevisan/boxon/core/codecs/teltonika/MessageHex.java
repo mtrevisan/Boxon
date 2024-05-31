@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs.teltonika;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
@@ -92,29 +93,39 @@ public class MessageHex{
 		private int eventIOID;
 		@BindInteger(condition = "codecID == 0x10", size = "8")
 		private int generationType;
+
 		//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int propertiesCount;
+
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int oneBytePropertiesCount;
-		@BindObject(type = OneByteProperty.class)
+		@ContextParameter(name = "valueSize", value = "8")
+		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.oneBytePropertiesCount")
-		private OneByteProperty[] oneByteProperties;
+		private FixedSizeProperty[] oneByteProperties;
+
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int twoBytesPropertiesCount;
-		@BindObject(type = TwoBytesProperty.class)
+		@ContextParameter(name = "valueSize", value = "16")
+		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.twoBytesPropertiesCount")
-		private TwoBytesProperty[] twoBytesProperties;
+		private FixedSizeProperty[] twoBytesProperties;
+
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int fourBytesPropertiesCount;
-		@BindObject(type = FourBytesProperty.class)
+		@ContextParameter(name = "valueSize", value = "32")
+		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.fourBytesPropertiesCount")
-		private FourBytesProperty[] fourBytesProperties;
+		private FixedSizeProperty[] fourBytesProperties;
+
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int eightBytesPropertiesCount;
-		@BindObject(type = EightBytesProperty.class)
+		@ContextParameter(name = "valueSize", value = "64")
+		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.eightBytesPropertiesCount")
-		private EightBytesProperty[] eightBytesProperties;
+		private FixedSizeProperty[] eightBytesProperties;
+
 		@BindInteger(condition = "codecID == -114", size = "16")
 		private int variableSizePropertiesCount;
 		@BindObject(condition = "codecID == -114", type = VariableSizeProperty.class)
@@ -122,41 +133,21 @@ public class MessageHex{
 		private VariableSizeProperty[] variableSizeProperties;
 	}
 
-	private static class OneByteProperty{
+	private static class FixedSizeProperty{
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int key;
-		@BindInteger(size = "8")
-		private int value;
-	}
-
-	private static class TwoBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "16")
-		private int value;
-	}
-
-	private static class FourBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "32")
-		private int value;
-	}
-
-	private static class EightBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "64")
-		private long value;
+		@BindInteger(size = "#valueSize")
+		private BigInteger value;
 	}
 
 	private static class VariableSizeProperty{
+		@BindInteger(size = "16")
+		private int key;
 		@BindInteger(size = "16")
 		private int length;
 		@BindInteger(size = "8 * #self.length")
 		private BigInteger value;
 	}
-
 
 	//skip preamble of all zeros
 	@SkipBits("32")

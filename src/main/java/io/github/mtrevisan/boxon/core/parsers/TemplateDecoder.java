@@ -173,6 +173,8 @@ final class TemplateDecoder extends TemplateCoderBase{
 			//save current object (some annotations can overwrite it)
 			final T currentObject = parserContext.getCurrentObject();
 
+			addContextParameters(field.getContextParameters());
+
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, collectionBinding, parserContext.getRootObject());
 

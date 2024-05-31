@@ -108,6 +108,8 @@ final class TemplateEncoder extends TemplateCoderBase{
 
 	private <T> void encodeField(final BitWriterInterface writer, final ParserContext<T> parserContext, final TemplateField field)
 			throws BoxonException{
+		addContextParameters(field.getContextParameters());
+
 		parserContext.setField(field);
 		parserContext.setFieldName(field.getFieldName());
 		parserContext.setBinding(field.getBinding());

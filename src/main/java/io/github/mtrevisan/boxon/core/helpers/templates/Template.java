@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
@@ -32,11 +33,17 @@ import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
@@ -64,8 +71,10 @@ public final class Template<T>{
 	private static final int ORDER_EVALUATE_INDEX = 2;
 	private static final int ORDER_POST_PROCESS_INDEX = 3;
 
-	private static final String ANNOTATION_NAME_BIND = "Bind";
-	private static final String ANNOTATION_NAME_BIND_AS = "BindAs";
+	private static final String ANNOTATION_NAME_BIND = JavaHelper.commonPrefix(BindBitSet.class, BindInteger.class, BindObject.class,
+		BindString.class, BindStringTerminated.class);
+	private static final String ANNOTATION_NAME_BIND_PARAMETER = ContextParameter.class.getSimpleName();
+	private static final String ANNOTATION_NAME_BIND_AS = JavaHelper.commonPrefix(BindAsArray.class, BindAsList.class);
 	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = ConverterChoices.class.getSimpleName();
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = ObjectChoices.class.getSimpleName();
 	private static final String STAR = "*";
@@ -74,7 +83,7 @@ public final class Template<T>{
 	private static final String ANNOTATION_NAME_CHECKSUM = Checksum.class.getSimpleName();
 	private static final String ANNOTATION_NAME_EVALUATE = Evaluate.class.getSimpleName();
 	private static final String ANNOTATION_NAME_POST_PROCESS = PostProcess.class.getSimpleName();
-	private static final String ANNOTATION_NAME_SKIP = "Skip";
+	private static final String ANNOTATION_NAME_SKIP = JavaHelper.commonPrefix(SkipBits.class, SkipUntilTerminator.class);
 	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
 
 	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
@@ -206,11 +215,12 @@ public final class Template<T>{
 			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
 
 			try{
+				final List<ContextParameter> contextParameters = extractContextParameters(boundedAnnotations);
 				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
 
 				if(validAnnotation != null || !skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips));
+					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips, contextParameters));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
@@ -230,6 +240,9 @@ public final class Template<T>{
 		for(final Annotation annotation : annotations){
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
+
+			if(annotationName.equals(ANNOTATION_NAME_BIND_PARAMETER))
+				continue;
 
 			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
 				|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
@@ -342,6 +355,19 @@ public final class Template<T>{
 			if(annotation.annotationType() == PostProcess.class)
 				processed.add(EvaluatedField.create(field, (PostProcess)annotation));
 		return processed;
+	}
+
+	private static List<ContextParameter> extractContextParameters(final List<? extends Annotation> annotations){
+		final int length = Math.max(annotations.size() - 1, 0);
+		final List<ContextParameter> contextParameters = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation annotation = annotations.get(i);
+
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if(annotationType == ContextParameter.class)
+				contextParameters.add((ContextParameter)annotation);
+		}
+		return Collections.unmodifiableList(contextParameters);
 	}
 
 	/**

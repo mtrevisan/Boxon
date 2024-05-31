@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
 import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
@@ -50,27 +51,30 @@ public final class TemplateField implements FieldRetriever{
 	private final SkipParams[] skips;
 	private final Annotation binding;
 	private final Annotation collectionBinding;
+	private final List<ContextParameter> contextParameters;
 
 	private String condition;
 
 
 	static TemplateField create(final Field field, final Annotation binding){
-		return new TemplateField(field, binding, null, Collections.emptyList());
+		return new TemplateField(field, binding, null, Collections.emptyList(), Collections.emptyList());
 	}
 
 	static TemplateField create(final Field field, final Annotation binding, final Annotation collectionBinding,
-			final List<SkipParams> skips){
-		return new TemplateField(field, binding, collectionBinding, skips);
+			final List<SkipParams> skips, final List<ContextParameter> contextParameters){
+		return new TemplateField(field, binding, collectionBinding, skips, contextParameters);
 	}
 
 
-	private TemplateField(final Field field, final Annotation binding, final Annotation collectionBinding, final List<SkipParams> skips){
+	private TemplateField(final Field field, final Annotation binding, final Annotation collectionBinding, final List<SkipParams> skips,
+			final List<ContextParameter> contextParameters){
 		Objects.requireNonNull(skips, "Skips must not be null");
 
 		this.field = field;
 		this.binding = binding;
 		this.collectionBinding = collectionBinding;
 		this.skips = (!skips.isEmpty()? skips.toArray(EMPTY_SKIP_ARRAY): EMPTY_SKIP_ARRAY);
+		this.contextParameters = contextParameters;
 
 		if(binding != null){
 			//pre-fetch condition method
@@ -120,6 +124,15 @@ public final class TemplateField implements FieldRetriever{
 	 */
 	public SkipParams[] getSkips(){
 		return skips.clone();
+	}
+
+	/**
+	 * The parameter annotations associated with this object.
+	 *
+	 * @return	The parameter annotations associated with this object.
+	 */
+	public List<ContextParameter> getContextParameters(){
+		return contextParameters;
 	}
 
 	/**

@@ -121,6 +121,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     4. [Checksum](#annotation-checksum)
     5. [Evaluate](#annotation-evaluate)
     6. [PostProcess](#annotation-post-process)
+    7. [ContextParameter](#annotation-context-parameter)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -686,6 +687,34 @@ This annotation is bounded to a variable.
 //requires the read value of `messageHeader`, and '+BCK' means a buffered message)
 @PostProcess(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
 private String messageHeader;
+```
+
+
+<a name="annotation-context-parameter"></a>
+### ContextParameter
+
+#### parameters
+
+- `name`: The name of the parameter that will be inserted into the context (both in the decode and encode phases).
+- `value`: The value to be assigned, or calculated, to the parameter with the given name (can be a SpEL expression).
+
+#### description
+
+Assigns a constant, or calculated value, to a parameter that will be added to the context before processing.
+
+Note that the parameter continues to live after the message is parsed.
+
+#### annotation type
+
+This annotation is bounded to a variable.
+
+#### example
+
+```java
+@ContextParameter(name = "valueCondition", value = "#self.readValue")
+@ContextParameter(name = "valueSize", value = "8")
+@BindString(condition = "valueCondition", size = "valueSize")
+private String value;
 ```
 
 

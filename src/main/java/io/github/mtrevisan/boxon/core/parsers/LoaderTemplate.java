@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
@@ -317,6 +318,7 @@ final class LoaderTemplate{
 
 			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
 			if(loaderCodec.hasCodec(annotationType)
+					|| annotationType == ContextParameter.class
 					|| annotationType == BindAsArray.class || annotationType == BindAsList.class)
 				annotations.add(declaredAnnotation);
 		}

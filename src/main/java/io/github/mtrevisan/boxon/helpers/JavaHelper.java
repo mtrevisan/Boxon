@@ -63,17 +63,6 @@ public final class JavaHelper{
 
 
 	/**
-	 * Check if the class is not an interface, an anonymous class, or a primitive data type.
-	 *
-	 * @param cls	The class.
-	 * @return	Whether the class is not an interface, an anonymous class, or a primitive data type.
-	 */
-	public static boolean isUserDefinedClass(final Class<?> cls){
-		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
-	}
-
-
-	/**
 	 * Return the given object if non-null, the default object otherwise.
 	 *
 	 * @param obj	The object.
@@ -331,8 +320,35 @@ public final class JavaHelper{
 		return DESCRIPTOR_MAP.get(variableName.charAt(length - 1)) + ARRAY_VARIABLE.repeat(length - 1);
 	}
 
+	/**
+	 * Check if the class is not an interface, an anonymous class, or a primitive data type.
+	 *
+	 * @param cls	The class.
+	 * @return	Whether the class is not an interface, an anonymous class, or a primitive data type.
+	 */
+	public static boolean isUserDefinedClass(final Class<?> cls){
+		return (!cls.isInterface() && !cls.isAnonymousClass() && !cls.isPrimitive());
+	}
+
 	private static boolean isClassOrRecord(final Class<?> type){
 		return (type.isRecord() || !type.isInterface() && ! Modifier.isAbstract(type.getModifiers()));
+	}
+
+
+	public static String commonPrefix(final Class<?>... strings){
+		final int length = sizeOrZero(strings);
+		String prefix = (length > 0? strings[0].getSimpleName(): EMPTY_STRING);
+		for(int i = 1; !prefix.isEmpty() && i < length; i ++)
+			prefix = findCommonPrefix(prefix, strings[i].getSimpleName());
+		return prefix;
+	}
+
+	private static String findCommonPrefix(final String str1, final String str2){
+		final int minLength = Math.min(str1.length(), str2.length());
+		int index = 0;
+		while(index < minLength && str1.charAt(index) == str2.charAt(index))
+			index ++;
+		return str1.substring(0, index);
 	}
 
 }

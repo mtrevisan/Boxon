@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
@@ -99,6 +100,14 @@ class TemplateCoderBase{
 
 	protected final boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
+	}
+
+	protected void addContextParameters(final List<ContextParameter> contextParameters){
+		for(int i = 0, length = contextParameters.size(); i < length; i ++){
+			final ContextParameter contextParameterBinding = contextParameters.get(i);
+
+			evaluator.putToContext(contextParameterBinding.name(), contextParameterBinding.value());
+		}
 	}
 
 }
