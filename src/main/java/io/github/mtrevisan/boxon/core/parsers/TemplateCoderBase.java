@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
+import org.springframework.expression.EvaluationException;
 
 import java.util.List;
 import java.util.function.Function;
@@ -106,8 +107,27 @@ class TemplateCoderBase{
 		for(int i = 0, length = contextParameters.size(); i < length; i ++){
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
-			evaluator.putToContext(contextParameterBinding.name(), contextParameterBinding.value());
+			final boolean allowOverwrite = contextParameterBinding.overwrite();
+			final String name = contextParameterBinding.name();
+
+			if(!allowOverwrite && evaluator.getContext().containsKey(name))
+				throw new EvaluationException("Cannot overwrite context parameter: " + name);
+
+			final Object value = tryEvaluateContextValue(contextParameterBinding.value());
+
+			evaluator.putToContext(name, value);
 		}
+	}
+
+	private Object tryEvaluateContextValue(final String contextValue){
+		Object value;
+		try{
+			value = evaluator.evaluate(contextValue, null, Object.class);
+		}
+		catch(final EvaluationException ignored){
+			value = contextValue;
+		}
+		return value;
 	}
 
 }

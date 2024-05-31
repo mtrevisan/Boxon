@@ -100,28 +100,28 @@ public class MessageHex{
 
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int oneBytePropertiesCount;
-		@ContextParameter(name = "valueSize", value = "8")
+		@ContextParameter(name = "valueSize", value = "8", overwrite = true)
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.oneBytePropertiesCount")
 		private FixedSizeProperty[] oneByteProperties;
 
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int twoBytesPropertiesCount;
-		@ContextParameter(name = "valueSize", value = "16")
+		@ContextParameter(name = "valueSize", value = "16", overwrite = true)
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.twoBytesPropertiesCount")
 		private FixedSizeProperty[] twoBytesProperties;
 
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int fourBytesPropertiesCount;
-		@ContextParameter(name = "valueSize", value = "32")
+		@ContextParameter(name = "valueSize", value = "32", overwrite = true)
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.fourBytesPropertiesCount")
 		private FixedSizeProperty[] fourBytesProperties;
 
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int eightBytesPropertiesCount;
-		@ContextParameter(name = "valueSize", value = "64")
+		@ContextParameter(name = "valueSize", value = "64", overwrite = true)
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.eightBytesPropertiesCount")
 		private FixedSizeProperty[] eightBytesProperties;

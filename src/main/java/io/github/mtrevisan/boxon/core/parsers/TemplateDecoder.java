@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
@@ -49,6 +50,8 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -131,6 +134,23 @@ final class TemplateDecoder extends TemplateCoderBase{
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
+
+		//clean context:
+		cleanContextFromParameters(fields);
+	}
+
+	private void cleanContextFromParameters(final List<TemplateField> fields){
+		final int length = fields.size();
+		final Collection<String> contextParameterNames = new HashSet<>(length);
+		for(int i = 0; i < length; i ++){
+			final List<ContextParameter> contextParameters = fields.get(i)
+				.getContextParameters();
+
+			for(int j = 0, len = contextParameters.size(); j < len; j ++)
+				contextParameterNames.add(contextParameters.get(j).name());
+		}
+		for(final String contextParameterName : contextParameterNames)
+			evaluator.removeFromContext(contextParameterName);
 	}
 
 	private void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
