@@ -24,10 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs.teltonika;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,14 +36,6 @@ import java.time.ZoneOffset;
 final class TeltonikaHelper{
 
 	private TeltonikaHelper(){}
-
-
-	public static final class PreambleValidator implements Validator<Integer>{
-		@Override
-		public boolean isValid(final Integer preamble){
-			return (preamble == 0);
-		}
-	}
 
 
 	public static final class UnixTimestampConverter implements Converter<Long, LocalDateTime>{
@@ -78,43 +67,6 @@ final class TeltonikaHelper{
 			return value.multiply(MULTIPLICAND)
 				.intValue();
 		}
-	}
-
-
-	static class OneByteProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "8")
-		private int value;
-	}
-
-	static class TwoBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "16")
-		private int value;
-	}
-
-	static class FourBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "32")
-		private int value;
-	}
-
-	static class EightBytesProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
-		private int key;
-		@BindInteger(size = "64")
-		private long value;
-	}
-
-	static class VariableBytesProperty{
-		@BindInteger(size = "16")
-		private int length;
-		@BindInteger(size = "8")
-		@BindAsArray(size = "#self.length")
-		private byte[] value;
 	}
 
 }

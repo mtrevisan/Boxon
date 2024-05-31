@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public final class ContextHelper{
 
-	/** The name of the current object being scanner (used for referencing variables from SpEL). */
+	/** The name of the current object being scanned (used for referencing variables from SpEL). */
 	public static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";

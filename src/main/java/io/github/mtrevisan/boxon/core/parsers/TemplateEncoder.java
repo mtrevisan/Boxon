@@ -101,14 +101,19 @@ final class TemplateEncoder extends TemplateCoderBase{
 			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
 			if(shouldProcessField){
 				//... and if so, process it
-				parserContext.setField(field);
-				parserContext.setFieldName(field.getFieldName());
-				parserContext.setBinding(field.getBinding());
-				parserContext.setCollectionBinding(field.getCollectionBinding());
-
-				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+				encodeField(writer, parserContext, field);
 			}
 		}
+	}
+
+	private <T> void encodeField(final BitWriterInterface writer, final ParserContext<T> parserContext, final TemplateField field)
+			throws BoxonException{
+		parserContext.setField(field);
+		parserContext.setFieldName(field.getFieldName());
+		parserContext.setBinding(field.getBinding());
+		parserContext.setCollectionBinding(field.getCollectionBinding());
+
+		ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 	}
 
 	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){

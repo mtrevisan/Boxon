@@ -35,10 +35,14 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16IBM;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 
+/**
+ * @see <a href="https://wiki.teltonika-gps.com/view/Codec">Codec</a>
+ */
 @TemplateHeader(start = "\0\0\0\0")
 public class MessageHex{
 
@@ -93,36 +97,72 @@ public class MessageHex{
 		private int propertiesCount;
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int oneBytePropertiesCount;
-		@BindObject(type = TeltonikaHelper.OneByteProperty.class)
+		@BindObject(type = OneByteProperty.class)
 		@BindAsArray(size = "#self.oneBytePropertiesCount")
-		private TeltonikaHelper.OneByteProperty[] oneByteProperties;
+		private OneByteProperty[] oneByteProperties;
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int twoBytesPropertiesCount;
-		@BindObject(type = TeltonikaHelper.TwoBytesProperty.class)
+		@BindObject(type = TwoBytesProperty.class)
 		@BindAsArray(size = "#self.twoBytesPropertiesCount")
-		private TeltonikaHelper.TwoBytesProperty[] twoBytesProperties;
+		private TwoBytesProperty[] twoBytesProperties;
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int fourBytesPropertiesCount;
-		@BindObject(type = TeltonikaHelper.FourBytesProperty.class)
+		@BindObject(type = FourBytesProperty.class)
 		@BindAsArray(size = "#self.fourBytesPropertiesCount")
-		private TeltonikaHelper.FourBytesProperty[] fourBytesProperties;
+		private FourBytesProperty[] fourBytesProperties;
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int eightBytesPropertiesCount;
-		@BindObject(type = TeltonikaHelper.EightBytesProperty.class)
+		@BindObject(type = EightBytesProperty.class)
 		@BindAsArray(size = "#self.eightBytesPropertiesCount")
-		private TeltonikaHelper.EightBytesProperty[] eightBytesProperties;
+		private EightBytesProperty[] eightBytesProperties;
 		@BindInteger(condition = "codecID == -114", size = "16")
-		private int variableBytesPropertiesCount;
-		@BindObject(condition = "codecID == -114", type = TeltonikaHelper.VariableBytesProperty.class)
-		@BindAsArray(size = "#self.variableBytesPropertiesCount")
-		private TeltonikaHelper.VariableBytesProperty[] variableBytesProperties;
+		private int variableSizePropertiesCount;
+		@BindObject(condition = "codecID == -114", type = VariableSizeProperty.class)
+		@BindAsArray(size = "#self.variableSizePropertiesCount")
+		private VariableSizeProperty[] variableSizeProperties;
+	}
+
+	private static class OneByteProperty{
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
+		private int key;
+		@BindInteger(size = "8")
+		private int value;
+	}
+
+	private static class TwoBytesProperty{
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
+		private int key;
+		@BindInteger(size = "16")
+		private int value;
+	}
+
+	private static class FourBytesProperty{
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
+		private int key;
+		@BindInteger(size = "32")
+		private int value;
+	}
+
+	private static class EightBytesProperty{
+		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
+		private int key;
+		@BindInteger(size = "64")
+		private long value;
+	}
+
+	private static class VariableSizeProperty{
+		@BindInteger(size = "16")
+		private int length;
+		@BindInteger(size = "8 * #self.length")
+		private BigInteger value;
 	}
 
 
-	@BindInteger(size = "32", validator = TeltonikaHelper.PreambleValidator.class)
-	private int preamble;
+	//skip preamble of all zeros
+	@SkipBits("32")
 	@BindInteger(size = "32")
 	private int messageLength;
+	//can parse Codec 8, Codec 8 Extended, and Codec 16
 	@BindInteger(size = "8")
 	private byte codecID;
 	@BindInteger(size = "8")
@@ -130,6 +170,7 @@ public class MessageHex{
 	@BindObject(type = AVLData.class)
 	@BindAsArray(size = "dataCount")
 	private AVLData[] data;
+	//skip a copy of `dataCount` and other reserved data
 	@SkipBits("24")
 	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class)
 	private short checksum;

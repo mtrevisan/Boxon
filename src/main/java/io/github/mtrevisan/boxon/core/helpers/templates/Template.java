@@ -32,6 +32,8 @@ import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -64,14 +66,14 @@ public final class Template<T>{
 
 	private static final String ANNOTATION_NAME_BIND = "Bind";
 	private static final String ANNOTATION_NAME_BIND_AS = "BindAs";
-	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = "ConverterChoices";
-	private static final String ANNOTATION_NAME_OBJECT_CHOICES = "ObjectChoices";
+	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = ConverterChoices.class.getSimpleName();
+	private static final String ANNOTATION_NAME_OBJECT_CHOICES = ObjectChoices.class.getSimpleName();
 	private static final String STAR = "*";
 	private static final String ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR = ANNOTATION_NAME_BIND + STAR + "`, `"
 		+ ANNOTATION_NAME_CONVERTER_CHOICES + "`, or `" + ANNOTATION_NAME_OBJECT_CHOICES + STAR;
-	private static final String ANNOTATION_NAME_CHECKSUM = "Checksum";
-	private static final String ANNOTATION_NAME_EVALUATE = "Evaluate";
-	private static final String ANNOTATION_NAME_POST_PROCESS = "PostProcess";
+	private static final String ANNOTATION_NAME_CHECKSUM = Checksum.class.getSimpleName();
+	private static final String ANNOTATION_NAME_EVALUATE = Evaluate.class.getSimpleName();
+	private static final String ANNOTATION_NAME_POST_PROCESS = PostProcess.class.getSimpleName();
 	private static final String ANNOTATION_NAME_SKIP = "Skip";
 	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
 
