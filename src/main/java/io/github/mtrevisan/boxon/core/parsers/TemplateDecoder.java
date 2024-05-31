@@ -50,8 +50,6 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -134,23 +132,6 @@ final class TemplateDecoder extends TemplateCoderBase{
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
-
-		//clean context:
-		cleanContextFromParameters(fields);
-	}
-
-	private void cleanContextFromParameters(final List<TemplateField> fields){
-		final int length = fields.size();
-		final Collection<String> contextParameterNames = new HashSet<>(length);
-		for(int i = 0; i < length; i ++){
-			final List<ContextParameter> contextParameters = fields.get(i)
-				.getContextParameters();
-
-			for(int j = 0, len = contextParameters.size(); j < len; j ++)
-				contextParameterNames.add(contextParameters.get(j).name());
-		}
-		for(final String contextParameterName : contextParameterNames)
-			evaluator.removeFromContext(contextParameterName);
 	}
 
 	private void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
@@ -189,11 +170,12 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
+		final List<ContextParameter> contextParameters = field.getContextParameters();
 		try{
 			//save current object (some annotations can overwrite it)
 			final T currentObject = parserContext.getCurrentObject();
 
-			addContextParameters(field.getContextParameters());
+			addContextParameters(contextParameters);
 
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, collectionBinding, parserContext.getRootObject());
@@ -213,6 +195,9 @@ final class TemplateDecoder extends TemplateCoderBase{
 		catch(final Exception e){
 			throw BoxonException.create(e)
 				.withClassAndField(template.getType(), field.getField());
+		}
+		finally{
+			clearContextParameters(contextParameters);
 		}
 	}
 

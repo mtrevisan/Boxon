@@ -697,13 +697,12 @@ private String messageHeader;
 
 - `name`: The name of the parameter that will be inserted into the context (both in the decode and encode phases).
 - `value`: The value to be assigned, or calculated, to the parameter with the given name (can be a SpEL expression).
-- `overwrite`: Whether overwriting is allowed (defaults to `false`).
 
 #### description
 
 Assigns a constant, or calculated value, to a parameter that will be added to the context before processing.
 
-Note that the parameter continues to live after the message is parsed.
+Note that the parameter ceases to live after the field is decoded/encoded.
 
 #### annotation type
 

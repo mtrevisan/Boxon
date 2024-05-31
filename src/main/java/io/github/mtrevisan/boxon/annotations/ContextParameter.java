@@ -53,11 +53,4 @@ public @interface ContextParameter{
 	 */
 	String value();
 
-	/**
-	 * Whether overwriting is allowed.
-	 *
-	 * @return	Whether overwriting is allowed.
-	 */
-	boolean overwrite() default false;
-
 }

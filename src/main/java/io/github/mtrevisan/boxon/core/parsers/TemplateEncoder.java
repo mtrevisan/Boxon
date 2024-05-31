@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
+import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
@@ -108,14 +109,20 @@ final class TemplateEncoder extends TemplateCoderBase{
 
 	private <T> void encodeField(final BitWriterInterface writer, final ParserContext<T> parserContext, final TemplateField field)
 			throws BoxonException{
-		addContextParameters(field.getContextParameters());
+		final List<ContextParameter> contextParameters = field.getContextParameters();
+		addContextParameters(contextParameters);
 
 		parserContext.setField(field);
 		parserContext.setFieldName(field.getFieldName());
 		parserContext.setBinding(field.getBinding());
 		parserContext.setCollectionBinding(field.getCollectionBinding());
 
-		ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+		try{
+			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+		}
+		finally{
+			clearContextParameters(contextParameters);
+		}
 	}
 
 	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){

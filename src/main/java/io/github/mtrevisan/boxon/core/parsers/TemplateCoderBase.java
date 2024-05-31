@@ -107,15 +107,18 @@ class TemplateCoderBase{
 		for(int i = 0, length = contextParameters.size(); i < length; i ++){
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
-			final boolean allowOverwrite = contextParameterBinding.overwrite();
 			final String name = contextParameterBinding.name();
-
-			if(!allowOverwrite && evaluator.getContext().containsKey(name))
-				throw new EvaluationException("Cannot overwrite context parameter: " + name);
-
 			final Object value = tryEvaluateContextValue(contextParameterBinding.value());
-
 			evaluator.putToContext(name, value);
+		}
+	}
+
+	protected void clearContextParameters(final List<ContextParameter> contextParameters){
+		for(int i = 0, length = contextParameters.size(); i < length; i ++){
+			final ContextParameter contextParameterBinding = contextParameters.get(i);
+
+			final String name = contextParameterBinding.name();
+			evaluator.removeFromContext(name);
 		}
 	}
 
