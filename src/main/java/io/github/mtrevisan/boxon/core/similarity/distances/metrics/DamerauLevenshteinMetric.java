@@ -107,23 +107,23 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 			return length1;
 
 		//maximum distance is the max possible distance
-		final int maximumDistance = input1.length() + input2.length();
+		final int maximumDistance = length1 + length2;
 
 		//create and initialize the element array indices
 		final Map<Object, Integer> da = new HashMap<>(maximumDistance);
-		for(int d = 0; d < input1.length(); d ++)
+		for(int d = 0; d < length1; d ++)
 			da.put(input1.elementAt(d), 0);
-		for(int d = 0; d < input2.length(); d ++)
+		for(int d = 0; d < length2; d ++)
 			da.put(input2.elementAt(d), 0);
 
 		//create the distance matrix `H[0 .. s1_{length+1}][0 .. s2_{length+1}]`
-		final int[][] h = new int[input1.length() + 2][input2.length() + 2];
+		final int[][] h = new int[length1 + 2][length2 + 2];
 		//initialize the left and top edges of `H`
-		for(int i = 0; i <= input1.length(); i ++){
+		for(int i = 0; i <= length1; i ++){
 			h[i + 1][0] = maximumDistance;
 			h[i + 1][1] = i;
 		}
-		for(int j = 0; j <= input2.length(); j ++){
+		for(int j = 0; j <= length2; j ++){
 			h[0][j + 1] = maximumDistance;
 			h[1][j + 1] = j;
 		}
@@ -154,7 +154,7 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 			da.put(input1.elementAt(i - 1), i);
 		}
 
-		return h[input1.length() + 1][input2.length() + 1];
+		return h[length1 + 1][length2 + 1];
 	}
 
 	private static int min(final int a, final int b, final int c, final int d){

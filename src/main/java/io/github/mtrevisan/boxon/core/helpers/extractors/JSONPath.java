@@ -45,15 +45,6 @@ import java.util.regex.Pattern;
  */
 public final class JSONPath{
 
-	/**
-	 * Map containing replacement characters for the RFC6901 encoding of JSON paths, where "~0" is the encoding of a tilde, and "~1" of
-	 * a slash.
-	 */
-	private static final Map<Character, String> RFC6901_REPLACEMENT_MAP = Map.of(
-		'1', "/",
-		'0', "~"
-	);
-
 	private static final char DECODED_SLASH = '/';
 	private static final String SLASH = String.valueOf(DECODED_SLASH);
 
@@ -111,7 +102,16 @@ public final class JSONPath{
 		for(int i = 0, length = text.length() - 1; i < length; i ++)
 			if(sb.charAt(i) == '~'){
 				final char nextChar = sb.charAt(i + 1);
-				final String replacement = RFC6901_REPLACEMENT_MAP.get(nextChar);
+
+				//replace characters for the RFC6901 encoding of JSON paths, where "~0" is the encoding of a tilde, and "~1" of a slash
+				final String replacement = switch(nextChar){
+					//define replacement for ~1
+					case '1' -> "/";
+					//define replacement for ~0
+					case '0' -> "~";
+					default -> null;
+				};
+
 				if(replacement != null){
 					sb.replace(i, i + 2, replacement);
 					length --;

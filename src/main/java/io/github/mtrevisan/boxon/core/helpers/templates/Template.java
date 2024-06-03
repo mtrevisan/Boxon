@@ -73,7 +73,7 @@ public final class Template<T>{
 
 	private static final String ANNOTATION_NAME_BIND = JavaHelper.commonPrefix(BindBitSet.class, BindInteger.class, BindObject.class,
 		BindString.class, BindStringTerminated.class);
-	private static final String ANNOTATION_NAME_BIND_PARAMETER = ContextParameter.class.getSimpleName();
+	private static final String ANNOTATION_NAME_CONTEXT_PARAMETER = ContextParameter.class.getSimpleName();
 	private static final String ANNOTATION_NAME_BIND_AS = JavaHelper.commonPrefix(BindAsArray.class, BindAsList.class);
 	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = ConverterChoices.class.getSimpleName();
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = ObjectChoices.class.getSimpleName();
@@ -248,7 +248,7 @@ public final class Template<T>{
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
 
-			if(annotationName.equals(ANNOTATION_NAME_BIND_PARAMETER))
+			if(annotationName.equals(ANNOTATION_NAME_CONTEXT_PARAMETER))
 				continue;
 
 			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
@@ -365,7 +365,7 @@ public final class Template<T>{
 	}
 
 	private static List<ContextParameter> extractContextParameters(final List<? extends Annotation> annotations){
-		final int length = Math.max(annotations.size() - 1, 0);
+		final int length = annotations.size();
 		final ArrayList<ContextParameter> contextParameters = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations.get(i);

@@ -50,6 +50,7 @@ public final class ACKMaskHex{
 		this.mask = mask;
 	}
 
+
 	public int getMaskLength(){
 		return 1;
 	}

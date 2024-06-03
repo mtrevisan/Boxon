@@ -66,6 +66,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		return new TemplateDecoder(loaderCodec, evaluator);
 	}
 
+
 	private TemplateDecoder(final LoaderCodec loaderCodec, final Evaluator evaluator){
 		super(loaderCodec, evaluator);
 	}

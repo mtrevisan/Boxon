@@ -60,6 +60,7 @@ final class NumberWriterManager implements WriterManager{
 	 */
 	@Override
 	public void put(final Object value){
+		//FIXME refactor
 		switch(value){
 			case final Byte v -> writer.writeText(Integer.toString(v & 0xFF, radix));
 			case final Short v -> writer.writeText(Integer.toString(v & 0xFFFF, radix));

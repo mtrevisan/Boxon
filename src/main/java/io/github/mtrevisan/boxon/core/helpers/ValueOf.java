@@ -94,6 +94,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 		values = Collections.unmodifiableMap(map);
 	}
 
+
 	private Map<K, T> createMap(final Comparator<K> comparator, final T[] enumConstants){
 		return (comparator != null
 			? new ConcurrentSkipListMap<>(comparator)

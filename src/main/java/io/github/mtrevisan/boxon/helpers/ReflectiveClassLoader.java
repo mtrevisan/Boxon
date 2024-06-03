@@ -77,7 +77,6 @@ public final class ReflectiveClassLoader{
 	}
 
 
-
 	/**
 	 * Get types annotated with a given annotation, both classes and annotations.
 	 * <p>{@link Inherited} is not honored by default.</p>
