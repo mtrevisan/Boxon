@@ -198,14 +198,15 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |                                    | &#9745; |           |                                |  &#9745;  |               &#9745;               |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |              &#9745;               |         |           |                                |  &#9745;  |               &#9745;               | BindStringTerminated |
 
-|                     | condition | start /<br/>end | charset |  value  | consumeTerminator | byteOrder | skipStart /<br/>skipEnd | algorithm |  value  | valueDecode /<br/>valueEncode |                     |
-|---------------------|:---------:|:---------------:|:-------:|:-------:|:-----------------:|:---------:|:-----------------------:|:---------:|:-------:|:-----------------------------:|--------------------:|
-| TemplateHeader      |           |     &#9745;     | &#9745; |         |                   |           |                         |           |         |                               |      TemplateHeader |
-| SkipBits            |  &#9745;  |                 |         | &#9745; |                   |           |                         |           |         |                               |            SkipBits |
-| SkipUntilTerminator |  &#9745;  |                 |         | &#9745; |      &#9745;      |           |                         |           |         |                               | SkipUntilTerminator |
-| Checksum            |  &#9745;  |                 |         |         |                   |  &#9745;  |         &#9745;         |  &#9745;  |         |                               |            Checksum |
-| Evaluate            |  &#9745;  |                 |         |         |                   |           |                         |           | &#9745; |                               |            Evaluate |
-| PostProcess         |  &#9745;  |                 |         |         |                   |           |                         |           |         |            &#9745;            |        ProcessField |
+|                     | condition | start /<br/>end | charset |  value  | consumeTerminator | byteOrder | skipStart /<br/>skipEnd | algorithm | valueDecode /<br/>valueEncode |  name   |                     |
+|---------------------|:---------:|:---------------:|:-------:|:-------:|:-----------------:|:---------:|:-----------------------:|:---------:|:-----------------------------:|:-------:|--------------------:|
+| TemplateHeader      |           |     &#9745;     | &#9745; |         |                   |           |                         |           |                               |         |      TemplateHeader |
+| SkipBits            |  &#9745;  |                 |         | &#9745; |                   |           |                         |           |                               |         |            SkipBits |
+| SkipUntilTerminator |  &#9745;  |                 |         | &#9745; |      &#9745;      |           |                         |           |                               |         | SkipUntilTerminator |
+| Checksum            |  &#9745;  |                 |         |         |                   |  &#9745;  |         &#9745;         |  &#9745;  |                               |         |            Checksum |
+| Evaluate            |  &#9745;  |                 |         | &#9745; |                   |           |                         |           |                               |         |            Evaluate |
+| PostProcess         |  &#9745;  |                 |         |         |                   |           |                         |           |            &#9745;            |         |        ProcessField |
+| ContextParameter    |           |                 |         | &#9745; |                   |           |                         |           |                               | &#9745; |    ContextParameter |
 
 |                               | shortDescription | longDescription | minProtocol /<br/>maxProtocol | start /<br/>end | charset | terminator | unitOfMeasure | minValue /<br/>maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------------------------:|:---------------:|:-------:|:----------:|:-------------:|:-----------------------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
