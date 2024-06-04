@@ -78,7 +78,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 		final Object rootObject = parserContext.getRootObject();
 
 		//encode message fields:
-		encodeMessageFields(template, writer, rootObject, parserContext);
+		encodeMessageFields(template.getTemplateFields(), writer, rootObject, parserContext);
 
 		final TemplateHeader header = template.getHeader();
 		if(header != null)
@@ -89,9 +89,8 @@ final class TemplateEncoder extends TemplateCoderBase{
 		processFields(template, parserContext, PostProcess::valueEncode);
 	}
 
-	private <T> void encodeMessageFields(final Template<?> template, final BitWriterInterface writer, final Object rootObject,
+	private <T> void encodeMessageFields(final List<TemplateField> fields, final BitWriterInterface writer, final Object rootObject,
 			final ParserContext<T> parserContext) throws BoxonException{
-		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final TemplateField field = fields.get(i);
 

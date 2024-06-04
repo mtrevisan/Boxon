@@ -85,7 +85,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 	<T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		final int startPosition = reader.position();
 
-		T currentObject = createEmptyObject(template);
+		T currentObject = createEmptyObject(template.getType());
 
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
@@ -102,7 +102,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			postProcessFields(template, parserContext);
 		}
 
-		readMessageTerminator(template, reader);
+		readMessageTerminator(template.getHeader(), reader);
 
 		currentObject = parserContext.getCurrentObject();
 		verifyChecksum(template, currentObject, startPosition, reader);
@@ -110,8 +110,8 @@ final class TemplateDecoder extends TemplateCoderBase{
 		return currentObject;
 	}
 
-	private static <T> T createEmptyObject(final Template<T> template){
-		return ConstructorHelper.getEmptyCreator(template.getType())
+	private static <T> T createEmptyObject(final Class<T> templateType){
+		return ConstructorHelper.getEmptyCreator(templateType)
 			.get();
 	}
 
@@ -202,8 +202,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
-		final TemplateHeader header = template.getHeader();
+	private static void readMessageTerminator(final TemplateHeader header, final BitReaderInterface reader) throws TemplateException{
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final byte[] messageTerminator = header.end()

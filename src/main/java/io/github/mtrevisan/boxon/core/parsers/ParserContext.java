@@ -89,10 +89,11 @@ final class ParserContext<T>{
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	void setFieldValue(final Field field, Object value){
+		final Class<?> fieldType = field.getType();
 		if(value instanceof final BigInteger bi)
-			value = ParserDataType.castValue(bi, field.getType());
-		else if(field.getType().isArray() && value.getClass().getComponentType() == BigInteger.class)
-			value = ParserDataType.castValue((BigInteger[])value, field.getType().getComponentType());
+			value = ParserDataType.castValue(bi, fieldType);
+		else if(fieldType.isArray() && value.getClass().getComponentType() == BigInteger.class)
+			value = ParserDataType.castValue((BigInteger[])value, fieldType.getComponentType());
 
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);

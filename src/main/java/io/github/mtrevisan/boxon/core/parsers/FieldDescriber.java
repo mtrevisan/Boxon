@@ -119,6 +119,7 @@ public final class FieldDescriber{
 	private static void extractObjectParameters(final Object obj, final Method[] methods, final Map<String, Object> rootDescription){
 		for(int i = 0, length = methods.length; i < length; i ++){
 			final Method method = methods[i];
+
 			if(method.getParameters().length > 0)
 				continue;
 
@@ -215,7 +216,8 @@ public final class FieldDescriber{
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), fieldDescription);
 		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 
-		extractSkipParameters(field, fieldExtractor, fieldsDescription);
+		final SkipParams[] skips = fieldExtractor.getSkips(field);
+		extractSkipParameters(skips, fieldsDescription);
 
 		extractObjectParameters(binding, annotationType, fieldDescription);
 		extractCollectionParameters(collectionBinding, fieldDescription);
@@ -223,9 +225,7 @@ public final class FieldDescriber{
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
 
-	private static <F> void extractSkipParameters(final F field, final FieldExtractor<F> fieldExtractor,
-			final Collection<Map<String, Object>> fieldsDescription){
-		final SkipParams[] skips = fieldExtractor.getSkips(field);
+	private static <F> void extractSkipParameters(final SkipParams[] skips, final Collection<Map<String, Object>> fieldsDescription){
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final SkipParams skip = skips[i];
 
