@@ -42,6 +42,8 @@ import java.time.ZonedDateTime;
 
 
 /**
+ * Parser for Codec 8, Codec 8 Extended, and Codec 16.
+ *
  * @see <a href="https://wiki.teltonika-gps.com/view/Codec">Codec</a>
  */
 @TemplateHeader(start = "\0\0\0\0")
@@ -50,6 +52,7 @@ public class MessageHex{
 	private static final class AVLData{
 		@BindInteger(size = "64", converter = TeltonikaHelper.UnixTimestampConverter.class)
 		private LocalDateTime eventTime;
+		//0: low, 1: high, 2: panic
 		@BindInteger(size = "8")
 		private byte priority;
 		@BindObject(type = GPSElement.class)
@@ -91,12 +94,13 @@ public class MessageHex{
 		//IO property that has changed, zero if it's not a record caused by an event
 		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
 		private int eventIOID;
-		@BindInteger(condition = "codecID == 0x10", size = "8")
+		//0: on exit, 1: on entrance, 2: on both exit and entrance, 4: hysteresis, 5: on change, 6: eventual, 7: periodical
+		@BindInteger(condition = "(codecID == 0x10)", size = "8")
 		private int generationType;
 
-		//propertiesCount = oneBytePropertiesCount + twoBytesPropertiesCount + fourBytesPropertiesCount + eightBytesPropertiesCount
-		@BindInteger(size = "(codecID == -114? 16: 8)")
-		private int propertiesCount;
+		//skip `propertiesCount` = `oneBytePropertiesCount` + `twoBytesPropertiesCount` + `fourBytesPropertiesCount`
+		//	+ `eightBytesPropertiesCount`
+		@SkipBits("(codecID == -114? 16: 8)")
 
 		@BindInteger(size = "(codecID == -114? 16: 8)")
 		private int oneBytePropertiesCount;
@@ -126,9 +130,9 @@ public class MessageHex{
 		@ContextParameter(name = "valueSize", value = "64")
 		private FixedSizeProperty[] eightBytesProperties;
 
-		@BindInteger(condition = "codecID == -114", size = "16")
+		@BindInteger(condition = "(codecID == -114)", size = "16")
 		private int variableSizePropertiesCount;
-		@BindObject(condition = "codecID == -114", type = VariableSizeProperty.class)
+		@BindObject(condition = "(codecID == -114)", type = VariableSizeProperty.class)
 		@BindAsArray(size = "#self.variableSizePropertiesCount")
 		private VariableSizeProperty[] variableSizeProperties;
 	}
@@ -149,11 +153,9 @@ public class MessageHex{
 		private BigInteger value;
 	}
 
-	//skip preamble of all zeros
-	@SkipBits("32")
-	@BindInteger(size = "32")
-	private int messageLength;
-	//can parse Codec 8, Codec 8 Extended, and Codec 16
+	//skip preamble of all zeros and message length
+	@SkipBits("32+32")
+	//0x08: Codec 8, 0x8E (-114): Codec 8 Extended, 0x10 Codec 16
 	@BindInteger(size = "8")
 	private byte codecID;
 	@BindInteger(size = "8")
@@ -162,7 +164,7 @@ public class MessageHex{
 	@BindAsArray(size = "dataCount")
 	private AVLData[] data;
 	//skip a copy of `dataCount` and other reserved data
-	@SkipBits("24")
+	@SkipBits("8+16")
 	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class)
 	private short checksum;
 

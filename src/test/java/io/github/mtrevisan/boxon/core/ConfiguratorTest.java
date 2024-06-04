@@ -160,9 +160,8 @@ class ConfiguratorTest{
 		Response<String, byte[]> composed = configurator.composeConfiguration("1.0", "Heartbeat acknowledge",
 			data);
 
-		if(composed.hasError()){
+		if(composed.hasError())
 			Assertions.fail(composed.getError());
-		}
 		Assertions.assertEquals("+SACK:GTHBD,870100,007B$", StringHelper.toASCIIString(composed.getMessage()));
 	}
 

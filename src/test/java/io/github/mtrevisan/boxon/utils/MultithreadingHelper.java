@@ -51,7 +51,7 @@ public final class MultithreadingHelper{
 			final Future<T>[] futures = (Future<T>[])Array.newInstance(Future.class, threadCount);
 			//assure overlaps happens (cycle until some overlaps happens)
 			while(overlaps.get() == 0){
-				for(int t = 0; t < threadCount; t++)
+				for(int t = 0; t < threadCount; t ++)
 					futures[t] = service.submit(() -> {
 						latch.await();
 

@@ -47,9 +47,12 @@ import java.util.List;
  */
 final class TemplateAnnotationValidatorHelper{
 
-	private static final NullConverterValidationStrategy NULL_CONVERTER_VALIDATION_STRATEGY = new NullConverterValidationStrategy();
-	private static final NonNullConverterValidationStrategy NON_NULL_CONVERTER_VALIDATION_STRATEGY
-		= new NonNullConverterValidationStrategy();
+	private interface ValidationStrategy{
+		void validate(Class<?> fieldType, Class<? extends Converter<?, ?>> converter, Class<?> bindingType) throws AnnotationException;
+	}
+
+	private static final ValidationStrategy NULL_CONVERTER_VALIDATOR = new NullConverterValidationStrategy();
+	private static final ValidationStrategy NON_NULL_CONVERTER_VALIDATOR = new NonNullConverterValidationStrategy();
 
 
 	private TemplateAnnotationValidatorHelper(){}
@@ -64,14 +67,7 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static ValidationStrategy selectValidationStrategy(final Class<? extends Converter<?, ?>> converter){
-		return (converter == NullConverter.class
-			? NULL_CONVERTER_VALIDATION_STRATEGY
-			: NON_NULL_CONVERTER_VALIDATION_STRATEGY
-		);
-	}
-
-	private interface ValidationStrategy{
-		void validate(Class<?> fieldType, Class<? extends Converter<?, ?>> converter, Class<?> bindingType) throws AnnotationException;
+		return (converter == NullConverter.class? NULL_CONVERTER_VALIDATOR: NON_NULL_CONVERTER_VALIDATOR);
 	}
 
 	private static class NullConverterValidationStrategy implements ValidationStrategy{
