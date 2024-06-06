@@ -85,7 +85,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 	<T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		final int startPosition = reader.position();
 
-		T currentObject = createEmptyObject(template.getType());
+		T currentObject = template.createEmptyObject();
 
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
@@ -108,11 +108,6 @@ final class TemplateDecoder extends TemplateCoderBase{
 		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
-	}
-
-	private static <T> T createEmptyObject(final Class<T> templateType){
-		return ConstructorHelper.getEmptyCreator(templateType)
-			.get();
 	}
 
 	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)

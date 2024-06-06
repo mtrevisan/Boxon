@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -265,6 +266,12 @@ public final class Template<T>{
 	public boolean canBeCoded(){
 		return (header != null && !templateFields.isEmpty());
 	}
+
+	public <T> T createEmptyObject(){
+		return (T)ConstructorHelper.getEmptyCreator(type)
+			.get();
+	}
+
 
 	@Override
 	public String toString(){
