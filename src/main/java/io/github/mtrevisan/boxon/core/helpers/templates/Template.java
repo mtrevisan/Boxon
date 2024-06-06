@@ -138,9 +138,9 @@ public final class Template<T>{
 				loadChecksumField(checksum, field);
 
 				final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
-				evaluatedFields.addAll(TemplateExtractor.extractEvaluations(declaredAnnotations, field));
+				evaluatedFields.addAll(TemplateExtractor.extractAnnotation(Evaluate.class, declaredAnnotations, field));
 
-				postProcessedFields.addAll(TemplateExtractor.extractProcessed(declaredAnnotations, field));
+				postProcessedFields.addAll(TemplateExtractor.extractAnnotation(PostProcess.class, declaredAnnotations, field));
 
 				final List<ContextParameter> contextParameters = TemplateExtractor.extractContextParameters(boundedAnnotations);
 				final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);

@@ -25,8 +25,6 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.ContextParameter;
-import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
@@ -96,20 +94,13 @@ public final class TemplateExtractor{
 		return skips;
 	}
 
-	static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations)
-			if(annotation.annotationType() == Evaluate.class)
-				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
+	static <T extends Annotation> List<EvaluatedField<T>> extractAnnotation(final Class<T> annotationType,
+			final Annotation[] declaredAnnotations, final Field field){
+		final List<EvaluatedField<T>> evaluations = new ArrayList<>(declaredAnnotations.length);
+		for(final Annotation declaredAnnotation : declaredAnnotations)
+			if(declaredAnnotation.annotationType() == annotationType)
+				evaluations.add(EvaluatedField.create(field, (T)declaredAnnotation));
 		return evaluations;
-	}
-
-	static List<EvaluatedField<PostProcess>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField<PostProcess>> processed = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations)
-			if(annotation.annotationType() == PostProcess.class)
-				processed.add(EvaluatedField.create(field, (PostProcess)annotation));
-		return processed;
 	}
 
 	static List<ContextParameter> extractContextParameters(final List<? extends Annotation> annotations){
