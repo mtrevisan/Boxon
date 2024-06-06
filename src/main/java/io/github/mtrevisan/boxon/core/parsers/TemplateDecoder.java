@@ -78,16 +78,15 @@ final class TemplateDecoder extends TemplateCoderBase{
 	 * @param template	The template used for decoding the message.
 	 * @param reader	The reader used for reading the message.
 	 * @param parentObject	The parent object of the message being decoded.
-	 * @param <T>	The type of the object to be returned as a result of decoding.
 	 * @return	The decoded object.
 	 * @throws BoxonException	If there is an error decoding a field.
 	 */
-	<T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
+	Object decode(final Template<?> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		final int startPosition = reader.position();
 
-		T currentObject = template.createEmptyObject();
+		Object currentObject = template.createEmptyObject();
 
-		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
+		final ParserContext<Object> parserContext = ParserContext.create(currentObject, parentObject);
 		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 
 		//decode message fields:
@@ -110,7 +109,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		return currentObject;
 	}
 
-	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)
+	private void decodeMessageFields(final Template<?> template, final BitReaderInterface reader, final ParserContext<Object> parserContext)
 			throws BoxonException{
 		final Object rootObject = parserContext.getRootObject();
 
@@ -154,7 +153,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
+	private void decodeField(final Template<?> template, final BitReaderInterface reader, final ParserContext<Object> parserContext,
 			final TemplateField field) throws BoxonException{
 		final Annotation binding = field.getBinding();
 		final Annotation collectionBinding = field.getCollectionBinding();
@@ -169,7 +168,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		final List<ContextParameter> contextParameters = field.getContextParameters();
 		try{
 			//save current object (some annotations can overwrite it)
-			final T currentObject = parserContext.getCurrentObject();
+			final Object currentObject = parserContext.getCurrentObject();
 
 			addContextParameters(contextParameters);
 
@@ -209,7 +208,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition, final BitReaderInterface reader){
+	private void verifyChecksum(final Template<?> template, final Object data, final int startPosition, final BitReaderInterface reader){
 		if(!template.isChecksumPresent())
 			return;
 
