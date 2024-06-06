@@ -173,13 +173,13 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	@Override
-	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
+	public Object decode(final Template<?> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		return templateDecoder.decode(template, reader, parentObject);
 	}
 
 
 	@Override
-	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
+	public void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final Object currentObject)
 			throws BoxonException{
 		templateEncoder.encode(template, writer, parentObject, currentObject);
 	}

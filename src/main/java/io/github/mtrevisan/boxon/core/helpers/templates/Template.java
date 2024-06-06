@@ -267,8 +267,8 @@ public final class Template<T>{
 		return (header != null && !templateFields.isEmpty());
 	}
 
-	public <T> T createEmptyObject(){
-		return (T)ConstructorHelper.getEmptyCreator(type)
+	public Object createEmptyObject(){
+		return ConstructorHelper.getEmptyCreator(type)
 			.get();
 	}
 

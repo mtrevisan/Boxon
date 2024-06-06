@@ -74,7 +74,7 @@ class TemplateParserTest{
 			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.putToContext("deviceTypes", deviceTypes);
 		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
-		ACKMessageHex message = templateParser.decode(template, reader, null);
+		ACKMessageHex message = (ACKMessageHex)templateParser.decode(template, reader, null);
 		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
@@ -104,7 +104,7 @@ class TemplateParserTest{
 			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.putToContext("deviceTypes", deviceTypes);
 		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
-		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
+		ACKMessageHexByteChecksum message = (ACKMessageHexByteChecksum)templateParser.decode(template, reader, null);
 		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
@@ -137,7 +137,7 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		evaluator.putToContext("deviceTypes", deviceTypes);
-		ACKMessageASCII message = templateParser.decode(template, reader, null);
+		ACKMessageASCII message = (ACKMessageASCII)templateParser.decode(template, reader, null);
 		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
@@ -281,7 +281,7 @@ class TemplateParserTest{
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		TestComposition1 parsed = templateParser.decode(template, reader, null);
+		TestComposition1 parsed = (TestComposition1)templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tm1", parsed.header);
 		Assertions.assertEquals(1, parsed.type);
@@ -346,7 +346,7 @@ class TemplateParserTest{
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		TestComposition2 parsed = templateParser.decode(template, reader, null);
+		TestComposition2 parsed = (TestComposition2)templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tm2", parsed.header);
 		Assertions.assertEquals(1, parsed.type);
@@ -374,7 +374,7 @@ class TemplateParserTest{
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
-		TestComposition2 parsed = templateParser.decode(template, reader, null);
+		TestComposition2 parsed = (TestComposition2)templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tc2", parsed.header);
 		Assertions.assertEquals(2, parsed.type);
