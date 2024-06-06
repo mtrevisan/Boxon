@@ -38,6 +38,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -71,6 +72,11 @@ public final class FieldAccessor{
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	public static <T> T setFieldValue(final T obj, final Field field, final Object value) throws DataException{
+		if(obj instanceof Map){
+			((Map<String, Object>)obj).put(field.getName(), value);
+			return obj;
+		}
+
 		try{
 			return updateObjectFieldValue(obj, field, value);
 		}

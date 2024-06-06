@@ -132,7 +132,7 @@ public final class ConfigurationMessage<T>{
 					configurationFields.add(ConfigurationField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException | CodecException e){
-				e.withClassAndField(type, field);
+				e.withClassNameAndField(type.getName(), field);
 				throw e;
 			}
 		}
