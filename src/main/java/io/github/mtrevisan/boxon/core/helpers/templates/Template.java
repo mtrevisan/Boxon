@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -62,6 +63,7 @@ public final class Template<T>{
 
 
 	private final Class<T> type;
+	private final String templateName;
 
 	private final TemplateHeader header;
 	private final List<TemplateField> templateFields;
@@ -104,6 +106,7 @@ public final class Template<T>{
 	private Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		this.type = type;
+		templateName = type.getName();
 
 		header = type.getAnnotation(TemplateHeader.class);
 		//(`ObjectChoices` and `ObjectChoicesList` alternatives may not have a `TemplateHeader`)
@@ -118,7 +121,7 @@ public final class Template<T>{
 		postProcessedFields = fields.postProcessedFields;
 
 		if(templateFields.isEmpty())
-			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
+			throw AnnotationException.create("No data can be extracted from this class: {}", templateName);
 	}
 
 
@@ -201,7 +204,7 @@ public final class Template<T>{
 	 * @return	The name of the template.
 	 */
 	public String getName(){
-		return type.getName();
+		return templateName;
 	}
 
 	/**
@@ -267,8 +270,14 @@ public final class Template<T>{
 		return (header != null && !templateFields.isEmpty());
 	}
 
-	public <T> T createEmptyObject(){
-		return (T)ConstructorHelper.getEmptyCreator(type)
+	public Object createEmptyObject(){
+		if(type == null){
+			final int initialCapacity = templateFields.size() + evaluatedFields.size() + postProcessedFields.size()
+				+ (checksum != null? 1: 0);
+			return new HashMap<>(initialCapacity);
+		}
+
+		return ConstructorHelper.getEmptyCreator(type)
 			.get();
 	}
 
@@ -291,7 +300,7 @@ public final class Template<T>{
 
 	@Override
 	public int hashCode(){
-		return type.getName()
+		return templateName
 			.hashCode();
 	}
 

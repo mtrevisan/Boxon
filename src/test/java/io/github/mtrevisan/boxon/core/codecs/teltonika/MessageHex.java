@@ -92,53 +92,53 @@ public class MessageHex{
 
 	private static final class IOElement{
 		//IO property that has changed, zero if it's not a record caused by an event
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
+		@BindInteger(size = "(#root['codecID'] == -114 || #root['codecID'] == 0x10? 16: 8)")
 		private int eventIOID;
 		//0: on exit, 1: on entrance, 2: on both exit and entrance, 4: hysteresis, 5: on change, 6: eventual, 7: periodical
-		@BindInteger(condition = "(codecID == 0x10)", size = "8")
+		@BindInteger(condition = "(#root['codecID'] == 0x10)", size = "8")
 		private int generationType;
 
 		//skip `propertiesCount` = `oneBytePropertiesCount` + `twoBytesPropertiesCount` + `fourBytesPropertiesCount`
 		//	+ `eightBytesPropertiesCount`
-		@SkipBits("(codecID == -114? 16: 8)")
+		@SkipBits("(#root['codecID'] == -114? 16: 8)")
 
-		@BindInteger(size = "(codecID == -114? 16: 8)")
+		@BindInteger(size = "(#root['codecID'] == -114? 16: 8)")
 		private int oneBytePropertiesCount;
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.oneBytePropertiesCount")
 		@ContextParameter(name = "valueSize", value = "8")
 		private FixedSizeProperty[] oneByteProperties;
 
-		@BindInteger(size = "(codecID == -114? 16: 8)")
+		@BindInteger(size = "(#root['codecID'] == -114? 16: 8)")
 		private int twoBytesPropertiesCount;
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.twoBytesPropertiesCount")
 		@ContextParameter(name = "valueSize", value = "16")
 		private FixedSizeProperty[] twoBytesProperties;
 
-		@BindInteger(size = "(codecID == -114? 16: 8)")
+		@BindInteger(size = "(#root['codecID'] == -114? 16: 8)")
 		private int fourBytesPropertiesCount;
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.fourBytesPropertiesCount")
 		@ContextParameter(name = "valueSize", value = "32")
 		private FixedSizeProperty[] fourBytesProperties;
 
-		@BindInteger(size = "(codecID == -114? 16: 8)")
+		@BindInteger(size = "(#root['codecID'] == -114? 16: 8)")
 		private int eightBytesPropertiesCount;
 		@BindObject(type = FixedSizeProperty.class)
 		@BindAsArray(size = "#self.eightBytesPropertiesCount")
 		@ContextParameter(name = "valueSize", value = "64")
 		private FixedSizeProperty[] eightBytesProperties;
 
-		@BindInteger(condition = "(codecID == -114)", size = "16")
+		@BindInteger(condition = "(#root['codecID'] == -114)", size = "16")
 		private int variableSizePropertiesCount;
-		@BindObject(condition = "(codecID == -114)", type = VariableSizeProperty.class)
+		@BindObject(condition = "(#root['codecID'] == -114)", type = VariableSizeProperty.class)
 		@BindAsArray(size = "#self.variableSizePropertiesCount")
 		private VariableSizeProperty[] variableSizeProperties;
 	}
 
 	private static class FixedSizeProperty{
-		@BindInteger(size = "(codecID == -114 || codecID == 0x10? 16: 8)")
+		@BindInteger(size = "(#root['codecID'] == -114 || #root['codecID'] == 0x10? 16: 8)")
 		private int key;
 		@BindInteger(size = "#valueSize")
 		private BigInteger value;
@@ -161,7 +161,7 @@ public class MessageHex{
 	@BindInteger(size = "8")
 	private byte dataCount;
 	@BindObject(type = AVLData.class)
-	@BindAsArray(size = "dataCount")
+	@BindAsArray(size = "#root['dataCount']")
 	private AVLData[] data;
 	//skip a copy of `dataCount` and other reserved data
 	@SkipBits("8+16")

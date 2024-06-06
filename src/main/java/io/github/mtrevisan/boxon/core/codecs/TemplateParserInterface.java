@@ -39,11 +39,10 @@ public interface TemplateParserInterface{
 	 * @param template	The template to decode.
 	 * @param reader	The reader that holds the decoded template.
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
-	 * @param <T>	The class type of the template.
 	 * @return	The data read.
 	 * @throws BoxonException	If a codec is not found.
 	 */
-	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws BoxonException;
+	Object decode(Template<?> template, BitReaderInterface reader, Object parentObject) throws BoxonException;
 
 	/**
 	 * Encode the template using the given writer with the given object that contains the values.

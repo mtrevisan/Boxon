@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.util.Map;
 
 
 final class ParserContext<T>{
@@ -95,8 +96,11 @@ final class ParserContext<T>{
 		else if(fieldType.isArray() && value.getClass().getComponentType() == BigInteger.class)
 			value = ParserDataType.castValue((BigInteger[])value, fieldType.getComponentType());
 
-		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
-		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);
+		if(currentObject instanceof Map)
+			((Map<String, Object>)currentObject).put(field.getName(), value);
+		else
+			//NOTE: record classes must be created anew, therefore `currentObject` must be updated
+			currentObject = FieldAccessor.setFieldValue(currentObject, field, value);
 	}
 
 	String getClassName(){
