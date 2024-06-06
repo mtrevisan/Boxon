@@ -68,8 +68,7 @@ class TemplateCoderBase{
 
 	protected final void processFields(final Template<?> template, final ParserContext<?> parserContext,
 			final Function<PostProcess, String> valueExtractor){
-		final String templateName = template.getType()
-			.getName();
+		final String templateName = template.getName();
 		final List<EvaluatedField<PostProcess>> postProcessedFields = template.getPostProcessedFields();
 		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
 			final EvaluatedField<PostProcess> field = postProcessedFields.get(i);

@@ -216,7 +216,7 @@ final class LoaderTemplate{
 				processTemplate(template, starts[i], charset);
 		}
 		catch(final TemplateException te){
-			eventListener.cannotLoadTemplate(template.getType().getName(), te);
+			eventListener.cannotLoadTemplate(template.getName(), te);
 
 			throw te;
 		}
@@ -225,7 +225,7 @@ final class LoaderTemplate{
 	private void processTemplate(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
 		final String key = calculateKey(headerStart, charset);
 		if(templates.containsKey(key))
-			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
+			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getName());
 
 		templates.put(key, template);
 	}

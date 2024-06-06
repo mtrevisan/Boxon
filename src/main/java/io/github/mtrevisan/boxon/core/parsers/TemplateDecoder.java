@@ -259,14 +259,14 @@ final class TemplateDecoder extends TemplateCoderBase{
 			if(!process)
 				continue;
 
-			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
+			eventListener.evaluatingField(template.getName(), field.getFieldName());
 
 			final Object value = evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
 
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
 
-			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
+			eventListener.evaluatedField(template.getName(), field.getFieldName(), value);
 		}
 	}
 

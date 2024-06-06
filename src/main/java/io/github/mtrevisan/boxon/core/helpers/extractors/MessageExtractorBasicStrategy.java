@@ -41,8 +41,7 @@ public class MessageExtractorBasicStrategy extends MessageExtractor<Template<?>,
 
 	@Override
 	public final String getTypeName(final Template<?> message){
-		return message.getType()
-			.getName();
+		return message.getName();
 	}
 
 	@Override

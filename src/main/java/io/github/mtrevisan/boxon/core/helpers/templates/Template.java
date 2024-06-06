@@ -186,12 +186,21 @@ public final class Template<T>{
 
 
 	/**
-	 * The class type of this template.
+	 * The class type of the template.
 	 *
 	 * @return	The class type.
 	 */
 	public Class<T> getType(){
 		return type;
+	}
+
+	/**
+	 * The name of the template.
+	 *
+	 * @return	The name of the template.
+	 */
+	public String getName(){
+		return type.getName();
 	}
 
 	/**
