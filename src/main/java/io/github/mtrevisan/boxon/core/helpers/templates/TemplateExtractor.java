@@ -131,21 +131,25 @@ public final class TemplateExtractor{
 		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			boolean validAnnotation = isCustomAnnotation(annotationType);
-			final AnnotationValidator validator = (validAnnotation
-				? customCodecValidatorExtractor.apply(annotationType)
-				: TemplateAnnotationValidator.fromAnnotationType(annotationType));
-			//validate with provided validator, if any
-			if(validator != null){
-				validator.validate(fieldType, annotation);
-				validAnnotation = true;
-			}
-
+			final boolean validAnnotation = isValidAnnotation(annotation, fieldType);
 			if(validAnnotation)
 				foundAnnotation = annotation;
 		}
 		return foundAnnotation;
+	}
+
+	private static boolean isValidAnnotation(final Annotation annotation, final Class<?> fieldType) throws AnnotationException{
+		final Class<? extends Annotation> annotationType = annotation.annotationType();
+		boolean validAnnotation = isCustomAnnotation(annotationType);
+		final AnnotationValidator validator = (validAnnotation
+			? customCodecValidatorExtractor.apply(annotationType)
+			: TemplateAnnotationValidator.fromAnnotationType(annotationType));
+		//validate with provided validator, if any
+		if(validator != null){
+			validator.validate(fieldType, annotation);
+			validAnnotation = true;
+		}
+		return validAnnotation;
 	}
 
 	/**
