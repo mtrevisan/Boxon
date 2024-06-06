@@ -41,13 +41,13 @@ public final class FieldMapper{
 	/**
 	 * Returns the value of the field represented by this {@code Field}, on the specified object.
 	 *
-	 * @param targetObject	Object from which the represented field's value is to be extracted.
-	 * @param targetField	The field whose value is to be extracted.
+	 * @param object	Object from which the represented field's value is to be extracted.
+	 * @param field	The field whose value is to be extracted.
 	 * @return	The value.
 	 */
-	public static Object getFieldValue(final Object targetObject, final Field targetField){
+	public static Object getFieldValue(final Object object, final Field field){
 		try{
-			return targetField.get(targetObject);
+			return field.get(object);
 		}
 		catch(final IllegalAccessException ignored){
 			//should never happen
