@@ -104,12 +104,12 @@ public class BoxonException extends Exception{
 	/**
 	 * Adds class and field names to the exception.
 	 *
-	 * @param type	The class type.
+	 * @param className	The class name.
 	 * @param field	The field.
 	 * @return	The exception itself.
 	 */
-	public final BoxonException withClassAndField(final Class<?> type, final Field field){
-		return withClassNameAndFieldName(type.getName(), field.getName());
+	public final BoxonException withClassNameAndField(final String className, final Field field){
+		return withClassNameAndFieldName(className, field.getName());
 	}
 
 	/**

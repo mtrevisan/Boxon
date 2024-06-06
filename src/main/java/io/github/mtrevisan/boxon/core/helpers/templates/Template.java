@@ -152,7 +152,7 @@ public final class Template<T>{
 				postProcessedFields.addAll(TemplateExtractor.extractAnnotation(PostProcess.class, declaredAnnotations, field));
 			}
 			catch(final AnnotationException ae){
-				ae.withClassAndField(templateType, field);
+				ae.withClassNameAndField(templateType.getName(), field);
 				throw ae;
 			}
 		}
@@ -284,7 +284,7 @@ public final class Template<T>{
 
 	@Override
 	public String toString(){
-		return "Template<" + getName() + ">";
+		return "Template<" + templateName + ">";
 	}
 
 	@Override
@@ -295,13 +295,12 @@ public final class Template<T>{
 			return false;
 
 		final Template<?> rhs = (Template<?>)obj;
-		return (type == rhs.type);
+		return (templateName.equals(rhs.templateName));
 	}
 
 	@Override
 	public int hashCode(){
-		return templateName
-			.hashCode();
+		return templateName.hashCode();
 	}
 
 }

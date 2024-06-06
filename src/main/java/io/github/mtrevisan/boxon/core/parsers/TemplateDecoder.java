@@ -161,7 +161,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		final Codec codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
-				.withClassAndField(template.getType(), field.getField());
+				.withClassNameAndField(template.getName(), field.getField());
 
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
@@ -184,12 +184,12 @@ final class TemplateDecoder extends TemplateCoderBase{
 			eventListener.readField(template.toString(), field.getFieldName(), value);
 		}
 		catch(final BoxonException fe){
-			fe.withClassAndField(template.getType(), field.getField());
+			fe.withClassNameAndField(template.getName(), field.getField());
 			throw fe;
 		}
 		catch(final Exception e){
 			throw BoxonException.create(e)
-				.withClassAndField(template.getType(), field.getField());
+				.withClassNameAndField(template.getName(), field.getField());
 		}
 		finally{
 			clearContextParameters(contextParameters);
