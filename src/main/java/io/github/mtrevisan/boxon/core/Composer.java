@@ -85,8 +85,8 @@ public final class Composer{
 
 			return null;
 		}
-		catch(final BoxonException e){
-			return EncodeException.create(e);
+		catch(final BoxonException be){
+			return EncodeException.create(be);
 		}
 	}
 

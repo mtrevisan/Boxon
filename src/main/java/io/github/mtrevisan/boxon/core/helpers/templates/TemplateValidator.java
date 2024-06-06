@@ -43,7 +43,6 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 
 public final class TemplateValidator{
@@ -68,16 +67,15 @@ public final class TemplateValidator{
 	private static final String ANNOTATION_NAME_SKIP = JavaHelper.commonPrefix(SkipBits.class, SkipUntilTerminator.class);
 	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
 
-	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one in field {}.{}";
-	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}` in field {}.{}";
-	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}` in field {}.{}";
+	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
+	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
+	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
 
 
 	private TemplateValidator(){}
 
 
-	static void validateAnnotationsOrder(final Annotation[] annotations, final Class<?> classType, final Field field)
-			throws AnnotationException{
+	static void validateAnnotationsOrder(final Annotation[] annotations) throws AnnotationException{
 		final int length = annotations.length;
 		if(length <= 1)
 			return;
@@ -92,84 +90,73 @@ public final class TemplateValidator{
 
 			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
 					|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
-				validateBindAnnotationOrder(classType, field, annotationFound);
+				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
-				validateChecksumAnnotationOrder(classType, field, annotationFound);
+				validateChecksumAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_CHECKSUM_INDEX] = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_EVALUATE)){
-				validateEvaluateAnnotationOrder(classType, field, annotationFound);
+				validateEvaluateAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_EVALUATE_INDEX] = true;
 			}
 			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS)){
-				validatePostProcessAnnotationOrder(classType, field, annotationFound);
+				validatePostProcessAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_POST_PROCESS_INDEX] = true;
 			}
 			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP))
-				validateSkipAnnotationOrder(classType, field, annotationFound);
+				validateSkipAnnotationOrder(annotationFound);
 		}
 	}
 
-	private static void validateBindAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
+	private static void validateBindAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_BIND_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, classType.getSimpleName(), field.getName());
+				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(),
-				field.getName());
+				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, ANNOTATION_NAME_CHECKSUM);
 	}
 
-	private static void validateChecksumAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
+	private static void validateChecksumAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_BIND_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				ANNOTATION_NAME_CHECKSUM, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, classType.getSimpleName(),
-				field.getName());
+				ANNOTATION_NAME_CHECKSUM, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(), field.getName());
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER, ANNOTATION_NAME_CHECKSUM);
 	}
 
-	private static void validateEvaluateAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
+	private static void validateEvaluateAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				ANNOTATION_NAME_EVALUATE, ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(), field.getName());
+				ANNOTATION_NAME_EVALUATE, ANNOTATION_NAME_CHECKSUM);
 		if(annotationFound[ORDER_EVALUATE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_EVALUATE, classType.getSimpleName(), field.getName());
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER, ANNOTATION_NAME_EVALUATE);
 	}
 
-	private static void validatePostProcessAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
+	private static void validatePostProcessAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_POST_PROCESS_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_POST_PROCESS, classType.getSimpleName(), field.getName());
+			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER, ANNOTATION_NAME_POST_PROCESS);
 	}
 
-	private static void validateSkipAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
+	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_BIND_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, classType.getSimpleName(),
-				field.getName());
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR);
 		if(annotationFound[ORDER_CHECKSUM_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(), field.getName());
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_CHECKSUM);
 		if(annotationFound[ORDER_EVALUATE_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_EVALUATE, classType.getSimpleName(), field.getName());
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_EVALUATE);
 		if(annotationFound[ORDER_POST_PROCESS_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_POST_PROCESS, classType.getSimpleName(), field.getName());
+				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_POST_PROCESS);
 	}
 
 }

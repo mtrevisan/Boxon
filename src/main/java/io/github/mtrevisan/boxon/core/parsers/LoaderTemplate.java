@@ -215,10 +215,10 @@ final class LoaderTemplate{
 			for(int i = 0, length = starts.length; i < length; i ++)
 				processTemplate(template, starts[i], charset);
 		}
-		catch(final TemplateException e){
-			eventListener.cannotLoadTemplate(template.getType().getName(), e);
+		catch(final TemplateException te){
+			eventListener.cannotLoadTemplate(template.getType().getName(), te);
 
-			throw e;
+			throw te;
 		}
 	}
 

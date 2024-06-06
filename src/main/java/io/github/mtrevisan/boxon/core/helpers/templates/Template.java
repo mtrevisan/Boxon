@@ -118,8 +118,8 @@ public final class Template<T>{
 	}
 
 
-	private Triplet loadAnnotatedFields(final Class<T> templateType, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
-			throws AnnotationException{
+	private Triplet loadAnnotatedFields(final Class<T> templateType,
+			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(templateType);
 
 		final int length = fields.size();
@@ -127,21 +127,21 @@ public final class Template<T>{
 		final ArrayList<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
 		final ArrayList<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
 		for(final Field field : fields){
-			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			TemplateValidator.validateAnnotationsOrder(declaredAnnotations, templateType, field);
-
-			final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
-
-			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
-
-			loadChecksumField(checksum, templateType, field);
-
-			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
-			evaluatedFields.addAll(TemplateExtractor.extractEvaluations(declaredAnnotations, field));
-
-			postProcessedFields.addAll(TemplateExtractor.extractProcessed(declaredAnnotations, field));
-
 			try{
+				final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
+				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
+
+				final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
+
+				final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
+
+				loadChecksumField(checksum, field);
+
+				final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
+				evaluatedFields.addAll(TemplateExtractor.extractEvaluations(declaredAnnotations, field));
+
+				postProcessedFields.addAll(TemplateExtractor.extractProcessed(declaredAnnotations, field));
+
 				final List<ContextParameter> contextParameters = TemplateExtractor.extractContextParameters(boundedAnnotations);
 				final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 				final Annotation collectionAnnotation = TemplateExtractor.extractCollectionAnnotation(boundedAnnotations);
@@ -149,9 +149,9 @@ public final class Template<T>{
 				if(validAnnotation != null || !skips.isEmpty())
 					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips, contextParameters));
 			}
-			catch(final AnnotationException e){
-				e.withClassAndField(templateType, field);
-				throw e;
+			catch(final AnnotationException ae){
+				ae.withClassAndField(templateType, field);
+				throw ae;
 			}
 		}
 		templateFields.trimToSize();
@@ -165,13 +165,11 @@ public final class Template<T>{
 	}
 
 
-	private void loadChecksumField(final Checksum checksum, final Class<T> templateType, final Field field) throws AnnotationException{
+	private void loadChecksumField(final Checksum checksum, final Field field) throws AnnotationException{
 		if(checksum != null){
-			if(this.checksum != null){
-				final AnnotationException exception = AnnotationException.create("Cannot have more than one {} annotations on class {}",
-					Checksum.class.getSimpleName(), templateType.getName());
-				throw (AnnotationException)exception.withClassAndField(templateType, field);
-			}
+			if(this.checksum != null)
+				throw AnnotationException.create("Cannot have more than one {} annotations",
+					Checksum.class.getSimpleName());
 
 			this.checksum = TemplateField.create(field, checksum);
 		}
