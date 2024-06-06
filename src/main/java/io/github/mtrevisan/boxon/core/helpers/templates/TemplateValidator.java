@@ -81,7 +81,9 @@ public final class TemplateValidator{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_POST_PROCESS_INDEX + 1];
-		for(final Annotation annotation : annotations){
+		for(int i = 0; i < length; i ++){
+			final Annotation annotation = annotations[i];
+
 			final String annotationName = annotation.annotationType()
 				.getSimpleName();
 

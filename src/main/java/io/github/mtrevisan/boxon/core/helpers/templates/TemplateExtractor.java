@@ -86,7 +86,9 @@ public final class TemplateExtractor{
 
 	static List<SkipParams> extractSkips(final Annotation[] annotations){
 		final List<SkipParams> skips = new ArrayList<>(annotations.length);
-		for(final Annotation annotation : annotations){
+		for(int i = 0, length = annotations.length; i < length; i ++){
+			final Annotation annotation = annotations[i];
+
 			final Function<Annotation, List<SkipParams>> processingFun = ANNOTATION_MAPPING.get(annotation.annotationType());
 			if(processingFun != null)
 				skips.addAll(processingFun.apply(annotation));
@@ -97,9 +99,12 @@ public final class TemplateExtractor{
 	static <T extends Annotation> List<EvaluatedField<T>> extractAnnotation(final Class<T> annotationType,
 			final Annotation[] declaredAnnotations, final Field field){
 		final List<EvaluatedField<T>> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation declaredAnnotation : declaredAnnotations)
+		for(int i = 0, length = declaredAnnotations.length; i < length; i++){
+			final Annotation declaredAnnotation = declaredAnnotations[i];
+
 			if(declaredAnnotation.annotationType() == annotationType)
 				evaluations.add(EvaluatedField.create(field, (T)declaredAnnotation));
+		}
 		return evaluations;
 	}
 

@@ -126,7 +126,9 @@ public final class Template<T>{
 		final ArrayList<TemplateField> templateFields = new ArrayList<>(length);
 		final ArrayList<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
 		final ArrayList<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
-		for(final Field field : fields){
+		for(int i = 0; i < length; i ++){
+			final Field field = fields.get(i);
+
 			try{
 				final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
@@ -146,8 +148,10 @@ public final class Template<T>{
 				final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 				final Annotation collectionAnnotation = TemplateExtractor.extractCollectionAnnotation(boundedAnnotations);
 
-				if(validAnnotation != null || !skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips, contextParameters));
+				if(validAnnotation != null || ! skips.isEmpty()){
+					final TemplateField templateField = TemplateField.create(field, validAnnotation).withSkips(skips).withCollectionBinding(collectionAnnotation).withContextParameters(contextParameters);
+					templateFields.add(templateField);
+				}
 			}
 			catch(final AnnotationException ae){
 				ae.withClassAndField(templateType, field);
