@@ -46,9 +46,6 @@ public final class FieldMapper{
 	 * @return	The value.
 	 */
 	public static Object getFieldValue(final Object object, final Field field){
-		if(object instanceof Map)
-			return ((Map<?, ?>)object).get(field.getName());
-
 		try{
 			return field.get(object);
 		}

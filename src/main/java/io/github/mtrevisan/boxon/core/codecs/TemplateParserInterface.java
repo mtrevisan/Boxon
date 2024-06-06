@@ -51,10 +51,9 @@ public interface TemplateParserInterface{
 	 * @param writer	The writer that holds the encoded template.
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
 	 * @param currentObject	The current object that holds the values.
-	 * @param <T>	The class type of the current object.
 	 * @throws BoxonException	If a codec is not found.
 	 */
-	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws BoxonException;
+	void encode(Template<?> template, BitWriterInterface writer, Object parentObject, Object currentObject) throws BoxonException;
 
 	/**
 	 * Constructs a new {@link Template}.
