@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 
 import java.lang.annotation.Annotation;
@@ -82,8 +83,7 @@ final class EntityDescriber{
 				final T entity = extractor.apply(entityClass);
 				description.add(mapper.apply(entity));
 			}
-		description.trimToSize();
-		return Collections.unmodifiableList(description);
+		return JavaHelper.trimAndCreateUnmodifiableList(description);
 	}
 
 	/**

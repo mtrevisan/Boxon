@@ -32,11 +32,11 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -50,9 +50,12 @@ public final class Template<T>{
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
 			List<EvaluatedField<PostProcess>> postProcessedFields){
-		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
-				final List<EvaluatedField<PostProcess>> postProcessedFields){
-			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
+		private static Triplet of(final ArrayList<TemplateField> templateFields, final ArrayList<EvaluatedField<Evaluate>> evaluatedFields,
+				final ArrayList<EvaluatedField<PostProcess>> postProcessedFields){
+			return new Triplet(
+				JavaHelper.trimAndCreateUnmodifiableList(templateFields),
+				JavaHelper.trimAndCreateUnmodifiableList(evaluatedFields),
+				JavaHelper.trimAndCreateUnmodifiableList(postProcessedFields));
 		}
 	}
 
@@ -133,7 +136,7 @@ public final class Template<T>{
 				final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
 
-				final TemplateField templateField = parseField(filterAnnotationsWithCodec, declaredAnnotations, field);
+				final TemplateField templateField = createField(filterAnnotationsWithCodec, declaredAnnotations, field);
 				if(templateField != null)
 					templateFields.add(templateField);
 
@@ -149,17 +152,10 @@ public final class Template<T>{
 				throw ae;
 			}
 		}
-		templateFields.trimToSize();
-		evaluatedFields.trimToSize();
-		postProcessedFields.trimToSize();
-		return Triplet.of(
-			Collections.unmodifiableList(templateFields),
-			Collections.unmodifiableList(evaluatedFields),
-			Collections.unmodifiableList(postProcessedFields)
-		);
+		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
 	}
 
-	private static TemplateField parseField(final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec,
+	private static TemplateField createField(final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec,
 			final Annotation[] declaredAnnotations, final Field field) throws AnnotationException{
 		final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 		final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
@@ -177,7 +173,6 @@ public final class Template<T>{
 		}
 		return templateField;
 	}
-
 
 	private void loadChecksumField(final Checksum checksum, final Field field) throws AnnotationException{
 		if(checksum != null){

@@ -39,7 +39,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -137,8 +136,7 @@ public final class ConfigurationMessage<T>{
 				throw e;
 			}
 		}
-		configurationFields.trimToSize();
-		return Collections.unmodifiableList(configurationFields);
+		return JavaHelper.trimAndCreateUnmodifiableList(configurationFields);
 	}
 
 
@@ -283,8 +281,7 @@ public final class ConfigurationMessage<T>{
 		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
-		boundaries.trimToSize();
-		return Collections.unmodifiableList(boundaries);
+		return JavaHelper.trimAndCreateUnmodifiableList(boundaries);
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){

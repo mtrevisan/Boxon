@@ -199,8 +199,7 @@ public final class FieldDescriber{
 
 			extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 		}
-		fieldsDescription.trimToSize();
-		return Collections.unmodifiableCollection(fieldsDescription);
+		return JavaHelper.trimAndCreateUnmodifiableList(fieldsDescription);
 	}
 
 	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,

@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
@@ -118,8 +119,7 @@ public final class TemplateExtractor{
 			if(annotationType == ContextParameter.class)
 				contextParameters.add((ContextParameter)annotation);
 		}
-		contextParameters.trimToSize();
-		return Collections.unmodifiableList(contextParameters);
+		return JavaHelper.trimAndCreateUnmodifiableList(contextParameters);
 	}
 
 	/**

@@ -29,8 +29,11 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -351,4 +354,9 @@ public final class JavaHelper{
 		return str1.substring(0, index);
 	}
 
+
+	public static <T> List<T> trimAndCreateUnmodifiableList(final ArrayList<T> list){
+		list.trimToSize();
+		return Collections.unmodifiableList(list);
+	}
 }

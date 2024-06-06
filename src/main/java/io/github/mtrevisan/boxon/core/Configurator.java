@@ -39,6 +39,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
@@ -102,8 +103,7 @@ public final class Configurator{
 		final ArrayList<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		protocolVersionBoundaries.trimToSize();
-		return Collections.unmodifiableList(protocolVersionBoundaries);
+		return JavaHelper.trimAndCreateUnmodifiableList(protocolVersionBoundaries);
 	}
 
 
