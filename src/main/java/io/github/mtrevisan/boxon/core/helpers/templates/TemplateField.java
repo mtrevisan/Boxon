@@ -36,7 +36,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 
 /** Data associated with an annotated field. */
@@ -48,33 +47,22 @@ public final class TemplateField implements FieldRetriever{
 
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
-	private final SkipParams[] skips;
+	private SkipParams[] skips = EMPTY_SKIP_ARRAY;
 	private final Annotation binding;
-	private final Annotation collectionBinding;
-	private final List<ContextParameter> contextParameters;
+	private Annotation collectionBinding;
+	private List<ContextParameter> contextParameters = Collections.emptyList();
 
 	private String condition;
 
 
 	static TemplateField create(final Field field, final Annotation binding){
-		return new TemplateField(field, binding, null, Collections.emptyList(), Collections.emptyList());
-	}
-
-	static TemplateField create(final Field field, final Annotation binding, final Annotation collectionBinding,
-			final List<SkipParams> skips, final List<ContextParameter> contextParameters){
-		return new TemplateField(field, binding, collectionBinding, skips, contextParameters);
+		return new TemplateField(field, binding);
 	}
 
 
-	private TemplateField(final Field field, final Annotation binding, final Annotation collectionBinding, final List<SkipParams> skips,
-			final List<ContextParameter> contextParameters){
-		Objects.requireNonNull(skips, "Skips must not be null");
-
+	private TemplateField(final Field field, final Annotation binding){
 		this.field = field;
 		this.binding = binding;
-		this.collectionBinding = collectionBinding;
-		this.skips = (!skips.isEmpty()? skips.toArray(EMPTY_SKIP_ARRAY): EMPTY_SKIP_ARRAY);
-		this.contextParameters = contextParameters;
 
 		if(binding != null){
 			//pre-fetch condition method
@@ -84,6 +72,24 @@ public final class TemplateField implements FieldRetriever{
 		}
 	}
 
+
+	TemplateField withCollectionBinding(final Annotation collectionBinding){
+		this.collectionBinding = collectionBinding;
+
+		return this;
+	}
+
+	TemplateField withSkips(final List<SkipParams> skips){
+		this.skips = (skips != null && !skips.isEmpty()? skips.toArray(EMPTY_SKIP_ARRAY): EMPTY_SKIP_ARRAY);
+
+		return this;
+	}
+
+	TemplateField withContextParameters(final List<ContextParameter> contextParameters){
+		this.contextParameters = contextParameters;
+
+		return this;
+	}
 
 	/**
 	 * Returns the field associated with this object.
