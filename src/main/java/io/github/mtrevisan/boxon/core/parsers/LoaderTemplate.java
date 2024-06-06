@@ -151,21 +151,11 @@ final class LoaderTemplate{
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
-			final Template<?> from = createTemplate(type);
-			addCodedTemplate(from, type, templates);
+			final Template<?> from = extractTemplate(type);
+
+			templates.add(from);
 		}
 		return templates;
-	}
-
-	private static void addCodedTemplate(final Template<?> from, final Class<?> type, final Collection<Template<?>> templates)
-			throws TemplateException{
-		if(from.canBeCoded())
-			//if the template is valid, add it to the list of templates...
-			templates.add(from);
-		else
-			//... otherwise throw exception
-			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
-				type.getSimpleName());
 	}
 
 	/**
@@ -178,11 +168,15 @@ final class LoaderTemplate{
 	 */
 	Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
+		validate(from, type);
+
+		return from;
+	}
+
+	private static void validate(final Template<?> from, final Class<?> type) throws TemplateException{
 		if(!from.canBeCoded())
 			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
 				type.getSimpleName());
-
-		return from;
 	}
 
 	/**
