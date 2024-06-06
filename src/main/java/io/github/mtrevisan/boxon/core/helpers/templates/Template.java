@@ -133,26 +133,16 @@ public final class Template<T>{
 				final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
 
-				final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
+				final TemplateField templateField = parseField(filterAnnotationsWithCodec, declaredAnnotations, field);
+				if(templateField != null)
+					templateFields.add(templateField);
 
 				final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
-
 				loadChecksumField(checksum, field);
 
-				final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 				evaluatedFields.addAll(TemplateExtractor.extractAnnotation(Evaluate.class, declaredAnnotations, field));
 
 				postProcessedFields.addAll(TemplateExtractor.extractAnnotation(PostProcess.class, declaredAnnotations, field));
-
-				final List<ContextParameter> contextParameters = TemplateExtractor.extractContextParameters(boundedAnnotations);
-				final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
-				final Annotation collectionAnnotation = TemplateExtractor.extractCollectionAnnotation(boundedAnnotations);
-
-				if(validAnnotation != null || !skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation)
-						.withCollectionBinding(collectionAnnotation)
-						.withSkips(skips)
-						.withContextParameters(contextParameters));
 			}
 			catch(final AnnotationException ae){
 				ae.withClassAndField(templateType, field);
@@ -167,6 +157,25 @@ public final class Template<T>{
 			Collections.unmodifiableList(evaluatedFields),
 			Collections.unmodifiableList(postProcessedFields)
 		);
+	}
+
+	private static TemplateField parseField(final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec,
+			final Annotation[] declaredAnnotations, final Field field) throws AnnotationException{
+		final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
+		final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
+		final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
+
+		TemplateField templateField = null;
+		if(validAnnotation != null || !skips.isEmpty()){
+			final Annotation collectionAnnotation = TemplateExtractor.extractCollectionAnnotation(boundedAnnotations);
+			final List<ContextParameter> contextParameters = TemplateExtractor.extractContextParameters(boundedAnnotations);
+
+			templateField = TemplateField.create(field, validAnnotation)
+				.withCollectionBinding(collectionAnnotation)
+				.withSkips(skips)
+				.withContextParameters(contextParameters);
+		}
+		return templateField;
 	}
 
 
