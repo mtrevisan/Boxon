@@ -96,6 +96,7 @@ class PatternMatcherTest{
 		matchers.put("KMP", kmp);
 		matchers.put("KR", kr);
 
+		TimeWatch watch = TimeWatch.start();
 		byte[] source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes(StandardCharsets.US_ASCII);
 		byte[] pattern = "0d0a".getBytes(StandardCharsets.US_ASCII);
 		for(Map.Entry<String, PatternMatcher> entry : matchers.entrySet()){
@@ -106,7 +107,7 @@ class PatternMatcherTest{
 			for(int i = 0; i < 2_000; i ++)
 				m.indexOf(source, 0, pattern, m.preProcessPattern(pattern));
 
-			TimeWatch watch = TimeWatch.start();
+			watch.reset();
 			for(int i = 0; i < 20_000; i ++)
 				m.indexOf(source, 0, pattern, m.preProcessPattern(pattern));
 			watch.stop();

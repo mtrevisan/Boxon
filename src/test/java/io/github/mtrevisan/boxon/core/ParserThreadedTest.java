@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 
 class ParserThreadedTest{
@@ -58,10 +59,9 @@ class ParserThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> parser.parse(PAYLOAD),
 			parserResponse -> {
-				int errorCount = 0;
-				for(int i = 0; i < parserResponse.size(); i ++)
-					if(parserResponse.get(i).hasError())
-						errorCount ++;
+				int errorCount = (int)parserResponse.stream()
+					.filter(Response::hasError)
+					.count();
 				errors.addAndGet(errorCount);
 			},
 			10
@@ -89,10 +89,9 @@ class ParserThreadedTest{
 				return parser.parse(PAYLOAD);
 			},
 			parserResponse -> {
-				int errorCount = 0;
-				for(int i = 0; i < parserResponse.size(); i ++)
-					if(parserResponse.get(i).hasError())
-						errorCount ++;
+				int errorCount = (int)parserResponse.stream()
+					.filter(Response::hasError)
+					.count();
 				errors.addAndGet(errorCount);
 			},
 			10
@@ -120,10 +119,9 @@ class ParserThreadedTest{
 				return parser.parse(PAYLOAD);
 			},
 			parserResponse -> {
-				int errorCount = 0;
-				for(int i = 0; i < parserResponse.size(); i ++)
-					if(parserResponse.get(i).hasError())
-						errorCount ++;
+				int errorCount = (int)parserResponse.stream()
+					.filter(Response::hasError)
+					.count();
 				errors.addAndGet(errorCount);
 			},
 			10

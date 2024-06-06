@@ -183,7 +183,7 @@ final class CodecObject implements Codec{
 	 * @return	The chosen alternative type. If none of the alternatives evaluate to {@code true}, it returns the default alternative type.
 	 */
 	private static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
-		final Evaluator evaluator, final Object rootObject){
+			final Evaluator evaluator, final Object rootObject){
 		Class<?> chosenAlternativeType = defaultAlternative;
 		for(int i = 0, length = alternatives.length; chosenAlternativeType == defaultAlternative && i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
