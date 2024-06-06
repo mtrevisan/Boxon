@@ -149,7 +149,10 @@ public final class Template<T>{
 				final Annotation collectionAnnotation = TemplateExtractor.extractCollectionAnnotation(boundedAnnotations);
 
 				if(validAnnotation != null || !skips.isEmpty())
-					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips, contextParameters));
+					templateFields.add(TemplateField.create(field, validAnnotation)
+						.withCollectionBinding(collectionAnnotation)
+						.withSkips(skips)
+						.withContextParameters(contextParameters));
 			}
 			catch(final AnnotationException ae){
 				ae.withClassAndField(templateType, field);
