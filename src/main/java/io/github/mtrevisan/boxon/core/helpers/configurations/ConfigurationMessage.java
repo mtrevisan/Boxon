@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateValidator;
 import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -174,49 +174,49 @@ public final class ConfigurationMessage<T>{
 
 	private static void validateAlternativeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
 				CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_FIELD);
 	}
 
 	private static void validateCompositeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
 				CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_FIELD);
 	}
 
 	private static void validateFieldAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
 				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
 				CONFIGURATION_NAME_FIELD);
 	}
 
 	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_ALTERNATIVE);
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_COMPOSITE);
 		if(annotationFound[ORDER_FIELD_INDEX])
-			throw AnnotationException.create(Template.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
+			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_FIELD);
 	}
 

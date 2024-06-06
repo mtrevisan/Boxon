@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateExtractor;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -75,7 +75,7 @@ public final class Core{
 		loaderCodec = LoaderCodec.create();
 
 		//FIXME ugliness
-		Template.setCustomCodecValidatorExtractor(loaderCodec::getCustomCodecValidator);
+		TemplateExtractor.setCustomCodecValidatorExtractor(loaderCodec::getCustomCodecValidator);
 
 		evaluator = Evaluator.create();
 

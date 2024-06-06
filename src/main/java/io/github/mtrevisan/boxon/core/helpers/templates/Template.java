@@ -28,35 +28,17 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
-import io.github.mtrevisan.boxon.annotations.SkipBits;
-import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.bindings.BindString;
-import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 /**
@@ -65,62 +47,6 @@ import java.util.stream.Collectors;
  * @param <T>	The type of object the codec is able to decode/encode.
  */
 public final class Template<T>{
-
-	private static final int ORDER_BIND_INDEX = 0;
-	private static final int ORDER_CHECKSUM_INDEX = 1;
-	private static final int ORDER_EVALUATE_INDEX = 2;
-	private static final int ORDER_POST_PROCESS_INDEX = 3;
-
-	private static final String ANNOTATION_NAME_BIND = JavaHelper.commonPrefix(BindBitSet.class, BindInteger.class, BindObject.class,
-		BindString.class, BindStringTerminated.class);
-	private static final String ANNOTATION_NAME_CONTEXT_PARAMETER = ContextParameter.class.getSimpleName();
-	private static final String ANNOTATION_NAME_BIND_AS = JavaHelper.commonPrefix(BindAsArray.class, BindAsList.class);
-	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = ConverterChoices.class.getSimpleName();
-	private static final String ANNOTATION_NAME_OBJECT_CHOICES = ObjectChoices.class.getSimpleName();
-	private static final String STAR = "*";
-	private static final String ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR = ANNOTATION_NAME_BIND + STAR + "`, `"
-		+ ANNOTATION_NAME_CONVERTER_CHOICES + "`, or `" + ANNOTATION_NAME_OBJECT_CHOICES + STAR;
-	private static final String ANNOTATION_NAME_CHECKSUM = Checksum.class.getSimpleName();
-	private static final String ANNOTATION_NAME_EVALUATE = Evaluate.class.getSimpleName();
-	private static final String ANNOTATION_NAME_POST_PROCESS = PostProcess.class.getSimpleName();
-	private static final String ANNOTATION_NAME_SKIP = JavaHelper.commonPrefix(SkipBits.class, SkipUntilTerminator.class);
-	private static final String ANNOTATION_NAME_SKIP_STAR = ANNOTATION_NAME_SKIP + STAR;
-
-	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one in field {}.{}";
-	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}` in field {}.{}";
-	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}` in field {}.{}";
-
-	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
-
-	private static Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor = type -> null;
-
-	/** Mapping of annotations to functions that extract skip parameters. */
-	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING
-		= new HashMap<>(4);
-	static{
-		ANNOTATION_MAPPING.put(SkipBits.class, annotation
-			-> Collections.singletonList(SkipParams.create((SkipBits)annotation)));
-		ANNOTATION_MAPPING.put(SkipBits.Skips.class, annotation
-			-> Arrays.stream(((SkipBits.Skips)annotation).value())
-				.map(SkipParams::create)
-				.collect(Collectors.toList()));
-		ANNOTATION_MAPPING.put(SkipUntilTerminator.class, annotation
-			-> Collections.singletonList(SkipParams.create((SkipUntilTerminator)annotation)));
-		ANNOTATION_MAPPING.put(SkipUntilTerminator.Skips.class, annotation
-			-> Arrays.stream(((SkipUntilTerminator.Skips)annotation).value())
-				.map(SkipParams::create)
-				.collect(Collectors.toList()));
-	}
-
-	/**
-	 * Sets a custom codec validator extractor.
-	 *
-	 * @param customCodecValidatorExtractor	A function that extracts a custom codec validator based on the annotation class.
-	 */
-	public static void setCustomCodecValidatorExtractor(
-			final Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor){
-		Template.customCodecValidatorExtractor = customCodecValidatorExtractor;
-	}
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
 			List<EvaluatedField<PostProcess>> postProcessedFields){
@@ -192,38 +118,39 @@ public final class Template<T>{
 	}
 
 
-	private Triplet loadAnnotatedFields(final Class<T> classType, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+	private Triplet loadAnnotatedFields(final Class<T> templateType, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
-		final List<Field> fields = FieldAccessor.getAccessibleFields(classType);
+		final List<Field> fields = FieldAccessor.getAccessibleFields(templateType);
+
 		final int length = fields.size();
 		final ArrayList<TemplateField> templateFields = new ArrayList<>(length);
 		final ArrayList<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
 		final ArrayList<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
 		for(final Field field : fields){
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			validateAnnotationsOrder(classType, field, declaredAnnotations);
+			TemplateValidator.validateAnnotationsOrder(declaredAnnotations, templateType, field);
 
-			final List<SkipParams> skips = extractSkips(declaredAnnotations);
+			final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
 
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
-			loadChecksumField(checksum, classType, field);
+			loadChecksumField(checksum, templateType, field);
 
 			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
-			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
+			evaluatedFields.addAll(TemplateExtractor.extractEvaluations(declaredAnnotations, field));
 
-			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
+			postProcessedFields.addAll(TemplateExtractor.extractProcessed(declaredAnnotations, field));
 
 			try{
-				final List<ContextParameter> contextParameters = extractContextParameters(boundedAnnotations);
-				final Annotation validAnnotation = extractAndValidateAnnotation(field.getType(), boundedAnnotations);
-				final Annotation collectionAnnotation = extractCollectionAnnotation(boundedAnnotations);
+				final List<ContextParameter> contextParameters = TemplateExtractor.extractContextParameters(boundedAnnotations);
+				final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
+				final Annotation collectionAnnotation = TemplateExtractor.extractCollectionAnnotation(boundedAnnotations);
 
 				if(validAnnotation != null || !skips.isEmpty())
 					templateFields.add(TemplateField.create(field, validAnnotation, collectionAnnotation, skips, contextParameters));
 			}
 			catch(final AnnotationException e){
-				e.withClassAndField(classType, field);
+				e.withClassAndField(templateType, field);
 				throw e;
 			}
 		}
@@ -238,217 +165,18 @@ public final class Template<T>{
 	}
 
 
-	private static void validateAnnotationsOrder(final Class<?> classType, final Field field, final Annotation[] annotations)
-			throws AnnotationException{
-		final int length = annotations.length;
-		if(length <= 1)
-			return;
-
-		final boolean[] annotationFound = new boolean[ORDER_POST_PROCESS_INDEX + 1];
-		for(final Annotation annotation : annotations){
-			final String annotationName = annotation.annotationType()
-				.getSimpleName();
-
-			if(annotationName.equals(ANNOTATION_NAME_CONTEXT_PARAMETER))
-				continue;
-
-			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
-					|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
-				validateBindAnnotationOrder(classType, field, annotationFound);
-
-				annotationFound[ORDER_BIND_INDEX] = true;
-			}
-			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
-				validateChecksumAnnotationOrder(classType, field, annotationFound);
-
-				annotationFound[ORDER_CHECKSUM_INDEX] = true;
-			}
-			else if(annotationName.equals(ANNOTATION_NAME_EVALUATE)){
-				validateEvaluateAnnotationOrder(classType, field, annotationFound);
-
-				annotationFound[ORDER_EVALUATE_INDEX] = true;
-			}
-			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS)){
-				validatePostProcessAnnotationOrder(classType, field, annotationFound);
-
-				annotationFound[ORDER_POST_PROCESS_INDEX] = true;
-			}
-			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP))
-				validateSkipAnnotationOrder(classType, field, annotationFound);
-		}
-	}
-
-	private static void validateBindAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
-		if(annotationFound[ORDER_BIND_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, classType.getSimpleName(), field.getName());
-		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(),
-				field.getName());
-	}
-
-	private static void validateChecksumAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
-		if(annotationFound[ORDER_BIND_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				ANNOTATION_NAME_CHECKSUM, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, classType.getSimpleName(),
-				field.getName());
-		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(), field.getName());
-	}
-
-	private static void validateEvaluateAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
-		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				ANNOTATION_NAME_EVALUATE, ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(), field.getName());
-		if(annotationFound[ORDER_EVALUATE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_EVALUATE, classType.getSimpleName(), field.getName());
-	}
-
-	private static void validatePostProcessAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
-		if(annotationFound[ORDER_POST_PROCESS_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				ANNOTATION_NAME_POST_PROCESS, classType.getSimpleName(), field.getName());
-	}
-
-	private static void validateSkipAnnotationOrder(final Class<?> classType, final Field field, final boolean[] annotationFound)
-			throws AnnotationException{
-		if(annotationFound[ORDER_BIND_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_BIND_STAR_CONVERTER_CHOICES_OBJECT_CHOICES_STAR, classType.getSimpleName(),
-				field.getName());
-		if(annotationFound[ORDER_CHECKSUM_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_CHECKSUM, classType.getSimpleName(), field.getName());
-		if(annotationFound[ORDER_EVALUATE_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_EVALUATE, classType.getSimpleName(), field.getName());
-		if(annotationFound[ORDER_POST_PROCESS_INDEX])
-			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_POST_PROCESS, classType.getSimpleName(), field.getName());
-	}
-
-
-	private static List<SkipParams> extractSkips(final Annotation[] annotations){
-		final List<SkipParams> skips = new ArrayList<>(annotations.length);
-		for(final Annotation annotation : annotations){
-			final Function<Annotation, List<SkipParams>> processingFun = ANNOTATION_MAPPING.get(annotation.annotationType());
-			if(processingFun != null)
-				skips.addAll(processingFun.apply(annotation));
-		}
-		return skips;
-	}
-
-	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
+	private void loadChecksumField(final Checksum checksum, final Class<T> templateType, final Field field) throws AnnotationException{
 		if(checksum != null){
 			if(this.checksum != null){
 				final AnnotationException exception = AnnotationException.create("Cannot have more than one {} annotations on class {}",
-					Checksum.class.getSimpleName(), type.getName());
-				throw (AnnotationException)exception.withClassAndField(type, field);
+					Checksum.class.getSimpleName(), templateType.getName());
+				throw (AnnotationException)exception.withClassAndField(templateType, field);
 			}
 
 			this.checksum = TemplateField.create(field, checksum);
 		}
 	}
 
-	private static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations)
-			if(annotation.annotationType() == Evaluate.class)
-				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
-		return evaluations;
-	}
-
-	private static List<EvaluatedField<PostProcess>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField<PostProcess>> processed = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations)
-			if(annotation.annotationType() == PostProcess.class)
-				processed.add(EvaluatedField.create(field, (PostProcess)annotation));
-		return processed;
-	}
-
-	private static List<ContextParameter> extractContextParameters(final List<? extends Annotation> annotations){
-		final int length = annotations.size();
-		final ArrayList<ContextParameter> contextParameters = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation annotation = annotations.get(i);
-
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType == ContextParameter.class)
-				contextParameters.add((ContextParameter)annotation);
-		}
-		contextParameters.trimToSize();
-		return Collections.unmodifiableList(contextParameters);
-	}
-
-	/**
-	 * Validates a field and return the first valid binding annotation.
-	 *
-	 * @param fieldType	The field class to validate.
-	 * @param annotations	The list of annotations on the field.
-	 * @return	The first valid binding annotation, or {@code null} if none are found.
-	 * @throws AnnotationException	If an annotation error occurs.
-	 */
-	private static Annotation extractAndValidateAnnotation(final Class<?> fieldType, final List<? extends Annotation> annotations)
-			throws AnnotationException{
-		Annotation foundAnnotation = null;
-		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
-			final Annotation annotation = annotations.get(i);
-
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			boolean validAnnotation = isCustomAnnotation(annotationType);
-			final AnnotationValidator validator = (validAnnotation
-				? customCodecValidatorExtractor.apply(annotationType)
-				: TemplateAnnotationValidator.fromAnnotationType(annotationType));
-			//validate with provided validator, if any
-			if(validator != null){
-				validator.validate(fieldType, annotation);
-				validAnnotation = true;
-			}
-
-			if(validAnnotation)
-				foundAnnotation = annotation;
-		}
-		return foundAnnotation;
-	}
-
-	/**
-	 * Return the first collection binding annotation.
-	 *
-	 * @param annotations	The list of annotations on the field.
-	 * @return	The first collection binding annotation, or {@code null} if none are found.
-	 */
-	private static Annotation extractCollectionAnnotation(final List<? extends Annotation> annotations){
-		Annotation foundAnnotation = null;
-		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
-			final Annotation annotation = annotations.get(i);
-
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType == BindAsArray.class || annotationType == BindAsList.class)
-				foundAnnotation = annotation;
-		}
-		return foundAnnotation;
-	}
-
-	private static boolean isCustomAnnotation(final Class<? extends Annotation> annotationType){
-		final String annotationPackageName = annotationType.getPackageName();
-		return !annotationPackageName.startsWith(LIBRARY_ROOT_PACKAGE_NAME);
-	}
-
-	private static String extractLibraryRootPackage(){
-		final String packageName = Template.class.getPackageName();
-		final String[] packageParts = packageName.split("\\.");
-		final StringJoiner sj = new StringJoiner(".");
-		for(int i = 0, length = Math.min(4, packageParts.length); i < length; i ++)
-			sj.add(packageParts[i]);
-		return sj.toString();
-	}
 
 	/**
 	 * The class type of this template.
