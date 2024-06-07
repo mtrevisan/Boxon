@@ -77,12 +77,12 @@ public enum ParserDataType{
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = Map.of(
-		Byte.TYPE, Byte.class,
-		Short.TYPE, Short.class,
-		Integer.TYPE, Integer.class,
-		Long.TYPE, Long.class,
-		Float.TYPE, Float.class,
-		Double.TYPE, Double.class
+		Byte.class, Byte.TYPE,
+		Short.class, Short.TYPE,
+		Integer.class, Integer.TYPE,
+		Long.class, Long.TYPE,
+		Float.class, Float.TYPE,
+		Double.class, Double.TYPE
 	);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
 	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = JavaHelper.reverseMap(PRIMITIVE_WRAPPER_MAP);
@@ -173,7 +173,7 @@ public enum ParserDataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
-		return PRIMITIVE_WRAPPER_MAP.getOrDefault(primitiveType, primitiveType);
+		return WRAPPER_PRIMITIVE_MAP.getOrDefault(primitiveType, primitiveType);
 	}
 
 	/**
@@ -183,7 +183,7 @@ public enum ParserDataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
-		return WRAPPER_PRIMITIVE_MAP.getOrDefault(objectiveType, objectiveType);
+		return PRIMITIVE_WRAPPER_MAP.getOrDefault(objectiveType, objectiveType);
 	}
 
 	/**
@@ -209,7 +209,7 @@ public enum ParserDataType{
 	}
 
 	private static boolean isPrimitiveWrapper(final Class<?> type){
-		return WRAPPER_PRIMITIVE_MAP.containsKey(type);
+		return PRIMITIVE_WRAPPER_MAP.containsKey(type);
 	}
 
 	/**
