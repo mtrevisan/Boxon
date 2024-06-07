@@ -294,7 +294,7 @@ private Version[] versions;
 @BindInteger(size = "8")
 private byte positionsCount;
 @BindObject(type = Position.class,
-   selectFrom = @ObjectChoices(prefixSize = 8,
+   selectFrom = @ObjectChoices(prefixLength = 8,
         alternatives = {
           @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = "0", type = PositionInvalid.class),
           @ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = "1", type = PositionAbsolute.class),

@@ -33,10 +33,12 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,6 +94,8 @@ public final class ACKMessageHex{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
+	private static final Map<String, Byte> REVERSE_MESSAGE_TYPE_MAP = Collections.unmodifiableMap(JavaHelper.reverseMap(MESSAGE_TYPE_MAP));
+
 	public static final class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
@@ -100,10 +104,7 @@ public final class ACKMessageHex{
 
 		@Override
 		public Byte encode(final String value){
-			for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet())
-				if(elem.getValue().equals(value))
-					return elem.getKey();
-			return null;
+			return REVERSE_MESSAGE_TYPE_MAP.get(value);
 		}
 	}
 

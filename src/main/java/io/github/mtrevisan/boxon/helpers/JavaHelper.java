@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -359,4 +360,12 @@ public final class JavaHelper{
 		list.trimToSize();
 		return Collections.unmodifiableList(list);
 	}
+
+	public static <K, V> Map<V, K> reverseMap(final Map<K, V> map){
+		final Map<V, K> reverseMap = new HashMap<>(map.size());
+		for(final Map.Entry<K, V> entry : map.entrySet())
+			reverseMap.put(entry.getValue(), entry.getKey());
+		return reverseMap;
+	}
+
 }
