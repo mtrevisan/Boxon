@@ -35,7 +35,6 @@ public final class TextStatistics{
 	private static final int NEW_PAGE_CHARACTER = 0x0C;
 	private static final int ESCAPE_CHARACTER = 0x1B;
 
-	//FIXME large array allocation which is not checked for out-of-memory condition
 	private final int[] counts = new int[1 << Byte.SIZE];
 
 	/** Total number of bytes seen so far. */
@@ -47,8 +46,9 @@ public final class TextStatistics{
 	 *
 	 * @param buffer	The byte array buffer.
 	 * @return	The created TextStatistics instance.
+	 * @throws OutOfMemoryError	If there is insufficient memory to allocate the count array.
 	 */
-	public static TextStatistics create(final byte[] buffer){
+	public static TextStatistics create(final byte[] buffer) throws OutOfMemoryError{
 		return new TextStatistics(buffer, 0, buffer.length);
 	}
 
@@ -59,8 +59,9 @@ public final class TextStatistics{
 	 * @param offset	The offset in the byte array.
 	 * @param length	The length of the bytes to be considered.
 	 * @return	The created TextStatistics instance.
+	 * @throws OutOfMemoryError	If there is insufficient memory to allocate the count array.
 	 */
-	public static TextStatistics create(final byte[] buffer, final int offset, final int length){
+	public static TextStatistics create(final byte[] buffer, final int offset, final int length) throws OutOfMemoryError{
 		return new TextStatistics(buffer, offset, length);
 	}
 

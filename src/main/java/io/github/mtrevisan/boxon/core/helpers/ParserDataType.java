@@ -49,7 +49,7 @@ import java.util.function.Function;
 /**
  * Holds information about size in memory and primitive-objective types of each data type.
  */
-//FIXME
+//FIXME refactor
 public enum ParserDataType{
 
 	/** Represents the byte data type. */
