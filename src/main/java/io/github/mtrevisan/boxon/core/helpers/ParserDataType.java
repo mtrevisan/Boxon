@@ -42,6 +42,8 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
 /**
@@ -50,168 +52,93 @@ import java.util.Map;
 public enum ParserDataType{
 
 	/** Represents the byte data type. */
-	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
-		@Override
-		Object value(final String value){
-			return Byte.valueOf(value);
-		}
-
-		@Override
-		public Number cast(final BigInteger value){
-			return value.byteValue();
-		}
-
-		@Override
-		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.readByte();
-		}
-
-		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.writeByte((Byte)value);
-		}
-	},
+	BYTE(Byte.TYPE, Byte.class),
 
 	/** Represents the short data type. */
-	SHORT(Short.TYPE, Short.class, Short.SIZE){
-		@Override
-		Object value(final String value){
-			return Short.valueOf(value);
-		}
-
-		@Override
-		public Number cast(final BigInteger value){
-			return value.shortValue();
-		}
-
-		@Override
-		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.readShort(byteOrder);
-		}
-
-		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.writeShort((Short)value, byteOrder);
-		}
-	},
+	SHORT(Short.TYPE, Short.class),
 
 	/** Represents the int/integer data type. */
-	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
-		@Override
-		Object value(final String value){
-			return Integer.valueOf(value);
-		}
-
-		@Override
-		public Number cast(final BigInteger value){
-			return value.intValue();
-		}
-
-		@Override
-		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.readInt(byteOrder);
-		}
-
-		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.writeInt((Integer)value, byteOrder);
-		}
-	},
+	INTEGER(Integer.TYPE, Integer.class),
 
 	/** Represents the long data type. */
-	LONG(Long.TYPE, Long.class, Long.SIZE){
-		@Override
-		Object value(final String value){
-			return Long.valueOf(value);
-		}
-
-		@Override
-		public Number cast(final BigInteger value){
-			return value.longValue();
-		}
-
-		@Override
-		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			return reader.readLong(byteOrder);
-		}
-
-		@Override
-		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-			writer.writeLong((Long)value, byteOrder);
-		}
-	},
+	LONG(Long.TYPE, Long.class),
 
 	/** Represents the float data type. */
-	FLOAT(Float.TYPE, Float.class, Float.SIZE){
-		@Override
-		Object value(final String value){
-			return Float.valueOf(value);
-		}
-
-		@Override
-		public Number cast(final BigInteger value){
-			return value.floatValue();
-		}
-
-		@Override
-		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			final int rawValue = reader.readInt(byteOrder);
-			return Float.intBitsToFloat(rawValue);
-		}
-
-		@Override
-		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
-			final int value = Float.floatToIntBits((Float)rawValue);
-			writer.writeInt(value, byteOrder);
-		}
-	},
+	FLOAT(Float.TYPE, Float.class),
 
 	/** Represents the double data type. */
-	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
-		@Override
-		Object value(final String value){
-			return Double.valueOf(value);
-		}
+	DOUBLE(Double.TYPE, Double.class);
 
-		@Override
-		public Number cast(final BigInteger value){
-			return value.doubleValue();
-		}
 
-		@Override
-		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-			final long rawValue = reader.readLong(byteOrder);
-			return Double.longBitsToDouble(rawValue);
-		}
-
-		@Override
-		void write(final BitWriterInterface writer, final Object rawValue, final ByteOrder byteOrder){
-			final long value = Double.doubleToLongBits((Double)rawValue);
-			writer.writeLong(value, byteOrder);
-		}
-	};
-
+	@FunctionalInterface
+	private interface TriConsumer<S, T, U>{
+		void accept(S s, T t, U u);
+	}
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
-	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
+	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = Map.of(
+		Byte.TYPE, Byte.class,
+		Short.TYPE, Short.class,
+		Integer.TYPE, Integer.class,
+		Long.TYPE, Long.class,
+		Float.TYPE, Float.class,
+		Double.TYPE, Double.class
+	);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
-	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP;
+	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = JavaHelper.reverseMap(PRIMITIVE_WRAPPER_MAP);
 	private static final Map<Class<?>, ParserDataType> TYPE_MAP;
 	static{
 		final ParserDataType[] values = values();
 		final int length = values.length;
-		PRIMITIVE_WRAPPER_MAP = new HashMap<>(length);
-		WRAPPER_PRIMITIVE_MAP = new HashMap<>(length);
 		TYPE_MAP = new HashMap<>(length << 1);
 		for(int i = 0; i < length; i ++){
 			final ParserDataType dt = values[i];
 
-			PRIMITIVE_WRAPPER_MAP.put(dt.primitiveType, dt.objectiveType);
-			WRAPPER_PRIMITIVE_MAP.put(dt.objectiveType, dt.primitiveType);
 			TYPE_MAP.put(dt.primitiveType, dt);
 			TYPE_MAP.put(dt.objectiveType, dt);
 		}
 	}
+	//the number of bits used to represent the value
+	private static final Map<Class<?>, Integer> PRIMITIVE_SIZE_MAP = Map.of(
+		Byte.class, Byte.SIZE,
+		Short.class, Short.SIZE,
+		Integer.class, Integer.SIZE,
+		Long.class, Long.SIZE,
+		Float.class, Float.SIZE,
+		Double.class, Double.SIZE
+	);
+	private static final Map<Class<?>, Function<String, Object>> VALUE_STRATEGIES = Map.of(
+		Byte.class, Byte::valueOf,
+		Short.class, Short::valueOf,
+		Integer.class, Integer::valueOf,
+		Long.class, Long::valueOf,
+		Float.class, Float::valueOf,
+		Double.class, Double::valueOf
+	);
+	private static final Map<Class<?>, Function<BigInteger, Number>> CAST_STRATEGIES = Map.of(
+		Byte.class, BigInteger::byteValue,
+		Short.class, BigInteger::shortValue,
+		Integer.class, BigInteger::intValue,
+		Long.class, BigInteger::longValue,
+		Float.class, BigInteger::floatValue,
+		Double.class, BigInteger::doubleValue
+	);
+	private static final Map<Class<?>, BiFunction<BitReaderInterface, ByteOrder, Object>> READER_STRATEGIES = Map.of(
+		Byte.class, (reader, byteOrder) -> reader.readByte(),
+		Short.class, (reader, byteOrder) -> reader.readShort(byteOrder),
+		Integer.class, (reader, byteOrder) -> reader.readInt(byteOrder),
+		Long.class, (reader, byteOrder) -> reader.readLong(byteOrder),
+		Float.class, (reader, byteOrder) -> Float.intBitsToFloat(reader.readInt(byteOrder)),
+		Double.class, (reader, byteOrder) -> Double.longBitsToDouble(reader.readLong(byteOrder))
+	);
+	private static final Map<Class<?>, TriConsumer<BitWriterInterface, Object, ByteOrder>> WRITER_STRATEGIES = Map.of(
+		Byte.class, (writer, value, byteOrder) -> writer.writeByte((Byte)value),
+		Short.class, (writer, value, byteOrder) -> writer.writeShort((Short)value, byteOrder),
+		Integer.class, (writer, value, byteOrder) -> writer.writeInt((Integer)value, byteOrder),
+		Long.class, (writer, value, byteOrder) -> writer.writeLong((Long)value, byteOrder),
+		Float.class, (writer, rawValue, byteOrder) -> writer.writeInt(Float.floatToIntBits((Float)rawValue), byteOrder),
+		Double.class, (writer, rawValue, byteOrder) -> writer.writeLong(Double.doubleToLongBits((Double)rawValue), byteOrder)
+	);
 
 	private static final String METHOD_VALUE_OF = "valueOf";
 	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
@@ -220,8 +147,6 @@ public enum ParserDataType{
 
 	private final Class<?> primitiveType;
 	private final Class<?> objectiveType;
-	//the number of bits used to represent the value
-	private final int size;
 
 
 	/**
@@ -235,10 +160,9 @@ public enum ParserDataType{
 	}
 
 
-	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType, final int size){
+	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType){
 		this.primitiveType = primitiveType;
 		this.objectiveType = objectiveType;
-		this.size = size;
 	}
 
 
@@ -298,8 +222,20 @@ public enum ParserDataType{
 	}
 
 
-	abstract Object value(String value);
+	/**
+	 * Retrieves the computed value based on the objective type.
+	 *
+	 * @param value	The input value to be processed.
+	 * @return	The computed value based on the objective type.
+	 */
+	private Object value(final String value){
+		return VALUE_STRATEGIES.get(objectiveType)
+			.apply(value);
+	}
 
+	private static int size(final Class<?> objectiveType){
+		return PRIMITIVE_SIZE_MAP.get(objectiveType);
+	}
 
 	/**
 	 * Casts the given `BigInteger` value to a `Number` object that can be a `byte`, a `short`, an `integer`, a `float`, or a `double`.
@@ -307,7 +243,10 @@ public enum ParserDataType{
 	 * @param value	The `BigInteger` value to be cast.
 	 * @return	The cast `Number` object.
 	 */
-	protected abstract Number cast(BigInteger value);
+	private Number cast(final BigInteger value){
+		return CAST_STRATEGIES.get(objectiveType)
+			.apply(value);
+	}
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
@@ -316,7 +255,10 @@ public enum ParserDataType{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The read value.
 	 */
-	abstract Object read(BitReaderInterface reader, ByteOrder byteOrder);
+	Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		return READER_STRATEGIES.get(objectiveType)
+			.apply(reader, byteOrder);
+	}
 
 	/**
 	 * Write a specific data to the writer, using the given byte order.
@@ -324,7 +266,10 @@ public enum ParserDataType{
 	 * @param value	The value to be written.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	abstract void write(BitWriterInterface writer, Object value, ByteOrder byteOrder);
+	void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		WRITER_STRATEGIES.get(objectiveType)
+			.accept(writer, value, byteOrder);
+	}
 
 
 	/**
@@ -360,10 +305,10 @@ public enum ParserDataType{
 		Object result = null;
 		final BigInteger value = JavaHelper.convertToBigInteger(text);
 		if(value != null){
-			final ParserDataType objectiveDataType = fromType(objectiveType);
-			if(objectiveDataType != null && value.bitCount() <= objectiveDataType.size)
+			final ParserDataType dataType = fromType(objectiveType);
+			if(dataType != null && value.bitCount() <= size(dataType.objectiveType))
 				//convert value to `objectiveType` class
-				result = objectiveDataType.cast(value);
+				result = dataType.cast(value);
 		}
 		return result;
 	}
@@ -376,9 +321,9 @@ public enum ParserDataType{
 		else if(BigInteger.class.isAssignableFrom(objectiveType))
 			result = JavaHelper.convertToBigInteger(value);
 		else{
-			final ParserDataType objectiveDataType = fromType(objectiveType);
-			if(objectiveDataType != null)
-				result = objectiveDataType.value(value);
+			final ParserDataType dataType = fromType(objectiveType);
+			if(dataType != null)
+				result = dataType.value(value);
 			else{
 				//try with `.valueOf()`
 				try{
