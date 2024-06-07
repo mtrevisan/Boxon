@@ -289,16 +289,6 @@ public enum ParserDataType{
 	}
 
 	/**
-	 * The number of bits used to represent the value.
-	 *
-	 * @param value	The value from which to extract its memory size.
-	 * @return	The size of the value as stored in memory.
-	 */
-	public static int getSize(final Object value){
-		return fromType(value.getClass()).size;
-	}
-
-	/**
 	 * Describe the data types handled by this class.
 	 *
 	 * @return	A list of data types.
