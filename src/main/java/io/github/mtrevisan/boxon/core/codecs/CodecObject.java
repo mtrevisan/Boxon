@@ -203,7 +203,7 @@ final class CodecObject implements Codec{
 	 * @param evaluator	The evaluator.
 	 * @param rootObject	Root object for the evaluator.
 	 * @return	The class type of the chosen alternative, or the default alternative type if no alternative was found.
-	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
 	private static Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Evaluator evaluator,
 		final Object rootObject) throws CodecException{

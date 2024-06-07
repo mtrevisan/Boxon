@@ -63,18 +63,17 @@ public final class JSONPath{
 	 * @param path	The path used to reference the value in the data object.
 	 * @param data	The data from which to extract the value.
 	 * @param defaultValue	Default value if the path is not found.
-	 * @param <T>	The value class type.
 	 * @return	The value.
 	 * @throws JSONPathException	If the path is not well formatted.
 	 */
-	public static <T> T extract(final String path, final Object data, final T defaultValue) throws JSONPathException{
+	public static Object extract(final String path, final Object data, final Object defaultValue) throws JSONPathException{
 		if(path == null || !path.isEmpty()){
 			final String[] pathComponents = parsePath(path);
 			return extract(pathComponents, data, defaultValue);
 		}
 
 		//path is null or empty, return the parent object
-		return (T)data;
+		return data;
 	}
 
 	private static String[] parsePath(final String path) throws JSONPathException{
@@ -135,35 +134,35 @@ public final class JSONPath{
 		return URLDecoder.decode(text, StandardCharsets.UTF_8);
 	}
 
-	private static <T> T extract(final String[] path, final Object data, final T defaultValue) throws JSONPathException{
+	private static Object extract(final String[] path, final Object data, final Object defaultValue) throws JSONPathException{
 		Object result = data;
 		//traverse the object until the path is fully consumed
 		for(int i = 0, length = path.length; i < length; i ++){
 			final String currentPath = path[i];
 
-			final Integer idx = extractIndex(currentPath);
+			final int idx = extractIndex(currentPath);
 
 			validatePath(result, currentPath, idx, path);
 
-			if(idx != null)
+			if(idx >= 0)
 				result = extractPath(result, idx, defaultValue);
 			else
 				result = extractPath(result, currentPath, defaultValue);
 		}
-		return (T)result;
+		return result;
 	}
 
-	private static Integer extractIndex(final String currentPath){
+	private static int extractIndex(final String currentPath){
 		return (JavaHelper.isDecimalIntegerNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
-			? Integer.valueOf(currentPath)
-			: null
+			? Integer.parseInt(currentPath)
+			: -1
 		);
 	}
 
-	private static void validatePath(final Object data, final String currentPath, final Integer idx, final String[] path)
+	private static void validatePath(final Object data, final String currentPath, final int idx, final String[] path)
 			throws JSONPathException{
 		final Class<?> dataClass = data.getClass();
-		if(idx != null ^ (dataClass.isArray() || List.class.isAssignableFrom(dataClass)))
+		if(idx >= 0 ^ (dataClass.isArray() || List.class.isAssignableFrom(dataClass)))
 			throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
 	}
 

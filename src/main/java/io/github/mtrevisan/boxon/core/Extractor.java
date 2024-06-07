@@ -82,7 +82,7 @@ public final class Extractor{
 	 * @throws JSONPathException	If the path has an error.
 	 */
 	public static <T> T get(final String path, final Object data, final T defaultValue) throws JSONPathException{
-		return JSONPath.extract(path, data, defaultValue);
+		return (T)JSONPath.extract(path, data, defaultValue);
 	}
 
 }

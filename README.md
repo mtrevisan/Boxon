@@ -1272,7 +1272,7 @@ public class IMEIConverter implements Converter<byte[], String>{
         final byte[] imei = new byte[8];
         final String[] components = value.split("(?<=\\G\\d{2})", 8);
         for(int i = 0; i < 8; i ++)
-            imei[i] = Integer.valueOf(components[i]).byteValue();
+            imei[i] = (byte)Integer.parseInt(components[i]);
         return imei;
     }
 }

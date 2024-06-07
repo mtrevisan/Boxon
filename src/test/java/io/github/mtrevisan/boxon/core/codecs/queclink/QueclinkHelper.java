@@ -98,7 +98,7 @@ final class QueclinkHelper{
 			final byte[] imei = new byte[8];
 			final String[] components = PATTERN.split(value, 8);
 			for(int i = 0; i < 8; i ++)
-				imei[i] = Integer.valueOf(components[i]).byteValue();
+				imei[i] = (byte)Integer.parseInt(components[i]);
 			return imei;
 		}
 	}
