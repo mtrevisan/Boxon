@@ -50,6 +50,9 @@ import java.util.Objects;
  */
 public final class Evaluator{
 
+	public static final String BOOLEAN_TRUE = "true";
+	public static final String BOOLEAN_FALSE = "false";
+
 	private static final class EvaluationContext extends StandardEvaluationContext{
 
 		private final Map<String, Object> backupContext = new HashMap<>(0);
@@ -223,7 +226,9 @@ public final class Evaluator{
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	public boolean evaluateBoolean(final String expression, final Object rootObject){
-		return (expression.isEmpty() || evaluate(expression, rootObject, boolean.class));
+		return (expression.isEmpty()
+			|| BOOLEAN_TRUE.equalsIgnoreCase(expression)
+			|| !BOOLEAN_FALSE.equalsIgnoreCase(expression) && evaluate(expression, rootObject, boolean.class));
 	}
 
 	/**
@@ -236,7 +241,7 @@ public final class Evaluator{
 	 */
 	public int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
-		if(!expression.isBlank())
+		if(!expression.isEmpty())
 			size = (isPositiveInteger(expression)
 				? Integer.parseInt(expression)
 				: evaluate(expression, rootObject, int.class)
