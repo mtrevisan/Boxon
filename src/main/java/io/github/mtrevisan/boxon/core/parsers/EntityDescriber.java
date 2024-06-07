@@ -83,7 +83,7 @@ final class EntityDescriber{
 				final T entity = extractor.apply(entityClass);
 				description.add(mapper.apply(entity));
 			}
-		return JavaHelper.trimAndCreateUnmodifiableList(description);
+		return JavaHelper.trimAndCreateUnmodifiable(description);
 	}
 
 	/**

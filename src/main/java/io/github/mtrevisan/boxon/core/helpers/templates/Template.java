@@ -54,9 +54,9 @@ public final class Template<T>{
 		private static Triplet of(final ArrayList<TemplateField> templateFields, final ArrayList<EvaluatedField<Evaluate>> evaluatedFields,
 				final ArrayList<EvaluatedField<PostProcess>> postProcessedFields){
 			return new Triplet(
-				JavaHelper.trimAndCreateUnmodifiableList(templateFields),
-				JavaHelper.trimAndCreateUnmodifiableList(evaluatedFields),
-				JavaHelper.trimAndCreateUnmodifiableList(postProcessedFields));
+				JavaHelper.trimAndCreateUnmodifiable(templateFields),
+				JavaHelper.trimAndCreateUnmodifiable(evaluatedFields),
+				JavaHelper.trimAndCreateUnmodifiable(postProcessedFields));
 		}
 	}
 
@@ -118,7 +118,7 @@ public final class Template<T>{
 		postProcessedFields = fields.postProcessedFields;
 
 		if(templateFields.isEmpty())
-			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
+			throw AnnotationException.create("No data can be extracted from this class: {}", getName());
 	}
 
 
@@ -291,8 +291,7 @@ public final class Template<T>{
 
 	@Override
 	public int hashCode(){
-		return type.getName()
-			.hashCode();
+		return getName().hashCode();
 	}
 
 }

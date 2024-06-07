@@ -355,7 +355,7 @@ public final class JavaHelper{
 	}
 
 
-	public static <T> List<T> trimAndCreateUnmodifiableList(final ArrayList<T> list){
+	public static <T> List<T> trimAndCreateUnmodifiable(final ArrayList<T> list){
 		list.trimToSize();
 		return Collections.unmodifiableList(list);
 	}

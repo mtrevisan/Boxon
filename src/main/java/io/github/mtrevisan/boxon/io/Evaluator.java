@@ -50,8 +50,8 @@ import java.util.Objects;
  */
 public final class Evaluator{
 
-	public static final String BOOLEAN_TRUE = "true";
-	public static final String BOOLEAN_FALSE = "false";
+	private static final String BOOLEAN_TRUE = "true";
+	private static final String BOOLEAN_FALSE = "false";
 
 	private static final class EvaluationContext extends StandardEvaluationContext{
 

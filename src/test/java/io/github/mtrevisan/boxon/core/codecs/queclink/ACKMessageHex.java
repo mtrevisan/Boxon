@@ -103,7 +103,7 @@ public final class ACKMessageHex{
 			for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet())
 				if(elem.getValue().equals(value))
 					return elem.getKey();
-			return 0x00;
+			return null;
 		}
 	}
 
@@ -144,7 +144,5 @@ public final class ACKMessageHex{
 	private String deviceTypeName;
 	@Evaluate("T(java.time.ZonedDateTime).now()")
 	private ZonedDateTime receptionTime;
-	@Evaluate("messageHeader.startsWith('+B')")
-	private boolean buffered;
 
 }

@@ -122,7 +122,7 @@ public final class ReflectiveClassLoader{
 				loadedClasses.addAll(list);
 			}
 		}
-		return JavaHelper.trimAndCreateUnmodifiableList(loadedClasses);
+		return JavaHelper.trimAndCreateUnmodifiable(loadedClasses);
 	}
 
 	private ArrayList<Class<?>> getStoredClasses(final Class<?> type){

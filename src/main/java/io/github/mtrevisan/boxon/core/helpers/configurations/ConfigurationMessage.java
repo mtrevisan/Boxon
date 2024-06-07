@@ -136,7 +136,7 @@ public final class ConfigurationMessage<T>{
 				throw e;
 			}
 		}
-		return JavaHelper.trimAndCreateUnmodifiableList(configurationFields);
+		return JavaHelper.trimAndCreateUnmodifiable(configurationFields);
 	}
 
 
@@ -281,7 +281,7 @@ public final class ConfigurationMessage<T>{
 		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
-		return JavaHelper.trimAndCreateUnmodifiableList(boundaries);
+		return JavaHelper.trimAndCreateUnmodifiable(boundaries);
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){

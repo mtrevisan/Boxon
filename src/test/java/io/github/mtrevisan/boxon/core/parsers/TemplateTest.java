@@ -103,7 +103,7 @@ class TemplateTest{
 					if(elem.getValue().equals(value))
 						return elem.getKey();
 				}
-				return 0x00;
+				return null;
 			}
 		}
 

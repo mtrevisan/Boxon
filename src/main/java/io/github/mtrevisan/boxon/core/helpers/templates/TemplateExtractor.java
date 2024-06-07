@@ -119,7 +119,7 @@ public final class TemplateExtractor{
 			if(annotationType == ContextParameter.class)
 				contextParameters.add((ContextParameter)annotation);
 		}
-		return JavaHelper.trimAndCreateUnmodifiableList(contextParameters);
+		return JavaHelper.trimAndCreateUnmodifiable(contextParameters);
 	}
 
 	/**

@@ -103,7 +103,7 @@ public final class Configurator{
 		final ArrayList<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		return JavaHelper.trimAndCreateUnmodifiableList(protocolVersionBoundaries);
+		return JavaHelper.trimAndCreateUnmodifiable(protocolVersionBoundaries);
 	}
 
 
