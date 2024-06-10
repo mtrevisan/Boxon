@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -53,7 +54,6 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -252,10 +252,16 @@ public final class FieldDescriber{
 			final Collection<Map<String, Object>> fieldsDescription){
 		final Class<?> fieldType = FieldAccessor.extractFieldType(fieldExtractor.getFieldType(field));
 
-		final Field[] fields = fieldType.getFields();
-		final String[] list = new String[fields.length];
-		for(int i = 0, length = fields.length; i < length; i ++)
-			list[i] = fields[i].getName();
+		final boolean isConfigurationEnum = ConfigurationEnum.class.isAssignableFrom(fieldType);
+		final Object[] elements = fieldType.getEnumConstants();
+		final int length = elements.length;
+		final String[] list = new String[length];
+		for(int i = 0; i < length; i ++){
+			final Object element = elements[i];
+
+			list[i] = element.toString()
+				+ (isConfigurationEnum? "(" + ((ConfigurationEnum<?>)element).getCode() + ")": null);
+		}
 
 		final Map<String, Object> fieldDescription = new LinkedHashMap<>(2);
 		putIfNotEmpty(DescriberKey.ENUMERATION_NAME, fieldType.getName(), fieldDescription);

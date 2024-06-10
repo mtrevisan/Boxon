@@ -26,14 +26,9 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 

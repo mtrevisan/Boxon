@@ -93,7 +93,7 @@ public final class DeviceTypes{
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getValue() + " (0x" + StringHelper.toHexString(deviceType.getKey(), Byte.BYTES) + ")");
+			sj.add(deviceType.getValue() + "(0x" + StringHelper.toHexString(deviceType.getKey(), Byte.BYTES) + ")");
 		return sj.toString();
 	}
 
