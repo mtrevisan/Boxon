@@ -1503,6 +1503,7 @@ Pull requests are welcomed.
 
 - Improve error messages and handling in encoding and decoding process
 - Added `ContextParameter` annotation which assigns a constant or calculated value to a parameter that will be added to the context before processing; each context parameter is created before a field is decoded or encoded and promptly removed as soon as the field processing completes.
+- Added `enumerations` key in template and configuration descriptions.
 
 <a name="changelog-5.0.0"></a>
 ### version 5.0.0 - 20240517

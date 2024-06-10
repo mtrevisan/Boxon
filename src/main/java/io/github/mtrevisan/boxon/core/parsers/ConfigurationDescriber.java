@@ -72,8 +72,10 @@ public final class ConfigurationDescriber{
 	 */
 	public List<Map<String, Object>> describeConfiguration() throws BoxonException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
-		return EntityDescriber.describeEntities(configurations, configuration -> messageDescriber.describeMessage(configuration,
-			FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION, FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+		final ThrowingFunction<ConfigurationMessage<?>, Map<String, Object>, BoxonException> mapper
+			= configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
+			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION);
+		return EntityDescriber.describeEntities(configurations, mapper);
 	}
 
 	/**
@@ -90,9 +92,10 @@ public final class ConfigurationDescriber{
 			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};
-		return EntityDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor,
-			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
-				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+		final ThrowingFunction<ConfigurationMessage<?>, Map<String, Object>, BoxonException> mapper
+			= configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
+			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION);
+		return EntityDescriber.describeEntity(ConfigurationHeader.class, configurationClass, extractor, mapper);
 	}
 
 	/**
@@ -104,9 +107,10 @@ public final class ConfigurationDescriber{
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
 	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws BoxonException{
-		return EntityDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
-			configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
-				FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION));
+		final ThrowingFunction<ConfigurationMessage<?>, Map<String, Object>, BoxonException> mapper
+			= configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
+			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION);
+		return EntityDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration, mapper);
 	}
 
 }

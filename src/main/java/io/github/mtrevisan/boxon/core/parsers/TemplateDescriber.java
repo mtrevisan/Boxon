@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -138,20 +139,23 @@ public final class TemplateDescriber{
 
 	private List<Map<String, Object>> describeAllTemplates(final MessageExtractorBasicStrategy messageExtractor) throws BoxonException{
 		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
-		return EntityDescriber.describeEntities(templates, template -> messageDescriber.describeMessage(template, messageExtractor,
-			FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
+		final ThrowingFunction<Template<?>, Map<String, Object>, BoxonException> mapper
+			= template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY);
+		return EntityDescriber.describeEntities(templates, mapper);
 	}
 
 	private Map<String, Object> describeSingleTemplate(final Class<?> templateClass, final MessageExtractorBasicStrategy messageExtractor)
 			throws BoxonException{
-		return EntityDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
-			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
+		final ThrowingFunction<Template<?>, Map<String, Object>, BoxonException> mapper
+			= template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY);
+		return EntityDescriber.describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate, mapper);
 	}
 
 	private List<Map<String, Object>> describeTemplatesSet(final Class<?>[] templateClasses,
 			final MessageExtractorBasicStrategy messageExtractor) throws BoxonException{
-		return EntityDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
-			template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY));
+		final ThrowingFunction<Template<?>, Map<String, Object>, BoxonException> mapper
+			= template -> messageDescriber.describeMessage(template, messageExtractor, FieldDescriber.FIELD_EXTRACTOR_STRATEGY);
+		return EntityDescriber.describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate, mapper);
 	}
 
 }

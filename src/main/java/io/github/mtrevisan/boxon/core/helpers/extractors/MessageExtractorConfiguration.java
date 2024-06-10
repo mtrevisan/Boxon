@@ -24,10 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -48,6 +52,21 @@ public final class MessageExtractorConfiguration extends MessageExtractor<Config
 	@Override
 	public List<ConfigurationField> getFields(final ConfigurationMessage<?> message){
 		return message.getConfigurationFields();
+	}
+
+	@Override
+	public Collection<ConfigurationField> getEnumerations(final ConfigurationMessage<?> message){
+		final List<ConfigurationField> configurationFields = message.getConfigurationFields();
+		final int length = configurationFields.size();
+		final Collection<ConfigurationField> enumerations = new HashSet<>(length);
+		for(int i = 0; i < length; i ++){
+			final ConfigurationField configurationField = configurationFields.get(i);
+
+			final Class<?> fieldType = FieldAccessor.extractFieldType(configurationField.getFieldType());
+			if(fieldType.isEnum() && ConfigurationEnum.class.isAssignableFrom(fieldType))
+				enumerations.add(configurationField);
+		}
+		return enumerations;
 	}
 
 }

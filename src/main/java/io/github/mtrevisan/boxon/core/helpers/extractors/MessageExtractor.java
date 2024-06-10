@@ -26,8 +26,14 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -74,6 +80,16 @@ public abstract class MessageExtractor<M, H, F>{
 	 * @return	The list of post-processed fields in the message template.
 	 */
 	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final M message){
+		return null;
+	}
+
+	/**
+	 * Retrieves the fields with enumeration type from a given message template.
+	 *
+	 * @param message	The message template from which to retrieve the fields with enumeration type.
+	 * @return	The list of fields with enumeration type in the message template.
+	 */
+	public Collection<F> getEnumerations(final M message){
 		return null;
 	}
 

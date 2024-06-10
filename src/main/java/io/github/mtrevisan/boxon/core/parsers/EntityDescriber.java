@@ -48,7 +48,7 @@ final class EntityDescriber{
 	 * values.</p>
 	 *
 	 * @param entities	The collection of entities to be described.
-	 * @param mapper	A function that takes an entity of type T and returns its corresponding map representation.
+	 * @param mapper	A function that takes an entity of type {@code T} and returns its corresponding map representation.
 	 * @param <T>	The type of the entities.
 	 * @throws BoxonException	If a field exception occurs during the mapping process.
 	 * @return	The list of descriptions for the entities.

@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorConfiguration;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorEvaluatedField;
@@ -52,6 +53,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -178,10 +180,12 @@ public final class FieldDescriber{
 
 		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor),
 			rootDescription);
-		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(messageExtractor.getEvaluatedFields(message),
-			FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
+		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(
+			messageExtractor.getEvaluatedFields(message), FIELD_EXTRACTOR_EVALUATED_FIELD), rootDescription);
 		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(
 			messageExtractor.getPostProcessedFields(message), FIELD_EXTRACTOR_POST_PROCESSED_FIELD), rootDescription);
+		putIfNotEmpty(DescriberKey.ENUMERATIONS, describeEnumerations(
+			messageExtractor.getEnumerations(message), fieldExtractor), rootDescription);
 	}
 
 	private static <M, F> DescriberKey selectMessageKey(final MessageExtractor<M, ?, F> messageExtractor){
@@ -224,7 +228,7 @@ public final class FieldDescriber{
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
 
-	private static <F> void extractSkipParameters(final SkipParams[] skips, final Collection<Map<String, Object>> fieldsDescription){
+	private static void extractSkipParameters(final SkipParams[] skips, final Collection<Map<String, Object>> fieldsDescription){
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final SkipParams skip = skips[i];
 
@@ -232,6 +236,32 @@ public final class FieldDescriber{
 			extractObjectParameters(skip, skip.getClass(), skipDescription);
 			fieldsDescription.add(Collections.unmodifiableMap(skipDescription));
 		}
+	}
+
+	private static <F> Collection<Map<String, Object>> describeEnumerations(final Collection<F> fields,
+			final FieldExtractor<F> fieldExtractor){
+		final int length = JavaHelper.sizeOrZero(fields);
+		final ArrayList<Map<String, Object>> enumerationsDescription = new ArrayList<>(length);
+		if(length > 0)
+			for(final F field : fields)
+				extractEnumerationParameters(field, fieldExtractor, enumerationsDescription);
+		return JavaHelper.trimAndCreateUnmodifiable(enumerationsDescription);
+	}
+
+	private static <F> void extractEnumerationParameters(final F field, final FieldExtractor<F> fieldExtractor,
+			final Collection<Map<String, Object>> fieldsDescription){
+		final Class<?> fieldType = FieldAccessor.extractFieldType(fieldExtractor.getFieldType(field));
+
+		final Field[] fields = fieldType.getFields();
+		final String[] list = new String[fields.length];
+		for(int i = 0, length = fields.length; i < length; i ++)
+			list[i] = fields[i].getName();
+
+		final Map<String, Object> fieldDescription = new LinkedHashMap<>(2);
+		putIfNotEmpty(DescriberKey.ENUMERATION_NAME, fieldType.getName(), fieldDescription);
+		putIfNotEmpty(DescriberKey.ENUMERATION_VALUES, list, fieldDescription);
+
+		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
 
 

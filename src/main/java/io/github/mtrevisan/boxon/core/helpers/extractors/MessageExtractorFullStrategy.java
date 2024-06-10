@@ -26,9 +26,14 @@ package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -42,6 +47,21 @@ public final class MessageExtractorFullStrategy extends MessageExtractorBasicStr
 	@Override
 	public List<EvaluatedField<PostProcess>> getPostProcessedFields(final Template<?> message){
 		return message.getPostProcessedFields();
+	}
+
+	@Override
+	public Collection<TemplateField> getEnumerations(final Template<?> message){
+		final List<TemplateField> templateFields = message.getTemplateFields();
+		final int length = templateFields.size();
+		final Collection<TemplateField> enumerations = new HashSet<>(length);
+		for(int i = 0; i < length; i ++){
+			final TemplateField templateField = templateFields.get(i);
+
+			final Class<?> fieldType = FieldAccessor.extractFieldType(templateField.getFieldType());
+			if(fieldType.isEnum() && ConfigurationEnum.class.isAssignableFrom(fieldType))
+				enumerations.add(templateField);
+		}
+		return enumerations;
 	}
 
 }

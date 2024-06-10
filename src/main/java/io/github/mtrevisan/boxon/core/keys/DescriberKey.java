@@ -48,6 +48,8 @@ public enum DescriberKey{
 	EVALUATED_FIELDS("evaluatedFields"),
 	/** Represents the post-processed constant used as a key in the {@link Describer}. */
 	POST_PROCESSED_FIELDS("postProcessedFields"),
+	/** Represents the enumerations constant used as a key in the {@link Describer}. */
+	ENUMERATIONS("enumerations"),
 	/** Represents the name constant used as a key in the {@link Describer}. */
 	FIELD_NAME("name"),
 	/** Represents the field type constant used as a key in the {@link Describer}. */
@@ -68,6 +70,10 @@ public enum DescriberKey{
 	COLLECTION_TYPE("collectionType"),
 	/** Represents the array collection size constant used as a key in the {@link Describer}. */
 	COLLECTION_ARRAY_SIZE("collectionArraySize"),
+	/** Represents the enumeration name constant used as a key in the {@link Describer}. */
+	ENUMERATION_NAME("name"),
+	/** Represents the enumeration values constant used as a key in the {@link Describer}. */
+	ENUMERATION_VALUES("values"),
 
 	/** Represents the bind subtypes constant used as a key in the {@link Describer}. */
 	BIND_SUBTYPES("subtypes");
