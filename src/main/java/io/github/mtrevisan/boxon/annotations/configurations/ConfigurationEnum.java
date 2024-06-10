@@ -28,14 +28,14 @@ package io.github.mtrevisan.boxon.annotations.configurations;
 /**
  * Interface every enumeration used in a configuration MUST implement.
  */
-public interface ConfigurationEnum{
+public interface ConfigurationEnum<T>{
 
 	/**
 	 * The code associated with this numeration value.
 	 *
 	 * @return	The code for this enumeration.
 	 */
-	int getCode();
+	T getCode();
 
 	/**
 	 * Name of the value.
@@ -55,9 +55,9 @@ public interface ConfigurationEnum{
 	 * @param value	The value to be converted.
 	 * @return	The enumeration constant that matches the value.
 	 */
-	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
+	static ConfigurationEnum<?> extractEnum(final ConfigurationEnum<?>[] enumConstants, final String value){
 		for(int i = 0, length = enumConstants.length; i < length; i ++){
-			final ConfigurationEnum enumConstant = enumConstants[i];
+			final ConfigurationEnum<?> enumConstant = enumConstants[i];
 			if(enumConstant.name().equals(value))
 				return enumConstant;
 		}

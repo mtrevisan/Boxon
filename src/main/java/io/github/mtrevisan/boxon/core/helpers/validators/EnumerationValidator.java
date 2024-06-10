@@ -99,13 +99,13 @@ final class EnumerationValidator{
 		for(int i = 0, length = defaultValues.length; i < length; i ++){
 			final String defaultValue = defaultValues[i];
 
-			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValue);
+			final ConfigurationEnum<?> enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValue);
 			validateDefaultValueCompatibilityWithEnumeration(enumConstants, enumValue, defaultValue, configData);
 		}
 	}
 
 	private static void validateDefaultValueCompatibilityWithEnumeration(final ConfigurationEnum[] enumConstants,
-			final ConfigurationEnum enumValue, final String defaultValue, final ConfigFieldData configData) throws AnnotationException{
+			final ConfigurationEnum<?> enumValue, final String defaultValue, final ConfigFieldData configData) throws AnnotationException{
 		if(enumValue == null)
 			throw AnnotationException.createDefaultValueAsEnumeration(configData.getAnnotationName(), defaultValue, enumConstants);
 	}

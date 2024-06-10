@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 
 
-enum Weekday implements ConfigurationEnum{
+enum Weekday implements ConfigurationEnum<Integer>{
 
 	MONDAY(0x01),
 	TUESDAY(0x02),
@@ -47,7 +47,7 @@ enum Weekday implements ConfigurationEnum{
 
 
 	@Override
-	public int getCode(){
+	public Integer getCode(){
 		return code;
 	}
 

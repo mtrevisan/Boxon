@@ -28,7 +28,7 @@ package io.github.mtrevisan.boxon.annotations.configurations;
 /**
  * Boolean enumeration used in a configuration.
  */
-public enum BooleanType implements ConfigurationEnum{
+public enum BooleanType implements ConfigurationEnum<Integer>{
 
 	/** {@code true/1} value. */
 	TRUE(1),
@@ -45,7 +45,7 @@ public enum BooleanType implements ConfigurationEnum{
 
 
 	@Override
-	public int getCode(){
+	public Integer getCode(){
 		return code;
 	}
 

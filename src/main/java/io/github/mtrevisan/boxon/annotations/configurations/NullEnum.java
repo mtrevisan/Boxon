@@ -31,13 +31,13 @@ package io.github.mtrevisan.boxon.annotations.configurations;
  * The returned code is always zero.
  * </p>
  */
-public enum NullEnum implements ConfigurationEnum{
+public enum NullEnum implements ConfigurationEnum<Void>{
 	;
 
 
 	@Override
-	public int getCode(){
-		return 0;
+	public Void getCode(){
+		return null;
 	}
 
 }

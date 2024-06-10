@@ -284,7 +284,7 @@ public final class CodecHelper{
 	public static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
-			if(value instanceof final ConfigurationEnum v)
+			if(value instanceof final ConfigurationEnum<?> v)
 				value = v.getCode();
 			else if(value.getClass().isArray())
 				value = calculateCompositeValue(value);
@@ -292,10 +292,18 @@ public final class CodecHelper{
 		return value;
 	}
 
-	private static int calculateCompositeValue(final Object value){
-		int compositeEnumValue = 0;
-		for(int i = 0, length = Array.getLength(value); i < length; i ++)
-			compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
+	private static long calculateCompositeValue(final Object value){
+		long compositeEnumValue = 0l;
+		for(int i = 0, length = Array.getLength(value); i < length; i ++){
+			final ConfigurationEnum<?> element = (ConfigurationEnum<?>)Array.get(value, i);
+
+			final Object code = element.getCode();
+			if(!(code instanceof Number))
+				throw DataException.create("Cannot calculate composite value of enum with code type {}",
+					JavaHelper.prettyPrintClassName(code.getClass()));
+
+			compositeEnumValue |= ((Number)code).longValue();
+		}
 		return compositeEnumValue;
 	}
 

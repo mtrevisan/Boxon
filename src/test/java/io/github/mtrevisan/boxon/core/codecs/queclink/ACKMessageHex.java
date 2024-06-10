@@ -46,57 +46,57 @@ import java.util.Map;
 @TemplateHeader(start = "+ACK", end = "\r\n")
 public final class ACKMessageHex{
 
-	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
-	static{
-		MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
-		MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
-		MESSAGE_TYPE_MAP.put((byte)2, "AT+GTQSS");
-		MESSAGE_TYPE_MAP.put((byte)4, "AT+GTCFG");
-		MESSAGE_TYPE_MAP.put((byte)5, "AT+GTTOW");
-		MESSAGE_TYPE_MAP.put((byte)6, "AT+GTEPS");
-		MESSAGE_TYPE_MAP.put((byte)7, "AT+GTDIS");
-		MESSAGE_TYPE_MAP.put((byte)8, "AT+GTOUT");
-		MESSAGE_TYPE_MAP.put((byte)9, "AT+GTIOB");
-		MESSAGE_TYPE_MAP.put((byte)10, "AT+GTTMA");
-		MESSAGE_TYPE_MAP.put((byte)11, "AT+GTFRI");
-		MESSAGE_TYPE_MAP.put((byte)12, "AT+GTGEO");
-		MESSAGE_TYPE_MAP.put((byte)13, "AT+GTSPD");
-		MESSAGE_TYPE_MAP.put((byte)14, "AT+GTSOS");
-		MESSAGE_TYPE_MAP.put((byte)15, "AT+GTMON");
-		MESSAGE_TYPE_MAP.put((byte)16, "AT+GTRTO");
-		MESSAGE_TYPE_MAP.put((byte)21, "AT+GTUPD");
-		MESSAGE_TYPE_MAP.put((byte)22, "AT+GTPIN");
-		MESSAGE_TYPE_MAP.put((byte)23, "AT+GTDAT");
-		MESSAGE_TYPE_MAP.put((byte)24, "AT+GTOWH");
-		MESSAGE_TYPE_MAP.put((byte)25, "AT+GTDOG");
-		MESSAGE_TYPE_MAP.put((byte)26, "AT+GTAIS");
-		MESSAGE_TYPE_MAP.put((byte)27, "AT+GTJDC");
-		MESSAGE_TYPE_MAP.put((byte)28, "AT+GTIDL");
-		MESSAGE_TYPE_MAP.put((byte)29, "AT+GTHBM");
-		MESSAGE_TYPE_MAP.put((byte)30, "AT+GTHMC");
-		MESSAGE_TYPE_MAP.put((byte)32, "AT+GTURT");
-		MESSAGE_TYPE_MAP.put((byte)34, "AT+GTWLT");
-		MESSAGE_TYPE_MAP.put((byte)35, "AT+GTHRM");
-		MESSAGE_TYPE_MAP.put((byte)36, "AT+GTFFC");
-		MESSAGE_TYPE_MAP.put((byte)37, "AT+GTJBS");
-		MESSAGE_TYPE_MAP.put((byte)38, "AT+GTSSR");
-		MESSAGE_TYPE_MAP.put((byte)41, "AT+GTEFS");
-		MESSAGE_TYPE_MAP.put((byte)43, "AT+GTIDA");
-		MESSAGE_TYPE_MAP.put((byte)44, "AT+GTACD");
-		MESSAGE_TYPE_MAP.put((byte)45, "AT+GTPDS");
-		MESSAGE_TYPE_MAP.put((byte)46, "AT+GTCRA");
-		MESSAGE_TYPE_MAP.put((byte)47, "AT+GTBZA");
-		MESSAGE_TYPE_MAP.put((byte)48, "AT+GTSPA");
-		MESSAGE_TYPE_MAP.put((byte)53, "AT+GTRMD");
-		MESSAGE_TYPE_MAP.put((byte)57, "AT+GTPGD");
-		MESSAGE_TYPE_MAP.put((byte)62, "AT+GTSSI");
-		MESSAGE_TYPE_MAP.put((byte)63, "AT+GTASC");
-		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
-	}
-
-	private static final Map<String, Byte> REVERSE_MESSAGE_TYPE_MAP = Collections.unmodifiableMap(JavaHelper.reverseMap(MESSAGE_TYPE_MAP));
-
 	public static final class MessageTypeConverter implements Converter<Byte, String>{
+		private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
+		static{
+			MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
+			MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
+			MESSAGE_TYPE_MAP.put((byte)2, "AT+GTQSS");
+			MESSAGE_TYPE_MAP.put((byte)4, "AT+GTCFG");
+			MESSAGE_TYPE_MAP.put((byte)5, "AT+GTTOW");
+			MESSAGE_TYPE_MAP.put((byte)6, "AT+GTEPS");
+			MESSAGE_TYPE_MAP.put((byte)7, "AT+GTDIS");
+			MESSAGE_TYPE_MAP.put((byte)8, "AT+GTOUT");
+			MESSAGE_TYPE_MAP.put((byte)9, "AT+GTIOB");
+			MESSAGE_TYPE_MAP.put((byte)10, "AT+GTTMA");
+			MESSAGE_TYPE_MAP.put((byte)11, "AT+GTFRI");
+			MESSAGE_TYPE_MAP.put((byte)12, "AT+GTGEO");
+			MESSAGE_TYPE_MAP.put((byte)13, "AT+GTSPD");
+			MESSAGE_TYPE_MAP.put((byte)14, "AT+GTSOS");
+			MESSAGE_TYPE_MAP.put((byte)15, "AT+GTMON");
+			MESSAGE_TYPE_MAP.put((byte)16, "AT+GTRTO");
+			MESSAGE_TYPE_MAP.put((byte)21, "AT+GTUPD");
+			MESSAGE_TYPE_MAP.put((byte)22, "AT+GTPIN");
+			MESSAGE_TYPE_MAP.put((byte)23, "AT+GTDAT");
+			MESSAGE_TYPE_MAP.put((byte)24, "AT+GTOWH");
+			MESSAGE_TYPE_MAP.put((byte)25, "AT+GTDOG");
+			MESSAGE_TYPE_MAP.put((byte)26, "AT+GTAIS");
+			MESSAGE_TYPE_MAP.put((byte)27, "AT+GTJDC");
+			MESSAGE_TYPE_MAP.put((byte)28, "AT+GTIDL");
+			MESSAGE_TYPE_MAP.put((byte)29, "AT+GTHBM");
+			MESSAGE_TYPE_MAP.put((byte)30, "AT+GTHMC");
+			MESSAGE_TYPE_MAP.put((byte)32, "AT+GTURT");
+			MESSAGE_TYPE_MAP.put((byte)34, "AT+GTWLT");
+			MESSAGE_TYPE_MAP.put((byte)35, "AT+GTHRM");
+			MESSAGE_TYPE_MAP.put((byte)36, "AT+GTFFC");
+			MESSAGE_TYPE_MAP.put((byte)37, "AT+GTJBS");
+			MESSAGE_TYPE_MAP.put((byte)38, "AT+GTSSR");
+			MESSAGE_TYPE_MAP.put((byte)41, "AT+GTEFS");
+			MESSAGE_TYPE_MAP.put((byte)43, "AT+GTIDA");
+			MESSAGE_TYPE_MAP.put((byte)44, "AT+GTACD");
+			MESSAGE_TYPE_MAP.put((byte)45, "AT+GTPDS");
+			MESSAGE_TYPE_MAP.put((byte)46, "AT+GTCRA");
+			MESSAGE_TYPE_MAP.put((byte)47, "AT+GTBZA");
+			MESSAGE_TYPE_MAP.put((byte)48, "AT+GTSPA");
+			MESSAGE_TYPE_MAP.put((byte)53, "AT+GTRMD");
+			MESSAGE_TYPE_MAP.put((byte)57, "AT+GTPGD");
+			MESSAGE_TYPE_MAP.put((byte)62, "AT+GTSSI");
+			MESSAGE_TYPE_MAP.put((byte)63, "AT+GTASC");
+			MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
+		}
+
+		private static final Map<String, Byte> REVERSE_MESSAGE_TYPE_MAP = Collections.unmodifiableMap(JavaHelper.reverseMap(MESSAGE_TYPE_MAP));
+
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);
