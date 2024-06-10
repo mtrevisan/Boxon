@@ -74,6 +74,8 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.core;
 	exports io.github.mtrevisan.boxon.core.detect;
 	exports io.github.mtrevisan.boxon.core.keys;
+	exports io.github.mtrevisan.boxon.core.similarity.distances;
+	exports io.github.mtrevisan.boxon.core.similarity.metrics;
 	exports io.github.mtrevisan.boxon.exceptions;
 	exports io.github.mtrevisan.boxon.io;
 	exports io.github.mtrevisan.boxon.logs;

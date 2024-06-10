@@ -22,27 +22,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
+package io.github.mtrevisan.boxon.core.similarity.metrics;
 
 import io.github.mtrevisan.boxon.core.similarity.distances.StringMetricData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-class DamerauLevenshteinMetricTest{
+class LevenshteinMetricTest{
 
 	@Test
 	void testNullThrows(){
 		Assertions.assertThrows(
 			IllegalArgumentException.class,
-			() -> DamerauLevenshteinMetric.<StringMetricData>create()
+			() -> LevenshteinMetric.<StringMetricData>create()
 				.similarity(null, StringMetricData.of("kEvIn"))
 		);
 	}
 
 	@Test
 	void emptyStringTest(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("");
 		StringMetricData data2 = StringMetricData.of("");
 
@@ -55,7 +55,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void testExactMatchSameCase(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("java");
 		StringMetricData data2 = StringMetricData.of("java");
 
@@ -68,7 +68,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void testNoSimilarity(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("abc");
 		StringMetricData data2 = StringMetricData.of("def");
 
@@ -81,7 +81,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void score1(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("he");
 		StringMetricData data2 = StringMetricData.of("head");
 
@@ -94,7 +94,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void score2(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("hd");
 		StringMetricData data2 = StringMetricData.of("head");
 
@@ -107,9 +107,9 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void score3(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("d");
-		StringMetricData data2 = StringMetricData.of("head");
+		 StringMetricData data2 = StringMetricData.of("head");
 
 		int distance = metric.distance(data1, data2);
 		double similarity = metric.similarity(data1, data2);
@@ -120,7 +120,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void score4(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("head");
 		StringMetricData data2 = StringMetricData.of("he");
 
@@ -133,7 +133,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void score5(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("kitten");
 		StringMetricData data2 = StringMetricData.of("sitting");
 
@@ -146,7 +146,7 @@ class DamerauLevenshteinMetricTest{
 
 	@Test
 	void score6(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		LevenshteinMetric<StringMetricData> metric = LevenshteinMetric.create();
 		StringMetricData data1 = StringMetricData.of("Saturday");
 		StringMetricData data2 = StringMetricData.of("Sunday");
 
@@ -155,20 +155,6 @@ class DamerauLevenshteinMetricTest{
 
 		Assertions.assertEquals(3, distance);
 		Assertions.assertEquals(0.625, similarity, 0.0001);
-	}
-
-	@Test
-	void score7(){
-		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create(1, 1, 1,
-			2);
-		StringMetricData data1 = StringMetricData.of("Saturday");
-		StringMetricData data2 = StringMetricData.of("Satudray");
-
-		int distance = metric.distance(data1, data2);
-		double similarity = metric.similarity(data1, data2);
-
-		Assertions.assertEquals(2, distance);
-		Assertions.assertEquals(6./7., similarity, 0.0001);
 	}
 
 }

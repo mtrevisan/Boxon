@@ -26,8 +26,8 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayMetricData;
-import io.github.mtrevisan.boxon.core.similarity.distances.metrics.LevenshteinMetric;
-import io.github.mtrevisan.boxon.core.similarity.distances.metrics.Metric;
+import io.github.mtrevisan.boxon.core.similarity.metrics.LevenshteinMetric;
+import io.github.mtrevisan.boxon.core.similarity.metrics.Metric;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 
 import java.util.Arrays;
