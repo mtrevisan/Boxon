@@ -56,6 +56,7 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -252,22 +253,32 @@ public final class FieldDescriber{
 			final Collection<Map<String, Object>> fieldsDescription){
 		final Class<?> fieldType = FieldAccessor.extractFieldType(fieldExtractor.getFieldType(field));
 
-		final boolean isConfigurationEnum = ConfigurationEnum.class.isAssignableFrom(fieldType);
-		final Object[] elements = fieldType.getEnumConstants();
-		final int length = elements.length;
-		final String[] list = new String[length];
-		for(int i = 0; i < length; i ++){
-			final Object element = elements[i];
-
-			list[i] = element.toString()
-				+ (isConfigurationEnum? "(" + ((ConfigurationEnum<?>)element).getCode() + ")": null);
-		}
+		final String[] list = convertToStringArray(fieldType);
 
 		final Map<String, Object> fieldDescription = new LinkedHashMap<>(2);
 		putIfNotEmpty(DescriberKey.ENUMERATION_NAME, fieldType.getName(), fieldDescription);
 		putIfNotEmpty(DescriberKey.ENUMERATION_VALUES, list, fieldDescription);
 
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
+	}
+
+	private static String[] convertToStringArray(final Class<?> fieldType){
+		final Object[] elements = fieldType.getEnumConstants();
+		return (ConfigurationEnum.class.isAssignableFrom(fieldType)
+			? convertConfigurationEnumToStringArray(elements)
+			: convertNormalEnumToStringArray(elements));
+	}
+
+	private static String[] convertConfigurationEnumToStringArray(final Object[] elements){
+		return Arrays.stream(elements)
+			.map(element -> element.toString() + "(" + ((ConfigurationEnum<?>)element).getCode() + ")")
+			.toArray(String[]::new);
+	}
+
+	private static String[] convertNormalEnumToStringArray(final Object[] elements){
+		return Arrays.stream(elements)
+			.map(Object::toString)
+			.toArray(String[]::new);
 	}
 
 
@@ -364,6 +375,7 @@ public final class FieldDescriber{
 			putIfNotEmpty(DescriberKey.BIND_SUBTYPES, typeDescription, rootDescription);
 		}
 	}
+
 
 	/**
 	 * Put the pair key-value into the given map if the value is not {@code null} or empty string.
