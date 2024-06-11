@@ -73,7 +73,7 @@ final class CodecObject implements Codec{
 
 		final Object instance;
 		if(collectionBinding == null){
-			final Class<?> chosenAlternativeType = chooseAlternativeType(reader, behavior, evaluator, rootObject);
+			final Class<?> chosenAlternativeType = chooseAlternativeType(reader, behavior, rootObject);
 			instance = readValue(reader, chosenAlternativeType, rootObject);
 		}
 		else if(collectionBinding instanceof final BindAsArray superBinding){
@@ -105,7 +105,7 @@ final class CodecObject implements Codec{
 	private void readArrayWithAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
-			final Class<?> chosenAlternativeType = chooseAlternativeType(reader, behavior, evaluator, rootObject);
+			final Class<?> chosenAlternativeType = chooseAlternativeType(reader, behavior, rootObject);
 			final Object element = readValue(reader, chosenAlternativeType, rootObject);
 
 			Array.set(array, i, element);
@@ -166,7 +166,7 @@ final class CodecObject implements Codec{
 		if(!hasHeader)
 			return void.class;
 
-		return chooseAlternativeType(alternatives, behavior.selectDefault(), evaluator, rootObject);
+		return chooseAlternativeType(alternatives, behavior.selectDefault(), rootObject);
 	}
 
 	/**
@@ -178,12 +178,11 @@ final class CodecObject implements Codec{
 	 *
 	 * @param alternatives	An array of ObjectChoices.ObjectChoice representing the alternatives.
 	 * @param defaultAlternative	The default alternative type.
-	 * @param evaluator	An instance of the Evaluator interface for evaluating the condition.
 	 * @param rootObject	The root object for the evaluator.
 	 * @return	The chosen alternative type. If none of the alternatives evaluate to {@code true}, it returns the default alternative type.
 	 */
-	private static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
-			final Evaluator evaluator, final Object rootObject){
+	private Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
+			final Object rootObject){
 		Class<?> chosenAlternativeType = defaultAlternative;
 		for(int i = 0, length = alternatives.length; chosenAlternativeType == defaultAlternative && i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
@@ -200,21 +199,20 @@ final class CodecObject implements Codec{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @param behavior	The object behavior containing the alternative choices.
-	 * @param evaluator	The evaluator.
 	 * @param rootObject	Root object for the evaluator.
 	 * @return	The class type of the chosen alternative, or the default alternative type if no alternative was found.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	private static Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Evaluator evaluator,
-		final Object rootObject) throws CodecException{
+	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject)
+			throws CodecException{
 		final ObjectChoices objectChoices = behavior.selectFrom();
 		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
 		if(!CodecHelper.hasSelectAlternatives(alternatives))
 			return behavior.objectType();
 
-		addPrefixToContext(reader, objectChoices, evaluator);
+		addPrefixToContext(reader, objectChoices);
 
-		final Class<?> chosenAlternativeType = chooseAlternativeType(alternatives, behavior.selectDefault(), evaluator, rootObject);
+		final Class<?> chosenAlternativeType = chooseAlternativeType(alternatives, behavior.selectDefault(), rootObject);
 		if(chosenAlternativeType != void.class)
 			return chosenAlternativeType;
 
@@ -226,7 +224,7 @@ final class CodecObject implements Codec{
 	 *
 	 * @param reader	The reader from which to read the prefix.
 	 */
-	private static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
+	private void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices){
 		final byte prefixSize = objectChoices.prefixLength();
 		if(prefixSize > 0){
 			final BitSet bitmap = reader.readBitSet(prefixSize);
