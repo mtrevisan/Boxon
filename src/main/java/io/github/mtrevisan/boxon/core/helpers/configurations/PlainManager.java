@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -71,7 +71,7 @@ final class PlainManager implements ConfigurationManager{
 	@Override
 	public Object getDefaultValue(final Class<?> fieldType, final Version protocol) throws CodecException{
 		final String value = annotation.defaultValue();
-		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
+		final Class<? extends ConfigurationEnum<?>> enumeration = annotation.enumeration();
 		return ConfigurationHelper.convertValue(value, fieldType, enumeration);
 	}
 
@@ -138,17 +138,17 @@ final class PlainManager implements ConfigurationManager{
 	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
 			EncodeException{
 		if(dataValue != null){
-			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
+			final Class<? extends ConfigurationEnum<?>> enumeration = annotation.enumeration();
 			if(ConfigurationHelper.hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(field.getType(), dataValue, enumeration, dataKey);
 			else
-				dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
+				dataValue = DataType.getValueOrSelf(field.getType(), dataValue);
 		}
 		return dataValue;
 	}
 
 	private static Object extractEnumerationValue(final Class<?> fieldType, Object value,
-			final Class<? extends ConfigurationEnum> enumeration, final String dataKey) throws EncodeException{
+			final Class<? extends ConfigurationEnum<?>> enumeration, final String dataKey) throws EncodeException{
 		value = ConfigurationHelper.extractEnumerationValue(fieldType, value, enumeration);
 
 		validateEnumerationValue(fieldType, value, enumeration, dataKey);
@@ -157,7 +157,7 @@ final class PlainManager implements ConfigurationManager{
 	}
 
 	private static void validateEnumerationValue(final Class<?> fieldType, final Object dataValue,
-			final Class<? extends ConfigurationEnum> enumeration, final String dataKey) throws EncodeException{
+			final Class<? extends ConfigurationEnum<?>> enumeration, final String dataKey) throws EncodeException{
 		if(dataValue == null)
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {}[] for enumeration type",
 				dataKey, getFieldBaseType(fieldType), enumeration.getSimpleName());

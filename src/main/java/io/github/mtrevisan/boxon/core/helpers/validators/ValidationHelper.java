@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.validators;
 
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
@@ -71,7 +71,7 @@ final class ValidationHelper{
 
 	private static void validateNonEnumerationType(final Class<?> fieldType, final String defaultValue, final ConfigFieldData configData)
 			throws AnnotationException, CodecException{
-		if(ParserDataType.getValueOrSelf(fieldType, defaultValue) == null)
+		if(DataType.getValueOrSelf(fieldType, defaultValue) == null)
 			throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 				configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
 	}
@@ -84,7 +84,7 @@ final class ValidationHelper{
 	}
 
 	private static void validateObjectiveType(final Class<?> fieldType, final ConfigFieldData configData) throws AnnotationException{
-		if(ParserDataType.isPrimitive(fieldType))
+		if(DataType.isPrimitive(fieldType))
 			throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
 				configData.getAnnotationName(), fieldType.getSimpleName(), fieldType.getSimpleName());
 	}

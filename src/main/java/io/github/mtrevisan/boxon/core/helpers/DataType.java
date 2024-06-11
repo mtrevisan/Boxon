@@ -50,7 +50,7 @@ import java.util.function.Function;
  * Holds information about size in memory and primitive-objective types of each data type.
  */
 //FIXME refactor
-public enum ParserDataType{
+public enum DataType{
 
 	/** Represents the byte data type. */
 	BYTE(Byte.class),
@@ -87,13 +87,13 @@ public enum ParserDataType{
 	);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
 	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = JavaHelper.reverseMap(PRIMITIVE_WRAPPER_MAP);
-	private static final Map<Class<?>, ParserDataType> TYPE_MAP;
+	private static final Map<Class<?>, DataType> TYPE_MAP;
 	static{
-		final ParserDataType[] values = values();
+		final DataType[] values = values();
 		final int length = values.length;
 		TYPE_MAP = new HashMap<>(length << 1);
 		for(int i = 0; i < length; i ++){
-			final ParserDataType dt = values[i];
+			final DataType dt = values[i];
 
 			final Class<?> primitiveType = PRIMITIVE_WRAPPER_MAP.get(dt.objectiveType);
 			TYPE_MAP.put(primitiveType, dt);
@@ -156,12 +156,12 @@ public enum ParserDataType{
 	 * @param type	The type to be converted.
 	 * @return	The enumeration corresponding to the given type.
 	 */
-	public static ParserDataType fromType(final Class<?> type){
+	public static DataType fromType(final Class<?> type){
 		return TYPE_MAP.get(type);
 	}
 
 
-	ParserDataType(final Class<?> objectiveType){
+	DataType(final Class<?> objectiveType){
 		this.objectiveType = objectiveType;
 	}
 
@@ -305,7 +305,7 @@ public enum ParserDataType{
 		Object result = null;
 		final BigInteger value = JavaHelper.convertToBigInteger(text);
 		if(value != null){
-			final ParserDataType dataType = fromType(objectiveType);
+			final DataType dataType = fromType(objectiveType);
 			if(dataType != null && value.bitCount() <= size(dataType.objectiveType))
 				//convert value to `objectiveType` class
 				result = dataType.cast(value);
@@ -321,7 +321,7 @@ public enum ParserDataType{
 		else if(BigInteger.class.isAssignableFrom(objectiveType))
 			result = JavaHelper.convertToBigInteger(value);
 		else{
-			final ParserDataType dataType = fromType(objectiveType);
+			final DataType dataType = fromType(objectiveType);
 			if(dataType != null)
 				result = dataType.value(value);
 			else{
@@ -367,7 +367,7 @@ public enum ParserDataType{
 	 */
 	public static Number castValue(final BigInteger value, final Class<?> inputType){
 		if(inputType != null){
-			final ParserDataType pdt = fromType(inputType);
+			final DataType pdt = fromType(inputType);
 			if(pdt != null)
 				return pdt.cast(value);
 		}

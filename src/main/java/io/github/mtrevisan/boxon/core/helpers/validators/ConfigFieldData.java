@@ -43,7 +43,7 @@ final class ConfigFieldData{
 	private String maxValue;
 
 	private String pattern;
-	private Class<? extends ConfigurationEnum> enumeration;
+	private Class<? extends ConfigurationEnum<?>> enumeration;
 
 	private String defaultValue;
 
@@ -165,7 +165,7 @@ final class ConfigFieldData{
 	 *
 	 * @return	The enumeration for the configuration field.
 	 */
-	Class<? extends ConfigurationEnum> getEnumeration(){
+	Class<? extends ConfigurationEnum<?>> getEnumeration(){
 		return enumeration;
 	}
 
@@ -174,7 +174,7 @@ final class ConfigFieldData{
 	 *
 	 * @param enumeration	The enumeration.
 	 */
-	void setEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+	void setEnumeration(final Class<? extends ConfigurationEnum<?>> enumeration){
 		this.enumeration = enumeration;
 	}
 

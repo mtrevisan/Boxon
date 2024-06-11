@@ -118,7 +118,7 @@ public final class CodecHelper{
 	 * @throws AnnotationException	If the type is not a primitive type.
 	 */
 	public static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
-		if(ParserDataType.isPrimitive(type))
+		if(DataType.isPrimitive(type))
 			throw AnnotationException.createNotPrimitiveValue(type);
 
 		return new ArrayList<>(0);
@@ -282,7 +282,7 @@ public final class CodecHelper{
 	 * @throws CodecException	If an error occurs during the interpretation.
 	 */
 	public static Object interpretValue(Object value, final Class<?> fieldType) throws CodecException{
-		value = ParserDataType.getValueOrSelf(fieldType, value);
+		value = DataType.getValueOrSelf(fieldType, value);
 		if(value != null){
 			if(value instanceof final ConfigurationEnum<?> v)
 				value = v.getCode();

@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -68,11 +68,11 @@ public final class ConfigurationHelper{
 	}
 
 
-	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)
+	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum<?>> enumeration)
 			throws CodecException{
 		return (hasEnumeration(enumeration)
 			? extractEnumerationValue(fieldType, value, enumeration)
-			: ParserDataType.getValueOrSelf(fieldType, value)
+			: DataType.getValueOrSelf(fieldType, value)
 		);
 	}
 
@@ -82,11 +82,11 @@ public final class ConfigurationHelper{
 	 * @param enumeration	The class to check.
 	 * @return	Whether the given class is a true enumeration.
 	 */
-	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+	static boolean hasEnumeration(final Class<? extends ConfigurationEnum<?>> enumeration){
 		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
-	static Object extractEnumerationValue(final Class<?> fieldType, Object value, final Class<? extends ConfigurationEnum> enumerationClass){
+	static Object extractEnumerationValue(final Class<?> fieldType, Object value, final Class<? extends ConfigurationEnum<?>> enumerationClass){
 		if(value instanceof final String v)
 			value = (fieldType.isArray()
 				? extractEnumerationArrayValue(v, enumerationClass)
@@ -95,8 +95,8 @@ public final class ConfigurationHelper{
 		return value;
 	}
 
-	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum> enumerationClass){
-		final ConfigurationEnum[] enumConstants = enumerationClass.getEnumConstants();
+	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum<?>> enumerationClass){
+		final ConfigurationEnum<?>[] enumConstants = enumerationClass.getEnumConstants();
 		final String[] defaultValues = StringHelper.split(value, PIPE);
 		final int length = defaultValues.length;
 		final Object valEnum = Array.newInstance(enumerationClass, length);
@@ -105,8 +105,8 @@ public final class ConfigurationHelper{
 		return valEnum;
 	}
 
-	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum> enumerationClass){
-		final ConfigurationEnum[] enumConstants = enumerationClass.getEnumConstants();
+	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum<?>> enumerationClass){
+		final ConfigurationEnum<?>[] enumConstants = enumerationClass.getEnumConstants();
 		return ConfigurationEnum.extractEnum(enumConstants, value);
 	}
 
@@ -131,10 +131,10 @@ public final class ConfigurationHelper{
 	}
 
 
-	static void extractEnumeration(final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration,
+	static void extractEnumeration(final Class<?> fieldType, final Class<? extends ConfigurationEnum<?>> enumeration,
 			final Map<String, Object> map) throws ConfigurationException{
 		if(enumeration != NullEnum.class){
-			final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
+			final ConfigurationEnum<?>[] enumConstants = enumeration.getEnumConstants();
 			final int length = enumConstants.length;
 			final String[] enumValues = new String[length];
 			for(int i = 0; i < length; i ++)

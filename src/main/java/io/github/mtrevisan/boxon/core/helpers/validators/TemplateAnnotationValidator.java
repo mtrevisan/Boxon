@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
@@ -88,7 +88,7 @@ public enum TemplateAnnotationValidator implements AnnotationValidator{
 			if(type == Object.class)
 				throw AnnotationException.create("Field `type` in {} must not be `Object.class`",
 					BindObject.class.getSimpleName());
-			if(ParserDataType.isPrimitive(type))
+			if(DataType.isPrimitive(type))
 				throw AnnotationException.create("Wrong annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
 

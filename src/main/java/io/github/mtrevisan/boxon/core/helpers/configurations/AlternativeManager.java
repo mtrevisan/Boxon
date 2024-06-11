@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -72,7 +72,7 @@ final class AlternativeManager implements ConfigurationManager{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
-			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
+			final Class<? extends ConfigurationEnum<?>> enumeration = annotation.enumeration();
 			return ConfigurationHelper.convertValue(value, fieldType, enumeration);
 		}
 		return JavaHelper.EMPTY_STRING;
@@ -232,7 +232,7 @@ final class AlternativeManager implements ConfigurationManager{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			dataValue = ParserDataType.getValueOrSelf(field.getType(), dataValue);
+			dataValue = DataType.getValueOrSelf(field.getType(), dataValue);
 
 			final Version minProtocolVersion = VersionBuilder.of(fieldBinding.minProtocol());
 			final Version maxProtocolVersion = VersionBuilder.of(fieldBinding.maxProtocol());

@@ -51,30 +51,30 @@ final class EnumerationValidator{
 			return;
 
 		//enumeration can be encoded
-		final Class<? extends ConfigurationEnum> enumeration = configData.getEnumeration();
+		final Class<? extends ConfigurationEnum<?>> enumeration = configData.getEnumeration();
 		validateEnumeration(enumeration, configData);
 
 		//non-empty enumeration
-		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
+		final ConfigurationEnum<?>[] enumConstants = enumeration.getEnumConstants();
 		validateEnumerationEmptiness(enumConstants, configData);
 
 		validateEnumerationValues(enumConstants, configData);
 	}
 
-	private static void validateEnumeration(final Class<? extends ConfigurationEnum> enumeration, final ConfigFieldData configData)
+	private static void validateEnumeration(final Class<? extends ConfigurationEnum<?>> enumeration, final ConfigFieldData configData)
 			throws AnnotationException{
 		if(!ConfigurationEnum.class.isAssignableFrom(enumeration))
 			throw AnnotationException.create("Enumeration must implement interface {} in {} in field {}",
 				ConfigurationEnum.class.getSimpleName(), configData.getAnnotationName(), configData.getFieldName());
 	}
 
-	private static void validateEnumerationEmptiness(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
+	private static void validateEnumerationEmptiness(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
 		if(enumConstants.length == 0)
 			throw AnnotationException.create("Empty enum in {} in field {}", configData.getAnnotationName(), configData.getFieldName());
 	}
 
-	private static void validateEnumerationValues(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
+	private static void validateEnumerationValues(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
 		final Class<?> fieldType = configData.getFieldType();
 		if(fieldType.isArray())
@@ -83,7 +83,7 @@ final class EnumerationValidator{
 			validateEnumerationMutuallyExclusive(enumConstants, configData);
 	}
 
-	private static void validateEnumerationMultipleValues(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
+	private static void validateEnumerationMultipleValues(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
 		//enumeration compatible with variable type
 		final Class<?> fieldType = configData.getFieldType();
@@ -93,7 +93,7 @@ final class EnumerationValidator{
 		validateEnumerationCompatibility(enumConstants, configData);
 	}
 
-	private static void validateEnumerationCompatibility(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
+	private static void validateEnumerationCompatibility(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
 		final String[] defaultValues = StringHelper.split(configData.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
 		for(int i = 0, length = defaultValues.length; i < length; i ++){
@@ -104,13 +104,13 @@ final class EnumerationValidator{
 		}
 	}
 
-	private static void validateDefaultValueCompatibilityWithEnumeration(final ConfigurationEnum[] enumConstants,
+	private static void validateDefaultValueCompatibilityWithEnumeration(final ConfigurationEnum<?>[] enumConstants,
 			final ConfigurationEnum<?> enumValue, final String defaultValue, final ConfigFieldData configData) throws AnnotationException{
 		if(enumValue == null)
 			throw AnnotationException.createDefaultValueAsEnumeration(configData.getAnnotationName(), defaultValue, enumConstants);
 	}
 
-	private static void validateEnumerationMutuallyExclusive(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
+	private static void validateEnumerationMutuallyExclusive(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
 		//enumeration compatible with variable type
 		final Class<?> fieldType = configData.getFieldType();
@@ -125,7 +125,7 @@ final class EnumerationValidator{
 				configData.getAnnotationName(), configData.getEnumeration().getSimpleName(), fieldType.toString());
 	}
 
-	private static void validateFieldValueCompatibility(final ConfigurationEnum[] enumConstants, final ConfigFieldData configData)
+	private static void validateFieldValueCompatibility(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
 		final String defaultValue = configData.getDefaultValue();
 		if(!StringHelper.isBlank(defaultValue) && ConfigurationEnum.extractEnum(enumConstants, defaultValue) == null)

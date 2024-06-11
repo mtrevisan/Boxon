@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Evaluator;
@@ -112,9 +112,9 @@ public abstract class CommonBehavior{
 	//convert value type into converter/validator input type
 	private static Object convertValueType(final Annotation collectionBinding, final Class<? extends Converter<?, ?>> converterType,
 			final Class<? extends Validator<?>> validator, Object instance){
-		Class<?> inputType = ParserDataType.resolveInputType(converterType, validator);
+		Class<?> inputType = DataType.resolveInputType(converterType, validator);
 		if(collectionBinding == null)
-			instance = ParserDataType.castValue((BigInteger)instance, inputType);
+			instance = DataType.castValue((BigInteger)instance, inputType);
 		else if(collectionBinding instanceof BindAsArray && inputType != null){
 			inputType = inputType.getComponentType();
 			if(inputType != instance.getClass().getComponentType())
@@ -128,7 +128,7 @@ public abstract class CommonBehavior{
 		final Object array = CodecHelper.createArray(elementType, length);
 		for(int i = 0; i < length; i ++){
 			Object element = Array.get(data, i);
-			element = ParserDataType.castValue((BigInteger)element, elementType);
+			element = DataType.castValue((BigInteger)element, elementType);
 			Array.set(array, i, element);
 		}
 		return array;

@@ -92,7 +92,7 @@ public @interface AlternativeConfigurationField{
 	 *
 	 * @return	The enumeration that represents the finite possible values for this field.
 	 */
-	Class<? extends ConfigurationEnum> enumeration() default NullEnum.class;
+	Class<? extends ConfigurationEnum<?>> enumeration() default NullEnum.class;
 
 
 	/**

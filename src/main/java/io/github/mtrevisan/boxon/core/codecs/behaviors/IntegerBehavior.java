@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
@@ -63,7 +63,7 @@ public final class IntegerBehavior extends BitSetBehavior{
 
 	@Override
 	public void writeValue(final BitWriterInterface writer, final Object value){
-		final BigInteger v = ParserDataType.reinterpretToBigInteger((Number)value);
+		final BigInteger v = DataType.reinterpretToBigInteger((Number)value);
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
 		writer.writeBitSet(bitmap, size);

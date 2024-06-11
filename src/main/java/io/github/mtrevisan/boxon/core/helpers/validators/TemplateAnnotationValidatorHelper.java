@@ -29,8 +29,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
-import io.github.mtrevisan.boxon.core.helpers.ParserDataType;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
@@ -103,8 +103,8 @@ final class TemplateAnnotationValidatorHelper{
 	}
 
 	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
-		final Class<?> checkTypeObjective = ParserDataType.toObjectiveTypeOrSelf(checkType);
-		final Class<?> baseTypeObjective = ParserDataType.toObjectiveTypeOrSelf(baseType);
+		final Class<?> checkTypeObjective = DataType.toObjectiveTypeOrSelf(checkType);
+		final Class<?> baseTypeObjective = DataType.toObjectiveTypeOrSelf(baseType);
 		return (checkTypeObjective.isAssignableFrom(baseTypeObjective)
 			|| Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
 	}

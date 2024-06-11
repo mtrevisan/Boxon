@@ -105,7 +105,7 @@ public final class AnnotationException extends BoxonException{
 	 * @return	An instance of this exception.
 	 */
 	public static AnnotationException createDefaultValueAsEnumeration(final String annotationName, final String defaultValue,
-			final ConfigurationEnum[] enumConstants){
+			final ConfigurationEnum<?>[] enumConstants){
 		return create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 			annotationName, defaultValue, Arrays.toString(enumConstants));
 	}
