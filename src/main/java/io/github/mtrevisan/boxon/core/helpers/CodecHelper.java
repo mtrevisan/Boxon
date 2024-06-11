@@ -298,11 +298,11 @@ public final class CodecHelper{
 			final ConfigurationEnum<?> element = (ConfigurationEnum<?>)Array.get(value, i);
 
 			final Object code = element.getCode();
-			if(!(code instanceof Number))
+			if(!(code instanceof final Number codeNumber))
 				throw DataException.create("Cannot calculate composite value of enum with code type {}",
 					JavaHelper.prettyPrintClassName(code.getClass()));
 
-			compositeEnumValue |= ((Number)code).longValue();
+			compositeEnumValue |= codeNumber.longValue();
 		}
 		return compositeEnumValue;
 	}

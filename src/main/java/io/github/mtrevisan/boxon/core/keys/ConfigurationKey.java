@@ -35,8 +35,6 @@ public enum ConfigurationKey{
 	FIELDS("fields"),
 	/** Represents the protocol version boundaries constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
-	/** Represents the composite fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
-	COMPOSITE_FIELDS("fields"),
 
 	/** Represents the alternatives constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	ALTERNATIVES("alternatives"),
