@@ -102,7 +102,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 		return fill(pattern, preprocessedPattern);
 	}
 
-	private static int[] createPreProcessedPatternArray(){
+	private static int[] createPreProcessedPatternArray() throws OutOfMemoryError{
 		return new int[Integer.SIZE << 3];
 	}
 

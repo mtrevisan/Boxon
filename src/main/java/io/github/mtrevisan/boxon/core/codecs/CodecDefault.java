@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.core.codecs.behaviors.CommonBehavior;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.IntegerBehavior;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
@@ -71,6 +72,9 @@ final class CodecDefault implements Codec{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
 		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
+		if(behavior == null)
+			throw AnnotationException.create("Cannot handle this type of annotation: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(annotation.getClass()));
 
 		Object instance = null;
 		if(collectionBinding == null)
@@ -100,6 +104,9 @@ final class CodecDefault implements Codec{
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
 		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
+		if(behavior == null)
+			throw AnnotationException.create("Cannot handle this type of annotation: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(annotation.getClass()));
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);

@@ -127,9 +127,9 @@ public enum DataType{
 	);
 	private static final Map<Class<?>, BiFunction<BitReaderInterface, ByteOrder, Object>> READER_STRATEGIES = Map.of(
 		Byte.class, (reader, byteOrder) -> reader.readByte(),
-		Short.class, (reader, byteOrder) -> reader.readShort(byteOrder),
-		Integer.class, (reader, byteOrder) -> reader.readInt(byteOrder),
-		Long.class, (reader, byteOrder) -> reader.readLong(byteOrder),
+		Short.class, BitReaderInterface::readShort,
+		Integer.class, BitReaderInterface::readInt,
+		Long.class, BitReaderInterface::readLong,
 		Float.class, (reader, byteOrder) -> Float.intBitsToFloat(reader.readInt(byteOrder)),
 		Double.class, (reader, byteOrder) -> Double.longBitsToDouble(reader.readLong(byteOrder))
 	);
