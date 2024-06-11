@@ -53,22 +53,22 @@ import java.util.function.Function;
 public enum ParserDataType{
 
 	/** Represents the byte data type. */
-	BYTE(Byte.TYPE, Byte.class),
+	BYTE(Byte.class),
 
 	/** Represents the short data type. */
-	SHORT(Short.TYPE, Short.class),
+	SHORT(Short.class),
 
 	/** Represents the int/integer data type. */
-	INTEGER(Integer.TYPE, Integer.class),
+	INTEGER(Integer.class),
 
 	/** Represents the long data type. */
-	LONG(Long.TYPE, Long.class),
+	LONG(Long.class),
 
 	/** Represents the float data type. */
-	FLOAT(Float.TYPE, Float.class),
+	FLOAT(Float.class),
 
 	/** Represents the double data type. */
-	DOUBLE(Double.TYPE, Double.class);
+	DOUBLE(Double.class);
 
 
 	@FunctionalInterface
@@ -95,7 +95,8 @@ public enum ParserDataType{
 		for(int i = 0; i < length; i ++){
 			final ParserDataType dt = values[i];
 
-			TYPE_MAP.put(dt.primitiveType, dt);
+			final Class<?> primitiveType = PRIMITIVE_WRAPPER_MAP.get(dt.objectiveType);
+			TYPE_MAP.put(primitiveType, dt);
 			TYPE_MAP.put(dt.objectiveType, dt);
 		}
 	}
@@ -146,7 +147,6 @@ public enum ParserDataType{
 		int.class.getSimpleName(), long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 
 
-	private final Class<?> primitiveType;
 	private final Class<?> objectiveType;
 
 
@@ -161,8 +161,7 @@ public enum ParserDataType{
 	}
 
 
-	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType){
-		this.primitiveType = primitiveType;
+	ParserDataType(final Class<?> objectiveType){
 		this.objectiveType = objectiveType;
 	}
 
