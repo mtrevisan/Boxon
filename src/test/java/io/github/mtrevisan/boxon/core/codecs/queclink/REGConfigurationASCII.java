@@ -82,12 +82,12 @@ public class REGConfigurationASCII{
 	)
 	private DownloadProtocol downloadProtocol;
 	@CompositeConfigurationField(
+		shortDescription = "Download URL",
 		value = {
 			@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
 			@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
 			@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 		},
-		shortDescription = "Download URL",
 		composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
 		pattern = ".{0,100}",
 		terminator = ","
