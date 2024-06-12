@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.codecs.behaviors.BehaviorBuilder;
@@ -83,15 +84,17 @@ final class CodecDefault implements Codec{
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
+		else if(collectionBinding instanceof BindAsList)
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@BindAsArray` instead",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
+		else
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 
 		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
-		final Object convertedValue;
-		if(behavior instanceof IntegerBehavior){
-			final Object convertedValueType = behavior.convertValueType(instance, chosenConverter, collectionBinding);
-			convertedValue = CodecHelper.converterDecode(chosenConverter, convertedValueType);
-		}
-		else
-			convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
+		if(behavior instanceof IntegerBehavior)
+			instance = behavior.convertValueType(instance, chosenConverter, collectionBinding);
+		final Object convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
 
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(convertedValue, validator);
@@ -122,6 +125,12 @@ final class CodecDefault implements Codec{
 
 			behavior.writeArrayWithoutAlternatives(writer, convertedValue);
 		}
+		else if(collectionBinding instanceof BindAsList)
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@BindAsArray` instead",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
+		else
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 	}
 
 }

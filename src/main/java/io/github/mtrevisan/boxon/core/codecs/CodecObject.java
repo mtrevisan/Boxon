@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -34,10 +35,12 @@ import io.github.mtrevisan.boxon.core.codecs.behaviors.ObjectBehavior;
 import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
@@ -80,8 +83,11 @@ final class CodecObject implements Codec{
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
 			instance = decodeArray(reader, behavior, arraySize, rootObject);
 		}
-		else
+		else if(collectionBinding instanceof BindAsList)
 			instance = decodeList(reader, behavior, rootObject);
+		else
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 
 		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
 		final Object convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
@@ -281,11 +287,14 @@ final class CodecObject implements Codec{
 
 			encodeArray(writer, array, behavior, rootObject);
 		}
-		else{
+		else if(collectionBinding instanceof BindAsList){
 			final List<Object> list = CodecHelper.converterEncode(chosenConverter, value);
 
 			writeListWithAlternatives(writer, list, rootObject);
 		}
+		else
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 	}
 
 	private void encodeArray(final BitWriterInterface writer, final Object[] array, final ObjectBehavior behavior, final Object rootObject)
