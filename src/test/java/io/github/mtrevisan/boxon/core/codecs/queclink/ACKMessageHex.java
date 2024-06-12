@@ -46,7 +46,7 @@ import java.util.Map;
 @TemplateHeader(start = "+ACK", end = "\r\n")
 public final class ACKMessageHex{
 
-	public static final class MessageTypeConverter implements Converter<Byte, String>{
+	static final class MessageTypeConverter implements Converter<Byte, String>{
 		private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
 		static{
 			MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");

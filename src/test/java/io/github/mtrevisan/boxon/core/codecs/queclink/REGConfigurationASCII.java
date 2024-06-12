@@ -42,25 +42,18 @@ public class REGConfigurationASCII{
 
 	@ConfigurationField(shortDescription = "Header", defaultValue = "GTREG", terminator = "=")
 	private String messageHeader;
-
 	@ConfigurationField(shortDescription = "Password", pattern = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s", terminator = ",")
 	private String password;
-
 	@ConfigurationField(shortDescription = "Operation mode", minValue = "0", maxValue = "3", defaultValue = "0", terminator = ",")
 	private Integer operationMode;
-
 	@ConfigurationField(shortDescription = "Random field", defaultValue = "27", terminator = ",")
 	private BigInteger randomField;
-
 	@ConfigurationField(shortDescription = "Decimal field", defaultValue = "3.1415928f", terminator = ",")
 	private float decimalField;
-
 	@ConfigurationField(shortDescription = "Update Over-The-Air", enumeration = BooleanType.class, defaultValue = "FALSE", terminator = ",")
 	private BooleanType updateOverTheAir;
-
 	@ConfigurationField(shortDescription = "Update mode", minValue = "0", maxValue = "1", defaultValue = "1", terminator = ",")
 	private int updateMode;
-
 	@AlternativeConfigurationField(
 		shortDescription = "Maximum download retry count",
 		value = {
@@ -70,7 +63,6 @@ public class REGConfigurationASCII{
 		terminator = ","
 	)
 	private int maxDownloadRetryCount;
-
 	@AlternativeConfigurationField(
 		shortDescription = "Download timeout", unitOfMeasure = "min",
 		value = {
@@ -80,7 +72,6 @@ public class REGConfigurationASCII{
 		terminator = ","
 	)
 	private int downloadTimeout;
-
 	@AlternativeConfigurationField(
 		shortDescription = "Download protocol", enumeration = DownloadProtocol.class,
 		value = {
@@ -90,7 +81,6 @@ public class REGConfigurationASCII{
 		terminator = ","
 	)
 	private DownloadProtocol downloadProtocol;
-
 	@CompositeConfigurationField(
 		value = {
 			@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
@@ -103,13 +93,11 @@ public class REGConfigurationASCII{
 		terminator = ","
 	)
 	private String downloadURL;
-
 	@ConfigurationSkip(maxProtocol = "1.18", terminator = ",")
 	@ConfigurationField(shortDescription = "Motion report interval", minProtocol = "1.19", maxProtocol = "1.20",
 		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s", terminator = ",")
 	private int motionReportInterval;
 	@ConfigurationSkip(minProtocol = "1.21", terminator = ",")
-
 	@ConfigurationSkip(maxProtocol = "1.18", terminator = ",")
 	@ConfigurationField(shortDescription = "Motionless report interval", minProtocol = "1.19", maxProtocol = "1.20",
 		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s", terminator = ",")
@@ -117,11 +105,9 @@ public class REGConfigurationASCII{
 	@ConfigurationField(shortDescription = "Operation mode report interval", minProtocol = "1.21",
 		minValue = "3600", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s", terminator = ",")
 	private int operationModeReportInterval;
-
 	@ConfigurationField(shortDescription = "Weekday", enumeration = Weekday.class, radix = 16,
 		defaultValue = "MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY", terminator = ",")
 	private Weekday[] weekday;
-
 	@ConfigurationSkip(terminator = ",")
 	@ConfigurationField(shortDescription = "Message counter", pattern = "[0-9A-F]{4}")
 	private String messageCounter;

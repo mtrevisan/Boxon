@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.utils.TestHelper;
 
 public final class ACKMaskHex{
 
-	public static final class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
+	static final class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
 		@Override
 		public ACKMaskHex decode(final Byte value){
 			return new ACKMaskHex(value);
