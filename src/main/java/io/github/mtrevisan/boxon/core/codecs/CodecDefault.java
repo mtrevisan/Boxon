@@ -77,7 +77,7 @@ final class CodecDefault implements Codec{
 			throw AnnotationException.create("Cannot handle this type of annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(annotation.getClass()));
 
-		Object instance = null;
+		Object instance;
 		if(collectionBinding == null)
 			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
