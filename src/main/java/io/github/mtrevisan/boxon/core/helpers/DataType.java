@@ -57,7 +57,7 @@ public enum DataType{
 		Byte.TYPE,
 		Byte.SIZE,
 		Byte::valueOf,
-		BigInteger::byteValueExact,
+		BigInteger::byteValue,
 		(reader, byteOrder) -> reader.readByte(),
 		(writer, value, byteOrder) -> writer.writeByte((Byte)value)),
 
@@ -66,7 +66,7 @@ public enum DataType{
 		Short.TYPE,
 		Short.SIZE,
 		Short::valueOf,
-		BigInteger::shortValueExact,
+		BigInteger::shortValue,
 		BitReaderInterface::readShort,
 		(writer, value, byteOrder) -> writer.writeShort((Short)value, byteOrder)),
 
@@ -75,7 +75,7 @@ public enum DataType{
 		Integer.TYPE,
 		Integer.SIZE,
 		Integer::valueOf,
-		BigInteger::intValueExact,
+		BigInteger::intValue,
 		BitReaderInterface::readInt,
 		(writer, value, byteOrder) -> writer.writeInt((Integer)value, byteOrder)),
 
@@ -84,7 +84,7 @@ public enum DataType{
 		Long.TYPE,
 		Long.SIZE,
 		Long::valueOf,
-		BigInteger::longValueExact,
+		BigInteger::longValue,
 		BitReaderInterface::readLong,
 		(writer, value, byteOrder) -> writer.writeLong((Long)value, byteOrder)),
 
