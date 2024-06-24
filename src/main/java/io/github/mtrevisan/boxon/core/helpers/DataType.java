@@ -53,22 +53,58 @@ import java.util.function.Function;
 public enum DataType{
 
 	/** Represents the byte data type. */
-	BYTE(Byte.class),
+	BYTE(Byte.class,
+		Byte.TYPE,
+		Byte.SIZE,
+		Byte::valueOf,
+		BigInteger::byteValueExact,
+		(reader, byteOrder) -> reader.readByte(),
+		(writer, value, byteOrder) -> writer.writeByte((Byte)value)),
 
 	/** Represents the short data type. */
-	SHORT(Short.class),
+	SHORT(Short.class,
+		Short.TYPE,
+		Short.SIZE,
+		Short::valueOf,
+		BigInteger::shortValueExact,
+		BitReaderInterface::readShort,
+		(writer, value, byteOrder) -> writer.writeShort((Short)value, byteOrder)),
 
 	/** Represents the int/integer data type. */
-	INTEGER(Integer.class),
+	INTEGER(Integer.class,
+		Integer.TYPE,
+		Integer.SIZE,
+		Integer::valueOf,
+		BigInteger::intValueExact,
+		BitReaderInterface::readInt,
+		(writer, value, byteOrder) -> writer.writeInt((Integer)value, byteOrder)),
 
 	/** Represents the long data type. */
-	LONG(Long.class),
+	LONG(Long.class,
+		Long.TYPE,
+		Long.SIZE,
+		Long::valueOf,
+		BigInteger::longValueExact,
+		BitReaderInterface::readLong,
+		(writer, value, byteOrder) -> writer.writeLong((Long)value, byteOrder)),
 
 	/** Represents the float data type. */
-	FLOAT(Float.class),
+	FLOAT(Float.class,
+		Float.TYPE,
+		Float.SIZE,
+		Float::valueOf,
+		BigInteger::floatValue,
+		(reader, byteOrder) -> Float.intBitsToFloat(reader.readInt(byteOrder)),
+		(writer, rawValue, byteOrder) -> writer.writeInt(Float.floatToIntBits((Float)rawValue), byteOrder)),
 
 	/** Represents the double data type. */
-	DOUBLE(Double.class);
+	DOUBLE(Double.class,
+		Double.TYPE,
+		Double.SIZE,
+		Double::valueOf,
+		BigInteger::doubleValue,
+		(reader, byteOrder) -> Double.longBitsToDouble(reader.readLong(byteOrder)),
+		(writer, rawValue, byteOrder) -> writer.writeLong(Double.doubleToLongBits((Double)rawValue), byteOrder));
 
 
 	@FunctionalInterface
@@ -76,71 +112,16 @@ public enum DataType{
 		void accept(S s, T t, U u);
 	}
 
-	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
-	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = Map.of(
-		Byte.class, Byte.TYPE,
-		Short.class, Short.TYPE,
-		Integer.class, Integer.TYPE,
-		Long.class, Long.TYPE,
-		Float.class, Float.TYPE,
-		Double.class, Double.TYPE
-	);
-	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
-	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = JavaHelper.reverseMap(PRIMITIVE_WRAPPER_MAP);
 	private static final Map<Class<?>, DataType> TYPE_MAP;
 	static{
 		final DataType[] values = values();
 		final int length = values.length;
 		TYPE_MAP = new HashMap<>(length << 1);
-		for(int i = 0; i < length; i ++){
-			final DataType dt = values[i];
-
-			final Class<?> primitiveType = PRIMITIVE_WRAPPER_MAP.get(dt.objectiveType);
-			TYPE_MAP.put(primitiveType, dt);
+		for(final DataType dt : values){
+			TYPE_MAP.put(dt.primitiveWrapperType, dt);
 			TYPE_MAP.put(dt.objectiveType, dt);
 		}
 	}
-	//the number of bits used to represent the value
-	private static final Map<Class<?>, Integer> PRIMITIVE_SIZE_MAP = Map.of(
-		Byte.class, Byte.SIZE,
-		Short.class, Short.SIZE,
-		Integer.class, Integer.SIZE,
-		Long.class, Long.SIZE,
-		Float.class, Float.SIZE,
-		Double.class, Double.SIZE
-	);
-	private static final Map<Class<?>, Function<String, Object>> VALUE_STRATEGIES = Map.of(
-		Byte.class, Byte::valueOf,
-		Short.class, Short::valueOf,
-		Integer.class, Integer::valueOf,
-		Long.class, Long::valueOf,
-		Float.class, Float::valueOf,
-		Double.class, Double::valueOf
-	);
-	private static final Map<Class<?>, Function<BigInteger, Number>> CAST_STRATEGIES = Map.of(
-		Byte.class, BigInteger::byteValue,
-		Short.class, BigInteger::shortValue,
-		Integer.class, BigInteger::intValue,
-		Long.class, BigInteger::longValue,
-		Float.class, BigInteger::floatValue,
-		Double.class, BigInteger::doubleValue
-	);
-	private static final Map<Class<?>, BiFunction<BitReaderInterface, ByteOrder, Object>> READER_STRATEGIES = Map.of(
-		Byte.class, (reader, byteOrder) -> reader.readByte(),
-		Short.class, BitReaderInterface::readShort,
-		Integer.class, BitReaderInterface::readInt,
-		Long.class, BitReaderInterface::readLong,
-		Float.class, (reader, byteOrder) -> Float.intBitsToFloat(reader.readInt(byteOrder)),
-		Double.class, (reader, byteOrder) -> Double.longBitsToDouble(reader.readLong(byteOrder))
-	);
-	private static final Map<Class<?>, TriConsumer<BitWriterInterface, Object, ByteOrder>> WRITER_STRATEGIES = Map.of(
-		Byte.class, (writer, value, byteOrder) -> writer.writeByte((Byte)value),
-		Short.class, (writer, value, byteOrder) -> writer.writeShort((Short)value, byteOrder),
-		Integer.class, (writer, value, byteOrder) -> writer.writeInt((Integer)value, byteOrder),
-		Long.class, (writer, value, byteOrder) -> writer.writeLong((Long)value, byteOrder),
-		Float.class, (writer, rawValue, byteOrder) -> writer.writeInt(Float.floatToIntBits((Float)rawValue), byteOrder),
-		Double.class, (writer, rawValue, byteOrder) -> writer.writeLong(Double.doubleToLongBits((Double)rawValue), byteOrder)
-	);
 
 	private static final String METHOD_VALUE_OF = "valueOf";
 	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
@@ -148,6 +129,13 @@ public enum DataType{
 
 
 	private final Class<?> objectiveType;
+	private final Class<?> primitiveWrapperType;
+	//the number of bits used to represent the value
+	private final int primitiveSize;
+	private final Function<String, Object> valueStrategy;
+	private final Function<BigInteger, Number> castStrategy;
+	private final BiFunction<BitReaderInterface, ByteOrder, Object> readStrategy;
+	private final TriConsumer<BitWriterInterface, Object, ByteOrder> writeStrategy;
 
 
 	/**
@@ -161,8 +149,17 @@ public enum DataType{
 	}
 
 
-	DataType(final Class<?> objectiveType){
+	DataType(final Class<?> objectiveType, final Class<?> primitiveWrapperType, final int primitiveSize,
+			final Function<String, Object> valueStrategy, final Function<BigInteger, Number> castStrategy,
+			final BiFunction<BitReaderInterface, ByteOrder, Object> readStrategy,
+			final TriConsumer<BitWriterInterface, Object, ByteOrder> writeStrategy){
 		this.objectiveType = objectiveType;
+		this.primitiveWrapperType = primitiveWrapperType;
+		this.primitiveSize = primitiveSize;
+		this.valueStrategy = valueStrategy;
+		this.castStrategy = castStrategy;
+		this.readStrategy = readStrategy;
+		this.writeStrategy = writeStrategy;
 	}
 
 
@@ -173,7 +170,8 @@ public enum DataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
-		return WRAPPER_PRIMITIVE_MAP.getOrDefault(primitiveType, primitiveType);
+		final DataType dataType = fromType(primitiveType);
+		return (dataType != null? dataType.objectiveType: primitiveType);
 	}
 
 	/**
@@ -183,7 +181,8 @@ public enum DataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
-		return PRIMITIVE_WRAPPER_MAP.getOrDefault(objectiveType, objectiveType);
+		final DataType dataType = fromType(objectiveType);
+		return (dataType != null? dataType.primitiveWrapperType: objectiveType);
 	}
 
 	/**
@@ -209,7 +208,7 @@ public enum DataType{
 	}
 
 	private static boolean isPrimitiveWrapper(final Class<?> type){
-		return PRIMITIVE_WRAPPER_MAP.containsKey(type);
+		return (fromType(type) != null);
 	}
 
 	/**
@@ -222,6 +221,10 @@ public enum DataType{
 	}
 
 
+	private int size(){
+		return primitiveSize;
+	}
+
 	/**
 	 * Retrieves the computed value based on the objective type.
 	 *
@@ -229,12 +232,7 @@ public enum DataType{
 	 * @return	The computed value based on the objective type.
 	 */
 	private Object value(final String value){
-		return VALUE_STRATEGIES.get(objectiveType)
-			.apply(value);
-	}
-
-	private static int size(final Class<?> objectiveType){
-		return PRIMITIVE_SIZE_MAP.get(objectiveType);
+		return valueStrategy.apply(value);
 	}
 
 	/**
@@ -244,8 +242,7 @@ public enum DataType{
 	 * @return	The cast `Number` object.
 	 */
 	private Number cast(final BigInteger value){
-		return CAST_STRATEGIES.get(objectiveType)
-			.apply(value);
+		return castStrategy.apply(value);
 	}
 
 	/**
@@ -256,8 +253,7 @@ public enum DataType{
 	 * @return	The read value.
 	 */
 	Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-		return READER_STRATEGIES.get(objectiveType)
-			.apply(reader, byteOrder);
+		return readStrategy.apply(reader, byteOrder);
 	}
 
 	/**
@@ -267,8 +263,7 @@ public enum DataType{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-		WRITER_STRATEGIES.get(objectiveType)
-			.accept(writer, value, byteOrder);
+		writeStrategy.accept(writer, value, byteOrder);
 	}
 
 
@@ -306,7 +301,7 @@ public enum DataType{
 		final BigInteger value = JavaHelper.convertToBigInteger(text);
 		if(value != null){
 			final DataType dataType = fromType(objectiveType);
-			if(dataType != null && value.bitCount() <= size(dataType.objectiveType))
+			if(dataType != null && value.bitCount() <= fromType(dataType.objectiveType).size())
 				//convert value to `objectiveType` class
 				result = dataType.cast(value);
 		}
