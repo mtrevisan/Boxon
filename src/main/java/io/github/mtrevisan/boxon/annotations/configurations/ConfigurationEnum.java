@@ -40,7 +40,7 @@ public interface ConfigurationEnum<T>{
 	/**
 	 * Name of the value.
 	 * <p>
-	 * NOTE: already implemented in an enum! Normally, it doesn't need to be extended.
+	 * NOTE: already implemented in an enum! Normally, it is not necessary to extend it.
 	 * </p>
 	 *
 	 * @return	The name of the value.

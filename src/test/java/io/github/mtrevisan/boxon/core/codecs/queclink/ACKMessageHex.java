@@ -38,7 +38,6 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ import java.util.Map;
 public final class ACKMessageHex{
 
 	static final class MessageTypeConverter implements Converter<Byte, String>{
-		private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
+		private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(44);
 		static{
 			MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
 			MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
@@ -95,7 +94,7 @@ public final class ACKMessageHex{
 			MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 		}
 
-		private static final Map<String, Byte> REVERSE_MESSAGE_TYPE_MAP = Collections.unmodifiableMap(JavaHelper.reverseMap(MESSAGE_TYPE_MAP));
+		private static final Map<String, Byte> REVERSE_MESSAGE_TYPE_MAP = JavaHelper.reverseMap(MESSAGE_TYPE_MAP);
 
 		@Override
 		public String decode(final Byte value){
