@@ -43,8 +43,8 @@ import java.util.Queue;
  */
 public final class GenericHelper{
 
-	private static final ParameterizedTypeAncestorHandler PARAMETERIZED_TYPE_ANCESTOR_HANDLER = new ParameterizedTypeAncestorHandler();
-	private static final ClassAncestorHandler CLASS_ANCESTOR_HANDLER = new ClassAncestorHandler();
+	private static final AncestorHandler PARAMETERIZED_TYPE_ANCESTOR_HANDLER = new ParameterizedTypeAncestorHandler();
+	private static final AncestorHandler CLASS_ANCESTOR_HANDLER = new ClassAncestorHandler();
 
 	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
@@ -205,6 +205,17 @@ public final class GenericHelper{
 			types.add(currentOffspring);
 	}
 
+
+	public static int countArrays(String typeName){
+		int count = 0;
+		final int arrayVariableSize = JavaHelper.ARRAY_VARIABLE.length();
+		while(typeName.endsWith(JavaHelper.ARRAY_VARIABLE)){
+			typeName = typeName.substring(0, typeName.length() - arrayVariableSize);
+
+			count ++;
+		}
+		return count;
+	}
 
 	/**
 	 * Adds arrays to the given type by specifying the number of dimensions.

@@ -26,20 +26,22 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -65,22 +67,16 @@ public final class Generator{
 	private Generator(){}
 
 
-	public Class<?> generateClass(final Map<String, Object> descriptor) throws ClassNotFoundException{
-		final String template = (String)descriptor.get(DescriberKey.TEMPLATE.toString());
-		final Map<String, Object> header = (Map<String, Object>)descriptor.get(DescriberKey.HEADER.toString());
-		final List<Map<String, Object>> fields = (List<Map<String, Object>>)descriptor.get(DescriberKey.FIELDS.toString());
-		final List<Map<String, Object>> evaluatedFields = (List<Map<String, Object>>)descriptor.get(
+	//TODO manage context
+	public Class<?> generateTemplate(final Map<String, Object> description) throws ClassNotFoundException{
+		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
+		final Map<String, Object> header = (Map<String, Object>)description.get(DescriberKey.HEADER.toString());
+		final List<Map<String, Object>> fields = (List<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
+		final List<Map<String, Object>> evaluatedFields = (List<Map<String, Object>>)description.get(
 			DescriberKey.EVALUATED_FIELDS.toString());
-		final List<Map<String, Object>> postProcessedFields = (List<Map<String, Object>>)descriptor.get(
+		final List<Map<String, Object>> postProcessedFields = (List<Map<String, Object>>)description.get(
 			DescriberKey.POST_PROCESSED_FIELDS.toString());
-		final Map<String, Map<String, Object>> postProcessedNavigableFields = new HashMap<>(postProcessedFields.size());
-		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
-			final Map<String, Object> postProcessedField = postProcessedFields.get(i);
-
-			final String name = (String)postProcessedField.get(DescriberKey.FIELD_NAME.toString());
-			final String fieldType = (String)postProcessedField.get(DescriberKey.FIELD_TYPE.toString());
-			postProcessedNavigableFields.put(name + KEY_SEPARATOR + fieldType, postProcessedField);
-		}
+		final Map<String, Map<String, Object>> postProcessedNavigableFields = extractPostProcessedNavigableFields(postProcessedFields);
 
 		final Annotation templateHeader = createAnnotation(TemplateHeader.class, header);
 
@@ -96,10 +92,42 @@ public final class Generator{
 		}
 	}
 
+	//TODO manage context, enumerations
+	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
+		final String configuration = (String)description.get(DescriberKey.CONFIGURATION.toString());
+		final Map<String, Object> header = (Map<String, Object>)description.get(DescriberKey.HEADER.toString());
+		final List<Map<String, Object>> fields = (List<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
+
+		final Annotation configurationHeader = createAnnotation(ConfigurationHeader.class, header);
+
+		final ByteBuddy byteBuddy = new ByteBuddy();
+		final DynamicType.Builder<Object> builder = byteBuddy.subclass(Object.class)
+			.name(configuration);
+		builder.annotateType(configurationHeader);
+		annotateFields(builder, fields, Collections.emptyMap());
+		try(final DynamicType.Unloaded<Object> make = builder.make()){
+			return make.load(getClass().getClassLoader())
+				.getLoaded();
+		}
+	}
+
+	private static Map<String, Map<String, Object>> extractPostProcessedNavigableFields(final List<Map<String, Object>> postProcessedFields){
+		final int length = JavaHelper.sizeOrZero(postProcessedFields);
+		final Map<String, Map<String, Object>> postProcessedNavigableFields = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
+			final Map<String, Object> postProcessedField = postProcessedFields.get(i);
+
+			final String name = (String)postProcessedField.get(DescriberKey.FIELD_NAME.toString());
+			final String fieldType = (String)postProcessedField.get(DescriberKey.FIELD_TYPE.toString());
+			postProcessedNavigableFields.put(name + KEY_SEPARATOR + fieldType, postProcessedField);
+		}
+		return postProcessedNavigableFields;
+	}
+
 	private static void annotateFields(final DynamicType.Builder<Object> builder, final List<Map<String, Object>> fields,
 			final Map<String, Map<String, Object>> postProcessedNavigableFields) throws ClassNotFoundException{
 		final List<Annotation> additionalAnnotations = new ArrayList<>(0);
-		for(int i = 0, length = fields.size(); i < length; i ++){
+		for(int i = 0, length = JavaHelper.sizeOrZero(fields); i < length; i ++){
 			final Map<String, Object> field = fields.get(i);
 
 			final String name = (String)field.get(DescriberKey.FIELD_NAME.toString());
@@ -110,8 +138,14 @@ public final class Generator{
 				additionalAnnotations.add(annotation);
 			}
 			else{
-				final String fieldType = (String)field.get(DescriberKey.FIELD_TYPE.toString());
-				final Class<?> type = DataType.toTypeOrSelf(fieldType);
+				String fieldType = (String)field.get(DescriberKey.FIELD_TYPE.toString());
+				final int arraysCount = GenericHelper.countArrays(fieldType);
+				if(arraysCount > 0)
+					fieldType = fieldType.substring(0, fieldType.length() - JavaHelper.ARRAY_VARIABLE.length() * arraysCount);
+				Class<?> type = DataType.toTypeOrSelf(fieldType);
+				if(arraysCount > 0)
+					type = GenericHelper.addArrayToType(type, arraysCount);
+
 				final String collectionFieldType = (String)field.get(DescriberKey.COLLECTION_TYPE.toString());
 				final Class<?> collectionType = (collectionFieldType != null
 					? DataType.toTypeOrSelf(collectionFieldType)
@@ -149,7 +183,7 @@ public final class Generator{
 
 	private static void annotateEvaluatedFields(final DynamicType.Builder<Object> builder, final List<Map<String, Object>> evaluatedFields)
 			throws ClassNotFoundException{
-		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
+		for(int i = 0, length = JavaHelper.sizeOrZero(evaluatedFields); i < length; i ++){
 			final Map<String, Object> field = evaluatedFields.get(i);
 
 			final String name = (String)field.get(DescriberKey.FIELD_NAME.toString());
@@ -165,7 +199,6 @@ public final class Generator{
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public static <A extends Annotation> A createAnnotation(final Class<A> annotationType, final Map<String, Object> values){
 		return (A)Proxy.newProxyInstance(
 			annotationType.getClassLoader(),
@@ -184,35 +217,36 @@ public final class Generator{
 		}
 
 		@Override
-		public Object invoke(final Object proxy, final Method method, final Object[] args){
+		public final Object invoke(final Object proxy, final Method method, final Object[] args){
 			final String methodName = method.getName();
 			Object value = (methodName.equals(DescriberKey.ANNOTATION_TYPE.toString())
 				? annotationType
 				: values.getOrDefault(methodName, method.getDefaultValue()));
 
-			final Class<?> returnType = method.getReturnType();
-			if(returnType.equals(Class.class)){
-				try{
-					return DataType.toTypeOrSelf((String)value);
+			try{
+				final Class<?> returnType = method.getReturnType();
+				if(returnType.equals(Class.class) && value instanceof final String v)
+					value = DataType.toTypeOrSelf(v);
+				else if(returnType.isArray() && value instanceof final List<?> subValues){
+					final int length = subValues.size();
+					if(length > 0){
+						final Object result = CodecHelper.createArray(returnType.getComponentType(), length);
+						for(int i = 0; i < length; i ++){
+							final Map<String, Object> subs = (Map<String, Object>)subValues.get(i);
+
+							final String subAnnotationType = (String)subs.get(DescriberKey.ANNOTATION_TYPE.toString());
+							Array.set(result, i, createAnnotation((Class<? extends Annotation>)Class.forName(subAnnotationType), subs));
+						}
+						value = result;
+					}
+					else
+						value = CodecHelper.createArray(returnType.getComponentType(), 0);
 				}
-				catch(final Exception ignored){}
+				else if(Annotation.class.isAssignableFrom(returnType) && value instanceof final Map<?, ?> subValues)
+					//manage ConverterChoices, ConverterChoice, ObjectChoices, ObjectChoice, ObjectChoicesList
+					value = createAnnotation((Class<? extends Annotation>)returnType, (Map<String, Object>)subValues);
 			}
-			else if(returnType.isArray() && value instanceof final List<?> subValues){
-				final int length = subValues.size();
-				if(length > 0){
-					//TODO
-					final Annotation[] result = new Annotation[length];
-					final Annotation subAnnotationType = (Annotation)GenericHelper.resolveGenericTypes(subValues.getClass(), Object.class);
-					for(int i = 0; i < length; i ++)
-						result[i] = createAnnotation(subAnnotationType.getClass(), (Map<String, Object>)subValues.get(i));
-					value = result;
-				}
-				else
-					value = CodecHelper.createArray(returnType.getComponentType(), 0);
-			}
-			else if(Annotation.class.isAssignableFrom(returnType) && value instanceof final Map<?, ?> subValues)
-				//manage ConverterChoices, ConverterChoice, ObjectChoices, ObjectChoice, ObjectChoicesList
-				value = createAnnotation((Class<? extends Annotation>)returnType, (Map<String, Object>)subValues);
+			catch(final Exception ignored){}
 			return value;
 		}
 	}

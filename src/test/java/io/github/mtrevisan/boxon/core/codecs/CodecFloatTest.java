@@ -27,10 +27,9 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -43,7 +42,8 @@ import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.Map;
 
 
 class CodecFloatTest{
@@ -52,52 +52,18 @@ class CodecFloatTest{
 	void floatPositiveLittleEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return IntegerToFloatConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "32",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", IntegerToFloatConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -117,52 +83,18 @@ class CodecFloatTest{
 	void floatNegativeLittleEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return IntegerToFloatConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "32",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", IntegerToFloatConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -182,52 +114,18 @@ class CodecFloatTest{
 	void floatPositiveBigEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		float encodedValue = TestHelper.RANDOM.nextFloat();
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return IntegerToFloatConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "32",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", IntegerToFloatConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -247,52 +145,18 @@ class CodecFloatTest{
 	void floatNegativeBigEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		float encodedValue = -TestHelper.RANDOM.nextFloat();
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return IntegerToFloatConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "32",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", IntegerToFloatConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());

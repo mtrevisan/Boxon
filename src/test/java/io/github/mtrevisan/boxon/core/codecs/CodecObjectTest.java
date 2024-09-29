@@ -33,13 +33,12 @@ import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Describer;
+import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
@@ -53,8 +52,8 @@ import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -68,102 +67,30 @@ class CodecObjectTest{
 	void object() throws BoxonException{
 		CodecObject codec = new CodecObject();
 		Version encodedValue = new Version((byte)1, (byte)2);
-		BindObject annotation = new BindObject(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindObject.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public Class<?> type(){
-				return Version.class;
-			}
-
-			@Override
-			public ObjectChoices selectFrom(){
-				return new ObjectChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ObjectChoices.class;
-					}
-
-					@Override
-					public byte prefixLength(){
-						return 0;
-					}
-
-					@Override
-					public ByteOrder byteOrder(){
-						return ByteOrder.BIG_ENDIAN;
-					}
-
-					@Override
-					public ObjectChoice[] alternatives(){
-						return new ObjectChoice[0];
-					}
-				};
-			}
-
-			@Override
-			public ObjectChoicesList selectFromList(){
-				return new ObjectChoicesList(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ObjectChoicesList.class;
-					}
-
-					@Override
-					public String charset(){
-						return StandardCharsets.UTF_8.name();
-					}
-
-					@Override
-					public byte terminator(){
-						return 0;
-					}
-
-					@Override
-					public ObjectChoices.ObjectChoice[] alternatives(){
-						return new ObjectChoices.ObjectChoice[0];
-					}
-				};
-			}
-
-			@Override
-			public Class<?> selectDefault(){
-				return void.class;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindObject.class.getName(),
+			"type", Version.class.getName(),
+			"selectFrom", Map.of(
+				"annotationType", ObjectChoices.class.getName(),
+				"prefixLength", 0,
+				"byteOrder", ByteOrder.BIG_ENDIAN,
+				"alternatives", Collections.emptyList()
+			),
+			"selectFromList", Map.of(
+				"annotationType", ObjectChoicesList.class.getName(),
+				"charset", StandardCharsets.UTF_8.name(),
+				"terminator", (byte)0,
+				"alternatives", Collections.emptyList()
+			),
+			"selectDefault", void.class.getName(),
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindObject annotation = Generator.createAnnotation(BindObject.class, annotationData);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();

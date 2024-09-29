@@ -31,12 +31,11 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
+import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
@@ -49,9 +48,10 @@ import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 class CodecListTest{
@@ -97,110 +97,35 @@ class CodecListTest{
 		List<Version> encodedValue = List.of(
 			new Version("2", "0", "1", "12"),
 			new Version("2", "1", "2", "0"));
-		BindObject annotation = new BindObject(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindObject.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public Class<?> type(){
-				return CodecListTest.Version.class;
-			}
-
-			@Override
-			public ObjectChoices selectFrom(){
-				return null;
-			}
-
-			@Override
-			public ObjectChoicesList selectFromList(){
-				return new ObjectChoicesList(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ObjectChoicesList.class;
-					}
-
-					@Override
-					public String charset(){
-						return StandardCharsets.US_ASCII.name();
-					}
-
-					@Override
-					public byte terminator(){
-						return ',';
-					}
-
-					@Override
-					public ObjectChoices.ObjectChoice[] alternatives(){
-						return new ObjectChoices.ObjectChoice[]{
-							new ObjectChoices.ObjectChoice(){
-								@Override
-								public Class<? extends Annotation> annotationType(){
-									return ObjectChoices.ObjectChoice.class;
-								}
-
-								@Override
-								public String condition(){
-									return "#prefix == '2'";
-								}
-
-								@Override
-								public String prefix(){
-									return "2";
-								}
-
-								@Override
-								public Class<?> type(){
-									return Version.class;
-								}
-							}
-						};
-					}
-				};
-			}
-
-			@Override
-			public Class<?> selectDefault(){
-				return void.class;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
-		BindAsList listAnnotation = new BindAsList(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindAsList.class;
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindObject.class.getName(),
+			"type", CodecListTest.Version.class.getName(),
+			"selectFromList", Map.of(
+				"annotationType", ObjectChoicesList.class.getName(),
+				"charset", StandardCharsets.US_ASCII.name(),
+				"terminator", (byte)',',
+				"alternatives", List.of(
+					Map.of(
+						"annotationType", ObjectChoices.ObjectChoice.class.getName(),
+						"condition", "#prefix == '2'",
+						"prefix", "2",
+						"type", Version.class.getName()
+					)
+				)
+			),
+			"selectDefault", void.class.getName(),
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindObject annotation = Generator.createAnnotation(BindObject.class, annotationData);
+		Map<String, Object> collectionAnnotationData = Map.of(
+			"annotationType", BindAsList.class.getName()
+		);
+		BindAsList collectionAnnotation = Generator.createAnnotation(BindAsList.class, collectionAnnotationData);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
@@ -208,13 +133,13 @@ class CodecListTest{
 		loaderCodec.loadDefaultCodecs();
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, listAnnotation, null, encodedValue);
+		codec.encode(writer, annotation, collectionAnnotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, listAnnotation, null);
+		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, collectionAnnotation, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());
 		Assertions.assertEquals(encodedValue.get(0).type, decoded.get(0).type);

@@ -52,8 +52,6 @@ final class PlainManager implements ConfigurationManager{
 
 	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
 
-	private static final String ARRAY_VARIABLE = "[]";
-
 
 	private final ConfigurationField annotation;
 
@@ -176,7 +174,7 @@ final class PlainManager implements ConfigurationManager{
 
 	private static String getFieldBaseType(final Class<?> fieldType){
 		return (fieldType.isArray()
-			? fieldType.getComponentType() + ARRAY_VARIABLE
+			? fieldType.getComponentType() + JavaHelper.ARRAY_VARIABLE
 			: fieldType.toString()
 		);
 	}

@@ -108,6 +108,7 @@ public enum DataType{
 		(writer, rawValue, byteOrder) -> writer.writeLong(Double.doubleToLongBits((Double)rawValue), byteOrder));
 
 
+	private static final String PRIMITIVE_VOID_NAME = "void";
 	private static final String PRIMITIVE_CHAR_NAME = "char";
 	private static final String PRIMITIVE_INTEGER_NAME = "int";
 	private static final String PRIMITIVE_BOOLEAN_NAME = "boolean";
@@ -124,13 +125,14 @@ public enum DataType{
 		final DataType[] values = values();
 		final int length = values.length;
 		TYPE_MAP = new HashMap<>(length << 1);
-		PRIMITIVE_TYPE_MAP = new HashMap<>(length + 3);
+		PRIMITIVE_TYPE_MAP = new HashMap<>(length + 4);
 		for(final DataType dt : values){
 			TYPE_MAP.put(dt.primitiveWrapperType, dt);
 			TYPE_MAP.put(dt.objectiveType, dt);
 
 			PRIMITIVE_TYPE_MAP.put(dt.objectiveType.getSimpleName().toLowerCase(Locale.ROOT), dt.primitiveWrapperType);
 		}
+		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_VOID_NAME, Void.TYPE);
 		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_BOOLEAN_NAME, Boolean.TYPE);
 		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_CHAR_NAME, Character.TYPE);
 		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_INTEGER_NAME, INTEGER.primitiveWrapperType);
@@ -391,24 +393,24 @@ public enum DataType{
 	 * Casts the given {@code value} to the specified {@code inputType}.
 	 *
 	 * @param value	The value to be cast.
-	 * @param inputType	The target data type to cast the value to.
+	 * @param targetType	The target data type to cast the value to.
 	 * @return	The cast value if successful, otherwise the original value.
 	 */
-	public static Number castValue(final BigInteger value, final Class<?> inputType){
-		if(inputType != null){
-			final DataType pdt = fromType(inputType);
+	public static Number castValue(final BigInteger value, final Class<?> targetType){
+		if(targetType != null){
+			final DataType pdt = fromType(targetType);
 			if(pdt != null)
 				return pdt.cast(value);
 		}
 		return value;
 	}
 
-	public static Object castValue(final BigInteger[] array, final Class<?> inputType){
+	public static Object castValue(final BigInteger[] array, final Class<?> targetType){
 		final int length = Array.getLength(array);
-		final Object convertedArray = Array.newInstance(inputType, length);
+		final Object convertedArray = Array.newInstance(targetType, length);
 		for(int i = 0; i < length; i ++){
 			Object element = Array.get(array, i);
-			element = castValue((BigInteger)element, inputType);
+			element = castValue((BigInteger)element, targetType);
 			Array.set(convertedArray, i, element);
 		}
 		return convertedArray;

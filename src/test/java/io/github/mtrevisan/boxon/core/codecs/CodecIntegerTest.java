@@ -27,10 +27,9 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
@@ -44,9 +43,10 @@ import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.Map;
 
 
 class CodecIntegerTest{
@@ -55,52 +55,18 @@ class CodecIntegerTest{
 	void smallLittleEndianSmall1() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "24",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -119,52 +85,18 @@ class CodecIntegerTest{
 	void smallLittleEndianSmall2() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "24",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -183,52 +115,18 @@ class CodecIntegerTest{
 	void smallLittleEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "24",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -248,52 +146,18 @@ class CodecIntegerTest{
 	void smallBigEndianSmall1() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "24",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -312,52 +176,18 @@ class CodecIntegerTest{
 	void smallBigEndianSmall2() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "24",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -376,52 +206,18 @@ class CodecIntegerTest{
 	void smallBigEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "24",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -441,52 +237,18 @@ class CodecIntegerTest{
 	void bigLittleEndianSmall() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "128",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -525,52 +287,18 @@ class CodecIntegerTest{
 	void bigLittleEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "128",
+			"byteOrder", ByteOrder.LITTLE_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -590,52 +318,18 @@ class CodecIntegerTest{
 	void bigBigEndianSmall() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "128",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -654,52 +348,18 @@ class CodecIntegerTest{
 	void bigBigEndian() throws BoxonException{
 		Codec codec = new CodecDefault();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "128",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", NullValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());

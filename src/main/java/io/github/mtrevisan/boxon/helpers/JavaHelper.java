@@ -47,7 +47,7 @@ public final class JavaHelper{
 	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
 
-	private static final String ARRAY_VARIABLE = "[]";
+	public static final String ARRAY_VARIABLE = "[]";
 	private static final Map<Character, String> DESCRIPTOR_MAP = Map.of(
 		'B', "byte",
 		'C', "char",

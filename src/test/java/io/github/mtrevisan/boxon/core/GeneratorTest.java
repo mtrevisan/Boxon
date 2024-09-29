@@ -26,9 +26,13 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
+import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,10 +51,56 @@ class GeneratorTest{
 			.create();
 		Describer describer = Describer.create(core);
 		List<Map<String, Object>> descriptions = describer.describeParsing();
-		Map<String, Object> description = descriptions.getFirst();
+		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
+		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
+		description.put(DescriberKey.TEMPLATE.toString(), template + "2");
 
 		Generator generator = Generator.create();
-		Class<?> dynamicType = generator.generateClass(description);
+		Class<?> dynamicType = generator.generateTemplate(description);
+
+		Assertions.assertNotNull(dynamicType);
+	}
+
+	@Test
+	void generateTemplate() throws Exception{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Core core = CoreBuilder.builder()
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withTemplate(ACKMessageASCII.class)
+			.create();
+		Describer describer = Describer.create(core);
+		List<Map<String, Object>> descriptions = describer.describeTemplate();
+		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
+		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
+		description.put(DescriberKey.TEMPLATE.toString(), template + "2");
+
+		Generator generator = Generator.create();
+		Class<?> dynamicType = generator.generateTemplate(description);
+
+		Assertions.assertNotNull(dynamicType);
+	}
+
+	@Test
+	void generateConfigurations() throws Exception{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Core core = CoreBuilder.builder()
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withConfiguration(REGConfigurationASCII.class)
+			.create();
+		Describer describer = Describer.create(core);
+		List<Map<String, Object>> descriptions = describer.describeConfiguration();
+		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
+		final String configuration = (String)description.get(DescriberKey.CONFIGURATION.toString());
+		description.put(DescriberKey.CONFIGURATION.toString(), configuration + "2");
+
+		Generator generator = Generator.create();
+		Class<?> dynamicType = generator.generateConfiguration(description);
 
 		Assertions.assertNotNull(dynamicType);
 	}
