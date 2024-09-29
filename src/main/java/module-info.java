@@ -62,6 +62,7 @@ module io.github.mtrevisan.boxon{
 	requires org.slf4j;
 	requires spring.core;
 	requires spring.expression;
+	requires net.bytebuddy;
 
 	opens io.github.mtrevisan.boxon.core.codecs to spring.core, spring.expression;
 

@@ -86,6 +86,10 @@
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
 		<freemarker.freemarker.version>2.3.33</freemarker.freemarker.version>
 
+		<!-- Code generator -->
+		<!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
+		<bytebuddy.version>1.15.3</bytebuddy.version>
+
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<slf4j.slf4j-api.version>2.0.16</slf4j.slf4j-api.version>
@@ -333,6 +337,13 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>${freemarker.freemarker.version}</version>
+		</dependency>
+
+		<!-- Code generator -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>${bytebuddy.version}</version>
 		</dependency>
 
 		<!-- Logging -->

@@ -41,6 +41,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -107,20 +108,32 @@ public enum DataType{
 		(writer, rawValue, byteOrder) -> writer.writeLong(Double.doubleToLongBits((Double)rawValue), byteOrder));
 
 
+	private static final String PRIMITIVE_CHAR_NAME = "char";
+	private static final String PRIMITIVE_INTEGER_NAME = "int";
+	private static final String PRIMITIVE_BOOLEAN_NAME = "boolean";
+
+
 	@FunctionalInterface
 	private interface TriConsumer<S, T, U>{
 		void accept(S s, T t, U u);
 	}
 
 	private static final Map<Class<?>, DataType> TYPE_MAP;
+	private static final Map<String, Class<?>> PRIMITIVE_TYPE_MAP;
 	static{
 		final DataType[] values = values();
 		final int length = values.length;
 		TYPE_MAP = new HashMap<>(length << 1);
+		PRIMITIVE_TYPE_MAP = new HashMap<>(length + 3);
 		for(final DataType dt : values){
 			TYPE_MAP.put(dt.primitiveWrapperType, dt);
 			TYPE_MAP.put(dt.objectiveType, dt);
+
+			PRIMITIVE_TYPE_MAP.put(dt.objectiveType.getSimpleName().toLowerCase(Locale.ROOT), dt.primitiveWrapperType);
 		}
+		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_BOOLEAN_NAME, Boolean.TYPE);
+		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_CHAR_NAME, Character.TYPE);
+		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_INTEGER_NAME, INTEGER.primitiveWrapperType);
 	}
 
 	private static final String METHOD_VALUE_OF = "valueOf";
@@ -162,6 +175,27 @@ public enum DataType{
 		this.writeStrategy = writeStrategy;
 	}
 
+
+	/**
+	 * Convert a type to an objective type, if applicable, otherwise returns the type itself.
+	 *
+	 * @param type	The type to be converted.
+	 * @return	The converted type;
+	 */
+	public static Class<?> toTypeOrSelf(final String type) throws ClassNotFoundException{
+		Class<?> cls;
+		try{
+			cls = Class.forName(type);
+			return toObjectiveTypeOrSelf(cls);
+		}
+		catch(final Exception ignored){
+			cls = PRIMITIVE_TYPE_MAP.get(type);
+		}
+
+		if(cls == null)
+			throw new ClassNotFoundException("Cannot find class for `" + type + "`");
+		return cls;
+	}
 
 	/**
 	 * Convert a type to an objective type, if applicable, otherwise returns the type itself.
