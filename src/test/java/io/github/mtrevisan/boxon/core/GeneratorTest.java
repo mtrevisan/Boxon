@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,8 @@ class GeneratorTest{
 			.withDefaultCodecs()
 			.withTemplate(dynamicType)
 			.create();
+		Map<String, Object> description2 = new HashMap<>(describer.describeParsing(dynamicType));
+		Assertions.assertEquals(PrettyPrintMap.toString(description), PrettyPrintMap.toString(description2));
 		Parser parser = Parser.create(core);
 		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,,,20270101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
