@@ -33,12 +33,15 @@ import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -52,6 +55,16 @@ import java.util.Map;
 public final class Generator{
 
 	private static final String KEY_SEPARATOR = "|";
+
+	private static final String PRIMITIVE_CLASS_NAME_BOOLEAN = "boolean";
+	private static final String PRIMITIVE_CLASS_NAME_BYTE = "byte";
+	private static final String PRIMITIVE_CLASS_NAME_CHAR = "char";
+	private static final String PRIMITIVE_CLASS_NAME_SHORT = "short";
+	private static final String PRIMITIVE_CLASS_NAME_INT = "int";
+	private static final String PRIMITIVE_CLASS_NAME_LONG = "long";
+	private static final String PRIMITIVE_CLASS_NAME_FLOAT = "float";
+	private static final String PRIMITIVE_CLASS_NAME_DOUBLE = "double";
+	private static final String CLASS_NAME_STRING = "java.lang.String";
 
 
 	/**
@@ -68,7 +81,8 @@ public final class Generator{
 
 
 	//TODO manage context
-	public Class<?> generateTemplate(final Map<String, Object> description) throws ClassNotFoundException{
+	public Class<?> generateTemplate(final Map<String, Object> description) throws ClassNotFoundException, InvocationTargetException,
+			IllegalAccessException{
 		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
 		final Map<String, Object> header = (Map<String, Object>)description.get(DescriberKey.HEADER.toString());
 		final List<Map<String, Object>> fields = (List<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
@@ -83,17 +97,18 @@ public final class Generator{
 		final ByteBuddy byteBuddy = new ByteBuddy();
 		final DynamicType.Builder<Object> builder = byteBuddy.subclass(Object.class)
 			.name(template);
-		builder.annotateType(templateHeader);
+		builder.annotateType(convertAnnotationToDescription(templateHeader));
 		annotateFields(builder, fields, postProcessedNavigableFields);
 		annotateEvaluatedFields(builder, evaluatedFields);
 		try(final DynamicType.Unloaded<Object> make = builder.make()){
-			return make.load(getClass().getClassLoader())
+			return make.load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
 				.getLoaded();
 		}
 	}
 
 	//TODO manage context, enumerations
-	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
+	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException, InvocationTargetException,
+			IllegalAccessException{
 		final String configuration = (String)description.get(DescriberKey.CONFIGURATION.toString());
 		final Map<String, Object> header = (Map<String, Object>)description.get(DescriberKey.HEADER.toString());
 		final List<Map<String, Object>> fields = (List<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
@@ -103,10 +118,10 @@ public final class Generator{
 		final ByteBuddy byteBuddy = new ByteBuddy();
 		final DynamicType.Builder<Object> builder = byteBuddy.subclass(Object.class)
 			.name(configuration);
-		builder.annotateType(configurationHeader);
+		builder.annotateType(convertAnnotationToDescription(configurationHeader));
 		annotateFields(builder, fields, Collections.emptyMap());
 		try(final DynamicType.Unloaded<Object> make = builder.make()){
-			return make.load(getClass().getClassLoader())
+			return make.load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
 				.getLoaded();
 		}
 	}
@@ -125,7 +140,8 @@ public final class Generator{
 	}
 
 	private static void annotateFields(final DynamicType.Builder<Object> builder, final List<Map<String, Object>> fields,
-			final Map<String, Map<String, Object>> postProcessedNavigableFields) throws ClassNotFoundException{
+			final Map<String, Map<String, Object>> postProcessedNavigableFields) throws ClassNotFoundException, InvocationTargetException,
+			IllegalAccessException{
 		final List<Annotation> additionalAnnotations = new ArrayList<>(0);
 		for(int i = 0, length = JavaHelper.sizeOrZero(fields); i < length; i ++){
 			final Map<String, Object> field = fields.get(i);
@@ -170,19 +186,19 @@ public final class Generator{
 				final DynamicType.Builder.FieldDefinition.Optional.Valuable<Object> fieldBuilder
 					= builder.defineField(name, type, Visibility.PACKAGE_PRIVATE);
 				for(int j = 0, count = additionalAnnotations.size(); j < count; j ++)
-					fieldBuilder.annotateField(additionalAnnotations.get(j));
+					fieldBuilder.annotateField(convertAnnotationToDescription(additionalAnnotations.get(j)));
 				additionalAnnotations.clear();
-				fieldBuilder.annotateField(annotation);
+				fieldBuilder.annotateField(convertAnnotationToDescription(annotation));
 				if(collectionAnnotation != null)
-					fieldBuilder.annotateField(collectionAnnotation);
+					fieldBuilder.annotateField(convertAnnotationToDescription(collectionAnnotation));
 				if(postProcessedAnnotation != null)
-					fieldBuilder.annotateField(postProcessedAnnotation);
+					fieldBuilder.annotateField(convertAnnotationToDescription(postProcessedAnnotation));
 			}
 		}
 	}
 
 	private static void annotateEvaluatedFields(final DynamicType.Builder<Object> builder, final List<Map<String, Object>> evaluatedFields)
-			throws ClassNotFoundException{
+			throws ClassNotFoundException, InvocationTargetException, IllegalAccessException{
 		for(int i = 0, length = JavaHelper.sizeOrZero(evaluatedFields); i < length; i ++){
 			final Map<String, Object> field = evaluatedFields.get(i);
 
@@ -194,7 +210,7 @@ public final class Generator{
 			final Annotation annotation = createAnnotation((Class<? extends Annotation>)Class.forName(annotationType), field);
 
 			builder.defineField(name, type, Visibility.PACKAGE_PRIVATE)
-				.annotateField(annotation);
+				.annotateField(convertAnnotationToDescription(annotation));
 		}
 	}
 
@@ -206,8 +222,61 @@ public final class Generator{
 			new DynamicAnnotationInvocationHandler(annotationType, values));
 	}
 
+	public static AnnotationDescription convertAnnotationToDescription(final Annotation annotation) throws InvocationTargetException,
+			IllegalAccessException{
+		AnnotationDescription.Builder builder = AnnotationDescription.Builder.ofType(annotation.annotationType());
+		final Method[] declaredMethods = annotation.annotationType().getDeclaredMethods();
+		for(int i = 0, length = declaredMethods.length; i < length; i ++){
+			final Method method = declaredMethods[i];
+//			final Object value = method.invoke(annotation);
+Object value;
+try{
+value = method.invoke(annotation);
+}
+catch(Exception e){
+value = method.invoke(annotation);
+}
 
-	private static class DynamicAnnotationInvocationHandler implements InvocationHandler{
+			final String key = method.getName();
+			final Class<?> valueClass = value.getClass();
+			if(valueClass.isArray()){
+				final Class<?> componentType = valueClass.getComponentType();
+				builder = switch(componentType.getName()){
+					case PRIMITIVE_CLASS_NAME_BOOLEAN -> builder.defineArray(key, (boolean[])value);
+					case PRIMITIVE_CLASS_NAME_BYTE -> builder.defineArray(key, (byte[])value);
+					case PRIMITIVE_CLASS_NAME_CHAR -> builder.defineArray(key, (char[])value);
+					case PRIMITIVE_CLASS_NAME_SHORT -> builder.defineArray(key, (short[])value);
+					case PRIMITIVE_CLASS_NAME_INT -> builder.defineArray(key, (int[])value);
+					case PRIMITIVE_CLASS_NAME_LONG -> builder.defineArray(key, (long[])value);
+					case PRIMITIVE_CLASS_NAME_FLOAT -> builder.defineArray(key, (float[])value);
+					case PRIMITIVE_CLASS_NAME_DOUBLE -> builder.defineArray(key, (double[])value);
+					case CLASS_NAME_STRING -> builder.defineArray(key, (String[])value);
+					default -> throw new IllegalArgumentException("Unsupported array type: " + componentType);
+				};
+			}
+			else
+				switch(value){
+					case final Boolean b -> builder = builder.define(key, b);
+					case final Byte b -> builder = builder.define(key, b);
+					case final Character c -> builder = builder.define(key, c);
+					case final Short n -> builder = builder.define(key, n);
+					case final Integer n -> builder = builder.define(key, n);
+					case final Long l -> builder = builder.define(key, l);
+					case final Float v -> builder = builder.define(key, v);
+					case final Double v -> builder = builder.define(key, v);
+					case final String s -> builder = builder.define(key, s);
+					case final Enum<?> e -> builder = builder.define(key, e);
+					case final Class<?> c -> builder = builder.define(key, c);
+					case final Annotation a -> builder = builder.define(key, a);
+					default -> throw new IllegalArgumentException("Unsupported type: " + value.getClass().getName());
+				}
+		}
+
+		return builder.build();
+	}
+
+
+	private static final class DynamicAnnotationInvocationHandler implements InvocationHandler{
 		private final Class<? extends Annotation> annotationType;
 		private final Map<String, Object> values;
 
@@ -217,7 +286,7 @@ public final class Generator{
 		}
 
 		@Override
-		public final Object invoke(final Object proxy, final Method method, final Object[] args){
+		public Object invoke(final Object proxy, final Method method, final Object[] args){
 			final String methodName = method.getName();
 			Object value = (methodName.equals(DescriberKey.ANNOTATION_TYPE.toString())
 				? annotationType

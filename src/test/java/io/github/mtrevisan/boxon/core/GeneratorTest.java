@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -57,6 +57,23 @@ class GeneratorTest{
 		Class<?> dynamicType = generator.generateTemplate(description);
 
 		Assertions.assertNotNull(dynamicType);
+
+
+		core = CoreBuilder.builder()
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withTemplate(dynamicType)
+			.create();
+		Parser parser = Parser.create(core);
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,,,20170101123542,11F0$");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertEquals(2, result.size());
+		if(result.get(0).hasError())
+			Assertions.fail(result.get(0).getError());
+		if(result.get(1).hasError())
+			Assertions.fail(result.get(1).getError());
 	}
 
 	@Test

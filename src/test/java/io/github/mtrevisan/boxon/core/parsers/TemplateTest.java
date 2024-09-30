@@ -39,7 +39,6 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
-import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
