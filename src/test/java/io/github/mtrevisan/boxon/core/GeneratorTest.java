@@ -47,11 +47,9 @@ class GeneratorTest{
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.withTemplate(ACKMessageASCII.class)
 			.create();
 		Describer describer = Describer.create(core);
-		List<Map<String, Object>> descriptions = describer.describeParsing();
-		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
+		Map<String, Object> description = new HashMap<>(describer.describeParsing(ACKMessageASCII.class));
 		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
 		description.put(DescriberKey.TEMPLATE.toString(), template + "2");
 
@@ -69,11 +67,9 @@ class GeneratorTest{
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.withTemplate(ACKMessageASCII.class)
 			.create();
 		Describer describer = Describer.create(core);
-		List<Map<String, Object>> descriptions = describer.describeTemplate();
-		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
+		Map<String, Object> description = new HashMap<>(describer.describeParsing(ACKMessageASCII.class));
 		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
 		description.put(DescriberKey.TEMPLATE.toString(), template + "2");
 
