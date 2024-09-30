@@ -88,6 +88,7 @@ public final class Generator{
 
 	//TODO manage context, enumerations
 	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
+		//enumerations: array of strings, each string is a pair `<name>(<value>)`
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
 
