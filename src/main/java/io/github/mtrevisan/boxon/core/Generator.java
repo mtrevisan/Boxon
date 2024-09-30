@@ -224,18 +224,12 @@ public final class Generator{
 
 	public static AnnotationDescription convertAnnotationToDescription(final Annotation annotation) throws InvocationTargetException,
 			IllegalAccessException{
-		AnnotationDescription.Builder builder = AnnotationDescription.Builder.ofType(annotation.annotationType());
-		final Method[] declaredMethods = annotation.annotationType().getDeclaredMethods();
+		final Class<? extends Annotation> annotationType = annotation.annotationType();
+		AnnotationDescription.Builder builder = AnnotationDescription.Builder.ofType(annotationType);
+		final Method[] declaredMethods = annotationType.getDeclaredMethods();
 		for(int i = 0, length = declaredMethods.length; i < length; i ++){
 			final Method method = declaredMethods[i];
-//			final Object value = method.invoke(annotation);
-Object value;
-try{
-value = method.invoke(annotation);
-}
-catch(Exception e){
-value = method.invoke(annotation);
-}
+			final Object value = method.invoke(annotation);
 
 			final String key = method.getName();
 			final Class<?> valueClass = value.getClass();
@@ -271,7 +265,6 @@ value = method.invoke(annotation);
 					default -> throw new IllegalArgumentException("Unsupported type: " + value.getClass().getName());
 				}
 		}
-
 		return builder.build();
 	}
 
