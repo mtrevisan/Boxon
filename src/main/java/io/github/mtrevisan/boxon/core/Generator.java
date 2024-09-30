@@ -42,6 +42,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,9 +77,30 @@ public final class Generator{
 		return generateWithMetadata(description, DescriberKey.TEMPLATE, TemplateHeader.class);
 	}
 
-	//TODO manage context, enumerations
+	//TODO manage context
 	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
 		//enumerations: array of strings, each string is a pair `<name>(<value>)`
+		//TODO manage enumerations
+		final List<Map<String, Object>> enumerations = (List<Map<String, Object>>)description.get(DescriberKey.ENUMERATIONS.toString());
+		for(int i = 0, length = enumerations.size(); i < length; i ++){
+			final Map<String, Object> enumeration = enumerations.get(i);
+
+			final String enumName = (String)enumeration.get("name");
+			final String[] enumValues = (String[])enumeration.get("values");
+			for(int j = 0, count = enumValues.length; j < count; j ++){
+				final String enumValue = enumValues[j];
+
+				String elementName = enumValue;
+				BigInteger elementValue = null;
+				final int index = enumValue.indexOf('(');
+				if(index > 0){
+					elementName = enumValue.substring(0, index);
+					elementValue = new BigInteger(enumValue.substring(index + 1, enumValue.length() - 1));
+				}
+				//TODO create enum
+			}
+		}
+
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
 
