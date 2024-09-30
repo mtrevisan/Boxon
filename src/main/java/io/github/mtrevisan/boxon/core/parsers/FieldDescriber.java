@@ -216,9 +216,9 @@ public final class FieldDescriber{
 		final Class<?> fieldType = fieldExtractor.getFieldType(field);
 
 		final Map<String, Object> fieldDescription = new LinkedHashMap<>(3);
+		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 		putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
 		putIfNotEmpty(DescriberKey.FIELD_TYPE, JavaHelper.prettyPrintClassName(fieldType), fieldDescription);
-		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
 
 		final SkipParams[] skips = fieldExtractor.getSkips(field);
 		extractSkipParameters(skips, fieldsDescription);
@@ -352,7 +352,9 @@ public final class FieldDescriber{
 	private static Map<String, Object> describeAlternative(final Annotation alternative){
 		final Map<String, Object> alternativeDescription = new LinkedHashMap<>(2);
 
-		extractObjectParameters(alternative, alternative.annotationType(), alternativeDescription);
+		final Class<? extends Annotation> annotationType = alternative.annotationType();
+		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), alternativeDescription);
+		extractObjectParameters(alternative, annotationType, alternativeDescription);
 		if(alternative instanceof final ObjectChoices.ObjectChoice choice)
 			describeChoiceType(choice.type(), alternativeDescription);
 

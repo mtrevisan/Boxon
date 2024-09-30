@@ -1505,6 +1505,7 @@ Pull requests are welcomed.
 - Added `ContextParameter` annotation which assigns a constant or calculated value to a parameter that will be added to the context before processing; each context parameter is created before a field is decoded or encoded and removed as soon as the field processing completes.
 - Added `enumerations` key in template and configuration descriptions.
 - Added `Generator`, to create an annotated Template from a text configuration file.
+- Fixed bug on missing `annotationType` in alternatives' description.
 
 <a name="changelog-5.0.0"></a>
 ### version 5.0.0 - 20240517
