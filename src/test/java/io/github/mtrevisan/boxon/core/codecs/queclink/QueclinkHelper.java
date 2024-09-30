@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
@@ -133,6 +134,9 @@ final class QueclinkHelper{
 	static final class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, LocalDateTime>{
 		@Override
 		public LocalDateTime decode(final String value){
+			if(StringHelper.isBlank(value) || value.length() < 14)
+				return null;
+
 			final int year = Integer.parseInt(value.substring(0, 4));
 			final int month = Integer.parseInt(value.substring(4, 6));
 			final int dayOfMonth = Integer.parseInt(value.substring(6, 8));
@@ -144,6 +148,9 @@ final class QueclinkHelper{
 
 		@Override
 		public String encode(final LocalDateTime value){
+			if(value == null)
+				return JavaHelper.EMPTY_STRING;
+
 			return StringHelper.leftPad(Integer.toString(value.getYear()), 4, '0')
 				+ StringHelper.leftPad(Integer.toString(value.getMonthValue()), 2, '0')
 				+ StringHelper.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0')

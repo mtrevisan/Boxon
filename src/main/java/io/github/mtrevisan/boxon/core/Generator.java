@@ -36,7 +36,6 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -95,13 +94,13 @@ public final class Generator{
 		final Annotation templateHeader = createAnnotation(TemplateHeader.class, header);
 
 		final ByteBuddy byteBuddy = new ByteBuddy();
-		final DynamicType.Builder<Object> builder = byteBuddy.subclass(Object.class)
+		DynamicType.Builder<Object> builder = byteBuddy.subclass(Object.class)
 			.name(template);
-		builder.annotateType(convertAnnotationToDescription(templateHeader));
-		annotateFields(builder, fields, postProcessedNavigableFields);
-		annotateEvaluatedFields(builder, evaluatedFields);
-		try(final DynamicType.Unloaded<Object> make = builder.make()){
-			return make.load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+		builder = builder.annotateType(convertAnnotationToDescription(templateHeader));
+		builder = annotateFields(builder, fields, postProcessedNavigableFields);
+		builder = annotateEvaluatedFields(builder, evaluatedFields);
+		try(final DynamicType.Unloaded<Object> unloaded = builder.make()){
+			return unloaded.load(getClass().getClassLoader())
 				.getLoaded();
 		}
 	}
@@ -120,8 +119,8 @@ public final class Generator{
 			.name(configuration);
 		builder.annotateType(convertAnnotationToDescription(configurationHeader));
 		annotateFields(builder, fields, Collections.emptyMap());
-		try(final DynamicType.Unloaded<Object> make = builder.make()){
-			return make.load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+		try(final DynamicType.Unloaded<Object> unloaded = builder.make()){
+			return unloaded.load(getClass().getClassLoader())
 				.getLoaded();
 		}
 	}
@@ -139,7 +138,7 @@ public final class Generator{
 		return postProcessedNavigableFields;
 	}
 
-	private static void annotateFields(final DynamicType.Builder<Object> builder, final List<Map<String, Object>> fields,
+	private static DynamicType.Builder<Object> annotateFields(DynamicType.Builder<Object> builder, final List<Map<String, Object>> fields,
 			final Map<String, Map<String, Object>> postProcessedNavigableFields) throws ClassNotFoundException, InvocationTargetException,
 			IllegalAccessException{
 		final List<Annotation> additionalAnnotations = new ArrayList<>(0);
@@ -188,17 +187,18 @@ public final class Generator{
 				for(int j = 0, count = additionalAnnotations.size(); j < count; j ++)
 					fieldBuilder.annotateField(convertAnnotationToDescription(additionalAnnotations.get(j)));
 				additionalAnnotations.clear();
-				fieldBuilder.annotateField(convertAnnotationToDescription(annotation));
+				builder = fieldBuilder.annotateField(convertAnnotationToDescription(annotation));
 				if(collectionAnnotation != null)
-					fieldBuilder.annotateField(convertAnnotationToDescription(collectionAnnotation));
+					builder = fieldBuilder.annotateField(convertAnnotationToDescription(collectionAnnotation));
 				if(postProcessedAnnotation != null)
-					fieldBuilder.annotateField(convertAnnotationToDescription(postProcessedAnnotation));
+					builder = fieldBuilder.annotateField(convertAnnotationToDescription(postProcessedAnnotation));
 			}
 		}
+		return builder;
 	}
 
-	private static void annotateEvaluatedFields(final DynamicType.Builder<Object> builder, final List<Map<String, Object>> evaluatedFields)
-			throws ClassNotFoundException, InvocationTargetException, IllegalAccessException{
+	private static DynamicType.Builder<Object> annotateEvaluatedFields(DynamicType.Builder<Object> builder,
+			final List<Map<String, Object>> evaluatedFields) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException{
 		for(int i = 0, length = JavaHelper.sizeOrZero(evaluatedFields); i < length; i ++){
 			final Map<String, Object> field = evaluatedFields.get(i);
 
@@ -209,9 +209,10 @@ public final class Generator{
 			final String annotationType = (String)field.get(DescriberKey.ANNOTATION_TYPE.toString());
 			final Annotation annotation = createAnnotation((Class<? extends Annotation>)Class.forName(annotationType), field);
 
-			builder.defineField(name, type, Visibility.PACKAGE_PRIVATE)
+			builder = builder.defineField(name, type, Visibility.PACKAGE_PRIVATE)
 				.annotateField(convertAnnotationToDescription(annotation));
 		}
+		return builder;
 	}
 
 
