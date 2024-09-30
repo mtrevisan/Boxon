@@ -55,16 +55,6 @@ public final class Generator{
 
 	private static final String KEY_SEPARATOR = "|";
 
-	private static final String PRIMITIVE_CLASS_NAME_BOOLEAN = "boolean";
-	private static final String PRIMITIVE_CLASS_NAME_BYTE = "byte";
-	private static final String PRIMITIVE_CLASS_NAME_CHAR = "char";
-	private static final String PRIMITIVE_CLASS_NAME_SHORT = "short";
-	private static final String PRIMITIVE_CLASS_NAME_INT = "int";
-	private static final String PRIMITIVE_CLASS_NAME_LONG = "long";
-	private static final String PRIMITIVE_CLASS_NAME_FLOAT = "float";
-	private static final String PRIMITIVE_CLASS_NAME_DOUBLE = "double";
-	private static final String CLASS_NAME_STRING = "java.lang.String";
-
 	private static final String REPEATABLE_VALUE = "value";
 
 
@@ -335,7 +325,7 @@ public final class Generator{
 				value = invokeArrayValues(elementType, (List<Map<String, Object>>)subValues);
 			}
 			else if(Annotation.class.isAssignableFrom(returnType) && value instanceof final Map<?, ?> subValues){
-				//manage ConverterChoices, ConverterChoice, ObjectChoices, ObjectChoice, ObjectChoicesList
+				//manage `ConverterChoices`, `ObjectChoices`, and `ObjectChoicesList`
 				final Class<? extends Annotation> annotationType = (Class<? extends Annotation>)returnType;
 				value = createAnnotation(annotationType, (Map<String, Object>)subValues);
 			}
