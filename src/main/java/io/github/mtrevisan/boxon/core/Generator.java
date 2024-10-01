@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.generators.ClassCreator;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
@@ -106,23 +107,27 @@ public final class Generator{
 			final Object value = entry.getValue();
 
 			//TODO find if value represents a method...
+			final Class<?> valueClass = value.getClass();
+			if(DataType.fromType(valueClass) != null)
+				coreBuilder.withContext(key, value);
+			else if(!valueClass.isArray() && DataType.fromType(valueClass) == null && valueClass != String.class){
+				final Class<?> type = null;
+				//key is methodName
+				coreBuilder.withContext(type, key);
 
-			final Class<?> type = null;
-			//key is methodName
-			coreBuilder.withContext(type, key);
+				//key is methodName
+				//TODO extract parameterTypes from `value`
+				final Class<?>[] parameterTypes = null;
+				coreBuilder.withContext(type, key, parameterTypes);
 
-			//key is methodName
-			//TODO extract parameterTypes from `value`
-			final Class<?>[] parameterTypes = null;
-			coreBuilder.withContext(type, key, parameterTypes);
-
-			//key is methodName
-			final Method method = null;
-			if(key.equals(method.getName()))
-				coreBuilder.withContext(method);
-
-			//TODO ... otherwise is something else (number, string, array, class, ...)
-			coreBuilder.withContext(key, value);
+				//key is methodName
+				final Method method = null;
+				if(key.equals(method.getName()))
+					coreBuilder.withContext(method);
+			}
+			else
+				//TODO ... otherwise is something else (number, string, array, class, ...)
+				coreBuilder.withContext(key, value);
 		}
 	}
 

@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ class GeneratorTest{
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withContext("deviceTypes", deviceTypes)
+			.withContext("enum", DayOfWeek.class)
 			.withContext("string", "text")
 			.withContext("number", 666)
 			.withContext("array", new int[]{0, 1, 2, 3})
@@ -61,7 +63,7 @@ class GeneratorTest{
 		Generator generator = Generator.create(core);
 		Class<?> dynamicType = generator.generateTemplate(description);
 		CoreBuilder coreBuilder = CoreBuilder.builder();
-		Generator.loadContext(coreBuilder, description);
+		Generator.loadContext(coreBuilder, (Map<String, Object>)description.get(DescriberKey.CONTEXT.toString()));
 
 		Assertions.assertNotNull(dynamicType);
 
