@@ -36,9 +36,9 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
-import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -102,12 +102,12 @@ class CodecArrayTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 		Map<String, Object> collectionAnnotationData = Map.of(
 			"annotationType", BindAsArray.class.getName(),
 			"size", Integer.toString(encodedValue.length)
 		);
-		BindAsArray collectionAnnotation = Generator.createAnnotation(BindAsArray.class, collectionAnnotationData);
+		BindAsArray collectionAnnotation = AnnotationCreator.createAnnotation(BindAsArray.class, collectionAnnotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -150,12 +150,12 @@ class CodecArrayTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindObject annotation = Generator.createAnnotation(BindObject.class, annotationData);
+		BindObject annotation = AnnotationCreator.createAnnotation(BindObject.class, annotationData);
 		Map<String, Object> collectionAnnotationData = Map.of(
 			"annotationType", BindAsArray.class.getName(),
 			"size", Integer.toString(encodedValue.length)
 		);
-		BindAsArray collectionAnnotation = Generator.createAnnotation(BindAsArray.class, collectionAnnotationData);
+		BindAsArray collectionAnnotation = AnnotationCreator.createAnnotation(BindAsArray.class, collectionAnnotationData);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();

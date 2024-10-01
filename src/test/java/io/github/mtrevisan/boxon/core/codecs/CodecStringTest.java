@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.core.Generator;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -63,7 +63,7 @@ class CodecStringTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindString annotation = Generator.createAnnotation(BindString.class, annotationData);
+		BindString annotation = AnnotationCreator.createAnnotation(BindString.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -93,7 +93,7 @@ class CodecStringTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindString annotation = Generator.createAnnotation(BindString.class, annotationData);
+		BindString annotation = AnnotationCreator.createAnnotation(BindString.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -128,7 +128,7 @@ class CodecStringTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindStringTerminated annotation = Generator.createAnnotation(BindStringTerminated.class, annotationData);
+		BindStringTerminated annotation = AnnotationCreator.createAnnotation(BindStringTerminated.class, annotationData);
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Object decoded = codec.decode(reader, annotation, null, null);
@@ -158,7 +158,7 @@ class CodecStringTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindStringTerminated annotation = Generator.createAnnotation(BindStringTerminated.class, annotationData);
+		BindStringTerminated annotation = AnnotationCreator.createAnnotation(BindStringTerminated.class, annotationData);
 
 		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Object decoded = codec.decode(reader, annotation, null, null);

@@ -38,9 +38,9 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Describer;
-import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -90,7 +90,7 @@ class CodecObjectTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindObject annotation = Generator.createAnnotation(BindObject.class, annotationData);
+		BindObject annotation = AnnotationCreator.createAnnotation(BindObject.class, annotationData);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();

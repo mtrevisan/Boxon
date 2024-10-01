@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.core.Generator;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -70,7 +70,7 @@ class CodecDefaultTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindBitSet annotation = Generator.createAnnotation(BindBitSet.class, annotationData);
+		BindBitSet annotation = AnnotationCreator.createAnnotation(BindBitSet.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -106,7 +106,7 @@ class CodecDefaultTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindBitSet annotation = Generator.createAnnotation(BindBitSet.class, annotationData);
+		BindBitSet annotation = AnnotationCreator.createAnnotation(BindBitSet.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());

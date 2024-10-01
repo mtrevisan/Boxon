@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
-import io.github.mtrevisan.boxon.core.Generator;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -54,7 +54,7 @@ class CodecChecksumTest{
 			"skipEnd", 0,
 			"algorithm", CRC16CCITT_FALSE.class.getName()
 		);
-		Checksum annotation = Generator.createAnnotation(Checksum.class, annotationData);
+		Checksum annotation = AnnotationCreator.createAnnotation(Checksum.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, null, encodedValue);

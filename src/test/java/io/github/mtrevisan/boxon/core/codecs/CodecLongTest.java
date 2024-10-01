@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.core.Generator;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -63,7 +63,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -94,7 +94,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -125,7 +125,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -156,7 +156,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -188,7 +188,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -219,7 +219,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -250,7 +250,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -281,7 +281,7 @@ class CodecLongTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindInteger annotation = Generator.createAnnotation(BindInteger.class, annotationData);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());

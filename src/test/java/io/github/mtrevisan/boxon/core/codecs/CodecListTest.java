@@ -35,9 +35,9 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
-import io.github.mtrevisan.boxon.core.Generator;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -121,11 +121,11 @@ class CodecListTest{
 				"alternatives", Collections.emptyList()
 			)
 		);
-		BindObject annotation = Generator.createAnnotation(BindObject.class, annotationData);
+		BindObject annotation = AnnotationCreator.createAnnotation(BindObject.class, annotationData);
 		Map<String, Object> collectionAnnotationData = Map.of(
 			"annotationType", BindAsList.class.getName()
 		);
-		BindAsList collectionAnnotation = Generator.createAnnotation(BindAsList.class, collectionAnnotationData);
+		BindAsList collectionAnnotation = AnnotationCreator.createAnnotation(BindAsList.class, collectionAnnotationData);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
