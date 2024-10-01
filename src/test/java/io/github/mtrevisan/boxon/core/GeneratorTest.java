@@ -45,6 +45,7 @@ class GeneratorTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
+//			.withEventListener(EventLogger.getInstance())
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
@@ -61,6 +62,7 @@ class GeneratorTest{
 
 
 		core = CoreBuilder.builder()
+//			.withEventListener(EventLogger.getInstance())
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
@@ -84,6 +86,7 @@ class GeneratorTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
+//			.withEventListener(EventLogger.getInstance())
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()

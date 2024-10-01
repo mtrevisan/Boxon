@@ -232,7 +232,7 @@ public final class EventLogger extends EventListener{
 
 			return sj.toString();
 		}
-		return parameters;
+		return (parameters.length > 1? parameters: parameters[0]);
 	}
 
 	private static Collection<String> collectPackages(final Object[] parameters){
