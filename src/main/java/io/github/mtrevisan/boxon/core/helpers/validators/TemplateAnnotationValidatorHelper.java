@@ -29,27 +29,18 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
-import java.lang.reflect.Type;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.List;
 
 
 /**
  * Container of all the validators of a message template.
  */
 final class TemplateAnnotationValidatorHelper{
-
-	private interface ValidationStrategy{
-		void validate(Class<?> fieldType, Class<? extends Converter<?, ?>> converter, Class<?> bindingType) throws AnnotationException;
-	}
 
 	private static final ValidationStrategy NULL_CONVERTER_VALIDATOR = new NullConverterValidationStrategy();
 	private static final ValidationStrategy NON_NULL_CONVERTER_VALIDATOR = new NonNullConverterValidationStrategy();
@@ -70,44 +61,6 @@ final class TemplateAnnotationValidatorHelper{
 		return (converter == NullConverter.class? NULL_CONVERTER_VALIDATOR: NON_NULL_CONVERTER_VALIDATOR);
 	}
 
-	private static class NullConverterValidationStrategy implements ValidationStrategy{
-		@Override
-		public final void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
-				throws AnnotationException{
-			fieldType = (fieldType != List.class
-				? FieldAccessor.extractFieldType(fieldType)
-				: bindingType
-			);
-			if(!validateTypes(fieldType, bindingType))
-				throw AnnotationException.create("Type mismatch between annotation output ({}) and field type ({})",
-					bindingType.getSimpleName(), fieldType.getSimpleName());
-		}
-	}
-
-	private static class NonNullConverterValidationStrategy implements ValidationStrategy{
-		@Override
-		public final void validate(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
-				throws AnnotationException{
-			final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter, Converter.class);
-			final Class<?> inputType = FieldAccessor.extractFieldType((Class<?>)inOutTypes.getFirst());
-			final Class<?> outputType = (Class<?>)inOutTypes.getLast();
-
-			if(!validateTypes(inputType, bindingType))
-				throw AnnotationException.create("Type mismatch between annotation output ({}) and converter input ({})",
-					bindingType.getSimpleName(), inputType.getSimpleName());
-
-			if(!validateTypes(fieldType, outputType))
-				throw AnnotationException.create("Type mismatch between converter output ({}) and field type ({})",
-					outputType.getSimpleName(), fieldType.getSimpleName());
-		}
-	}
-
-	private static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
-		final Class<?> checkTypeObjective = DataType.toObjectiveTypeOrSelf(checkType);
-		final Class<?> baseTypeObjective = DataType.toObjectiveTypeOrSelf(baseType);
-		return (checkTypeObjective.isAssignableFrom(baseTypeObjective)
-			|| Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
-	}
 
 	private static void validateConverterToList(final Class<?> fieldType, final Class<?> bindingType,
 			final Class<? extends Converter<?, ?>> converter, final Class<?> type) throws AnnotationException{

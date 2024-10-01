@@ -66,7 +66,6 @@ final class ValidationHelper{
 			else
 				validateNonEnumerationType(fieldType, defaultValue, configData);
 		}
-
 	}
 
 	private static void validateNonEnumerationType(final Class<?> fieldType, final String defaultValue, final ConfigFieldData configData)
@@ -166,6 +165,14 @@ final class ValidationHelper{
 	static void validateRadix(final int radix) throws AnnotationException{
 		if(radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
 			throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
+	}
+
+
+	static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
+		final Class<?> checkTypeObjective = DataType.toObjectiveTypeOrSelf(checkType);
+		final Class<?> baseTypeObjective = DataType.toObjectiveTypeOrSelf(baseType);
+		return (checkTypeObjective.isAssignableFrom(baseTypeObjective)
+			|| Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
 	}
 
 }
