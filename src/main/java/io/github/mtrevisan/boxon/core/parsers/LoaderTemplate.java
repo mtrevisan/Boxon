@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,6 +62,9 @@ final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
+
+	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
+		BindAsArray.class, BindAsList.class));
 
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
@@ -311,9 +315,7 @@ final class LoaderTemplate{
 			final Annotation declaredAnnotation = declaredAnnotations[i];
 
 			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
-			if(loaderCodec.hasCodec(annotationType)
-					|| annotationType == ContextParameter.class
-					|| annotationType == BindAsArray.class || annotationType == BindAsList.class)
+			if(loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType))
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;
