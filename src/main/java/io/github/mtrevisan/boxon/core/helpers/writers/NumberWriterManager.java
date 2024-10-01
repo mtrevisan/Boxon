@@ -62,8 +62,8 @@ final class NumberWriterManager implements WriterManager{
 	public void put(final Object value){
 		//FIXME refactor
 		switch(value){
-			case final Byte v -> writer.writeText(Integer.toString(v & 0xFF, radix));
-			case final Short v -> writer.writeText(Integer.toString(v & 0xFFFF, radix));
+			case final Byte v -> writer.writeText(Integer.toString(v.intValue() & 0xFF, radix));
+			case final Short v -> writer.writeText(Integer.toString(v.intValue() & 0xFFFF, radix));
 			case final Integer v -> writer.writeText(Integer.toString(v, radix));
 			case final Long v -> writer.writeText(Long.toString(v, radix));
 			case final BigDecimal v -> writer.writeText(v.toPlainString());
