@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -219,7 +220,7 @@ public final class Template<T>{
 	 * @return	List of template fields.
 	 */
 	public List<TemplateField> getTemplateFields(){
-		return templateFields;
+		return Collections.unmodifiableList(templateFields);
 	}
 
 	/**
@@ -228,7 +229,7 @@ public final class Template<T>{
 	 * @return	List of evaluated fields.
 	 */
 	public List<EvaluatedField<Evaluate>> getEvaluatedFields(){
-		return evaluatedFields;
+		return Collections.unmodifiableList(evaluatedFields);
 	}
 
 	/**
@@ -237,7 +238,7 @@ public final class Template<T>{
 	 * @return	List of processed fields.
 	 */
 	public List<EvaluatedField<PostProcess>> getPostProcessedFields(){
-		return postProcessedFields;
+		return Collections.unmodifiableList(postProcessedFields);
 	}
 
 	/**

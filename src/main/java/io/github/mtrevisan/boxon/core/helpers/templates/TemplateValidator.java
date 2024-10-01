@@ -30,8 +30,6 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
@@ -39,10 +37,14 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 
 public final class TemplateValidator{
@@ -52,10 +54,14 @@ public final class TemplateValidator{
 	private static final int ORDER_EVALUATE_INDEX = 2;
 	private static final int ORDER_POST_PROCESS_INDEX = 3;
 
+	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_BIND_ORDER = new HashSet<>(List.of(BindBitSet.class,
+		BindInteger.class, BindObject.class, BindString.class, BindStringTerminated.class, ConverterChoices.class, ObjectChoices.class,
+		ObjectChoicesList.class));
+	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_SKIP = new HashSet<>(List.of(SkipBits.class,
+		SkipUntilTerminator.class));
+
 	private static final String ANNOTATION_NAME_BIND = JavaHelper.commonPrefix(BindBitSet.class, BindInteger.class, BindObject.class,
 		BindString.class, BindStringTerminated.class);
-	private static final String ANNOTATION_NAME_CONTEXT_PARAMETER = ContextParameter.class.getSimpleName();
-	private static final String ANNOTATION_NAME_BIND_AS = JavaHelper.commonPrefix(BindAsArray.class, BindAsList.class);
 	private static final String ANNOTATION_NAME_CONVERTER_CHOICES = ConverterChoices.class.getSimpleName();
 	private static final String ANNOTATION_NAME_OBJECT_CHOICES = ObjectChoices.class.getSimpleName();
 	private static final String STAR = "*";
@@ -84,34 +90,31 @@ public final class TemplateValidator{
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations[i];
 
-			final String annotationName = annotation.annotationType()
-				.getSimpleName();
-
-			if(annotationName.equals(ANNOTATION_NAME_CONTEXT_PARAMETER))
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if(annotationType == ContextParameter.class)
 				continue;
 
-			if(annotationName.startsWith(ANNOTATION_NAME_BIND) && !annotationName.startsWith(ANNOTATION_NAME_BIND_AS)
-					|| annotationName.equals(ANNOTATION_NAME_CONVERTER_CHOICES) || annotationName.startsWith(ANNOTATION_NAME_OBJECT_CHOICES)){
+			if(ANNOTATIONS_BIND_ORDER.contains(annotationType)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;
 			}
-			else if(annotationName.equals(ANNOTATION_NAME_CHECKSUM)){
+			else if(annotationType == Checksum.class){
 				validateChecksumAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_CHECKSUM_INDEX] = true;
 			}
-			else if(annotationName.equals(ANNOTATION_NAME_EVALUATE)){
+			else if(annotationType == Evaluate.class){
 				validateEvaluateAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_EVALUATE_INDEX] = true;
 			}
-			else if(annotationName.equals(ANNOTATION_NAME_POST_PROCESS)){
+			else if(annotationType == PostProcess.class){
 				validatePostProcessAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_POST_PROCESS_INDEX] = true;
 			}
-			else if(annotationName.startsWith(ANNOTATION_NAME_SKIP))
+			else if(ANNOTATIONS_SKIP.contains(annotationType))
 				validateSkipAnnotationOrder(annotationFound);
 		}
 	}

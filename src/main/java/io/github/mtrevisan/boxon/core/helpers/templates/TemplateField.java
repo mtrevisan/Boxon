@@ -138,7 +138,7 @@ public final class TemplateField implements FieldRetriever{
 	 * @return	The parameter annotations associated with this object.
 	 */
 	public List<ContextParameter> getContextParameters(){
-		return contextParameters;
+		return Collections.unmodifiableList(contextParameters);
 	}
 
 	/**
