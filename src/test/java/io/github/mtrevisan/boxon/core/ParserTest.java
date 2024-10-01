@@ -87,6 +87,10 @@ class ParserTest{
 		return 4;
 	}
 
+	private static int headerLength2(final int size){
+		return size;
+	}
+
 
 	@TemplateHeader(start = "+UNV")
 	static class NonByteMultipleLengths{

@@ -47,7 +47,10 @@ class GeneratorTest{
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withContext("deviceTypes", deviceTypes)
-			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("string", "text")
+			.withContext("number", 666)
+			.withContext("array", new int[]{0, 1, 2, 3})
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength2", int.class))
 			.withDefaultCodecs()
 			.create();
 		Describer describer = Describer.create(core);
@@ -57,6 +60,8 @@ class GeneratorTest{
 
 		Generator generator = Generator.create(core);
 		Class<?> dynamicType = generator.generateTemplate(description);
+		CoreBuilder coreBuilder = CoreBuilder.builder();
+		Generator.loadContext(coreBuilder, description);
 
 		Assertions.assertNotNull(dynamicType);
 

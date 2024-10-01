@@ -222,6 +222,7 @@ public final class FieldDescriber{
 		final Annotation binding = fieldExtractor.getBinding(field);
 		if(binding == null)
 			throw CodecException.create("Cannot find codec for field `{}`", field);
+
 		final Annotation collectionBinding = fieldExtractor.getCollectionBinding(field);
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final String fieldName = fieldExtractor.getFieldName(field);

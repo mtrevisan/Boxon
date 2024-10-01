@@ -101,22 +101,29 @@ public final class Generator{
 	public static void loadContext(final CoreBuilder coreBuilder, final Map<String, Object> contextDescription) throws NoSuchMethodException{
 		//TODO manage context
 		//extract Method & other things
+		for(final Map.Entry<String, Object> entry : contextDescription.entrySet()){
+			final String key = entry.getKey();
+			final Object value = entry.getValue();
 
-		final String key = null;
-		final Object value = null;
-		coreBuilder.withContext(key, value);
+			//TODO find if value represents a method...
 
-		final Class<?> type = null;
-		final String methodName = null;
-		coreBuilder.withContext(type, methodName);
+			final Class<?> type = null;
+			//key is methodName
+			coreBuilder.withContext(type, key);
 
-		final Class<?>[] parameterTypes = null;
-		coreBuilder.withContext(type, methodName, parameterTypes);
+			//key is methodName
+			//TODO extract parameterTypes from `value`
+			final Class<?>[] parameterTypes = null;
+			coreBuilder.withContext(type, key, parameterTypes);
 
-		final Method method = null;
-		coreBuilder.withContext(method);
+			//key is methodName
+			final Method method = null;
+			if(key.equals(method.getName()))
+				coreBuilder.withContext(method);
 
-System.out.println();
+			//TODO ... otherwise is something else (number, string, array, class, ...)
+			coreBuilder.withContext(key, value);
+		}
 	}
 
 	private Class<?> generateWithMetadata(final Map<String, Object> metadata, final DescriberKey key,
