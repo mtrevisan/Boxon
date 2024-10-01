@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -97,9 +98,23 @@ public final class Generator{
 	 * @param coreBuilder        The core builder.
 	 * @param contextDescription The context to be loaded.
 	 */
-	public static void loadContext(final CoreBuilder coreBuilder, final Map<String, Object> contextDescription){
+	public static void loadContext(final CoreBuilder coreBuilder, final Map<String, Object> contextDescription) throws NoSuchMethodException{
 		//TODO manage context
 		//extract Method & other things
+
+		final String key = null;
+		final Object value = null;
+		coreBuilder.withContext(key, value);
+
+		final Class<?> type = null;
+		final String methodName = null;
+		coreBuilder.withContext(type, methodName);
+
+		final Class<?>[] parameterTypes = null;
+		coreBuilder.withContext(type, methodName, parameterTypes);
+
+		final Method method = null;
+		coreBuilder.withContext(method);
 
 System.out.println();
 	}
