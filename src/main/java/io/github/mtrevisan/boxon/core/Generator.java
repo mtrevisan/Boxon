@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.core.helpers.DataType;
@@ -156,6 +157,7 @@ public final class Generator{
 
 			//create enum
 			final DynamicType.Builder<? extends Enum<?>> builder = BYTE_BUDDY.makeEnumeration(elementNames)
+				.implement(ConfigurationEnum.class)
 				.name(enumName)
 				.defineMethod(METHOD_NAME_GET_CODE, BigInteger.class)
 				.intercept(MethodDelegation.to(new EnumCodeInterceptor(elementNames, elementValues)));
@@ -411,10 +413,10 @@ public final class Generator{
 		}
 	}
 
-	public static class EnumCodeInterceptor{
+	private static final class EnumCodeInterceptor{
 		private final Map<String, BigInteger> elementCodeMap;
 
-		public EnumCodeInterceptor(final String[] elementNames, final BigInteger[] elementValues){
+		private EnumCodeInterceptor(final String[] elementNames, final BigInteger[] elementValues){
 			elementCodeMap = new HashMap<>(elementNames.length);
 			for(int i = 0, length = elementNames.length; i < length; i ++)
 				elementCodeMap.put(elementNames[i], elementValues[i]);
