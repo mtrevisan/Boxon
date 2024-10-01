@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.configurations;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -147,25 +149,24 @@ public final class ConfigurationMessage<T>{
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
 		for(final Annotation annotation : annotations){
-			final String annotationName = annotation.annotationType()
-				.getSimpleName();
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
 
-			if(annotationName.startsWith(CONFIGURATION_NAME_ALTERNATIVE)){
+			if(annotationType == AlternativeConfigurationField.class){
 				validateAlternativeAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
 			}
-			else if(annotationName.equals(CONFIGURATION_NAME_COMPOSITE)){
+			else if(annotationType == CompositeConfigurationField.class){
 				validateCompositeAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_COMPOSITE_INDEX] = true;
 			}
-			else if(annotationName.equals(CONFIGURATION_NAME_FIELD)){
+			else if(annotationType == io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class){
 				validateFieldAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_FIELD_INDEX] = true;
 			}
-			else if(annotationName.startsWith(CONFIGURATION_NAME_SKIP))
+			else if(annotationType == ConfigurationSkip.class)
 				validateSkipAnnotationOrder(annotationFound);
 		}
 	}
