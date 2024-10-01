@@ -89,14 +89,14 @@ public final class AnnotationCreator{
 		private static Object extractValueBasedOnReturnType(final Class<?> returnType, Object value) throws ClassNotFoundException{
 			if(returnType.equals(Class.class) && value instanceof final String v)
 				value = DataType.toTypeOrSelf(v);
-			else if(returnType.isArray() && value instanceof final List<?> subValues){
+			else if(returnType.isArray() && value instanceof List<?>){
 				final Class<?> elementType = returnType.getComponentType();
-				value = invokeArrayValues(elementType, (List<Map<String, Object>>)subValues);
+				value = invokeArrayValues(elementType, (List<Map<String, Object>>)value);
 			}
-			else if(Annotation.class.isAssignableFrom(returnType) && value instanceof final Map<?, ?> subValues){
+			else if(Annotation.class.isAssignableFrom(returnType) && value instanceof Map<?, ?>){
 				//manage `ConverterChoices`, `ObjectChoices`, and `ObjectChoicesList`
 				final Class<? extends Annotation> annotationType = (Class<? extends Annotation>)returnType;
-				value = createAnnotation(annotationType, (Map<String, Object>)subValues);
+				value = createAnnotation(annotationType, (Map<String, Object>)value);
 			}
 			return value;
 		}
