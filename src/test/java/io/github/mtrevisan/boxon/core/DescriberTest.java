@@ -39,6 +39,29 @@ import java.util.Map;
 class DescriberTest{
 
 	@Test
+	void describeContext() throws Exception{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Core core = CoreBuilder.builder()
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withTemplate(ACKMessageASCII.class)
+			.create();
+		Describer describer = Describer.create(core);
+
+		List<Map<String, Object>> descriptions = describer.describeParsing();
+
+		Assertions.assertEquals(1, descriptions.size());
+
+		Map<String, Object> description = descriptions.getFirst();
+
+		String jsonDescription = PrettyPrintMap.toString(description);
+//		Assertions.assertEquals("{context:{headerLength:private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength(),deviceTypes:[QUECLINK_GB200S(0x46)]},header:{end:$,charset:UTF-8,start:[+ACK:, +BCK:]},template:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII,fields:[{name:messageHeader,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,consumeTerminator:true,terminator:58},{name:messageType,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,consumeTerminator:true,terminator:44},{name:deviceTypeCode,fieldType:byte,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,size:2,charset:UTF-8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$HexStringToByteConverter},{name:protocolVersion,fieldType:io.github.mtrevisan.boxon.semanticversioning.Version,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$HexStringVersionConverter,consumeTerminator:true,terminator:44},{name:imei,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,consumeTerminator:true,terminator:44,validator:io.github.mtrevisan.boxon.annotations.validators.IMEIValidator},{name:latitude,fieldType:java.math.BigDecimal,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,converter:io.github.mtrevisan.boxon.annotations.converters.StringToBigDecimalConverter,consumeTerminator:true,terminator:44},{name:id,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,consumeTerminator:true,terminator:44},{name:correlationId,fieldType:short,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$HexStringToShortConverter,consumeTerminator:true,terminator:44},{value:44,annotationType:io.github.mtrevisan.boxon.annotations.SkipUntilTerminator,consumeTerminator:true},{value:44,annotationType:io.github.mtrevisan.boxon.annotations.SkipUntilTerminator,consumeTerminator:true},{name:eventTime,fieldType:java.time.LocalDateTime,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$StringDateTimeYYYYMMDDHHMMSSConverter,consumeTerminator:true,terminator:44},{name:messageId,fieldType:short,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated,charset:UTF-8,converter:io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$HexStringToShortConverter,consumeTerminator:false,terminator:36}],evaluatedFields:[{name:deviceTypeName,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.Evaluate,value:#deviceTypes.getDeviceTypeName(deviceTypeCode)},{name:receptionTime,fieldType:java.time.ZonedDateTime,annotationType:io.github.mtrevisan.boxon.annotations.Evaluate,value:T(java.time.ZonedDateTime).now()},{name:buffered,fieldType:boolean,annotationType:io.github.mtrevisan.boxon.annotations.Evaluate,value:messageHeader.startsWith('+B')}],postProcessedFields:[{name:messageHeader,fieldType:java.lang.String,annotationType:io.github.mtrevisan.boxon.annotations.PostProcess,condition:buffered,valueEncode:'+BCK',valueDecode:'+ACK'}]}", jsonDescription);
+		Assertions.assertEquals(3567, jsonDescription.length());
+	}
+
+	@Test
 	void describeParsing() throws Exception{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");

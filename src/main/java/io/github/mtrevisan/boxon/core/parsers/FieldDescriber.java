@@ -50,6 +50,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
@@ -89,21 +90,22 @@ public final class FieldDescriber{
 	}
 
 	private interface ArrayHandler{
-		void handle(String key, Object value, Map<String, Object> description);
+		void handle(String key, Object value, Map<String, Object> description) throws CodecException;
 	}
 
 
 	private FieldDescriber(){}
 
 
-	private static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription){
+	private static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription)
+			throws CodecException{
 		final Method[] methods = objType.getDeclaredMethods();
 
 		extractObjectParameters(obj, methods, rootDescription);
 	}
 
 	static void extractObjectParameters(final Object obj, final Class<?> objType, final Map<String, Object> rootDescription,
-			final String key){
+			final String key) throws CodecException{
 		final Method[] methods = objType.getDeclaredMethods();
 
 		final Map<String, Object> description = new LinkedHashMap<>(methods.length);
@@ -118,8 +120,10 @@ public final class FieldDescriber{
 	 * @param obj	The object from which to extract the parameters.
 	 * @param methods	An array of methods from the object's class.
 	 * @param rootDescription	The map where the parameters will be added.
+	 * @throws CodecException	If a codec is not found.
 	 */
-	private static void extractObjectParameters(final Object obj, final Method[] methods, final Map<String, Object> rootDescription){
+	private static void extractObjectParameters(final Object obj, final Method[] methods, final Map<String, Object> rootDescription)
+			throws CodecException{
 		for(int i = 0, length = methods.length; i < length; i ++){
 			final Method method = methods[i];
 
@@ -130,6 +134,9 @@ public final class FieldDescriber{
 				final Object value = method.invoke(obj);
 
 				putIfNotEmpty(method.getName(), value, rootDescription);
+			}
+			catch(final CodecException ce){
+				throw ce;
 			}
 			catch(final Exception ignored){
 				//cannot happen
@@ -150,8 +157,9 @@ public final class FieldDescriber{
 	 *
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
+	 * @throws CodecException	If a codec is not found.
 	 */
-	public static Map<String, Object> describeRawMessage(final Class<?> boundClass){
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws CodecException{
 		final Map<String, Object> description = new LinkedHashMap<>(6);
 		try{
 			final Template<?> entity = Template.create(boundClass);
@@ -173,9 +181,10 @@ public final class FieldDescriber{
 	 * @param rootDescription	The map where the description will be populated.
 	 * @param <M>	The type of the message.
 	 * @param <F>	The type of the fields.
+	 * @throws CodecException	If a codec is not found.
 	 */
 	static <M, F> void describeRawMessage(final M message, final MessageExtractor<M, ?, F> messageExtractor,
-			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription){
+			final FieldExtractor<F> fieldExtractor, final Map<String, Object> rootDescription) throws CodecException{
 		final DescriberKey messageKey = selectMessageKey(messageExtractor);
 		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), rootDescription);
 
@@ -196,7 +205,8 @@ public final class FieldDescriber{
 		);
 	}
 
-	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor){
+	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
+			throws CodecException{
 		final int length = JavaHelper.sizeOrZero(fields);
 		final ArrayList<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -208,8 +218,10 @@ public final class FieldDescriber{
 	}
 
 	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
-			final Collection<Map<String, Object>> fieldsDescription){
+			final Collection<Map<String, Object>> fieldsDescription) throws CodecException{
 		final Annotation binding = fieldExtractor.getBinding(field);
+		if(binding == null)
+			throw CodecException.create("Cannot find codec for field `{}`", field);
 		final Annotation collectionBinding = fieldExtractor.getCollectionBinding(field);
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final String fieldName = fieldExtractor.getFieldName(field);
@@ -229,7 +241,8 @@ public final class FieldDescriber{
 		fieldsDescription.add(Collections.unmodifiableMap(fieldDescription));
 	}
 
-	private static void extractSkipParameters(final SkipParams[] skips, final Collection<Map<String, Object>> fieldsDescription){
+	private static void extractSkipParameters(final SkipParams[] skips, final Collection<Map<String, Object>> fieldsDescription)
+			throws CodecException{
 		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final SkipParams skip = skips[i];
 
@@ -288,8 +301,9 @@ public final class FieldDescriber{
 	 * @param key	The key.
 	 * @param value	The value.
 	 * @param rootDescription	The map in which to load the key-value pair.
+	 * @throws CodecException	If a codec is not found.
 	 */
-	private static void putIfNotEmpty(final String key, final Object value, final Map<String, Object> rootDescription){
+	private static void putIfNotEmpty(final String key, final Object value, final Map<String, Object> rootDescription) throws CodecException{
 		if(value == null)
 			return;
 
@@ -320,7 +334,8 @@ public final class FieldDescriber{
 			rootDescription.put(key, JavaHelper.prettyPrintClassName(cls));
 	}
 
-	private static void handleArrayValue(final String key, final Object value, final Map<String, Object> rootDescription){
+	private static void handleArrayValue(final String key, final Object value, final Map<String, Object> rootDescription)
+			throws CodecException{
 		final Class<?> componentType = value.getClass()
 			.getComponentType();
 
@@ -332,7 +347,8 @@ public final class FieldDescriber{
 		rootDescription.put(key, value);
 	}
 
-	private static void describeAlternatives(final String key, final Object value, final Map<String, Object> rootDescription){
+	private static void describeAlternatives(final String key, final Object value, final Map<String, Object> rootDescription)
+			throws CodecException{
 		final Annotation[] annotations = (Annotation[])value;
 		final int length = annotations.length;
 		if(length == 0)
@@ -349,7 +365,7 @@ public final class FieldDescriber{
 		putIfNotEmpty(key, alternativesDescription, rootDescription);
 	}
 
-	private static Map<String, Object> describeAlternative(final Annotation alternative){
+	private static Map<String, Object> describeAlternative(final Annotation alternative) throws CodecException{
 		final Map<String, Object> alternativeDescription = new LinkedHashMap<>(2);
 
 		final Class<? extends Annotation> annotationType = alternative.annotationType();
@@ -361,7 +377,7 @@ public final class FieldDescriber{
 		return Collections.unmodifiableMap(alternativeDescription);
 	}
 
-	private static void describeChoiceType(final Class<?> type, final Map<String, Object> rootDescription){
+	private static void describeChoiceType(final Class<?> type, final Map<String, Object> rootDescription) throws CodecException{
 		if(JavaHelper.isUserDefinedClass(type)){
 			final List<Map<String, Object>> typeDescription = new ArrayList<>(1);
 			final Collection<Class<?>> processedTypes = new HashSet<>(1);

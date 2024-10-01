@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.core.parsers.TemplateDescriber;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -185,8 +186,9 @@ public final class Describer{
 	 *
 	 * @param boundClass	Generic bound class to be described.
 	 * @return	The description.
+	 * @throws CodecException	If a codec is not found.
 	 */
-	public static Map<String, Object> describeRawMessage(final Class<?> boundClass){
+	public static Map<String, Object> describeRawMessage(final Class<?> boundClass) throws CodecException{
 		return FieldDescriber.describeRawMessage(boundClass);
 	}
 
