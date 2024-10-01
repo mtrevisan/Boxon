@@ -41,7 +41,7 @@ class DescriberTest{
 
 	@Test
 	void describeContext() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
@@ -68,7 +68,7 @@ class DescriberTest{
 
 	@Test
 	void describeParsing() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
@@ -91,7 +91,7 @@ class DescriberTest{
 
 	@Test
 	void describeTemplates() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
@@ -114,7 +114,7 @@ class DescriberTest{
 
 	@Test
 	void describeConfigurations() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)

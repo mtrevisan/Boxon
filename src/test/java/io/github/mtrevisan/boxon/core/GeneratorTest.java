@@ -43,7 +43,7 @@ class GeneratorTest{
 
 	@Test
 	void generateParsing() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
@@ -85,7 +85,7 @@ class GeneratorTest{
 
 	@Test
 	void generateTemplate() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
@@ -106,7 +106,7 @@ class GeneratorTest{
 
 	@Test
 	void generateConfigurations() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())

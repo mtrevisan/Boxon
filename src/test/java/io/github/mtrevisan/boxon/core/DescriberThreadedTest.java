@@ -37,7 +37,7 @@ class DescriberThreadedTest{
 
 	@Test
 	void concurrencySingleParserSingleCore() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
@@ -59,7 +59,7 @@ class DescriberThreadedTest{
 
 	@Test
 	void concurrencyMultipleParserSingleCore() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
@@ -84,7 +84,7 @@ class DescriberThreadedTest{
 
 	@Test
 	void concurrencyMultipleParserMultipleCore() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 
 		int threadCount = 10;

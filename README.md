@@ -731,7 +731,7 @@ These returns a JSON with a description of all the annotations of the loaded tem
 Example:
 
 ```java
-DeviceTypes deviceTypes = DeviceTypes.create()
+DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
     .with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)

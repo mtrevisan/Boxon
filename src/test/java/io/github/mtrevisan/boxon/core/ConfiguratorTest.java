@@ -142,7 +142,7 @@ class ConfiguratorTest{
 
 	@Test
 	void composeSACK() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()

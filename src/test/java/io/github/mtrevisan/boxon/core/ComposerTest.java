@@ -41,7 +41,7 @@ class ComposerTest{
 
 	@Test
 	void parseAndComposeSingleMessageHex() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
@@ -73,7 +73,7 @@ class ComposerTest{
 
 	@Test
 	void parseAndComposeSingleMessageASCII() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
