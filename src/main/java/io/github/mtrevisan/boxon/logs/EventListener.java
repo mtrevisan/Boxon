@@ -213,14 +213,16 @@ public class EventListener{
 	 * Called when a generated template or configuration already exists.
 	 *
 	 * @param name	The template or configuration name.
+	 * @param reason	The reason from the exception thrown.
 	 */
-	public void alreadyGeneratedClass(final String name){}
+	public void alreadyGeneratedClass(final String name, final String reason){}
 
 	/**
 	 * Called when a generated enumeration already exists.
 	 *
 	 * @param name	The enumeration name.
+	 * @param reason	The reason from the exception thrown.
 	 */
-	public void alreadyGeneratedEnum(final String name){}
+	public void alreadyGeneratedEnum(final String name, final String reason){}
 
 }

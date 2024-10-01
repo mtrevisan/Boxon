@@ -176,13 +176,13 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void alreadyGeneratedClass(final String name){
-		warn("Cannot load class {} because it's already present", name);
+	public void alreadyGeneratedClass(final String name, final String reason){
+		warn("Cannot load generated class {}: {}", name, reason);
 	}
 
 	@Override
-	public void alreadyGeneratedEnum(final String name){
-		warn("Cannot load enum {} because it's already present", name);
+	public void alreadyGeneratedEnum(final String name, final String reason){
+		warn("Cannot load generated enum {}: {}", name, reason);
 	}
 
 

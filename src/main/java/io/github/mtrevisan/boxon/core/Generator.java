@@ -124,8 +124,8 @@ public final class Generator{
 		try{
 			return loadClass(builder);
 		}
-		catch(final IllegalStateException ignored){
-			eventListener.alreadyGeneratedClass(className);
+		catch(final IllegalStateException ise){
+			eventListener.alreadyGeneratedClass(className, ise.getMessage());
 
 			return null;
 		}
@@ -164,8 +164,8 @@ public final class Generator{
 			try{
 				loadClass(builder);
 			}
-			catch(final IllegalStateException ignored){
-				eventListener.alreadyGeneratedEnum(enumName);
+			catch(final IllegalStateException ise){
+				eventListener.alreadyGeneratedEnum(enumName, ise.getMessage());
 			}
 		}
 	}

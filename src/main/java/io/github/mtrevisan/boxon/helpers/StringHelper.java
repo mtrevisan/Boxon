@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.helpers;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -77,7 +78,9 @@ public final class StringHelper{
 	 * @param parameters	The arguments to be substituted in place of the formatting anchors.
 	 * @return	The formatted message.
 	 */
-	public static String format(final String message, final Object... parameters){
+	public static String format(final String message, Object... parameters){
+		if(parameters.getClass().isArray() && Array.getLength(parameters) == 1 && parameters[0].getClass().isArray())
+			parameters = (Object[])parameters[0];
 		return MessageFormatter.arrayFormat(message, parameters)
 			.getMessage();
 	}
