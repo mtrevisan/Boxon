@@ -82,8 +82,7 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 
 	@Override
 	public double similarity(final D input1, final D input2){
-		if(input1 == null || input2 == null)
-			throw new IllegalArgumentException("Inputs must not be null");
+		validateInputs(input1, input2);
 
 		final int maxLength = Math.max(input1.length(), input2.length());
 		final int maxDistance = (maxLength > 1
@@ -94,8 +93,7 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 
 	@Override
 	public int distance(final D input1, final D input2){
-		if(input1 == null || input2 == null)
-			throw new IllegalArgumentException("Inputs must not be null");
+		validateInputs(input1, input2);
 
 		if(input1.equals(input2))
 			return 0;
@@ -116,17 +114,7 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 		for(int d = 0; d < length2; d ++)
 			da.put(input2.elementAt(d), 0);
 
-		//create the distance matrix `H[0 .. s1_{length+1}][0 .. s2_{length+1}]`
-		final int[][] h = new int[length1 + 2][length2 + 2];
-		//initialize the left and top edges of `H`
-		for(int i = 0; i <= length1; i ++){
-			h[i + 1][0] = maximumDistance;
-			h[i + 1][1] = i;
-		}
-		for(int j = 0; j <= length2; j ++){
-			h[0][j + 1] = maximumDistance;
-			h[1][j + 1] = j;
-		}
+		final int[][] h = createInitialDistanceMatrix(length1, length2, maximumDistance);
 
 		//fill in the rest of the rows
 		for(int i = 1; i <= length1; i ++){
@@ -155,6 +143,26 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 		}
 
 		return h[length1 + 1][length2 + 1];
+	}
+
+	private static <D extends MetricData<D>> void validateInputs(final D input1, final D input2){
+		if(input1 == null || input2 == null)
+			throw new IllegalArgumentException("Inputs must not be null");
+	}
+
+	private static int[][] createInitialDistanceMatrix(final int length1, final int length2, final int maximumDistance){
+		//create the distance matrix `H[0 .. s1_{length+1}][0 .. s2_{length+1}]`
+		final int[][] h = new int[length1 + 2][length2 + 2];
+		//initialize the left and top edges of `H`
+		for(int i = 0; i <= length1; i ++){
+			h[i + 1][0] = maximumDistance;
+			h[i + 1][1] = i;
+		}
+		for(int j = 0; j <= length2; j ++){
+			h[0][j + 1] = maximumDistance;
+			h[1][j + 1] = j;
+		}
+		return h;
 	}
 
 	private static int min(final int a, final int b, final int c, final int d){
