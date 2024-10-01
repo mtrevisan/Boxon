@@ -89,7 +89,7 @@ public final class Generator{
 	/**
 	 * Generates a class template based on the given description (see {@link Describer}).
 	 * <p>
-	 * Note that the context will be ignored (see {@link #loadContext(Map)}).
+	 * Note that the context will be ignored (see {@link #loadContext(CoreBuilder, Map)}).
 	 * </p>
 	 *
 	 * @param description	The description of the template.
@@ -103,7 +103,7 @@ public final class Generator{
 	/**
 	 * Generates a class configuration based on the given description (see {@link Describer}).
 	 * <p>
-	 * Note that the context will be ignored (see {@link #loadContext(Map)}).
+	 * Note that the context will be ignored (see {@link #loadContext(CoreBuilder, Map)}).
 	 * </p>
 	 *
 	 * @param description	The description of the configuration.
@@ -121,14 +121,14 @@ public final class Generator{
 	/**
 	 * Loads the context for the generator.
 	 *
-	 * @param context	The context to be loaded.
-	 * @return	The loaded context.
+	 * @param coreBuilder        The core builder.
+	 * @param contextDescription The context to be loaded.
 	 */
-	public static Map<String, Object> loadContext(final Map<String, Object> context){
+	public static void loadContext(final CoreBuilder coreBuilder, final Map<String, Object> contextDescription){
 		//TODO manage context
 		//extract Method & other things
 
-		return context;
+System.out.println();
 	}
 
 	private Class<?> generateWithMetadata(final Map<String, Object> metadata, final DescriberKey key,
