@@ -86,15 +86,31 @@ public final class Generator{
 	}
 
 
+	/**
+	 * Generates a class template based on the given description (see {@link Describer}).
+	 * <p>
+	 * Note that the context will be ignored (see {@link #loadContext(Map)}).
+	 * </p>
+	 *
+	 * @param description	The description of the template.
+	 * @return	The generated class template.
+	 * @throws ClassNotFoundException	If the class specified in the description cannot be found.
+	 */
 	public Class<?> generateTemplate(final Map<String, Object> description) throws ClassNotFoundException{
-		final Map<String, Object> context = generateContext(description);
-
 		return generateWithMetadata(description, DescriberKey.TEMPLATE, TemplateHeader.class);
 	}
 
+	/**
+	 * Generates a class configuration based on the given description (see {@link Describer}).
+	 * <p>
+	 * Note that the context will be ignored (see {@link #loadContext(Map)}).
+	 * </p>
+	 *
+	 * @param description	The description of the configuration.
+	 * @return	The generated class configuration.
+	 * @throws ClassNotFoundException	If the class specified in the description cannot be found.
+	 */
 	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
-		final Map<String, Object> context = generateContext(description);
-
 		//enumerations: array of strings, each string is a pair `<name>(<value>)`
 		final List<Map<String, Object>> enumerations = (List<Map<String, Object>>)description.get(DescriberKey.ENUMERATIONS.toString());
 		loadEnumerations(enumerations);
@@ -102,9 +118,13 @@ public final class Generator{
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
 
-	private static Map<String, Object> generateContext(final Map<String, Object> metadata){
-		final Map<String, Object> context = (Map<String, Object>)metadata.get(DescriberKey.CONTEXT.toString());
-
+	/**
+	 * Loads the context for the generator.
+	 *
+	 * @param context	The context to be loaded.
+	 * @return	The loaded context.
+	 */
+	public static Map<String, Object> loadContext(final Map<String, Object> context){
 		//TODO manage context
 		//extract Method & other things
 
