@@ -52,7 +52,7 @@ class GeneratorTest{
 			.create();
 		Describer describer = Describer.create(core);
 		Map<String, Object> description = new HashMap<>(describer.describeParsing(ACKMessageASCII.class));
-		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
+		String template = (String)description.get(DescriberKey.TEMPLATE.toString());
 		description.put(DescriberKey.TEMPLATE.toString(), template + "_other");
 
 		Generator generator = Generator.create(core);
@@ -61,13 +61,7 @@ class GeneratorTest{
 		Assertions.assertNotNull(dynamicType);
 
 
-		core = CoreBuilder.builder()
-//			.withEventListener(EventLogger.getInstance())
-			.withContext("deviceTypes", deviceTypes)
-			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
-			.withDefaultCodecs()
-			.withTemplate(dynamicType)
-			.create();
+		core.addTemplate(dynamicType);
 		Map<String, Object> description2 = new HashMap<>(describer.describeParsing(dynamicType));
 		Assertions.assertEquals(PrettyPrintMap.toString(description), PrettyPrintMap.toString(description2));
 		Parser parser = Parser.create(core);
@@ -93,7 +87,7 @@ class GeneratorTest{
 			.create();
 		Describer describer = Describer.create(core);
 		Map<String, Object> description = new HashMap<>(describer.describeParsing(ACKMessageASCII.class));
-		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
+		String template = (String)description.get(DescriberKey.TEMPLATE.toString());
 		description.put(DescriberKey.TEMPLATE.toString(), template + "_other");
 
 		Generator generator = Generator.create(core);
@@ -116,7 +110,7 @@ class GeneratorTest{
 		Describer describer = Describer.create(core);
 		List<Map<String, Object>> descriptions = describer.describeConfiguration();
 		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
-		final String configuration = (String)description.get(DescriberKey.CONFIGURATION.toString());
+		String configuration = (String)description.get(DescriberKey.CONFIGURATION.toString());
 		description.put(DescriberKey.CONFIGURATION.toString(), configuration + "_other");
 
 		Generator generator = Generator.create(core);
