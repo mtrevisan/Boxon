@@ -102,10 +102,11 @@ public final class Generator{
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
 
-	private static Map<String, Object> generateContext(Map<String, Object> description){
-		final Map<String, Object> context = (Map<String, Object>)description.get(DescriberKey.CONTEXT.toString());
+	private static Map<String, Object> generateContext(final Map<String, Object> metadata){
+		final Map<String, Object> context = (Map<String, Object>)metadata.get(DescriberKey.CONTEXT.toString());
 
 		//TODO manage context
+		//extract Method & other things
 
 		return context;
 	}
