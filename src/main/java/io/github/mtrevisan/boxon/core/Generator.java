@@ -26,15 +26,14 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.generators.ClassCreator;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ public final class Generator{
 	/**
 	 * Generates a class template based on the given description (see {@link Describer}).
 	 * <p>
-	 * Note that the context will be ignored (see {@link #loadContext(CoreBuilder, Map)}).
+	 * Note that the context will be ignored (see FIXME{ @link #loadContext(CoreBuilder, Map)}).
 	 * </p>
 	 *
 	 * @param description	The description of the template.
@@ -78,7 +77,7 @@ public final class Generator{
 	/**
 	 * Generates a class configuration based on the given description (see {@link Describer}).
 	 * <p>
-	 * Note that the context will be ignored (see {@link #loadContext(CoreBuilder, Map)}).
+	 * Note that the context will be ignored (see FIXME{ @link #loadContext(CoreBuilder, Map)}).
 	 * </p>
 	 *
 	 * @param description	The description of the configuration.
@@ -93,12 +92,12 @@ public final class Generator{
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
 
-	/**
+	/* *
 	 * Loads the context for the generator.
 	 *
 	 * @param coreBuilder        The core builder.
 	 * @param contextDescription The context to be loaded.
-	 */
+	 * /
 	public static void loadContext(final CoreBuilder coreBuilder, final Map<String, Object> contextDescription) throws NoSuchMethodException{
 		//TODO manage context
 		//extract Method & other things
@@ -129,7 +128,7 @@ public final class Generator{
 				//TODO ... otherwise is something else (number, string, array, class, ...)
 				coreBuilder.withContext(key, value);
 		}
-	}
+	}/**/
 
 	private Class<?> generateWithMetadata(final Map<String, Object> metadata, final DescriberKey key,
 			final Class<? extends Annotation> templateType) throws ClassNotFoundException{
@@ -158,14 +157,16 @@ public final class Generator{
 
 	private void loadEnumerations(final List<Map<String, Object>> enumerations){
 		final int length = enumerations.size();
+		final ArrayList<String> elementNames = new ArrayList<>(0);
+		final ArrayList<BigInteger> elementValues = new ArrayList<>(0);
 		for(int i = 0; i < length; i ++){
 			final Map<String, Object> enumeration = enumerations.get(i);
 
 			final String enumName = (String)enumeration.get(DescriberKey.ENUMERATION_NAME.toString());
 			final String[] enumValues = (String[])enumeration.get(DescriberKey.ENUMERATION_VALUES.toString());
 			final int count = enumValues.length;
-			final String[] elementNames = new String[count];
-			final BigInteger[] elementValues = new BigInteger[count];
+			elementNames.ensureCapacity(count);
+			elementValues.ensureCapacity(count);
 			for(int j = 0; j < count; j ++){
 				final String enumValue = enumValues[j];
 
@@ -176,8 +177,8 @@ public final class Generator{
 					elementName = enumValue.substring(0, index);
 					elementValue = new BigInteger(enumValue.substring(index + 1, enumValue.length() - 1));
 				}
-				elementNames[j] = elementName;
-				elementValues[j] = elementValue;
+				elementNames.add(elementName);
+				elementValues.add(elementValue);
 			}
 
 			try{
@@ -186,6 +187,9 @@ public final class Generator{
 			catch(final IllegalStateException ise){
 				eventListener.alreadyGeneratedEnum(enumName, ise.getMessage());
 			}
+
+			elementNames.clear();
+			elementValues.clear();
 		}
 	}
 

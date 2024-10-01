@@ -226,8 +226,8 @@ public final class ClassCreator{
 	}
 
 
-	public static <E extends ConfigurationEnum<?>> Class<E> loadEnumeration(final String enumName, final String[] elementNames,
-			final BigInteger[] elementValues){
+	public static <E extends ConfigurationEnum<?>> Class<E> loadEnumeration(final String enumName, final List<String> elementNames,
+			final List<BigInteger> elementValues){
 		final DynamicType.Builder<? extends Enum<?>> builder = BYTE_BUDDY.makeEnumeration(elementNames)
 			.implement(ConfigurationEnum.class)
 			.name(enumName)
@@ -246,10 +246,11 @@ public final class ClassCreator{
 	private static final class EnumCodeInterceptor{
 		private final Map<String, BigInteger> elementCodeMap;
 
-		private EnumCodeInterceptor(final String[] elementNames, final BigInteger[] elementValues){
-			elementCodeMap = new HashMap<>(elementNames.length);
-			for(int i = 0, length = elementNames.length; i < length; i ++)
-				elementCodeMap.put(elementNames[i], elementValues[i]);
+		private EnumCodeInterceptor(final List<String> elementNames, final List<BigInteger> elementValues){
+			final int length = elementNames.size();
+			elementCodeMap = new HashMap<>(length);
+			for(int i = 0; i < length; i ++)
+				elementCodeMap.put(elementNames.get(i), elementValues.get(i));
 		}
 
 		@RuntimeType

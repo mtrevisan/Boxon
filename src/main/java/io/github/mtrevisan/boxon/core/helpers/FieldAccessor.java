@@ -186,7 +186,7 @@ public final class FieldAccessor{
 	 * @return	An array of all the fields of the given class.
 	 */
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final List<Field> allFields = new ArrayList<>();
+		final List<Field> allFields = new ArrayList<>(0);
 		while(cls != null && cls != PARENT_CLASS_LIMIT){
 			final Field[] rawChildFields = cls.getDeclaredFields();
 			final List<Field> childFields = extractChildFields(rawChildFields, fieldType);
@@ -203,7 +203,7 @@ public final class FieldAccessor{
 	}
 
 	private static List<Field> extractChildFields(final Field[] rawChildFields, final Class<?> fieldType){
-		final List<Field> childFields = new ArrayList<>();
+		final List<Field> childFields = new ArrayList<>(0);
 		if(fieldType != null)
 			extractInjectableChildFields(rawChildFields, fieldType, childFields);
 		else

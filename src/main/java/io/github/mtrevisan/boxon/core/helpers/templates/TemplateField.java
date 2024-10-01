@@ -86,7 +86,7 @@ public final class TemplateField implements FieldRetriever{
 	}
 
 	TemplateField withContextParameters(final List<ContextParameter> contextParameters){
-		this.contextParameters = contextParameters;
+		this.contextParameters = Collections.unmodifiableList(contextParameters);
 
 		return this;
 	}
