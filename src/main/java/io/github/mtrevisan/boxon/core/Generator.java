@@ -32,9 +32,13 @@ import io.github.mtrevisan.boxon.core.helpers.DataType;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.logs.EventListener;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.This;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
@@ -54,22 +58,31 @@ import java.util.Map;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Generator{
 
+	private static final ByteBuddy BYTE_BUDDY = new ByteBuddy();
+
 	private static final String KEY_SEPARATOR = "|";
 
 	private static final String REPEATABLE_VALUE = "value";
+	private static final String METHOD_NAME_GET_CODE = "getCode";
+
+
+	private final EventListener eventListener;
 
 
 	/**
 	 * Create a generator.
 	 *
+	 * @param core	The core of the parser (used to retrieve the event listener).
 	 * @return	A generator.
 	 */
-	public static Generator create(){
-		return new Generator();
+	public static Generator create(final Core core){
+		return new Generator(core.getEventListener());
 	}
 
 
-	private Generator(){}
+	private Generator(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+	}
 
 
 	//TODO manage context
@@ -80,26 +93,8 @@ public final class Generator{
 	//TODO manage context
 	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
 		//enumerations: array of strings, each string is a pair `<name>(<value>)`
-		//TODO manage enumerations
 		final List<Map<String, Object>> enumerations = (List<Map<String, Object>>)description.get(DescriberKey.ENUMERATIONS.toString());
-		for(int i = 0, length = enumerations.size(); i < length; i ++){
-			final Map<String, Object> enumeration = enumerations.get(i);
-
-			final String enumName = (String)enumeration.get("name");
-			final String[] enumValues = (String[])enumeration.get("values");
-			for(int j = 0, count = enumValues.length; j < count; j ++){
-				final String enumValue = enumValues[j];
-
-				String elementName = enumValue;
-				BigInteger elementValue = null;
-				final int index = enumValue.indexOf('(');
-				if(index > 0){
-					elementName = enumValue.substring(0, index);
-					elementValue = new BigInteger(enumValue.substring(index + 1, enumValue.length() - 1));
-				}
-				//TODO create enum
-			}
-		}
+		loadEnumerations(enumerations);
 
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
@@ -120,13 +115,57 @@ public final class Generator{
 		final List<Map<String, Object>> postProcessedFields = getPostProcessedFieldsFromMetadata(metadata);
 		final Map<String, Map<String, Object>> postProcessedNavigableFields = extractPostProcessedNavigableFields(postProcessedFields);
 
-		final ByteBuddy byteBuddy = new ByteBuddy();
-		DynamicType.Builder<Object> builder = byteBuddy.subclass(Object.class)
+		DynamicType.Builder<Object> builder = BYTE_BUDDY.subclass(Object.class)
 			.name(className)
 			.annotateType(header);
 		builder = annotateFields(builder, fields, postProcessedNavigableFields);
 		builder = annotateEvaluatedFields(builder, evaluatedFields);
-		return loadClass(builder);
+		try{
+			return loadClass(builder);
+		}
+		catch(final IllegalStateException ignored){
+			eventListener.alreadyGeneratedClass(className);
+
+			return null;
+		}
+	}
+
+	private void loadEnumerations(final List<Map<String, Object>> enumerations){
+		final int length = enumerations.size();
+		for(int i = 0; i < length; i ++){
+			final Map<String, Object> enumeration = enumerations.get(i);
+
+			final String enumName = (String)enumeration.get(DescriberKey.ENUMERATION_NAME.toString());
+			final String[] enumValues = (String[])enumeration.get(DescriberKey.ENUMERATION_VALUES.toString());
+			final int count = enumValues.length;
+			final String[] elementNames = new String[count];
+			final BigInteger[] elementValues = new BigInteger[count];
+			for(int j = 0; j < count; j ++){
+				final String enumValue = enumValues[j];
+
+				String elementName = enumValue;
+				BigInteger elementValue = null;
+				final int index = enumValue.indexOf('(');
+				if(index > 0){
+					elementName = enumValue.substring(0, index);
+					elementValue = new BigInteger(enumValue.substring(index + 1, enumValue.length() - 1));
+				}
+				elementNames[j] = elementName;
+				elementValues[j] = elementValue;
+			}
+
+			//create enum
+			final DynamicType.Builder<? extends Enum<?>> builder = BYTE_BUDDY.makeEnumeration(elementNames)
+				.name(enumName)
+				.defineMethod(METHOD_NAME_GET_CODE, BigInteger.class)
+				.intercept(MethodDelegation.to(new EnumCodeInterceptor(elementNames, elementValues)));
+			try{
+				loadClass(builder);
+			}
+			catch(final IllegalStateException ignored){
+				eventListener.alreadyGeneratedEnum(enumName);
+			}
+		}
 	}
 
 	private static Map<String, Object> getHeaderFromMetadata(final Map<String, Object> metadata){
@@ -145,8 +184,8 @@ public final class Generator{
 		return (List<Map<String, Object>>)metadata.get(DescriberKey.POST_PROCESSED_FIELDS.toString());
 	}
 
-	private Class<?> loadClass(final DynamicType.Builder<Object> builder){
-		try(final DynamicType.Unloaded<Object> unloaded = builder.make()){
+	private Class<?> loadClass(final DynamicType.Builder<?> builder){
+		try(final DynamicType.Unloaded<?> unloaded = builder.make()){
 			return unloaded.load(getClass().getClassLoader()).getLoaded();
 		}
 	}
@@ -369,6 +408,21 @@ public final class Generator{
 				Array.set(result, i, createAnnotation(annotationType, subs));
 			}
 			return result;
+		}
+	}
+
+	public static class EnumCodeInterceptor{
+		private final Map<String, BigInteger> elementCodeMap;
+
+		public EnumCodeInterceptor(final String[] elementNames, final BigInteger[] elementValues){
+			elementCodeMap = new HashMap<>(elementNames.length);
+			for(int i = 0, length = elementNames.length; i < length; i ++)
+				elementCodeMap.put(elementNames[i], elementValues[i]);
+		}
+
+		@RuntimeType
+		public BigInteger getCode(@This final Enum<?> enumInstance){
+			return elementCodeMap.get(enumInstance.name());
 		}
 	}
 

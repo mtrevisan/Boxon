@@ -52,9 +52,9 @@ class GeneratorTest{
 		Describer describer = Describer.create(core);
 		Map<String, Object> description = new HashMap<>(describer.describeParsing(ACKMessageASCII.class));
 		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
-		description.put(DescriberKey.TEMPLATE.toString(), template + "2");
+		description.put(DescriberKey.TEMPLATE.toString(), template + "_other");
 
-		Generator generator = Generator.create();
+		Generator generator = Generator.create(core);
 		Class<?> dynamicType = generator.generateTemplate(description);
 
 		Assertions.assertNotNull(dynamicType);
@@ -91,9 +91,9 @@ class GeneratorTest{
 		Describer describer = Describer.create(core);
 		Map<String, Object> description = new HashMap<>(describer.describeParsing(ACKMessageASCII.class));
 		final String template = (String)description.get(DescriberKey.TEMPLATE.toString());
-		description.put(DescriberKey.TEMPLATE.toString(), template + "2");
+		description.put(DescriberKey.TEMPLATE.toString(), template + "_other");
 
-		Generator generator = Generator.create();
+		Generator generator = Generator.create(core);
 		Class<?> dynamicType = generator.generateTemplate(description);
 
 		Assertions.assertNotNull(dynamicType);
@@ -104,6 +104,7 @@ class GeneratorTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
+//			.withEventListener(EventLogger.getInstance())
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
@@ -113,9 +114,9 @@ class GeneratorTest{
 		List<Map<String, Object>> descriptions = describer.describeConfiguration();
 		Map<String, Object> description = new HashMap<>(descriptions.getFirst());
 		final String configuration = (String)description.get(DescriberKey.CONFIGURATION.toString());
-		description.put(DescriberKey.CONFIGURATION.toString(), configuration + "2");
+		description.put(DescriberKey.CONFIGURATION.toString(), configuration + "_other");
 
-		Generator generator = Generator.create();
+		Generator generator = Generator.create(core);
 		Class<?> dynamicType = generator.generateConfiguration(description);
 
 		Assertions.assertNotNull(dynamicType);

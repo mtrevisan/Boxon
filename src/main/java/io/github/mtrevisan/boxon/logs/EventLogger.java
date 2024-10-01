@@ -175,6 +175,17 @@ public final class EventLogger extends EventListener{
 	}
 
 
+	@Override
+	public void alreadyGeneratedClass(final String name){
+		warn("Cannot load class {} because it's already present", name);
+	}
+
+	@Override
+	public void alreadyGeneratedEnum(final String name){
+		warn("Cannot load enum {} because it's already present", name);
+	}
+
+
 	private static void trace(final String message, final Exception exception){
 		LOGGER.trace(compose(message), exception);
 	}

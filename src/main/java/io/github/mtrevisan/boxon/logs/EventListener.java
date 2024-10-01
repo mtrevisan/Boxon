@@ -208,4 +208,19 @@ public class EventListener{
 	 */
 	public void writtenField(final String templateName, final String fieldName, final Object value){}
 
+
+	/**
+	 * Called when a generated template or configuration already exists.
+	 *
+	 * @param name	The template or configuration name.
+	 */
+	public void alreadyGeneratedClass(final String name){}
+
+	/**
+	 * Called when a generated enumeration already exists.
+	 *
+	 * @param name	The enumeration name.
+	 */
+	public void alreadyGeneratedEnum(final String name){}
+
 }
