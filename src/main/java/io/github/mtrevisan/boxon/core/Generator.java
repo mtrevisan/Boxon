@@ -86,18 +86,28 @@ public final class Generator{
 	}
 
 
-	//TODO manage context
 	public Class<?> generateTemplate(final Map<String, Object> description) throws ClassNotFoundException{
+		final Map<String, Object> context = generateContext(description);
+
 		return generateWithMetadata(description, DescriberKey.TEMPLATE, TemplateHeader.class);
 	}
 
-	//TODO manage context
 	public Class<?> generateConfiguration(final Map<String, Object> description) throws ClassNotFoundException{
+		final Map<String, Object> context = generateContext(description);
+
 		//enumerations: array of strings, each string is a pair `<name>(<value>)`
 		final List<Map<String, Object>> enumerations = (List<Map<String, Object>>)description.get(DescriberKey.ENUMERATIONS.toString());
 		loadEnumerations(enumerations);
 
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
+	}
+
+	private static Map<String, Object> generateContext(Map<String, Object> description){
+		final Map<String, Object> context = (Map<String, Object>)description.get(DescriberKey.CONTEXT.toString());
+
+		//TODO manage context
+
+		return context;
 	}
 
 	private Class<?> generateWithMetadata(final Map<String, Object> metadata, final DescriberKey key,
