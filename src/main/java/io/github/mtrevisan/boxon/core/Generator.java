@@ -92,44 +92,6 @@ public final class Generator{
 		return generateWithMetadata(description, DescriberKey.CONFIGURATION, ConfigurationHeader.class);
 	}
 
-	/* *
-	 * Loads the context for the generator.
-	 *
-	 * @param coreBuilder        The core builder.
-	 * @param contextDescription The context to be loaded.
-	 * /
-	public static void loadContext(final CoreBuilder coreBuilder, final Map<String, Object> contextDescription) throws NoSuchMethodException{
-		//TODO manage context
-		//extract Method & other things
-		for(final Map.Entry<String, Object> entry : contextDescription.entrySet()){
-			final String key = entry.getKey();
-			final Object value = entry.getValue();
-
-			//TODO find if value represents a method...
-			final Class<?> valueClass = value.getClass();
-			if(DataType.fromType(valueClass) != null)
-				coreBuilder.withContext(key, value);
-			else if(!valueClass.isArray() && DataType.fromType(valueClass) == null && valueClass != String.class){
-				final Class<?> type = null;
-				//key is methodName
-				coreBuilder.withContext(type, key);
-
-				//key is methodName
-				//TODO extract parameterTypes from `value`
-				final Class<?>[] parameterTypes = null;
-				coreBuilder.withContext(type, key, parameterTypes);
-
-				//key is methodName
-				final Method method = null;
-				if(key.equals(method.getName()))
-					coreBuilder.withContext(method);
-			}
-			else
-				//TODO ... otherwise is something else (number, string, array, class, ...)
-				coreBuilder.withContext(key, value);
-		}
-	}/**/
-
 	private Class<?> generateWithMetadata(final Map<String, Object> metadata, final DescriberKey key,
 			final Class<? extends Annotation> templateType) throws ClassNotFoundException{
 		final String className = (String)metadata.get(key.toString());

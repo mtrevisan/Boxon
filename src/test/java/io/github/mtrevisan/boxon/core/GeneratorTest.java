@@ -62,9 +62,6 @@ class GeneratorTest{
 
 		Generator generator = Generator.create(core);
 		Class<?> dynamicType = generator.generateTemplate(description);
-		//FIXME
-//		CoreBuilder coreBuilder = CoreBuilder.builder();
-//		Generator.loadContext(coreBuilder, (Map<String, Object>)description.get(DescriberKey.CONTEXT.toString()));
 
 		Assertions.assertNotNull(dynamicType);
 
