@@ -127,15 +127,15 @@ public enum DataType{
 		TYPE_MAP = new HashMap<>(length << 1);
 		PRIMITIVE_TYPE_MAP = new HashMap<>(length + 4);
 		for(final DataType dt : values){
-			TYPE_MAP.put(dt.primitiveWrapperType, dt);
+			TYPE_MAP.put(dt.primitiveType, dt);
 			TYPE_MAP.put(dt.objectiveType, dt);
 
-			PRIMITIVE_TYPE_MAP.put(dt.objectiveType.getSimpleName().toLowerCase(Locale.ROOT), dt.primitiveWrapperType);
+			PRIMITIVE_TYPE_MAP.put(dt.objectiveType.getSimpleName().toLowerCase(Locale.ROOT), dt.primitiveType);
 		}
 		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_VOID_NAME, Void.TYPE);
 		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_BOOLEAN_NAME, Boolean.TYPE);
 		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_CHAR_NAME, Character.TYPE);
-		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_INTEGER_NAME, INTEGER.primitiveWrapperType);
+		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_INTEGER_NAME, INTEGER.primitiveType);
 	}
 
 	private static final String METHOD_VALUE_OF = "valueOf";
@@ -144,7 +144,7 @@ public enum DataType{
 
 
 	private final Class<?> objectiveType;
-	private final Class<?> primitiveWrapperType;
+	private final Class<?> primitiveType;
 	//the number of bits used to represent the value
 	private final int primitiveSize;
 	private final Function<String, Object> valueStrategy;
@@ -164,12 +164,13 @@ public enum DataType{
 	}
 
 
-	DataType(final Class<?> objectiveType, final Class<?> primitiveWrapperType, final int primitiveSize,
-			final Function<String, Object> valueStrategy, final Function<BigInteger, Number> castStrategy,
+	DataType(final Class<?> objectiveType, final Class<?> primitiveType, final int primitiveSize,
+			final Function<String, Object> valueStrategy,
+			final Function<BigInteger, Number> castStrategy,
 			final BiFunction<BitReaderInterface, ByteOrder, Object> readStrategy,
 			final TriConsumer<BitWriterInterface, Object, ByteOrder> writeStrategy){
 		this.objectiveType = objectiveType;
-		this.primitiveWrapperType = primitiveWrapperType;
+		this.primitiveType = primitiveType;
 		this.primitiveSize = primitiveSize;
 		this.valueStrategy = valueStrategy;
 		this.castStrategy = castStrategy;
@@ -218,7 +219,7 @@ public enum DataType{
 	 */
 	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
 		final DataType dataType = fromType(objectiveType);
-		return (dataType != null? dataType.primitiveWrapperType: objectiveType);
+		return (dataType != null? dataType.primitiveType: objectiveType);
 	}
 
 	/**
@@ -234,7 +235,7 @@ public enum DataType{
 
 	/**
 	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
-	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered as primitives!</p>
+	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered primitives!</p>
 	 *
 	 * @param type	The class to query.
 	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
