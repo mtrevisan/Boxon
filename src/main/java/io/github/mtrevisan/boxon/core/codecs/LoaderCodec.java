@@ -112,6 +112,7 @@ public final class LoaderCodec{
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes that implements {@link Codec}. */
 		final List<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(Codec.class);
+		//TODO try to avoid creation of list
 		final List<Codec> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
@@ -147,7 +148,7 @@ public final class LoaderCodec{
 	public void addCodec(final Codec codec) throws CodecException{
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
-		eventListener.loadingCodec(codec.getClass());
+		eventListener.loadingCodec(codec);
 
 		addCodecInner(codec, null);
 
@@ -182,15 +183,11 @@ public final class LoaderCodec{
 	public void addCodecs(final Codec... codecs) throws CodecException{
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
-		final int length = codecs.length;
-		final Class<?>[] codecClasses = new Class<?>[length];
-		for(int i = 0; i < length; i ++)
-			codecClasses[i] = codecs[i].getClass();
-		eventListener.loadingCodec(codecClasses);
+		eventListener.loadingCodec(codecs);
 
 		addCodecsInner(codecs);
 
-		eventListener.loadedCodecs(length);
+		eventListener.loadedCodecs(codecs.length);
 	}
 
 	private void addCodecsInner(final List<Codec> codecs) throws CodecException{

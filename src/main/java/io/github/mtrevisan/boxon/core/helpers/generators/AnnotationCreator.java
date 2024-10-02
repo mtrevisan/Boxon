@@ -34,7 +34,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +67,7 @@ public final class AnnotationCreator{
 
 		private DynamicAnnotationInvocationHandler(final Class<? extends Annotation> annotationType, final Map<String, Object> values){
 			this.annotationType = annotationType;
-			this.values = new HashMap<>(values);
+			this.values = Map.copyOf(values);
 		}
 
 		@Override

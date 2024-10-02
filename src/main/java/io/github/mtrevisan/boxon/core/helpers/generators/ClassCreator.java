@@ -236,9 +236,10 @@ public final class ClassCreator{
 		return (Class<E>)loadClass(builder);
 	 }
 
-	private static Class<?> loadClass(final DynamicType.Builder<?> builder){
+	private static Class<?> loadClass(final DynamicType.Builder<?> builder) throws IllegalStateException{
 		try(final DynamicType.Unloaded<?> unloaded = builder.make()){
-			return unloaded.load(ClassCreator.class.getClassLoader()).getLoaded();
+			return unloaded.load(ClassCreator.class.getClassLoader())
+				.getLoaded();
 		}
 	}
 

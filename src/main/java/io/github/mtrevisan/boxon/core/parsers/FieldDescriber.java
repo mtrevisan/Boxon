@@ -208,13 +208,13 @@ public final class FieldDescriber{
 	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
 			throws CodecException{
 		final int length = JavaHelper.sizeOrZero(fields);
-		final ArrayList<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		final List<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);
 
 			extractAnnotationParameters(field, fieldExtractor, fieldsDescription);
 		}
-		return JavaHelper.trimAndCreateUnmodifiable(fieldsDescription);
+		return Collections.unmodifiableList(fieldsDescription);
 	}
 
 	private static <F> void extractAnnotationParameters(final F field, final FieldExtractor<F> fieldExtractor,
@@ -256,11 +256,11 @@ public final class FieldDescriber{
 	private static <F> Collection<Map<String, Object>> describeEnumerations(final Collection<F> fields,
 			final FieldExtractor<F> fieldExtractor){
 		final int length = JavaHelper.sizeOrZero(fields);
-		final ArrayList<Map<String, Object>> enumerationsDescription = new ArrayList<>(length);
+		final List<Map<String, Object>> enumerationsDescription = new ArrayList<>(length);
 		if(length > 0)
 			for(final F field : fields)
 				extractEnumerationParameters(field, fieldExtractor, enumerationsDescription);
-		return JavaHelper.trimAndCreateUnmodifiable(enumerationsDescription);
+		return Collections.unmodifiableList(enumerationsDescription);
 	}
 
 	private static <F> void extractEnumerationParameters(final F field, final FieldExtractor<F> fieldExtractor,
@@ -367,7 +367,7 @@ public final class FieldDescriber{
 	}
 
 	private static Map<String, Object> describeAlternative(final Annotation alternative) throws CodecException{
-		final Map<String, Object> alternativeDescription = new LinkedHashMap<>(2);
+		final Map<String, Object> alternativeDescription = new LinkedHashMap<>(3);
 
 		final Class<? extends Annotation> annotationType = alternative.annotationType();
 		putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), alternativeDescription);

@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.logs;
 
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
 
 
 /**
@@ -65,7 +66,7 @@ public class EventListener{
 	 *
 	 * @param codecClasses	List of codec classes.
 	 */
-	public void loadingCodec(final Class<?>... codecClasses){}
+	public void loadingCodec(final Codec... codecClasses){}
 
 	/**
 	 * Called when about to loading some codecs through codec classes.

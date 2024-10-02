@@ -81,7 +81,9 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
+		final String expected = new String(payload, StandardCharsets.US_ASCII);
+		final String actual = new String(reconstructedMessage, StandardCharsets.US_ASCII);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -111,7 +113,9 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
+		final String expected = new String(payload, StandardCharsets.US_ASCII);
+		final String actual = new String(reconstructedMessage, StandardCharsets.US_ASCII);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	private static int headerLength(){
@@ -144,7 +148,9 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
+		final String expected = new String(payload, StandardCharsets.US_ASCII);
+		final String actual = new String(reconstructedMessage, StandardCharsets.US_ASCII);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test

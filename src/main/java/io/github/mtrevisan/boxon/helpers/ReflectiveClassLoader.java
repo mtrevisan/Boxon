@@ -32,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -112,7 +113,7 @@ public final class ReflectiveClassLoader{
 	}
 
 	private List<Class<?>> extractClassesWithInfo(final Class<?> type, final Function<ScanResult, ClassInfoList> filter){
-		final ArrayList<Class<?>> loadedClasses = getStoredClasses(type);
+		final List<Class<?>> loadedClasses = getStoredClasses(type);
 
 		if(loadedClasses.isEmpty()){
 			try(final ScanResult scanResult = classGraph.scan()){
@@ -122,7 +123,7 @@ public final class ReflectiveClassLoader{
 				loadedClasses.addAll(list);
 			}
 		}
-		return JavaHelper.trimAndCreateUnmodifiable(loadedClasses);
+		return Collections.unmodifiableList(loadedClasses);
 	}
 
 	private ArrayList<Class<?>> getStoredClasses(final Class<?> type){

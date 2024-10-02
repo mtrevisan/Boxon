@@ -41,6 +41,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -115,7 +116,7 @@ public final class ConfigurationMessage<T>{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int size = fields.size();
 		final Collection<String> uniqueShortDescription = new HashSet<>(size);
-		final ArrayList<ConfigurationField> configurationFields = new ArrayList<>(size);
+		final List<ConfigurationField> configurationFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 
@@ -138,7 +139,7 @@ public final class ConfigurationMessage<T>{
 				throw e;
 			}
 		}
-		return JavaHelper.trimAndCreateUnmodifiable(configurationFields);
+		return configurationFields;
 	}
 
 
@@ -246,7 +247,7 @@ public final class ConfigurationMessage<T>{
 
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(ConfigurationSkip.class.isAssignableFrom(annotationType)
-					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
+					|| ConfigurationSkip.Skips.class.isAssignableFrom(annotationType))
 				continue;
 
 			validateAnnotation(field, annotation, minProtocolVersion, maxProtocolVersion);
@@ -282,7 +283,7 @@ public final class ConfigurationMessage<T>{
 		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
-		return JavaHelper.trimAndCreateUnmodifiable(boundaries);
+		return boundaries;
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){
@@ -331,7 +332,7 @@ public final class ConfigurationMessage<T>{
 	 * @return	List of configuration fields data.
 	 */
 	public List<ConfigurationField> getConfigurationFields(){
-		return configurationFields;
+		return Collections.unmodifiableList(configurationFields);
 	}
 
 	/**
@@ -340,7 +341,7 @@ public final class ConfigurationMessage<T>{
 	 * @return	List of protocol version boundaries.
 	 */
 	public List<String> getProtocolVersionBoundaries(){
-		return protocolVersionBoundaries;
+		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
 	/**

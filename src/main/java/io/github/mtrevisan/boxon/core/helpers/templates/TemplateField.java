@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,8 +86,8 @@ public final class TemplateField implements FieldRetriever{
 		return this;
 	}
 
-	TemplateField withContextParameters(final List<ContextParameter> contextParameters){
-		this.contextParameters = Collections.unmodifiableList(contextParameters);
+	TemplateField withContextParameters(final Collection<ContextParameter> contextParameters){
+		this.contextParameters = List.copyOf(contextParameters);
 
 		return this;
 	}
