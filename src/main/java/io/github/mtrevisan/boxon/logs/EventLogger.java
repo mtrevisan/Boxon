@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.logs;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.Codec;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,11 +77,11 @@ public final class EventLogger extends EventListener{
 	}
 
 	@Override
-	public void loadingCodec(final Class<?>... codecClasses){
+	public void loadingCodec(final Codec... codecClasses){
 		if(LOGGER.isInfoEnabled()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(int i = 0, length = codecClasses.length; i < length; i ++)
-				sj.add(codecClasses[i].getSimpleName());
+				sj.add(codecClasses[i].getClass().getSimpleName());
 
 			info("Loading codecs: {}", sj.toString());
 		}
@@ -175,6 +176,17 @@ public final class EventLogger extends EventListener{
 	}
 
 
+	@Override
+	public void alreadyGeneratedClass(final String name, final String reason){
+		warn("Cannot load generated class {}: {}", name, reason);
+	}
+
+	@Override
+	public void alreadyGeneratedEnum(final String name, final String reason){
+		warn("Cannot load generated enum {}: {}", name, reason);
+	}
+
+
 	private static void trace(final String message, final Exception exception){
 		LOGGER.trace(compose(message), exception);
 	}
@@ -221,7 +233,7 @@ public final class EventLogger extends EventListener{
 
 			return sj.toString();
 		}
-		return parameters;
+		return (parameters.length > 1? parameters: parameters[0]);
 	}
 
 	private static Collection<String> collectPackages(final Object[] parameters){

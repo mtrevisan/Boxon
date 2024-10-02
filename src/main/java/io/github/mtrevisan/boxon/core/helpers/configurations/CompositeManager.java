@@ -60,7 +60,7 @@ import static io.github.mtrevisan.boxon.core.helpers.configurations.Configuratio
 final class CompositeManager implements ConfigurationManager{
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
-	private static final Configuration FREEMARKER_CONFIGURATION = new Configuration(Configuration.VERSION_2_3_31);
+	private static final Configuration FREEMARKER_CONFIGURATION = new Configuration(Configuration.VERSION_2_3_33);
 
 	static{
 		FREEMARKER_CONFIGURATION.setDefaultEncoding(StandardCharsets.UTF_8.name());

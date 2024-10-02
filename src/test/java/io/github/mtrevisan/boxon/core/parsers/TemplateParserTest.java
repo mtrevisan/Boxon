@@ -70,7 +70,7 @@ class TemplateParserTest{
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.putToContext("deviceTypes", deviceTypes);
 		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
@@ -81,7 +81,9 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
+		final String expected = new String(payload, StandardCharsets.US_ASCII);
+		final String actual = new String(reconstructedMessage, StandardCharsets.US_ASCII);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test
@@ -100,7 +102,7 @@ class TemplateParserTest{
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.putToContext("deviceTypes", deviceTypes);
 		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
@@ -111,7 +113,9 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
+		final String expected = new String(payload, StandardCharsets.US_ASCII);
+		final String actual = new String(reconstructedMessage, StandardCharsets.US_ASCII);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	private static int headerLength(){
@@ -134,7 +138,7 @@ class TemplateParserTest{
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		evaluator.putToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = (ACKMessageASCII)templateParser.decode(template, reader, null);
@@ -144,7 +148,9 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
+		final String expected = new String(payload, StandardCharsets.US_ASCII);
+		final String actual = new String(reconstructedMessage, StandardCharsets.US_ASCII);
+		Assertions.assertEquals(expected, actual);
 	}
 
 	@Test

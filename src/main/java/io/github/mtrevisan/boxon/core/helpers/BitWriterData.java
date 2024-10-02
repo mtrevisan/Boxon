@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
-import java.util.function.BiConsumer;
 
 
 /**
@@ -88,7 +87,7 @@ class BitWriterData{
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
 	 */
 	private void writeNumber(final long value, final int bitsToWrite){
-		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> writeToCache(value, bitsToProcess, length);
+		final CacheUpdater cacheUpdater = (bitsToProcess, length) -> writeToCache(value, bitsToProcess, length);
 		writeBits(bitsToWrite, cacheUpdater);
 	}
 
@@ -104,7 +103,7 @@ class BitWriterData{
 	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
 	 */
 	public final synchronized void writeBitSet(final BitSet bitmap, final int bitsToWrite){
-		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> writeToCache(bitmap, bitsToProcess, length);
+		final CacheUpdater cacheUpdater = (bitsToProcess, length) -> writeToCache(bitmap, bitsToProcess, length);
 		writeBits(bitsToWrite, cacheUpdater);
 	}
 
@@ -131,8 +130,13 @@ class BitWriterData{
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
 	public final synchronized void skipBits(final int bitsToSkip){
-		final BiConsumer<Integer, Integer> cacheUpdater = (bitsToProcess, length) -> {};
+		final CacheUpdater cacheUpdater = (bitsToProcess, length) -> {};
 		writeBits(bitsToSkip, cacheUpdater);
+	}
+
+	@FunctionalInterface
+	public interface CacheUpdater{
+		void update(int t, int u);
 	}
 
 	/**
@@ -145,7 +149,7 @@ class BitWriterData{
 	 * @param bitsToWrite	The number of bits to write.
 	 * @param cacheUpdater	The function that updates the cache with bits.
 	 */
-	private void writeBits(int bitsToWrite, final BiConsumer<Integer, Integer> cacheUpdater){
+	private void writeBits(int bitsToWrite, final CacheUpdater cacheUpdater){
 		while(bitsToWrite > 0){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite, remaining);
@@ -153,7 +157,7 @@ class BitWriterData{
 
 			cache <<= length;
 
-			cacheUpdater.accept(bitsToWrite, length);
+			cacheUpdater.update(bitsToWrite, length);
 
 			consumeCache(length);
 

@@ -157,8 +157,7 @@ final class ConfigFieldData{
 		final boolean hasPattern = !pattern.isEmpty();
 		final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());
 		final boolean hasEnumeration = hasEnumeration();
-		return (hasPattern && (hasMinMaxValues || hasEnumeration)
-			|| hasMinMaxValues && hasEnumeration);
+		return ((hasPattern? 1: 0) + (hasMinMaxValues? 1: 0) + (hasEnumeration? 1: 0) > 1);
 	}
 	/**
 	 * The enumeration for the configuration field.

@@ -29,12 +29,9 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -47,7 +44,7 @@ public final class JavaHelper{
 	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
 
-	private static final String ARRAY_VARIABLE = "[]";
+	public static final String ARRAY_VARIABLE = "[]";
 	private static final Map<Character, String> DESCRIPTOR_MAP = Map.of(
 		'B', "byte",
 		'C', "char",
@@ -356,10 +353,6 @@ public final class JavaHelper{
 	}
 
 
-	public static <T> List<T> trimAndCreateUnmodifiable(final ArrayList<T> list){
-		list.trimToSize();
-		return Collections.unmodifiableList(list);
-	}
 
 	public static <K, V> Map<V, K> reverseMap(final Map<K, V> map){
 		final Map<V, K> reverseMap = new HashMap<>(map.size());

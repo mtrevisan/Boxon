@@ -33,11 +33,11 @@ import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -51,12 +51,12 @@ public final class Template<T>{
 
 	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
 			List<EvaluatedField<PostProcess>> postProcessedFields){
-		private static Triplet of(final ArrayList<TemplateField> templateFields, final ArrayList<EvaluatedField<Evaluate>> evaluatedFields,
-				final ArrayList<EvaluatedField<PostProcess>> postProcessedFields){
+		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
+				final List<EvaluatedField<PostProcess>> postProcessedFields){
 			return new Triplet(
-				JavaHelper.trimAndCreateUnmodifiable(templateFields),
-				JavaHelper.trimAndCreateUnmodifiable(evaluatedFields),
-				JavaHelper.trimAndCreateUnmodifiable(postProcessedFields));
+				Collections.unmodifiableList(templateFields),
+				Collections.unmodifiableList(evaluatedFields),
+				Collections.unmodifiableList(postProcessedFields));
 		}
 	}
 
@@ -219,7 +219,7 @@ public final class Template<T>{
 	 * @return	List of template fields.
 	 */
 	public List<TemplateField> getTemplateFields(){
-		return templateFields;
+		return Collections.unmodifiableList(templateFields);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public final class Template<T>{
 	 * @return	List of evaluated fields.
 	 */
 	public List<EvaluatedField<Evaluate>> getEvaluatedFields(){
-		return evaluatedFields;
+		return Collections.unmodifiableList(evaluatedFields);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public final class Template<T>{
 	 * @return	List of processed fields.
 	 */
 	public List<EvaluatedField<PostProcess>> getPostProcessedFields(){
-		return postProcessedFields;
+		return Collections.unmodifiableList(postProcessedFields);
 	}
 
 	/**

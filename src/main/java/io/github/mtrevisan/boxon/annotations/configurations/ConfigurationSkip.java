@@ -48,7 +48,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(ConfigurationSkip.ConfigurationSkips.class)
+@Repeatable(ConfigurationSkip.Skips.class)
 @Documented
 public @interface ConfigurationSkip{
 
@@ -58,7 +58,7 @@ public @interface ConfigurationSkip{
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	@Documented
-	@interface ConfigurationSkips{
+	@interface Skips{
 
 		/**
 		 * The array holding the Skip annotations.

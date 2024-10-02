@@ -39,7 +39,6 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
@@ -48,7 +47,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,10 +99,10 @@ public final class Configurator{
 	 */
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final ArrayList<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		return JavaHelper.trimAndCreateUnmodifiable(protocolVersionBoundaries);
+		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
 
@@ -142,7 +141,7 @@ public final class Configurator{
 			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
-			final Map<String, Object> map = new HashMap<>(3);
+			final Map<String, Object> map = new LinkedHashMap<>(3);
 			final Map<String, Object> headerMap = extractMap(protocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
 			putIfNotEmpty(ConfigurationKey.HEADER, headerMap, map);
@@ -166,7 +165,7 @@ public final class Configurator{
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(4);
+		final Map<String, Object> map = new LinkedHashMap<>(4);
 		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){
@@ -189,7 +188,7 @@ public final class Configurator{
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
-		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
+		final Map<String, Object> fieldsMap = new LinkedHashMap<>(fields.size());
 		for(final ConfigurationField field : fields){
 			final Annotation annotation = field.getBinding();
 			final Class<?> fieldType = field.getFieldType();

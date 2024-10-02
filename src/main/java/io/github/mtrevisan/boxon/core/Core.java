@@ -57,6 +57,8 @@ public final class Core{
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
+	private EventListener eventListener = EventListener.getNoOpInstance();
+
 
 	/**
 	 * Create an empty parser core.
@@ -90,6 +92,9 @@ public final class Core{
 	 * @param eventListener	The event listener.
 	 */
 	void setEventListener(final EventListener eventListener){
+		if(eventListener != null)
+			this.eventListener = eventListener;
+
 		loaderCodec.withEventListener(eventListener);
 
 		templateParser.withEventListener(eventListener);
@@ -278,6 +283,11 @@ public final class Core{
 
 	ConfigurationParser getConfigurationParser(){
 		return configurationParser;
+	}
+
+
+	public EventListener getEventListener(){
+		return eventListener;
 	}
 
 }

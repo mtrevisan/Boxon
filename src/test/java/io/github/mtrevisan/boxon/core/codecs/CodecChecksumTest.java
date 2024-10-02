@@ -27,11 +27,10 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
-import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
@@ -39,7 +38,7 @@ import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
+import java.util.Map;
 
 
 class CodecChecksumTest{
@@ -48,37 +47,14 @@ class CodecChecksumTest{
 	void checksumShort() throws BoxonException{
 		Codec codec = new CodecChecksum();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
-		Checksum annotation = new Checksum(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return Checksum.class;
-			}
-
-			@Override
-			public String condition(){
-				return JavaHelper.EMPTY_STRING;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public int skipStart(){
-				return 2;
-			}
-
-			@Override
-			public int skipEnd(){
-				return 0;
-			}
-
-			@Override
-			public Class<? extends Checksummer> algorithm(){
-				return CRC16CCITT_FALSE.class;
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", Checksum.class.getName(),
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"skipStart", 2,
+			"skipEnd", 0,
+			"algorithm", CRC16CCITT_FALSE.class.getName()
+		);
+		Checksum annotation = AnnotationCreator.createAnnotation(Checksum.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, null, encodedValue);

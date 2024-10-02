@@ -74,8 +74,7 @@ public final class LevenshteinMetric<D extends MetricData<D>> implements Metric<
 
 	@Override
 	public double similarity(final D input1, final D input2){
-		if(input1 == null || input2 == null)
-			throw new IllegalArgumentException("Inputs must not be null");
+		validateInputs(input1, input2);
 		if(insertionCost != 1 || deletionCost != 1 || substitutionCost != 1)
 			throw new IllegalArgumentException("Cannot calculate similarity if all the costs are not 1");
 
@@ -85,8 +84,7 @@ public final class LevenshteinMetric<D extends MetricData<D>> implements Metric<
 
 	@Override
 	public int distance(final D input1, final D input2){
-		if(input1 == null || input2 == null)
-			throw new IllegalArgumentException("Inputs must not be null");
+		validateInputs(input1, input2);
 
 		if(input1.equals(input2))
 			return 0;
@@ -111,6 +109,11 @@ public final class LevenshteinMetric<D extends MetricData<D>> implements Metric<
 		return (length1 > length2
 			? distanceInternal(input1, input2, startIndex, endIndex)
 			: distanceInternal(input2, input1, startIndex, endIndex));
+	}
+
+	private static <D extends MetricData<D>> void validateInputs(final D input1, final D input2){
+		if(input1 == null || input2 == null)
+			throw new IllegalArgumentException("Inputs must not be null");
 	}
 
 	private int distanceInternal(final D input1, final D input2, final int startIndex, final int endIndex){

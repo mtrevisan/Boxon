@@ -32,10 +32,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
-import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
@@ -44,6 +41,7 @@ import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -52,8 +50,9 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 class CodecArrayTest{
@@ -92,71 +91,23 @@ class CodecArrayTest{
 	void arrayPrimitive() throws BoxonException{
 		Codec codec = new CodecDefault();
 		int[] encodedValue = {0x0000_0123, 0x0000_0456};
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return AlwaysPassValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-
-
-			static class AlwaysPassValidator implements Validator<int[]>{
-				@Override
-				public boolean isValid(final int[] value){
-					return true;
-				}
-			}
-		};
-		BindAsArray collectionAnnotation = new BindAsArray(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindAsArray.class;
-			}
-
-			@Override
-			public String size(){
-				return Integer.toString(encodedValue.length);
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindInteger.class.getName(),
+			"size", "32",
+			"byteOrder", ByteOrder.BIG_ENDIAN,
+			"validator", AlwaysPassIntValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
+		Map<String, Object> collectionAnnotationData = Map.of(
+			"annotationType", BindAsArray.class.getName(),
+			"size", Integer.toString(encodedValue.length)
+		);
+		BindAsArray collectionAnnotation = AnnotationCreator.createAnnotation(BindAsArray.class, collectionAnnotationData);
 
 		BitWriter writer = BitWriter.create();
 		FieldAccessor.injectValues(codec, Evaluator.create());
@@ -171,97 +122,40 @@ class CodecArrayTest{
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
 	}
 
+	private static class AlwaysPassIntValidator implements Validator<int[]>{
+		@Override
+		public boolean isValid(final int[] value){
+			return true;
+		}
+	}
+
 	@Test
 	void arrayOfSameObject() throws BoxonException{
 		CodecObject codec = new CodecObject();
 		Version[] encodedValue = {new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
-		BindObject annotation = new BindObject(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindObject.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public Class<?> type(){
-				return Version.class;
-			}
-
-			@Override
-			public ObjectChoices selectFrom(){
-				return new ObjectChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ObjectChoices.class;
-					}
-
-					@Override
-					public byte prefixLength(){
-						return 0;
-					}
-
-					@Override
-					public ByteOrder byteOrder(){
-						return ByteOrder.BIG_ENDIAN;
-					}
-
-					@Override
-					public ObjectChoice[] alternatives(){
-						return new ObjectChoice[0];
-					}
-				};
-			}
-
-			@Override
-			public ObjectChoicesList selectFromList(){
-				return null;
-			}
-
-			@Override
-			public Class<?> selectDefault(){
-				return void.class;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
-		BindAsArray collectionAnnotation = new BindAsArray(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindAsArray.class;
-			}
-
-			@Override
-			public String size(){
-				return Integer.toString(encodedValue.length);
-			}
-		};
+		Map<String, Object> annotationData = Map.of(
+			"annotationType", BindObject.class.getName(),
+			"type", Version.class.getName(),
+			"selectFrom", Map.of(
+				"annotationType", ObjectChoices.class.getName(),
+				"prefixLength", 0,
+				"byteOrder", ByteOrder.BIG_ENDIAN,
+				"alternatives", Collections.emptyList()
+			),
+			"selectDefault", void.class.getName(),
+			"validator", AlwaysPassVersionValidator.class.getName(),
+			"converter", NullConverter.class.getName(),
+			"selectConverterFrom", Map.of(
+				"annotationType", ConverterChoices.class.getName(),
+				"alternatives", Collections.emptyList()
+			)
+		);
+		BindObject annotation = AnnotationCreator.createAnnotation(BindObject.class, annotationData);
+		Map<String, Object> collectionAnnotationData = Map.of(
+			"annotationType", BindAsArray.class.getName(),
+			"size", Integer.toString(encodedValue.length)
+		);
+		BindAsArray collectionAnnotation = AnnotationCreator.createAnnotation(BindAsArray.class, collectionAnnotationData);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
@@ -283,6 +177,13 @@ class CodecArrayTest{
 		Assertions.assertEquals(encodedValue[0].minor, decoded[0].minor);
 		Assertions.assertEquals(encodedValue[1].major, decoded[1].major);
 		Assertions.assertEquals(encodedValue[1].minor, decoded[1].minor);
+	}
+
+	private static class AlwaysPassVersionValidator implements Validator<Version[]>{
+		@Override
+		public boolean isValid(final Version[] value){
+			return true;
+		}
 	}
 
 	@Test

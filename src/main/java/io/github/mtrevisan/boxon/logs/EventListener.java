@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.logs;
 
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
+import io.github.mtrevisan.boxon.io.Codec;
 
 
 /**
@@ -65,7 +66,7 @@ public class EventListener{
 	 *
 	 * @param codecClasses	List of codec classes.
 	 */
-	public void loadingCodec(final Class<?>... codecClasses){}
+	public void loadingCodec(final Codec... codecClasses){}
 
 	/**
 	 * Called when about to loading some codecs through codec classes.
@@ -207,5 +208,22 @@ public class EventListener{
 	 * @param value	The value written.
 	 */
 	public void writtenField(final String templateName, final String fieldName, final Object value){}
+
+
+	/**
+	 * Called when a generated template or configuration already exists.
+	 *
+	 * @param name	The template or configuration name.
+	 * @param reason	The reason from the exception thrown.
+	 */
+	public void alreadyGeneratedClass(final String name, final String reason){}
+
+	/**
+	 * Called when a generated enumeration already exists.
+	 *
+	 * @param name	The enumeration name.
+	 * @param reason	The reason from the exception thrown.
+	 */
+	public void alreadyGeneratedEnum(final String name, final String reason){}
 
 }

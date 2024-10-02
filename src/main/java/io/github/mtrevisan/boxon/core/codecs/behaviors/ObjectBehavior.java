@@ -121,12 +121,12 @@ public final class ObjectBehavior extends CommonBehavior{
 
 	@Override
 	public Object readValue(final BitReaderInterface reader){
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Unimplemented method");
 	}
 
 	@Override
 	public void writeValue(final BitWriterInterface writer, final Object value){
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Unimplemented method");
 	}
 
 }

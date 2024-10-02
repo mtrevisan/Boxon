@@ -34,7 +34,8 @@ class VersionTest{
 	void shouldParseNormalVersion(){
 		Version version = VersionBuilder.of("1.0.0");
 
-		Assertions.assertEquals(VersionBuilder.of(1, 0, 0), version);
+		final Version expected = VersionBuilder.of(1, 0, 0);
+		Assertions.assertEquals(expected, version);
 		Assertions.assertEquals("1.0.0", version.toString());
 	}
 
@@ -42,7 +43,8 @@ class VersionTest{
 	void shouldParsePreReleaseVersion(){
 		Version version = VersionBuilder.of("1.1.0-beta");
 
-		Assertions.assertEquals(VersionBuilder.of(1, 1, 0, new String[]{"beta"}), version);
+		final Version expected = VersionBuilder.of(1, 1, 0, new String[]{"beta"});
+		Assertions.assertEquals(expected, version);
 		Assertions.assertEquals("1.1.0-beta", version.toString());
 	}
 
@@ -50,7 +52,8 @@ class VersionTest{
 	void shouldParsePreReleaseVersionAndBuild(){
 		Version version = VersionBuilder.of("1.0.0-rc.2+build.05");
 
-		Assertions.assertEquals(VersionBuilder.of(1, 0, 0, new String[]{"rc", "2"}, new String[]{"build", "05"}), version);
+		final Version expected = VersionBuilder.of(1, 0, 0, new String[]{"rc", "2"}, new String[]{"build", "05"});
+		Assertions.assertEquals(expected, version);
 		Assertions.assertEquals("1.0.0-rc.2+build.05", version.toString());
 	}
 
@@ -58,7 +61,8 @@ class VersionTest{
 	void shouldParseBuild(){
 		Version version = VersionBuilder.of("1.2.3+build");
 
-		Assertions.assertEquals(VersionBuilder.of(1, 2, 3, new String[0], new String[]{"build"}), version);
+		final Version expected = VersionBuilder.of(1, 2, 3, new String[0], new String[]{"build"});
+		Assertions.assertEquals(expected, version);
 		Assertions.assertEquals("1.2.3+build", version.toString());
 	}
 

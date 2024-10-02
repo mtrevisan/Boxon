@@ -100,7 +100,7 @@ public final class SkipParams{
 	 *
 	 * @return	The byte value of the terminator.
 	 */
-	public byte terminator(){
+	public byte value(){
 		return terminator;
 	}
 

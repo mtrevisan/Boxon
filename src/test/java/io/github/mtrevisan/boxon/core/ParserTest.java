@@ -45,7 +45,7 @@ import java.util.Map;
 class ParserTest{
 
 	public static void main(String[] args) throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		//if it is wanted `headerLength` to be a variable and not a method:
@@ -87,6 +87,10 @@ class ParserTest{
 		return 4;
 	}
 
+	private static int headerLength2(final int size){
+		return size;
+	}
+
 
 	@TemplateHeader(start = "+UNV")
 	static class NonByteMultipleLengths{
@@ -126,7 +130,7 @@ class ParserTest{
 
 	@Test
 	void parseMultipleMessagesHex() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
@@ -149,7 +153,7 @@ class ParserTest{
 
 	@Test
 	void parseMultipleMessagesASCII() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
@@ -171,7 +175,7 @@ class ParserTest{
 
 	@Test
 	void parseMultipleMessagesHexASCII() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -206,7 +210,7 @@ class ParserTest{
 
 	@Test
 	void parseMultipleMessagesASCIIHex() throws Exception{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);

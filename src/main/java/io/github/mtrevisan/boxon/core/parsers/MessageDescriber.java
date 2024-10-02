@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractor;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 
 import java.lang.annotation.Annotation;
@@ -69,9 +70,10 @@ public final class MessageDescriber{
 	 * @param <M>	The type of the message.
 	 * @param <F>	The type of the fields.
 	 * @return	A map containing the description of the message.
+	 * @throws CodecException   If a codec is not found.
 	 */
 	<M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
-			final FieldExtractor<F> fieldExtractor){
+			final FieldExtractor<F> fieldExtractor) throws CodecException{
 		final Map<String, Object> description = new LinkedHashMap<>(6);
 
 		describeContext(description);

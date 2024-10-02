@@ -36,7 +36,7 @@ class ComparatorTest{
 
 	@Test
 	void similarityBetweenTemplates() throws NoSuchMethodException, BoxonException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
+		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)

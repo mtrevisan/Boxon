@@ -35,7 +35,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 
 
 /**
@@ -119,7 +118,7 @@ abstract class BitReaderData{
 	 */
 	final synchronized long readNumber(final int bitsToRead){
 		final AtomicLong bitmap = new AtomicLong(0l);
-		final BiConsumer<Integer, Integer> numberBufferConsumer = (bitsToProcess, length) -> readFromCache(bitmap, bitsToProcess, length);
+		final BitConsumer numberBufferConsumer = (bitsToProcess, length) -> readFromCache(bitmap, bitsToProcess, length);
 		readBits(bitsToRead, numberBufferConsumer);
 		return bitmap.get();
 	}
@@ -147,7 +146,7 @@ abstract class BitReaderData{
 	 */
 	public final synchronized BitSet readBitSet(final int bitsToRead){
 		final BitSet bitmap = new BitSet(bitsToRead);
-		final BiConsumer<Integer, Integer> bitmapBufferConsumer = (bitsToProcess, length) -> readFromCache(bitmap, bitsToProcess, length);
+		final BitConsumer bitmapBufferConsumer = (bitsToProcess, length) -> readFromCache(bitmap, bitsToProcess, length);
 		readBits(bitsToRead, bitmapBufferConsumer);
 		return bitmap;
 	}
@@ -181,17 +180,22 @@ abstract class BitReaderData{
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
 	final synchronized void skipBits(final int bitsToSkip){
-		final BiConsumer<Integer, Integer> skipBufferConsumer = (bitsToProcess, length) -> {};
+		final BitConsumer skipBufferConsumer = (bitsToProcess, length) -> {};
 		readBits(bitsToSkip, skipBufferConsumer);
 	}
 
-	/**
+	@FunctionalInterface
+	public interface BitConsumer{
+		void consume(int t, int u);
+	}
+
+		/**
 	 * Reads the specified number of bits from the buffer and processes them using the provided bi-consumer.
 	 *
 	 * @param bitsToProcess	The number of bits to process.
 	 * @param bitConsumer	The bi-consumer function to process the bits.
 	 */
-	private void readBits(int bitsToProcess, final BiConsumer<Integer, Integer> bitConsumer){
+	private void readBits(int bitsToProcess, final BitConsumer bitConsumer){
 		while(bitsToProcess > 0){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remainingBitsInCache == 0){
@@ -202,7 +206,7 @@ abstract class BitReaderData{
 			final int length = Math.min(bitsToProcess, remainingBitsInCache);
 			bitsToProcess -= length;
 
-			bitConsumer.accept(bitsToProcess, length);
+			bitConsumer.consume(bitsToProcess, length);
 
 			remainingBitsInCache -= length;
 		}

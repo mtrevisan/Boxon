@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.configurations;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -39,6 +41,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -113,7 +116,7 @@ public final class ConfigurationMessage<T>{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int size = fields.size();
 		final Collection<String> uniqueShortDescription = new HashSet<>(size);
-		final ArrayList<ConfigurationField> configurationFields = new ArrayList<>(size);
+		final List<ConfigurationField> configurationFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 
@@ -136,7 +139,7 @@ public final class ConfigurationMessage<T>{
 				throw e;
 			}
 		}
-		return JavaHelper.trimAndCreateUnmodifiable(configurationFields);
+		return configurationFields;
 	}
 
 
@@ -147,25 +150,24 @@ public final class ConfigurationMessage<T>{
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
 		for(final Annotation annotation : annotations){
-			final String annotationName = annotation.annotationType()
-				.getSimpleName();
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
 
-			if(annotationName.startsWith(CONFIGURATION_NAME_ALTERNATIVE)){
+			if(annotationType == AlternativeConfigurationField.class){
 				validateAlternativeAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
 			}
-			else if(annotationName.equals(CONFIGURATION_NAME_COMPOSITE)){
+			else if(annotationType == CompositeConfigurationField.class){
 				validateCompositeAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_COMPOSITE_INDEX] = true;
 			}
-			else if(annotationName.equals(CONFIGURATION_NAME_FIELD)){
+			else if(annotationType == io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class){
 				validateFieldAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_FIELD_INDEX] = true;
 			}
-			else if(annotationName.startsWith(CONFIGURATION_NAME_SKIP))
+			else if(annotationType == ConfigurationSkip.class)
 				validateSkipAnnotationOrder(annotationFound);
 		}
 	}
@@ -245,7 +247,7 @@ public final class ConfigurationMessage<T>{
 
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(ConfigurationSkip.class.isAssignableFrom(annotationType)
-					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
+					|| ConfigurationSkip.Skips.class.isAssignableFrom(annotationType))
 				continue;
 
 			validateAnnotation(field, annotation, minProtocolVersion, maxProtocolVersion);
@@ -281,7 +283,7 @@ public final class ConfigurationMessage<T>{
 		boundaries.sort(Comparator.comparing(VersionBuilder::of));
 		removeDuplicates(boundaries);
 		boundaries.remove(JavaHelper.EMPTY_STRING);
-		return JavaHelper.trimAndCreateUnmodifiable(boundaries);
+		return boundaries;
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){
@@ -330,7 +332,7 @@ public final class ConfigurationMessage<T>{
 	 * @return	List of configuration fields data.
 	 */
 	public List<ConfigurationField> getConfigurationFields(){
-		return configurationFields;
+		return Collections.unmodifiableList(configurationFields);
 	}
 
 	/**
@@ -339,7 +341,7 @@ public final class ConfigurationMessage<T>{
 	 * @return	List of protocol version boundaries.
 	 */
 	public List<String> getProtocolVersionBoundaries(){
-		return protocolVersionBoundaries;
+		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
 	/**

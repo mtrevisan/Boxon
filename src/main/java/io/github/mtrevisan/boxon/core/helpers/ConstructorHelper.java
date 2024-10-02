@@ -68,12 +68,12 @@ public final class ConstructorHelper{
 	 * Gets the creator function for the given class.
 	 *
 	 * @param type	The class to extract the creator for.
-	 * @param constructorClasses	Array of types of constructor parameters.
+	 * @param parametersClass	Array of types of constructor parameters.
 	 * @param <T>	The parameter identifying the class.
 	 * @return	A method that construct the given class.
 	 */
-	public static <T> Function<Object[], T> getNonEmptyCreator(final Class<T> type, final Class<?>[] constructorClasses){
-		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new AbstractMap.SimpleEntry<>(type, constructorClasses));
+	public static <T> Function<Object[], T> getNonEmptyCreator(final Class<T> type, final Class<?>[] parametersClass){
+		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new AbstractMap.SimpleEntry<>(type, parametersClass));
 	}
 
 	private static <T> Supplier<T> getEmptyCreatorInner(final Class<T> type){
@@ -108,8 +108,8 @@ public final class ConstructorHelper{
 		Function<Object[], ?> instantiator = null;
 		try{
 			final Class<?> type = tuple.getKey();
-			final Class<?>[] constructorClasses = tuple.getValue();
-			final Constructor<?> constructor = type.getDeclaredConstructor(constructorClasses);
+			final Class<?>[] parametersClass = tuple.getValue();
+			final Constructor<?> constructor = type.getDeclaredConstructor(parametersClass);
 			FieldAccessor.makeAccessible(constructor);
 
 			instantiator = (final Object[] constructorValues) -> {
@@ -143,19 +143,19 @@ public final class ConstructorHelper{
 	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass,
 			final Object[] recordValues){
 		//extract the field types from the record class
-		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);
+		final Class<?>[] parametersClass = extractFieldTypes(recordComponents);
 
 		//creates a new instance of the record class with the updated values
-		return getNonEmptyCreator(objClass, constructorClasses)
+		return getNonEmptyCreator(objClass, parametersClass)
 			.apply(recordValues);
 	}
 
 	private static Class<?>[] extractFieldTypes(final RecordComponent[] components){
 		final int length = components.length;
-		final Class<?>[] constructorClasses = new Class<?>[length];
+		final Class<?>[] parametersClass = new Class<?>[length];
 		for(int i = 0; i < length; i ++)
-			constructorClasses[i] = components[i].getType();
-		return constructorClasses;
+			parametersClass[i] = components[i].getType();
+		return parametersClass;
 	}
 
 }

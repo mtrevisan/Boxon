@@ -85,8 +85,8 @@ final class CodecDefault implements Codec{
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 		else if(collectionBinding instanceof BindAsList)
-			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@BindAsArray` instead",
-				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@{}` instead",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()), BindAsArray.class.getSimpleName());
 		else
 			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
@@ -126,8 +126,8 @@ final class CodecDefault implements Codec{
 			behavior.writeArrayWithoutAlternatives(writer, convertedValue);
 		}
 		else if(collectionBinding instanceof BindAsList)
-			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@BindAsArray` instead",
-				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
+			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@{}` instead",
+				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()), BindAsArray.class.getSimpleName());
 		else
 			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));

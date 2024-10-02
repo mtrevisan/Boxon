@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,6 +62,9 @@ final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
+
+	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
+		BindAsArray.class, BindAsList.class));
 
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
@@ -112,10 +116,10 @@ final class LoaderTemplate{
 		eventListener.loadingTemplatesFrom(basePackageClasses);
 
 		final List<Class<?>> annotatedClasses = getAnnotatedClasses(basePackageClasses);
-		final List<Template<?>> templates = extractValidTemplates(annotatedClasses);
+		final Template<?>[] templates = extractValidTemplates(annotatedClasses);
 		addTemplatesToMap(templates);
 
-		eventListener.loadedTemplates(templates.size());
+		eventListener.loadedTemplates(templates.length);
 	}
 
 	/** Extract all classes annotated with {@link TemplateHeader}. */
@@ -145,15 +149,15 @@ final class LoaderTemplate{
 		}
 	}
 
-	private List<Template<?>> extractValidTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
+	private Template<?>[] extractValidTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
 		final int size = annotatedClasses.size();
-		final List<Template<?>> templates = new ArrayList<>(size);
+		final Template<?>[] templates = new Template<?>[size];
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
 			final Template<?> from = extractTemplate(type);
 
-			templates.add(from);
+			templates[i] = from;
 		}
 		return templates;
 	}
@@ -191,10 +195,10 @@ final class LoaderTemplate{
 		return (Template<T>)templateStore.apply(type);
 	}
 
-	private void addTemplatesToMap(final List<Template<?>> templates) throws TemplateException{
+	private void addTemplatesToMap(final Template<?>[] templates) throws TemplateException{
 		//load each template into the available templates list
-		for(int i = 0, length = templates.size(); i < length; i ++){
-			final Template<?> template = templates.get(i);
+		for(int i = 0, length = templates.length; i < length; i ++){
+			final Template<?> template = templates[i];
 
 			if(template != null && template.canBeCoded())
 				addTemplateToMap(template);
@@ -311,9 +315,7 @@ final class LoaderTemplate{
 			final Annotation declaredAnnotation = declaredAnnotations[i];
 
 			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
-			if(loaderCodec.hasCodec(annotationType)
-					|| annotationType == ContextParameter.class
-					|| annotationType == BindAsArray.class || annotationType == BindAsList.class)
+			if(loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType))
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;

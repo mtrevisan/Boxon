@@ -145,7 +145,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			reader.skip(size);
 		}
 		else{
-			final byte terminator = skip.terminator();
+			final byte terminator = skip.value();
 			reader.skipUntilTerminator(terminator);
 			if(skip.consumeTerminator())
 				//`terminator` is a byte

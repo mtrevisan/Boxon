@@ -41,7 +41,7 @@ public final class PrettyPrintMap{
 		else if(obj instanceof final Map<?, ?> map)
 			toStringAsMap(sb, map);
 		else if(type.isArray())
-			toStringAsArray(sb, (Object[])obj);
+			toStringAsArray(sb, obj);
 		else
 			sb.append(obj);
 		return sb.toString();
@@ -74,8 +74,18 @@ public final class PrettyPrintMap{
 			sb.append(',');
 	}
 
-	private static void toStringAsArray(final StringBuilder sb, final Object[] array){
-		sb.append(Arrays.deepToString(array));
+	private static void toStringAsArray(final StringBuilder sb, final Object array){
+		sb.append(switch(array){
+			case final int[] a -> Arrays.toString(a);
+			case final long[] a -> Arrays.toString(a);
+			case final short[] a -> Arrays.toString(a);
+			case final char[] a -> Arrays.toString(a);
+			case final byte[] a -> Arrays.toString(a);
+			case final boolean[] a -> Arrays.toString(a);
+			case final float[] a -> Arrays.toString(a);
+			case final double[] a -> Arrays.toString(a);
+			case null, default -> Arrays.deepToString((Object[])array);
+		});
 	}
 
 }
