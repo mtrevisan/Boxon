@@ -51,10 +51,17 @@ public abstract class MessageExtractor<M, H, F>{
 	public abstract H getHeader(M message);
 
 	/**
-	 * Retrieves the list of {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s from a given {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message.
+	 * Retrieves the list of {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s from a given
+	 * {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message, or the list of
+	 * {@link io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField ConfigurationField}s from a given
+	 * {@link io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage Configuration} message.
 	 *
-	 * @param message	The {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message from which to retrieve the {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s.
-	 * @return	The list of {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s from the given {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message.
+	 * @param message	The {@link io.github.mtrevisan.boxon.core.helpers.templates.Template Template} message from which to retrieve the
+	 * 	{@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s, or the
+	 *    {@link io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage Configuration} message from which to retrieve the
+	 * 	{@link io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField ConfigurationField}s.
+	 * @return	The list of {@link io.github.mtrevisan.boxon.core.helpers.templates.TemplateField TemplateField}s or
+	 * 	{@link io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField ConfigurationField}s.
 	 */
 	public abstract List<F> getFields(M message);
 
@@ -79,10 +86,10 @@ public abstract class MessageExtractor<M, H, F>{
 	}
 
 	/**
-	 * Retrieves the fields with enumeration type from a given message template.
+	 * Retrieves the fields with enumeration type from a given message configuration.
 	 *
-	 * @param message	The message template from which to retrieve the fields with enumeration type.
-	 * @return	The list of fields with enumeration type in the message template.
+	 * @param message	The message configuration from which to retrieve the fields with enumeration type.
+	 * @return	The list of fields with enumeration type in the message configuration.
 	 */
 	public Collection<F> getEnumerations(final M message){
 		return null;
