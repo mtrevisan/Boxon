@@ -63,7 +63,7 @@ public final class Generator{
 	/**
 	 * Generates a class template based on the given description (see {@link Describer}).
 	 * <p>
-	 * Note that the context will be ignored (see FIXME{ @link #loadContext(CoreBuilder, Map)}).
+	 * Note that the context will be ignored.
 	 * </p>
 	 *
 	 * @param description	The description of the template.
@@ -77,7 +77,7 @@ public final class Generator{
 	/**
 	 * Generates a class configuration based on the given description (see {@link Describer}).
 	 * <p>
-	 * Note that the context will be ignored (see FIXME{ @link #loadContext(CoreBuilder, Map)}).
+	 * Note that the context will be ignored.
 	 * </p>
 	 *
 	 * @param description	The description of the configuration.
