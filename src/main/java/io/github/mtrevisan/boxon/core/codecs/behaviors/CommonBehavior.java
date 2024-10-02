@@ -114,7 +114,7 @@ public abstract class CommonBehavior{
 			final Class<? extends Validator<?>> validator, Object instance){
 		Class<?> inputType = DataType.resolveInputType(converterType, validator);
 		if(collectionBinding == null)
-			instance = DataType.castValue((BigInteger)instance, inputType);
+			instance = DataType.cast((BigInteger)instance, inputType);
 		else if(collectionBinding instanceof BindAsArray && inputType != null){
 			inputType = inputType.getComponentType();
 			if(inputType != instance.getClass().getComponentType())
@@ -128,7 +128,7 @@ public abstract class CommonBehavior{
 		final Object array = CodecHelper.createArray(elementType, length);
 		for(int i = 0; i < length; i ++){
 			Object element = Array.get(data, i);
-			element = DataType.castValue((BigInteger)element, elementType);
+			element = DataType.cast((BigInteger)element, elementType);
 			Array.set(array, i, element);
 		}
 		return array;

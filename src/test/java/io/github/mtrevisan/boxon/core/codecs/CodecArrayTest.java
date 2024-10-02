@@ -142,7 +142,7 @@ class CodecArrayTest{
 				"byteOrder", ByteOrder.BIG_ENDIAN,
 				"alternatives", Collections.emptyList()
 			),
-			"selectDefault", void.class.getName(),
+			"selectDefault", void.class,
 			"validator", AlwaysPassVersionValidator.class.getName(),
 			"converter", NullConverter.class.getName(),
 			"selectConverterFrom", Map.of(

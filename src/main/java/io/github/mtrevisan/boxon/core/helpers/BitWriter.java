@@ -55,11 +55,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	@Override
 	public void write(final Object value, final ByteOrder byteOrder) throws AnnotationException{
-		final DataType dt = DataType.fromType(value.getClass());
-		if(dt == null)
-			throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
-
-		dt.write(this, value, byteOrder);
+		DataType.write(this, value, byteOrder);
 	}
 
 	@Override
