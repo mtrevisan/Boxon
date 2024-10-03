@@ -58,10 +58,13 @@ import java.util.function.Function;
 /**
  * Loader for the templates.
  */
-final class LoaderTemplate{
+public final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
-	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
+	private static Function<byte[], int[]> PRE_PROCESSED_PATTERNS;
+	static{
+		initialize(-1);
+	}
 
 	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
 		BindAsArray.class, BindAsList.class));
@@ -93,6 +96,11 @@ final class LoaderTemplate{
 		this.loaderCodec = loaderCodec;
 
 		withEventListener(null);
+	}
+
+
+	public static void initialize(final int maxTemplateMemoizerSize){
+		PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern, maxTemplateMemoizerSize);
 	}
 
 

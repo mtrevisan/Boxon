@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -34,7 +35,7 @@ import java.util.function.Function;
 /**
  * A wrapper around a calculation that takes a parameter and returns a result.
  * <br />
- * The results for the calculation will be cached for future requests.
+ * The results for the calculation will be cached for future requests, with a maximum cache size if specified.
  */
 public final class Memoizer{
 
@@ -52,8 +53,23 @@ public final class Memoizer{
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
+		return memoize(function, -1);
+	}
+
+	/**
+	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
+	 *
+	 * @param function	The function to be memoized.
+	 * @param maxSize	The maximum number of cache entries.
+	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
+	 * @param <OUT>	Type of output from the function.
+	 * @return	The new memoized function.
+	 *
+	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
+	 */
+	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function, final int maxSize){
 		return new Function<>(){
-			private final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
+			private final Map<IN, OUT> cache = createCache(maxSize);
 			private final Lock lock = new ReentrantLock();
 
 			@Override
@@ -82,8 +98,25 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
+		return throwingMemoize(function, -1);
+	}
+
+	/**
+	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
+	 *
+	 * @param function	The function to be memoized.
+	 * @param maxSize	The maximum number of cache entries.
+	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
+	 * @param <OUT>	Type of output from the function.
+	 * @param <E>	Type of exception thrown by the function.
+	 * @return	The new memoized function.
+	 *
+	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
+	 */
+	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
+			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function, final int maxSize){
 		return new ThrowingFunction<>(){
-			private final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
+			private final Map<IN, OUT> cache = createCache(maxSize);
 			private final Lock lock = new ReentrantLock();
 
 			@Override
@@ -100,6 +133,27 @@ public final class Memoizer{
 				finally{
 					lock.unlock();
 				}
+			}
+		};
+	}
+
+
+	/**
+	 * Creates a thread-safe cache with a maximum size that removes the oldest entries when the size limit is exceeded.
+	 *
+	 * @param maxSize	The maximum number of cache entries.
+	 * @param <K>	The type of keys maintained by the cache.
+	 * @param <V>	The type of mapped values.
+	 * @return	A map that removes the oldest entries when the cache is full.
+	 */
+	private static <K, V> Map<K, V> createCache(final int maxSize){
+		if(maxSize <= 0)
+			return new ConcurrentHashMap<>(0);
+
+		return new LinkedHashMap<>(maxSize, 0.75f, true){
+			@Override
+			protected boolean removeEldestEntry(final Map.Entry<K, V> eldest){
+				return (size() > maxSize);
 			}
 		};
 	}

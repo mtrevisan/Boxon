@@ -43,14 +43,22 @@ import java.util.function.Supplier;
  */
 public final class ConstructorHelper{
 
-	private static final Function<Class<?>, Supplier<?>> EMPTY_CREATORS = Memoizer.memoize(ConstructorHelper::getEmptyCreatorInner);
-	private static final Function<Map.Entry<Class<?>, Class<?>[]>, Function<Object[], ?>> NON_EMPTY_CREATORS
-		= Memoizer.memoize(ConstructorHelper::getNonEmptyCreatorInner);
+	private static Function<Class<?>, Supplier<?>> EMPTY_CREATORS;
+	private static Function<Map.Entry<Class<?>, Class<?>[]>, Function<Object[], ?>> NON_EMPTY_CREATORS;
+	static{
+		initialize(-1, -1);
+	}
 
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
 
 
 	private ConstructorHelper(){}
+
+
+	public static void initialize(final int maxEmptyConstructorMemoizerSize, final int maxNonEmptyConstructorMemoizerSize){
+		EMPTY_CREATORS = Memoizer.memoize(ConstructorHelper::getEmptyCreatorInner, maxEmptyConstructorMemoizerSize);
+		NON_EMPTY_CREATORS = Memoizer.memoize(ConstructorHelper::getNonEmptyCreatorInner, maxNonEmptyConstructorMemoizerSize);
+	}
 
 
 	/**

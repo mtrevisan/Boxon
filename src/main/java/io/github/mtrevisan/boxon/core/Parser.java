@@ -25,10 +25,14 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
+import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
+import io.github.mtrevisan.boxon.helpers.GenericHelper;
+import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +64,56 @@ public final class Parser{
 
 	private Parser(final Core core){
 		templateParser = core.getTemplateParser();
+	}
+
+
+	/**
+	 * Loads the maximum memoizer size for the constructor.
+	 *
+	 * @param maxEmptyConstructorMemoizerSize	The maximum number of elements for the empty constructor memoizer.
+	 * @param maxNonEmptyConstructorMemoizerSize	The maximum number of elements for the non-empty constructor memoizer.
+	 * @return	This instance, used for chaining.
+	 */
+	public Parser withMaxConstructorMemoizerSize(final int maxEmptyConstructorMemoizerSize, final int maxNonEmptyConstructorMemoizerSize){
+		ConstructorHelper.initialize(maxEmptyConstructorMemoizerSize, maxNonEmptyConstructorMemoizerSize);
+
+		return this;
+	}
+
+	/**
+	 * Loads the maximum memoizer size for the templates.
+	 *
+	 * @param maxSize	The maximum number of elements for the memoizer.
+	 * @return	This instance, used for chaining.
+	 */
+	public Parser withMaxTemplateMemoizerSize(final int maxSize){
+		LoaderTemplate.initialize(maxSize);
+
+		return this;
+	}
+
+	/**
+	 * Loads the maximum memoizer size for the generics offsprings.
+	 *
+	 * @param maxSize	The maximum number of elements for the memoizer.
+	 * @return	This instance, used for chaining.
+	 */
+	public Parser withMaxGenericsOffspringsMemoizerSize(final int maxSize){
+		GenericHelper.initialize(maxSize);
+
+		return this;
+	}
+
+	/**
+	 * Loads the maximum memoizer size for the SpEL expressions.
+	 *
+	 * @param maxSize	The maximum number of elements for the memoizer.
+	 * @return	This instance, used for chaining.
+	 */
+	public Parser withMaxSpELMemoizerSize(final int maxSize){
+		Evaluator.initialize(maxSize);
+
+		return this;
 	}
 
 

@@ -130,8 +130,8 @@ class CustomCodecTest{
 
 				int size = evaluator.evaluateSize(binding.size(), rootObject);
 
-				final BigInteger v = asciiToBigInteger((String)value);
-				final BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);
+				BigInteger v = asciiToBigInteger((String)value);
+				BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);
 
 				writer.writeBitSet(bitmap, size * Byte.SIZE);
 			}
@@ -172,7 +172,7 @@ class CustomCodecTest{
 		if(response.hasError())
 			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestCustomCodec.class, response.getMessage().getClass());
-		final TestCustomCodec message = (TestCustomCodec)response.getMessage();
+		TestCustomCodec message = (TestCustomCodec)response.getMessage();
 		Assertions.assertEquals("tcc", message.header);
 		Assertions.assertEquals("1234", message.customData);
 

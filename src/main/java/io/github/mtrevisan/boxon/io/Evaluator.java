@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.Memoizer;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -43,6 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 
 /**
@@ -107,6 +109,11 @@ public final class Evaluator{
 		PARSER = new SpelExpressionParser(config);
 	}
 
+	private static Function<String, Expression> CACHED_EXPRESSIONS;
+	static{
+		initialize(-1);
+	}
+
 
 	private final EvaluationContext context;
 
@@ -125,6 +132,11 @@ public final class Evaluator{
 		context = new EvaluationContext();
 		//trick to allow accessing private fields
 		context.addPropertyAccessor(new ReflectiveProperty());
+	}
+
+
+	public static void initialize(final int maxSpELMemoizerSize){
+		CACHED_EXPRESSIONS = Memoizer.memoize(PARSER::parseExpression, maxSpELMemoizerSize);
 	}
 
 
@@ -214,7 +226,7 @@ public final class Evaluator{
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	public <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
-		final Expression exp = PARSER.parseExpression(expression);
+		final Expression exp = CACHED_EXPRESSIONS.apply(expression);
 		return exp.getValue(context, rootObject, returnType);
 	}
 

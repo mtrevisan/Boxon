@@ -48,11 +48,19 @@ public final class GenericHelper{
 
 	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
-	private static final Function<Class<?>, List<Type>> RESOLVED_OFFSPRINGS = Memoizer.memoize(
-		offspring -> resolveGenericTypes(offspring, Object.class, EMPTY_TYPE_ARRAY));
+	private static Function<Class<?>, List<Type>> RESOLVED_OFFSPRINGS;
+	static{
+		initialize(-1);
+	}
 
 
 	private GenericHelper(){}
+
+
+	public static void initialize(final int maxGenericsOffspringsMemoizerSize){
+		RESOLVED_OFFSPRINGS = Memoizer.memoize(offspring -> resolveGenericTypes(offspring, Object.class, EMPTY_TYPE_ARRAY),
+			maxGenericsOffspringsMemoizerSize);
+	}
 
 
 	/**

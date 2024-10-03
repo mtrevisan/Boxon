@@ -46,6 +46,9 @@
 	</appender>
 
 
+	<logger name="org.springframework.expression.spel" level="WARN" />
+
+
 	<root level="debug">
 		<appender-ref ref="console" />
 <!--		<appender-ref ref="fileAppender"></appender-ref>-->

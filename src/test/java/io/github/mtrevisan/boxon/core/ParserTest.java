@@ -63,12 +63,14 @@ class ParserTest{
 			.withContext(context)
 			.withContext(ParserTest.class, "headerLength")
 			.create();
-		Parser parser = Parser.create(core);
+		Parser parser = Parser.create(core)
+			.withMaxSpELMemoizerSize(50);
 
 		//20220301: 213-223 µs/msg = 4.5-4.7 kHz
 		//20240424: 99.6-108 µs/msg = 9.3-10 kHz (2.1×)
 		//20240513: 97.7-101 µs/msg = 9.9-10.2 kHz (2.2×)
 		//20240607: 88-95.5 µs/msg = 10.5-11.4 kHz (2.4×)
+		//20241003: 45.7-48.1 µs/msg = 20.8-21.9 kHz (9.3×) - cached SpEL
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 		//warm-up
