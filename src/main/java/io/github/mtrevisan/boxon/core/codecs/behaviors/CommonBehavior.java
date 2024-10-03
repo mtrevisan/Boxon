@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.function.Function;
 
 
 public abstract class CommonBehavior{
@@ -114,7 +115,7 @@ public abstract class CommonBehavior{
 			final Class<? extends Validator<?>> validator, Object instance){
 		Class<?> inputType = DataType.resolveInputType(converterType, validator);
 		if(collectionBinding == null)
-			instance = DataType.castValue((BigInteger)instance, inputType);
+			instance = DataType.cast((BigInteger)instance, inputType);
 		else if(collectionBinding instanceof BindAsArray && inputType != null){
 			inputType = inputType.getComponentType();
 			if(inputType != instance.getClass().getComponentType())
@@ -123,15 +124,23 @@ public abstract class CommonBehavior{
 		return instance;
 	}
 
-	private static Object convertArrayElements(final Object data, final Class<?> elementType){
-		final int length = Array.getLength(data);
-		final Object array = CodecHelper.createArray(elementType, length);
+	private static Object convertArrayElements(final Object array, final Class<?> targetType){
+		final int length = Array.getLength(array);
+		final Class<?> type = DataType.allElementsSameClassType(array, length);
+		final Function<BigInteger, Number> fun = (type != null? DataType.castFunction(targetType): null);
+		final Object convertedArray = CodecHelper.createArray(targetType, length);
 		for(int i = 0; i < length; i ++){
-			Object element = Array.get(data, i);
-			element = DataType.castValue((BigInteger)element, elementType);
-			Array.set(array, i, element);
+			Object element = Array.get(array, i);
+			if(element == null)
+				continue;
+
+			element = (fun != null
+				? fun.apply((BigInteger)element)
+				: DataType.cast((BigInteger)element, targetType));
+
+			Array.set(convertedArray, i, element);
 		}
-		return array;
+		return convertedArray;
 	}
 
 

@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -353,6 +354,10 @@ public final class JavaHelper{
 	}
 
 
+
+	public static <K, V> Map<K, V> createMapOrEmpty(final int initialCapacity){
+		return (initialCapacity > 0? new HashMap<>(initialCapacity): Collections.emptyMap());
+	}
 
 	public static <K, V> Map<V, K> reverseMap(final Map<K, V> map){
 		final Map<V, K> reverseMap = new HashMap<>(map.size());

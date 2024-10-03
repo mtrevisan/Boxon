@@ -88,7 +88,7 @@ final class CompositeManager implements ConfigurationManager{
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
 		final int length = fields.length;
-		final Map<String, Object> dataValue = new HashMap<>(length);
+		final Map<String, Object> dataValue = JavaHelper.createMapOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final CompositeSubField f = fields[i];
 
@@ -128,7 +128,7 @@ final class CompositeManager implements ConfigurationManager{
 		final Map<String, Object> compositeMap = extractMap();
 		final CompositeSubField[] bindings = annotation.value();
 		final int length = bindings.length;
-		final Map<String, Object> compositeFieldsMap = new HashMap<>(length);
+		final Map<String, Object> compositeFieldsMap = JavaHelper.createMapOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final CompositeSubField binding = bindings[i];
 
@@ -201,7 +201,7 @@ final class CompositeManager implements ConfigurationManager{
 	private static String replace(final String text, final Map<?, ?> replacements, final CompositeSubField[] fields)
 			throws EncodeException{
 		final int length = fields.length;
-		final Map<String, Object> trueReplacements = new HashMap<>(length);
+		final Map<String, Object> trueReplacements = JavaHelper.createMapOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final String key = fields[i].shortDescription();
 			trueReplacements.put(key, replacements.get(key));

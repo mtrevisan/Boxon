@@ -218,7 +218,7 @@ public final class Core{
 	void addCodecs(final Codec... codecs) throws CodecException{
 		loaderCodec.addCodecs(codecs);
 
-		for(int i = 0, codecsLength = codecs.length; i < codecsLength; i ++)
+		for(int i = 0, length = codecs.length; i < length; i ++)
 			postProcessCodec(codecs[i]);
 	}
 

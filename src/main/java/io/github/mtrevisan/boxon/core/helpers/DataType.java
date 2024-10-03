@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -40,163 +41,80 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
 /**
  * Holds information about size in memory and primitive-objective types of each data type.
  */
-//FIXME refactor
-public enum DataType{
-
-	/** Represents the byte data type. */
-	BYTE(Byte.class,
-		Byte.TYPE,
-		Byte.SIZE,
-		Byte::valueOf,
-		BigInteger::byteValue,
-		(reader, byteOrder) -> reader.readByte(),
-		(writer, value, byteOrder) -> writer.writeByte((Byte)value)),
-
-	/** Represents the short data type. */
-	SHORT(Short.class,
-		Short.TYPE,
-		Short.SIZE,
-		Short::valueOf,
-		BigInteger::shortValue,
-		BitReaderInterface::readShort,
-		(writer, value, byteOrder) -> writer.writeShort((Short)value, byteOrder)),
-
-	/** Represents the int/integer data type. */
-	INTEGER(Integer.class,
-		Integer.TYPE,
-		Integer.SIZE,
-		Integer::valueOf,
-		BigInteger::intValue,
-		BitReaderInterface::readInt,
-		(writer, value, byteOrder) -> writer.writeInt((Integer)value, byteOrder)),
-
-	/** Represents the long data type. */
-	LONG(Long.class,
-		Long.TYPE,
-		Long.SIZE,
-		Long::valueOf,
-		BigInteger::longValue,
-		BitReaderInterface::readLong,
-		(writer, value, byteOrder) -> writer.writeLong((Long)value, byteOrder)),
-
-	/** Represents the float data type. */
-	FLOAT(Float.class,
-		Float.TYPE,
-		Float.SIZE,
-		Float::valueOf,
-		BigInteger::floatValue,
-		(reader, byteOrder) -> Float.intBitsToFloat(reader.readInt(byteOrder)),
-		(writer, rawValue, byteOrder) -> writer.writeInt(Float.floatToIntBits((Float)rawValue), byteOrder)),
-
-	/** Represents the double data type. */
-	DOUBLE(Double.class,
-		Double.TYPE,
-		Double.SIZE,
-		Double::valueOf,
-		BigInteger::doubleValue,
-		(reader, byteOrder) -> Double.longBitsToDouble(reader.readLong(byteOrder)),
-		(writer, rawValue, byteOrder) -> writer.writeLong(Double.doubleToLongBits((Double)rawValue), byteOrder));
-
-
-	private static final String PRIMITIVE_VOID_NAME = "void";
-	private static final String PRIMITIVE_CHAR_NAME = "char";
-	private static final String PRIMITIVE_INTEGER_NAME = "int";
-	private static final String PRIMITIVE_BOOLEAN_NAME = "boolean";
-
-
-	@FunctionalInterface
-	private interface TriConsumer<S, T, U>{
-		void accept(S s, T t, U u);
-	}
-
-	private static final Map<Class<?>, DataType> TYPE_MAP;
-	private static final Map<String, Class<?>> PRIMITIVE_TYPE_MAP;
-	static{
-		final DataType[] values = values();
-		final int length = values.length;
-		TYPE_MAP = new HashMap<>(length << 1);
-		PRIMITIVE_TYPE_MAP = new HashMap<>(length + 4);
-		for(final DataType dt : values){
-			TYPE_MAP.put(dt.primitiveWrapperType, dt);
-			TYPE_MAP.put(dt.objectiveType, dt);
-
-			PRIMITIVE_TYPE_MAP.put(dt.objectiveType.getSimpleName().toLowerCase(Locale.ROOT), dt.primitiveWrapperType);
-		}
-		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_VOID_NAME, Void.TYPE);
-		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_BOOLEAN_NAME, Boolean.TYPE);
-		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_CHAR_NAME, Character.TYPE);
-		PRIMITIVE_TYPE_MAP.put(PRIMITIVE_INTEGER_NAME, INTEGER.primitiveWrapperType);
-	}
+public final class DataType{
 
 	private static final String METHOD_VALUE_OF = "valueOf";
 	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
 		int.class.getSimpleName(), long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 
-
-	private final Class<?> objectiveType;
-	private final Class<?> primitiveWrapperType;
-	//the number of bits used to represent the value
-	private final int primitiveSize;
-	private final Function<String, Object> valueStrategy;
-	private final Function<BigInteger, Number> castStrategy;
-	private final BiFunction<BitReaderInterface, ByteOrder, Object> readStrategy;
-	private final TriConsumer<BitWriterInterface, Object, ByteOrder> writeStrategy;
-
-
-	/**
-	 * Extract the enumeration corresponding to the given type.
-	 *
-	 * @param type	The type to be converted.
-	 * @return	The enumeration corresponding to the given type.
-	 */
-	public static DataType fromType(final Class<?> type){
-		return TYPE_MAP.get(type);
-	}
+	private static final String PRIMITIVE_TYPE_NAME_BOOLEAN = "boolean";
+	private static final String PRIMITIVE_TYPE_NAME_BYTE = "byte";
+	private static final String PRIMITIVE_TYPE_NAME_CHAR = "char";
+	private static final String PRIMITIVE_TYPE_NAME_SHORT = "short";
+	private static final String PRIMITIVE_TYPE_NAME_INT = "int";
+	private static final String PRIMITIVE_TYPE_NAME_LONG = "long";
+	private static final String PRIMITIVE_TYPE_NAME_FLOAT = "float";
+	private static final String PRIMITIVE_TYPE_NAME_DOUBLE = "double";
+	private static final String PRIMITIVE_TYPE_NAME_VOID = "void";
+	private static final String OBJECTIVE_TYPE_NAME_BOOLEAN = "Boolean";
+	private static final String OBJECTIVE_TYPE_NAME_BYTE = "Byte";
+	private static final String OBJECTIVE_TYPE_NAME_CHARACTER = "Character";
+	private static final String OBJECTIVE_TYPE_NAME_SHORT = "Short";
+	private static final String OBJECTIVE_TYPE_NAME_INTEGER = "Integer";
+	private static final String OBJECTIVE_TYPE_NAME_LONG = "Long";
+	private static final String OBJECTIVE_TYPE_NAME_FLOAT = "Float";
+	private static final String OBJECTIVE_TYPE_NAME_DOUBLE = "Double";
+	private static final String OBJECTIVE_TYPE_NAME_VOID = "Void";
 
 
-	DataType(final Class<?> objectiveType, final Class<?> primitiveWrapperType, final int primitiveSize,
-			final Function<String, Object> valueStrategy, final Function<BigInteger, Number> castStrategy,
-			final BiFunction<BitReaderInterface, ByteOrder, Object> readStrategy,
-			final TriConsumer<BitWriterInterface, Object, ByteOrder> writeStrategy){
-		this.objectiveType = objectiveType;
-		this.primitiveWrapperType = primitiveWrapperType;
-		this.primitiveSize = primitiveSize;
-		this.valueStrategy = valueStrategy;
-		this.castStrategy = castStrategy;
-		this.readStrategy = readStrategy;
-		this.writeStrategy = writeStrategy;
-	}
+	private DataType(){}
 
 
 	/**
-	 * Convert a type to an objective type, if applicable, otherwise returns the type itself.
+	 * Convert a type to a primitive type, if applicable, otherwise returns the type itself.
 	 *
-	 * @param type	The type to be converted.
+	 * @param typeName	The type to be converted.
 	 * @return	The converted type;
 	 */
-	public static Class<?> toTypeOrSelf(final String type) throws ClassNotFoundException{
-		Class<?> cls;
-		try{
-			cls = Class.forName(type);
-			return toObjectiveTypeOrSelf(cls);
-		}
-		catch(final Exception ignored){
-			cls = PRIMITIVE_TYPE_MAP.get(type);
+	public static Class<?> toTypeOrSelf(final String typeName) throws ClassNotFoundException{
+		Class<?> type = switch(typeName){
+			case PRIMITIVE_TYPE_NAME_BOOLEAN -> boolean.class;
+			case OBJECTIVE_TYPE_NAME_BOOLEAN -> Boolean.class;
+			case PRIMITIVE_TYPE_NAME_BYTE -> byte.class;
+			case OBJECTIVE_TYPE_NAME_BYTE -> Byte.class;
+			case PRIMITIVE_TYPE_NAME_CHAR -> char.class;
+			case OBJECTIVE_TYPE_NAME_CHARACTER -> Character.class;
+			case PRIMITIVE_TYPE_NAME_SHORT -> short.class;
+			case OBJECTIVE_TYPE_NAME_SHORT -> Short.class;
+			case PRIMITIVE_TYPE_NAME_INT -> int.class;
+			case OBJECTIVE_TYPE_NAME_INTEGER -> Integer.class;
+			case PRIMITIVE_TYPE_NAME_LONG -> long.class;
+			case OBJECTIVE_TYPE_NAME_LONG -> Long.class;
+			case PRIMITIVE_TYPE_NAME_FLOAT -> float.class;
+			case OBJECTIVE_TYPE_NAME_FLOAT -> Float.class;
+			case PRIMITIVE_TYPE_NAME_DOUBLE -> double.class;
+			case OBJECTIVE_TYPE_NAME_DOUBLE -> Double.class;
+			case PRIMITIVE_TYPE_NAME_VOID -> void.class;
+			case OBJECTIVE_TYPE_NAME_VOID -> Void.class;
+			default -> null;
+		};
+
+		if(type == null){
+			try{
+				type = Class.forName(typeName);
+			}
+			catch(final Exception ignored){
+				throw new ClassNotFoundException("Cannot find class for `" + type + "`");
+			}
 		}
 
-		if(cls == null)
-			throw new ClassNotFoundException("Cannot find class for `" + type + "`");
-		return cls;
+		return type;
 	}
 
 	/**
@@ -206,8 +124,27 @@ public enum DataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
-		final DataType dataType = fromType(primitiveType);
-		return (dataType != null? dataType.objectiveType: primitiveType);
+		if(primitiveType == null)
+			return null;
+
+		final String primitiveTypeName = primitiveType.getSimpleName();
+		final Class<?> objectiveType = toObjectiveTypeOrNull(primitiveTypeName);
+		return (objectiveType != null? objectiveType: primitiveType);
+	}
+
+	private static Class<?> toObjectiveTypeOrNull(final String primitiveTypeName){
+		return switch(primitiveTypeName){
+			case PRIMITIVE_TYPE_NAME_BOOLEAN -> Boolean.class;
+			case PRIMITIVE_TYPE_NAME_BYTE -> Byte.class;
+			case PRIMITIVE_TYPE_NAME_CHAR -> Character.class;
+			case PRIMITIVE_TYPE_NAME_SHORT -> Short.class;
+			case PRIMITIVE_TYPE_NAME_INT -> Integer.class;
+			case PRIMITIVE_TYPE_NAME_LONG -> Long.class;
+			case PRIMITIVE_TYPE_NAME_FLOAT -> Float.class;
+			case PRIMITIVE_TYPE_NAME_DOUBLE -> Double.class;
+			case PRIMITIVE_TYPE_NAME_VOID -> Void.class;
+			default -> 	null;
+		};
 	}
 
 	/**
@@ -217,8 +154,36 @@ public enum DataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
-		final DataType dataType = fromType(objectiveType);
-		return (dataType != null? dataType.primitiveWrapperType: objectiveType);
+		return switch(objectiveType.getSimpleName()){
+			case OBJECTIVE_TYPE_NAME_BOOLEAN -> boolean.class;
+			case OBJECTIVE_TYPE_NAME_BYTE -> byte.class;
+			case OBJECTIVE_TYPE_NAME_CHARACTER -> char.class;
+			case OBJECTIVE_TYPE_NAME_SHORT -> short.class;
+			case OBJECTIVE_TYPE_NAME_INTEGER -> int.class;
+			case OBJECTIVE_TYPE_NAME_LONG -> long.class;
+			case OBJECTIVE_TYPE_NAME_FLOAT -> float.class;
+			case OBJECTIVE_TYPE_NAME_DOUBLE -> double.class;
+			case OBJECTIVE_TYPE_NAME_VOID -> void.class;
+			default -> objectiveType;
+		};
+	}
+
+	/**
+	 * Return the number of bits used to represent a value of the given type.
+	 *
+	 * @param objectiveType	The type of the number.
+	 * @return	The number of bits.
+	 */
+	public static int getSize(final Class<?> objectiveType){
+		return switch(objectiveType.getSimpleName()){
+			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> Byte.SIZE;
+			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> Short.SIZE;
+			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> Integer.SIZE;
+			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> Long.SIZE;
+			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> Float.SIZE;
+			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> Double.SIZE;
+			default -> -1;
+		};
 	}
 
 	/**
@@ -234,7 +199,7 @@ public enum DataType{
 
 	/**
 	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
-	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered as primitives!</p>
+	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered primitives!</p>
 	 *
 	 * @param type	The class to query.
 	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
@@ -244,41 +209,99 @@ public enum DataType{
 	}
 
 	private static boolean isPrimitiveWrapper(final Class<?> type){
-		return (fromType(type) != null);
+		return (toPrimitiveTypeOrSelf(type) != type);
 	}
 
-	/**
-	 * Describe the data types handled by this class.
-	 *
-	 * @return	A list of data types.
-	 */
-	static String describe(){
-		return CLASS_DESCRIPTOR;
-	}
-
-
-	private int size(){
-		return primitiveSize;
-	}
 
 	/**
 	 * Retrieves the computed value based on the objective type.
 	 *
 	 * @param value	The input value to be processed.
+	 * @param type	The class type from which to convert.
 	 * @return	The computed value based on the objective type.
 	 */
-	private Object value(final String value){
-		return valueStrategy.apply(value);
+	private static Number value(final String value, final Class<?> type){
+		return switch(type.getSimpleName()){
+			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> Byte.valueOf(value);
+			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> Short.valueOf(value);
+			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> Integer.valueOf(value);
+			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> Long.valueOf(value);
+			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> Float.valueOf(value);
+			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> Double.valueOf(value);
+			default -> null;
+		};
 	}
 
 	/**
-	 * Casts the given `BigInteger` value to a `Number` object that can be a `byte`, a `short`, an `integer`, a `float`, or a `double`.
+	 * Returns the method that perform the cast to the specified {@code inputType}.
 	 *
-	 * @param value	The `BigInteger` value to be cast.
-	 * @return	The cast `Number` object.
+	 * @param targetType The target data type to cast the value to.
+	 * @return The cast value if successful, otherwise the original value.
 	 */
-	private Number cast(final BigInteger value){
-		return castStrategy.apply(value);
+	public static Function<BigInteger, Number> castFunction(final Class<?> targetType){
+		if(targetType == null)
+			return (value -> value);
+
+		return switch(targetType.getSimpleName()){
+			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> (value -> value.byteValue());
+			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> (value -> value.shortValue());
+			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> (value -> value.intValue());
+			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> (value -> value.longValue());
+			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> (value -> value.floatValue());
+			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> (value -> value.doubleValue());
+			default -> (value -> value);
+		};
+	}
+
+	/**
+	 * Casts the given {@code value} to the specified {@code inputType}.
+	 *
+	 * @param value	The value to be cast.
+	 * @param targetType	The target data type to cast the value to.
+	 * @return	The cast value if successful, otherwise the original value.
+	 */
+	public static Number cast(final BigInteger value, final Class<?> targetType){
+		return castFunction(targetType).apply(value);
+	}
+
+	public static Object cast(final BigInteger[] array, final Class<?> targetType){
+		final int length = Array.getLength(array);
+		final Class<?> type = allElementsSameClassType(array, length);
+		final Function<BigInteger, Number> fun = (type != null? castFunction(targetType): null);
+		final Object convertedArray = Array.newInstance(targetType, length);
+		for(int i = 0; i < length; i ++){
+			Object element = Array.get(array, i);
+			if(element == null)
+				continue;
+
+			element = (fun != null
+				? fun.apply((BigInteger)element)
+				: cast((BigInteger)element, targetType));
+
+			Array.set(convertedArray, i, element);
+		}
+		return convertedArray;
+	}
+
+	public static Class<?> allElementsSameClassType(final Object array, final int length){
+		Class<?> firstClass = null;
+		for(int i = 0; i < length; i ++){
+			final Object element = Array.get(array, i);
+			if(element != null){
+				firstClass = element.getClass();
+				break;
+			}
+		}
+
+		if(firstClass == null)
+			return null;
+
+		for(int i = 0; i < length; i ++){
+			final Object element = Array.get(array, i);
+			if(element != null && !element.getClass().equals(firstClass))
+				return null;
+		}
+		return firstClass;
 	}
 
 	/**
@@ -286,10 +309,20 @@ public enum DataType{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param targetType	The target data type to cast the value to.
 	 * @return	The read value.
 	 */
-	Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
-		return readStrategy.apply(reader, byteOrder);
+	static Number read(final BitReaderInterface reader, final ByteOrder byteOrder, final Class<?> targetType) throws AnnotationException{
+		return switch(targetType.getSimpleName()){
+			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> reader.readByte();
+			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> reader.readShort(byteOrder);
+			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> reader.readInt(byteOrder);
+			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> reader.readLong(byteOrder);
+			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> Float.intBitsToFloat(reader.readInt(byteOrder));
+			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> Double.longBitsToDouble(reader.readLong(byteOrder));
+			default -> throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
+				targetType.getSimpleName(), CLASS_DESCRIPTOR);
+		};
 	}
 
 	/**
@@ -298,8 +331,16 @@ public enum DataType{
 	 * @param value	The value to be written.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
-		writeStrategy.accept(writer, value, byteOrder);
+	static void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder) throws AnnotationException{
+		switch(value.getClass().getSimpleName()){
+			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> writer.writeByte((Byte)value);
+			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> writer.writeShort((Short)value, byteOrder);
+			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> writer.writeInt((Integer)value, byteOrder);
+			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> writer.writeLong((Long)value, byteOrder);
+			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> writer.writeInt(Float.floatToIntBits((Float)value), byteOrder);
+			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> writer.writeLong(Double.doubleToLongBits((Double)value), byteOrder);
+			default -> throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
+		};
 	}
 
 
@@ -336,26 +377,23 @@ public enum DataType{
 		Object result = null;
 		final BigInteger value = JavaHelper.convertToBigInteger(text);
 		if(value != null){
-			final DataType dataType = fromType(objectiveType);
-			if(dataType != null && value.bitCount() <= fromType(dataType.objectiveType).size())
+			final int size = getSize(objectiveType);
+			if(size > 0 && value.bitCount() <= size)
 				//convert value to `objectiveType` class
-				result = dataType.cast(value);
+				result = cast(value, objectiveType);
 		}
 		return result;
 	}
 
-
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
-		final Object result;
+		Object result;
 		if(BigDecimal.class.isAssignableFrom(objectiveType))
 			result = new BigDecimal(value);
 		else if(BigInteger.class.isAssignableFrom(objectiveType))
 			result = JavaHelper.convertToBigInteger(value);
 		else{
-			final DataType dataType = fromType(objectiveType);
-			if(dataType != null)
-				result = dataType.value(value);
-			else{
+			result = value(value, objectiveType);
+			if(result == null){
 				//try with `.valueOf()`
 				try{
 					result = MethodHelper.invokeStaticMethod(objectiveType, METHOD_VALUE_OF, value);
@@ -369,7 +407,6 @@ public enum DataType{
 	}
 
 
-
 	/**
 	 * Resolves the input type for a sequence of a converter, if given, and/or a following validator.
 	 *
@@ -381,39 +418,12 @@ public enum DataType{
 			final Class<? extends Validator<?>> validatorType){
 		Class<?> inputType = null;
 		if(converterType != NullConverter.class)
-			inputType = (Class<?>)GenericHelper.resolveGenericTypes(converterType, Converter.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(converterType)
 				.getFirst();
 		if(inputType == null && validatorType != NullValidator.class)
-			inputType = (Class<?>)GenericHelper.resolveGenericTypes(validatorType, Validator.class)
+			inputType = (Class<?>)GenericHelper.resolveGenericTypes(validatorType)
 				.getFirst();
 		return inputType;
-	}
-
-	/**
-	 * Casts the given {@code value} to the specified {@code inputType}.
-	 *
-	 * @param value	The value to be cast.
-	 * @param targetType	The target data type to cast the value to.
-	 * @return	The cast value if successful, otherwise the original value.
-	 */
-	public static Number castValue(final BigInteger value, final Class<?> targetType){
-		if(targetType != null){
-			final DataType pdt = fromType(targetType);
-			if(pdt != null)
-				return pdt.cast(value);
-		}
-		return value;
-	}
-
-	public static Object castValue(final BigInteger[] array, final Class<?> targetType){
-		final int length = Array.getLength(array);
-		final Object convertedArray = Array.newInstance(targetType, length);
-		for(int i = 0; i < length; i ++){
-			Object element = Array.get(array, i);
-			element = castValue((BigInteger)element, targetType);
-			Array.set(convertedArray, i, element);
-		}
-		return convertedArray;
 	}
 
 	/**
@@ -421,7 +431,7 @@ public enum DataType{
 	 *
 	 * @param value	The `Number` to reinterpret as a `BigInteger`.
 	 * @return	A `BigInteger` representing the same numerical value as the given `Number`.
-	 * @see #castValue(BigInteger, Class)
+	 * @see #cast(BigInteger, Class)
 	 */
 	public static BigInteger reinterpretToBigInteger(final Number value){
 		return (value instanceof final BigInteger bi

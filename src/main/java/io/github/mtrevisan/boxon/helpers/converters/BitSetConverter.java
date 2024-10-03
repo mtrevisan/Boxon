@@ -59,29 +59,58 @@ public interface BitSetConverter{
 				bitmap.set(k);
 	}
 
+//	static BigInteger toBigIntegerBigEndian2(final BitSet bitmap, final int bitmapSize){
+//		BigInteger result = BigInteger.ZERO;
+//		int i = -1;
+//		while((i = bitmap.nextSetBit(i + 1)) >= 0)
+//			result = result.setBit(calculateTrueIndex(i, bitmapSize));
+//		return result;
+//	}
+
+//	private static int calculateTrueIndex(final int i, final int bitSize){
+//		final int index = bitSize - 1 - i;
+//		final int offsetByteIndex = index / Byte.SIZE + 1;
+//		final int offsetBitIndex = index % Byte.SIZE + 1;
+//		return offsetByteIndex * Byte.SIZE - offsetBitIndex;
+//	}
+
+//	static BigInteger toBigIntegerLittleEndian(final BitSet bitmap){
+//		BigInteger result = BigInteger.ZERO;
+//		int i = -1;
+//		while((i = bitmap.nextSetBit(i + 1)) >= 0)
+//			result = result.setBit(i);
+//		return result;
+//	}
 
 	static BigInteger toBigIntegerBigEndian(final BitSet bitmap, final int bitmapSize){
-		BigInteger result = BigInteger.ZERO;
+		final int length = (bitmapSize + 7) / Byte.SIZE;
+		final byte[] bytes = new byte[length];
 		int i = -1;
-		while((i = bitmap.nextSetBit(i + 1)) >= 0)
-			result = result.setBit(calculateTrueIndex(i, bitmapSize));
-		return result;
-	}
-
-
-	private static int calculateTrueIndex(final int i, final int bitSize){
-		final int index = bitSize - 1 - i;
-		final int offsetByteIndex = index / Byte.SIZE + 1;
-		final int offsetBitIndex = index % Byte.SIZE + 1;
-		return offsetByteIndex * Byte.SIZE - offsetBitIndex;
+		while((i = bitmap.nextSetBit(i + 1)) >= 0){
+			final int index = bitmapSize - 1 - i;
+			final int byteIndex = index / Byte.SIZE;
+			final int bitIndex = index % Byte.SIZE;
+			//in-place reverse byte array
+			bytes[length - 1 - byteIndex] |= (byte)(1 << (Byte.SIZE - 1 - bitIndex));
+		}
+		return new BigInteger(1, bytes);
 	}
 
 	static BigInteger toBigIntegerLittleEndian(final BitSet bitmap){
-		BigInteger result = BigInteger.ZERO;
-		int i = -1;
-		while((i = bitmap.nextSetBit(i + 1)) >= 0)
-			result = result.setBit(i);
-		return result;
+		final long[] words = bitmap.toLongArray();
+		final int length = words.length;
+		final byte[] bytes = new byte[length * Long.BYTES];
+		for(int i = 0; i < length; i ++){
+			long word = words[i];
+
+			final int offset = bytes.length - 1 - i * Long.BYTES;
+			for(int j = 0; j < Long.BYTES; j ++){
+				//in-place reverse byte array
+				bytes[offset - j] = (byte)(word & 0xFF);
+				word >>= 8;
+			}
+		}
+		return new BigInteger(1, bytes);
 	}
 
 	static BigInteger negateValue(final BigInteger result, final int bitSize){

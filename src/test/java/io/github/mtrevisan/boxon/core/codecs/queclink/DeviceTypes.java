@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.exceptions.DataException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.math.BigInteger;
 import java.util.Comparator;
@@ -89,10 +90,10 @@ public final class DeviceTypes<T extends Number>{
 		final String deviceTypeName = deviceTypes.get(deviceTypeCode);
 
 		if(deviceTypeName == null){
-			final String actualCode = convertToBigInteger(deviceTypeCode).toString(16);
+			final String actualCode = StringHelper.toHexString(convertToBigInteger(deviceTypeCode));
 			final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
 			for(final Map.Entry<T, String> deviceType : deviceTypes.entrySet())
-				sj.add(convertToBigInteger(deviceType.getKey()).toString(16));
+				sj.add(StringHelper.toHexString(convertToBigInteger(deviceType.getKey())));
 			throw DataException.create("Cannot decode message from another device, device type is 0x{}, should be one of {}",
 				actualCode, sj);
 		}
@@ -103,7 +104,7 @@ public final class DeviceTypes<T extends Number>{
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(final Map.Entry<T, String> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getValue() + "(0x" + convertToBigInteger(deviceType.getKey()).toString(16) + ")");
+			sj.add(deviceType.getValue() + "(0x" + StringHelper.toHexString(convertToBigInteger(deviceType.getKey())) + ")");
 		return sj.toString();
 	}
 

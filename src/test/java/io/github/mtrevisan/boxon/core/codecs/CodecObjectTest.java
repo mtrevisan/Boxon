@@ -82,7 +82,7 @@ class CodecObjectTest{
 				"terminator", (byte)0,
 				"alternatives", Collections.emptyList()
 			),
-			"selectDefault", void.class.getName(),
+			"selectDefault", void.class,
 			"validator", NullValidator.class.getName(),
 			"converter", NullConverter.class.getName(),
 			"selectConverterFrom", Map.of(

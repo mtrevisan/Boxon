@@ -41,7 +41,6 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -51,8 +50,9 @@ import java.util.Objects;
  */
 public final class Evaluator{
 
-	private static final String BOOLEAN_TRUE = Boolean.TRUE.toString().toLowerCase(Locale.ROOT);
-	private static final String BOOLEAN_FALSE = Boolean.FALSE.toString().toLowerCase(Locale.ROOT);
+	private static final String BOOLEAN_TRUE = Boolean.TRUE.toString();
+	private static final String BOOLEAN_FALSE = Boolean.FALSE.toString();
+
 
 	private static final class EvaluationContext extends StandardEvaluationContext{
 

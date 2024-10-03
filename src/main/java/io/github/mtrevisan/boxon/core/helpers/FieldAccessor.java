@@ -83,9 +83,9 @@ public final class FieldAccessor{
 	//FIXME ugliness (set & create... also a cycle between classes...)
 	private static <T> T updateObjectFieldValue(final T obj, final Field field, final Object value) throws IllegalArgumentException,
 			ReflectiveOperationException{
-		return (isRecord(obj)
-			? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
-			: updateField(obj, field, value)
+		return (!isRecord(obj)
+			? updateField(obj, field, value)
+			: ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
 		);
 	}
 
@@ -153,7 +153,7 @@ public final class FieldAccessor{
 	}
 
 	private static Type extractFieldType(final Object value){
-		return GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
+		return GenericHelper.resolveGenericTypes(value.getClass())
 			.getFirst();
 	}
 
