@@ -112,7 +112,7 @@ class CustomCodecTest{
 			}
 
 			private static String bigIntegerToAscii(BigInteger number){
-				String hex = number.toString(16);
+				String hex = StringHelper.toHexString(number);
 
 				StringBuilder sb = new StringBuilder();
 				for(int i = 0, length = hex.length(); i < length; i += 2){

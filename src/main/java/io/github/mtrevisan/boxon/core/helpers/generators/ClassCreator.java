@@ -44,7 +44,6 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +194,7 @@ public final class ClassCreator{
 
 	private static Map<String, Map<String, Object>> extractPostProcessedNavigableFields(final List<Map<String, Object>> postProcessedFields){
 		final int length = JavaHelper.sizeOrZero(postProcessedFields);
-		final Map<String, Map<String, Object>> postProcessedNavigableFields = new HashMap<>(length);
+		final Map<String, Map<String, Object>> postProcessedNavigableFields = JavaHelper.createMapOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final Map<String, Object> postProcessedField = postProcessedFields.get(i);
 
@@ -249,7 +248,7 @@ public final class ClassCreator{
 
 		private EnumCodeInterceptor(final List<String> elementNames, final List<BigInteger> elementValues){
 			final int length = elementNames.size();
-			elementCodeMap = new HashMap<>(length);
+			elementCodeMap = JavaHelper.createMapOrEmpty(length);
 			for(int i = 0; i < length; i ++)
 				elementCodeMap.put(elementNames.get(i), elementValues.get(i));
 		}

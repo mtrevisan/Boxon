@@ -32,10 +32,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.function.Function;
 
 
 /**
@@ -48,9 +48,26 @@ public final class GenericHelper{
 
 	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
+	private static final Function<Class<?>, List<Type>> RESOLVED_OFFSPRINGS = Memoizer.memoize(
+		offspring -> resolveGenericTypes(offspring, Object.class, EMPTY_TYPE_ARRAY));
+
 
 	private GenericHelper(){}
 
+
+	/**
+	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
+	 *
+	 * @param offspring	The class or interface subclassing or extending the base type.
+	 * @param <T>	The base type.
+	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
+	 * 	If omitted, the type parameters will be used instead.
+	 *
+	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
+	 */
+	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring){
+		return RESOLVED_OFFSPRINGS.apply(offspring);
+	}
 
 	/**
 	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
@@ -67,10 +84,10 @@ public final class GenericHelper{
 	 */
 	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... argumentsType){
 		//initialize list to store resolved types
-		final List<Type> types = new ArrayList<>(0);
+		final List<Type> types = new ArrayList<>(4);
 
-		final Queue<Class<?>> classStack = new ArrayDeque<>(1);
-		final Queue<Type[]> argumentsStack = new ArrayDeque<>(1);
+		final Queue<Class<?>> classStack = new ArrayDeque<>(5);
+		final Queue<Type[]> argumentsStack = new ArrayDeque<>(5);
 		classStack.add(offspring);
 		argumentsStack.add(argumentsType);
 		while(!classStack.isEmpty()){
@@ -102,9 +119,10 @@ public final class GenericHelper{
 
 	private static Map<String, Type> mapParameterTypes(final Type[] actualTypes){
 		final int length = actualTypes.length;
-		final Map<String, Type> typeVariables = new HashMap<>(length);
+		final Map<String, Type> typeVariables = JavaHelper.createMapOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final Type actualType = actualTypes[i];
+
 			final String key = ((TypeVariable<?>)actualType).getName();
 			typeVariables.put(key, actualType);
 		}
@@ -124,11 +142,15 @@ public final class GenericHelper{
 
 	private static void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<?> base,
 			final Collection<Class<?>> classStack, final Collection<Type[]> argumentsStack){
-		for(int i = 0, length = ancestors.size(); i < length; i ++){
-			final Type ancestorType = ancestors.get(i);
+		final int length = ancestors.size();
+		if(length == 1)
+			processAncestor(ancestors.getFirst(), typeVariables, base, classStack, argumentsStack);
+		else
+			for(int i = 0; i < length; i ++){
+				final Type ancestorType = ancestors.get(i);
 
-			processAncestor(ancestorType, typeVariables, base, classStack, argumentsStack);
-		}
+				processAncestor(ancestorType, typeVariables, base, classStack, argumentsStack);
+			}
 	}
 
 	private static void processAncestor(final Type ancestorType, final Map<String, Type> typeVariables, final Class<?> base,
@@ -198,8 +220,12 @@ public final class GenericHelper{
 
 	private static void processBase(final Type currentOffspring, final Type[] actualArgs, final Collection<Type> types){
 		//there is a result if the base class is reached
-		for(int i = 0, length = actualArgs.length; i < length; i ++)
-			types.add(actualArgs[i]);
+		final int length = actualArgs.length;
+		if(length == 1)
+			types.add(actualArgs[0]);
+		else
+			for(int i = 0; i < length; i ++)
+				types.add(actualArgs[i]);
 
 		if(types.isEmpty())
 			types.add(currentOffspring);

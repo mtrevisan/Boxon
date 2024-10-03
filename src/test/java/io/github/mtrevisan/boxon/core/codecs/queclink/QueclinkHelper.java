@@ -109,11 +109,13 @@ final class QueclinkHelper{
 		@Override
 		public LocalDateTime decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
-			final int year = bb.getShort();
-			final int month = bb.get();
-			final int dayOfMonth = bb.get();
-			final int hour = bb.get();
-			final int minute = bb.get();
+			final int yearMonthDay = bb.getInt();
+			final int year = ((yearMonthDay >> 16) & 0xFFFF);
+			final int month = ((yearMonthDay >> 8) & 0xFF);
+			final int dayOfMonth = (yearMonthDay & 0xFF);
+			final int hourMinute = bb.getShort();
+			final int hour = ((hourMinute >> 8) & 0xFF);
+			final int minute = (hourMinute & 0xFF);
 			final int second = bb.get();
 			return LocalDateTime.of(year, month, dayOfMonth, hour, minute, second);
 		}

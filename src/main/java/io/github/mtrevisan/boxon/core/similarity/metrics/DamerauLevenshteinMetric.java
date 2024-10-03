@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core.similarity.metrics;
 
 import io.github.mtrevisan.boxon.core.similarity.distances.MetricData;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -108,7 +108,7 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 		final int maximumDistance = length1 + length2;
 
 		//create and initialize the element array indices
-		final Map<Object, Integer> da = new HashMap<>(maximumDistance);
+		final Map<Object, Integer> da = JavaHelper.createMapOrEmpty(maximumDistance);
 		for(int d = 0; d < length1; d ++)
 			da.put(input1.elementAt(d), 0);
 		for(int d = 0; d < length2; d ++)

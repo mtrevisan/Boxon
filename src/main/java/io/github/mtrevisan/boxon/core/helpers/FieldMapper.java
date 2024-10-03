@@ -24,8 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.helpers;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public final class FieldMapper{
 
 		final List<Field> fields = FieldAccessor.getAccessibleFields(object.getClass());
 		final int size = fields.size();
-		final Map<String, Object> map = new HashMap<>(size);
+		final Map<String, Object> map = JavaHelper.createMapOrEmpty(size);
 		for(int i = 0; i < size; i ++)
 			addFieldToMap(fields.get(i), object, map);
 		return map;
