@@ -255,6 +255,7 @@ abstract class BitReaderData{
 	}
 
 	//FIXME refactor
+	//if remainingBitsInCache > 0 and actual cache does not match the terminator, and there are more bits to read, then true
 	private boolean hasNextByte(final byte terminator){
 		long bitmap = 0l;
 		final int currentPosition = buffer.position();
