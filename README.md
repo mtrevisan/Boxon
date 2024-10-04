@@ -1357,7 +1357,7 @@ NOTE: If the extended annotation uses some elements of the parent one, these MUS
 	@Documented
 	@BindStringTerminated(terminator = ',')
 	public @interface BindStringCommaTerminated{
-		//NOTE that only the parameters used by this annotation should be copied from the parent annotation!
+		//NOTE that only the parameters used by this annotation should be *copied as-is* from the parent annotation!
 		String condition() default "";
 
 		String charset() default "UTF-8";

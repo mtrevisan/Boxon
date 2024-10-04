@@ -86,12 +86,12 @@ class CustomCodecTest{
 	@Documented
 	@BindStringTerminated(terminator = ',')
 	public @interface BindStringCommaTerminated{
-		//NOTE that only the parameters used by this annotation should be copied from the parent annotation!
+		//NOTE that only the parameters used by this annotation should be *copied as-is* from the parent annotation! Under the hood, however,
+		// all the elements will be inherited, and those that are redefined here replace those of the parent
+
 		String condition() default "";
 
 		String charset() default "UTF-8";
-
-		byte terminator() default 0;
 
 		boolean consumeTerminator() default true;
 	}
