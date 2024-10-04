@@ -83,25 +83,29 @@ public final class ClassCreator{
 		for(int i = 0; i < length; i ++){
 			final Map<String, Object> fieldValues = fields.get(i);
 
-			final String name = (String)fieldValues.get(DescriberKey.FIELD_NAME.toString());
-			final String annotationType = (String)fieldValues.get(DescriberKey.ANNOTATION_TYPE.toString());
-			final Annotation annotation = AnnotationCreator.createAnnotation(annotationType, fieldValues);
+			final String fieldName = (String)fieldValues.get(DescriberKey.FIELD_NAME.toString());
+			final Annotation annotation = createAnnotation(fieldValues);
 			additionalAnnotations.add(annotation);
-			if(name != null){
+			if(fieldName != null){
 				final Class<?> type = extractFieldType(fieldValues);
 				final Annotation collectionAnnotation = getCollectionAnnotation(fieldValues);
-				final Annotation postProcessedAnnotation = getPostProcessedAnnotation(postProcessedNavigableFields, name, type);
+				final Annotation postProcessedAnnotation = getPostProcessedAnnotation(postProcessedNavigableFields, fieldName, type);
 
 				if(collectionAnnotation != null)
 					additionalAnnotations.add(collectionAnnotation);
 				if(postProcessedAnnotation != null)
 					additionalAnnotations.add(postProcessedAnnotation);
-				builder = addAnnotations(builder, name, type, additionalAnnotations);
+				builder = addAnnotations(builder, fieldName, type, additionalAnnotations);
 
 				additionalAnnotations.clear();
 			}
 		}
 		return builder;
+	}
+
+	private static Annotation createAnnotation(final Map<String, Object> fieldValues) throws ClassNotFoundException{
+		final String annotationType = (String)fieldValues.get(DescriberKey.ANNOTATION_TYPE.toString());
+		return AnnotationCreator.createAnnotation(annotationType, fieldValues);
 	}
 
 	private static Class<?> extractFieldType(final Map<String, Object> values) throws ClassNotFoundException{
@@ -216,8 +220,7 @@ public final class ClassCreator{
 			final String fieldType = (String)field.get(DescriberKey.FIELD_TYPE.toString());
 			final Class<?> type = DataType.toTypeOrSelf(fieldType);
 
-			final String evaluatedFieldType = (String)field.get(DescriberKey.ANNOTATION_TYPE.toString());
-			final Annotation annotation = AnnotationCreator.createAnnotation(evaluatedFieldType, field);
+			final Annotation annotation = createAnnotation(field);
 
 			builder = builder.defineField(name, type, Visibility.PACKAGE_PRIVATE)
 				.annotateField(annotation);
