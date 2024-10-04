@@ -275,7 +275,7 @@ public final class Template<T>{
 
 	@Override
 	public String toString(){
-		return "Template<" + getName() + ">";
+		return getName();
 	}
 
 	@Override

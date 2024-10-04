@@ -63,6 +63,8 @@ abstract class BitReaderData{
 		}
 	}
 
+	private final BitConsumer skipBufferConsumer = (bitsToProcess, length) -> {};
+
 
 	/** The backing {@link ByteBuffer}. */
 	private final ByteBuffer buffer;
@@ -180,7 +182,6 @@ abstract class BitReaderData{
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
 	final synchronized void skipBits(final int bitsToSkip){
-		final BitConsumer skipBufferConsumer = (bitsToProcess, length) -> {};
 		readBits(bitsToSkip, skipBufferConsumer);
 	}
 
@@ -254,42 +255,20 @@ abstract class BitReaderData{
 		baos.flush();
 	}
 
-	//FIXME refactor
-	//if remainingBitsInCache > 0 and actual cache does not match the terminator, and there are more bits to read, then true
 	private boolean hasNextByte(final byte terminator){
-		long bitmap = 0l;
-		final int currentPosition = buffer.position();
-		final int bytesRemaining = buffer.limit() - currentPosition;
-		long forecastCache = cache;
-		int forecastRemainingBitsInCache = remainingBitsInCache;
-		int bitsToRead = Byte.SIZE;
-		int offset = 0;
-		//cycle two times at most, since a byte can be split at most in two
-		while(bitsToRead > 0){
-			//if cache is empty and there are more bits to be read, fill it
-			if(forecastRemainingBitsInCache == 0){
-				if(offset >= bytesRemaining)
-					return false;
-
-				//fill cache
-				forecastCache = buffer.get(currentPosition + offset);
-				forecastRemainingBitsInCache = Byte.SIZE;
-			}
-
-			final int length = Math.min(bitsToRead, forecastRemainingBitsInCache);
-			bitsToRead -= length;
-
-			final long mask = composeMask(length);
-			forecastRemainingBitsInCache -= length;
-			if(forecastRemainingBitsInCache == 0)
-				bitmap |= (forecastCache & mask) << bitsToRead;
-			else
-				bitmap |= (forecastCache & mask) >> forecastRemainingBitsInCache;
-			forecastCache &= ~mask;
-
-			offset ++;
+		if(remainingBitsInCache > 0){
+			//if masked terminator (MSB) does not match masked cache (LSB), then a match is impossible, if there are more bytes to read then
+			// there's another byte that can be read
+			final byte maskedTerminator = (byte)(terminator >>> byteComplement(remainingBitsInCache));
+			return (maskedTerminator == cache && (remainingBitsInCache < Byte.SIZE || buffer.hasRemaining()));
 		}
-		return (bitmap != terminator);
+
+		if(!buffer.hasRemaining())
+			return false;
+
+		//read next byte
+		final byte forecastCache = buffer.get(buffer.position());
+		return (terminator != forecastCache);
 	}
 
 	private static long composeMask(final int length){
