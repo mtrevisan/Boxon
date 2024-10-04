@@ -333,23 +333,32 @@ public final class LoaderTemplate{
 			final Annotation[] parentAnnotations = annotationType.getAnnotations();
 			final Annotation parentAnnotation = findParentAnnotation(parentAnnotations);
 			if(parentAnnotation != null){
-				final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
-				final Map<String, Object> values = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-				//replace with default parent values
-				for(final Map.Entry<String, Object> entry : parentValues.entrySet()){
-					final String key = entry.getKey();
-					final Object value = entry.getValue();
-
-					values.putIfAbsent(key, value);
-				}
-				//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
-				// parameters from `declaredAnnotation`
-				annotations.add(AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), values));
+				final Annotation annotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation);
+				annotations.add(annotation);
 			}
-			else if(loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType))
+			else if(shouldIncludeAnnotation(annotationType))
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;
+	}
+
+	private static Annotation createAnnotationWithDefaults(final Annotation declaredAnnotation, final Annotation parentAnnotation){
+		final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
+		final Map<String, Object> values = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
+		populateDefaultValues(values, parentValues);
+		//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
+		// parameters from `declaredAnnotation`
+		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), values);
+	}
+
+	private static void populateDefaultValues(final Map<String, Object> values, final Map<String, Object> parentValues){
+		//replace with default parent values
+		for(final Map.Entry<String, Object> entry : parentValues.entrySet()){
+			final String key = entry.getKey();
+			final Object value = entry.getValue();
+
+			values.putIfAbsent(key, value);
+		}
 	}
 
 	private static Annotation findParentAnnotation(final Annotation[] parentAnnotations){
@@ -359,6 +368,10 @@ public final class LoaderTemplate{
 				return parentAnnotation;
 		}
 		return null;
+	}
+
+	private boolean shouldIncludeAnnotation(final Class<? extends Annotation> annotationType){
+		return (loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType));
 	}
 
 	/**
