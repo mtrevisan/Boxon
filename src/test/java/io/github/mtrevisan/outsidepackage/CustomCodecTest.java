@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.outsidepackage;
 
+import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
@@ -54,6 +55,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -81,6 +83,14 @@ class CustomCodecTest{
 		ConverterChoices selectConverterFrom() default @ConverterChoices;
 	}
 
+	@TemplateHeader(start = "tcc", end = "/")
+	private static class TestCustomCodec{
+		@BindStringTerminated(terminator = ',')
+		String header;
+		@BindCustomData(size = "4")
+		String customData;
+	}
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	@Documented
@@ -96,17 +106,33 @@ class CustomCodecTest{
 		boolean consumeTerminator() default true;
 	}
 
-	@TemplateHeader(start = "tcc", end = "/")
-	private static class TestCustomCodec{
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Repeatable(SkipTwoBytes.Skips.class)
+	@Documented
+	@SkipBits("2*8")
+	public @interface SkipTwoBytes{
+		@Retention(RetentionPolicy.RUNTIME)
+		@Target(ElementType.FIELD)
+		@Documented
+		@SkipBits.Skips
+		@interface Skips{
+			SkipTwoBytes[] value();
+		}
+	}
+
+	@TemplateHeader(start = "tca", end = "/")
+	private static class TestCustomAnnotation{
 		@BindStringCommaTerminated
 		String header;
-		@BindCustomData(size = "4")
+		@SkipTwoBytes
+		@SkipTwoBytes
 		String customData;
 	}
 
 
 	@Test
-	void test() throws BoxonException{
+	void testCustomCodec() throws BoxonException{
 		Codec codec = new Codec(){
 			@Injected
 			private Evaluator evaluator;
@@ -192,6 +218,35 @@ class CustomCodecTest{
 		Assertions.assertEquals("1234", message.customData);
 
 		Response<TestCustomCodec, byte[]> composeResult = composer.compose(message);
+
+		if(composeResult.hasError())
+			Assertions.fail(composeResult.getError());
+		Assertions.assertArrayEquals(payload, composeResult.getMessage());
+	}
+
+	@Test
+	void testCustomAnnotation() throws BoxonException{
+		Core core = CoreBuilder.builder()
+			.withDefaultCodecs()
+			.withTemplate(TestCustomAnnotation.class)
+			.create();
+		Parser parser = Parser.create(core);
+		Composer composer = Composer.create(core);
+
+		byte[] payload = TestHelper.toByteArray("tca,1234/");
+		List<Response<byte[], Object>> result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.getFirst();
+		if(response.hasError())
+			Assertions.fail(response.getError());
+		Assertions.assertEquals(TestCustomAnnotation.class, response.getMessage().getClass());
+		TestCustomAnnotation message = (TestCustomAnnotation)response.getMessage();
+		Assertions.assertEquals("tca", message.header);
+		Assertions.assertEquals("1234", message.customData);
+
+		Response<TestCustomAnnotation, byte[]> composeResult = composer.compose(message);
 
 		if(composeResult.hasError())
 			Assertions.fail(composeResult.getError());

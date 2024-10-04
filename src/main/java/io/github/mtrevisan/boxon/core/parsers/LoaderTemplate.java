@@ -25,9 +25,12 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.ContextParameter;
+import io.github.mtrevisan.boxon.annotations.SkipBits;
+import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
@@ -333,7 +336,26 @@ public final class LoaderTemplate{
 			final Annotation[] parentAnnotations = annotationType.getAnnotations();
 			final Annotation parentAnnotation = findParentAnnotation(parentAnnotations);
 			if(parentAnnotation != null){
-				final Annotation annotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation);
+				Annotation[] skips = null;
+				final Class<? extends Annotation> parentAnnotationType = parentAnnotation.annotationType();
+				if(parentAnnotationType == SkipBits.Skips.class || parentAnnotationType == SkipUntilTerminator.Skips.class
+						|| parentAnnotationType == ConfigurationSkip.Skips.class){
+					final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
+					final Annotation[] declaredSkips = (Annotation[])declaredValues.get("value");
+					skips = new Annotation[declaredSkips.length];
+					int j = 0;
+					for(int k = 0, skipsLength = declaredSkips.length; k < skipsLength; k ++){
+						final Annotation declaredSkip = declaredSkips[k];
+
+						final Class<? extends Annotation> skipAnnotationType = declaredAnnotation.annotationType();
+						final Annotation[] skipParentAnnotations = skipAnnotationType.getAnnotations();
+						final Annotation skipParentAnnotation = findParentAnnotation(skipParentAnnotations);
+
+						skips[j ++] = createAnnotationWithDefaults(declaredSkip, skipParentAnnotation, null);
+					}
+				}
+
+				final Annotation annotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation, skips);
 				annotations.add(annotation);
 			}
 			else if(shouldIncludeAnnotation(annotationType))
@@ -342,13 +364,16 @@ public final class LoaderTemplate{
 		return annotations;
 	}
 
-	private static Annotation createAnnotationWithDefaults(final Annotation declaredAnnotation, final Annotation parentAnnotation){
+	private static Annotation createAnnotationWithDefaults(final Annotation declaredAnnotation, final Annotation parentAnnotation,
+			final Annotation[] skips){
 		final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
-		final Map<String, Object> values = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-		populateDefaultValues(values, parentValues);
+		final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
+		populateDefaultValues(declaredValues, parentValues);
+		if(skips != null)
+			declaredValues.put("value", skips);
 		//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
 		// parameters from `declaredAnnotation`
-		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), values);
+		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), declaredValues);
 	}
 
 	private static void populateDefaultValues(final Map<String, Object> values, final Map<String, Object> parentValues){

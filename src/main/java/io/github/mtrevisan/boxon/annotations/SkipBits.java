@@ -65,7 +65,7 @@ public @interface SkipBits{
 		 *
 		 * @return	The array of Skip annotations.
 		 */
-		SkipBits[] value();
+		SkipBits[] value() default {};
 
 	}
 
