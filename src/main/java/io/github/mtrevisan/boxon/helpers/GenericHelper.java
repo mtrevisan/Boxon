@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.core.Parser;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -50,7 +52,7 @@ public final class GenericHelper{
 
 	private static Function<Class<?>, List<Type>> RESOLVED_OFFSPRINGS;
 	static{
-		initialize(-1);
+		initialize(Parser.UNBOUNDED_MEMOIZER_SIZE);
 	}
 
 

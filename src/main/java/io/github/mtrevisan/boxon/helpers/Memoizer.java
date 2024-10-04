@@ -53,7 +53,7 @@ public final class Memoizer{
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
-		return memoize(function, -1);
+		return memoize(function, 0);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
-		return throwingMemoize(function, -1);
+		return throwingMemoize(function, 0);
 	}
 
 	/**

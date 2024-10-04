@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
@@ -63,7 +64,7 @@ public final class LoaderTemplate{
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static Function<byte[], int[]> PRE_PROCESSED_PATTERNS;
 	static{
-		initialize(-1);
+		initialize(Parser.UNBOUNDED_MEMOIZER_SIZE);
 	}
 
 	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
