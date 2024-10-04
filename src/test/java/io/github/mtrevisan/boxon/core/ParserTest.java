@@ -48,14 +48,6 @@ class ParserTest{
 		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		//if it is wanted `headerLength` to be a variable and not a method:
-		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
-		//- change @BindString(size = "#prefixLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
-		//- remove .withContext(ParserTest.class, "headerLength") below
-		//- uncomment the below context map
-//		Map<String, Object> context = Map.of(
-//			"deviceTypes", deviceTypes,
-//			"headerLength", 4);
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withDefaultCodecs()
