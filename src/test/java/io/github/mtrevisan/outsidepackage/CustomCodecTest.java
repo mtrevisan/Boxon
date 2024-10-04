@@ -86,6 +86,7 @@ class CustomCodecTest{
 	@Documented
 	@BindStringTerminated(terminator = ',')
 	public @interface BindStringCommaTerminated{
+		//NOTE that only the parameters used by this annotation should be copied from the parent annotation!
 		String condition() default "";
 
 		String charset() default "UTF-8";
@@ -93,14 +94,6 @@ class CustomCodecTest{
 		byte terminator() default 0;
 
 		boolean consumeTerminator() default true;
-
-		Class<? extends Validator<?>> validator() default NullValidator.class;
-
-		Class<? extends Converter<?, ?>> converter() default NullConverter.class;
-
-		ConverterChoices selectConverterFrom() default @ConverterChoices;
-
-		String unitOfMeasure() default "";
 	}
 
 	@TemplateHeader(start = "tcc", end = "/")
