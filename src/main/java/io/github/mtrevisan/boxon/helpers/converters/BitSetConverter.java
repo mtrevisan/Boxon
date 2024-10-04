@@ -24,14 +24,20 @@
  */
 package io.github.mtrevisan.boxon.helpers.converters;
 
+import io.github.mtrevisan.boxon.helpers.Memoizer;
+
 import java.math.BigInteger;
 import java.util.BitSet;
+import java.util.function.Function;
 
 
 /**
  * Defines methods for converting between BitSet and primitive/objective types.
  */
 public interface BitSetConverter{
+
+	Function<Integer, BigInteger> MASKS = Memoizer.memoize(bitSize -> BigInteger.ONE.shiftLeft(bitSize).subtract(BigInteger.ONE));
+
 
 	/**
 	 * Creates a {@link BitSet} with the given {@link BigInteger} value and `bitmapSize`.
@@ -107,17 +113,25 @@ public interface BitSetConverter{
 			for(int j = 0; j < Long.BYTES; j ++){
 				//in-place reverse byte array
 				bytes[offset - j] = (byte)(word & 0xFF);
-				word >>= 8;
+				word >>= Byte.SIZE;
 			}
 		}
 		return new BigInteger(1, bytes);
 	}
 
-	static BigInteger negateValue(final BigInteger result, final int bitSize){
-		final BigInteger mask = BigInteger.ONE
-			.shiftLeft(bitSize)
-			.subtract(BigInteger.ONE);
-		return result.not()
+	/**
+	 * Negates a given {@link BigInteger} value with a specified bit size.
+	 * <p>
+	 * NOTE: Calculate `-((~value + 1) && mask)`, where `mask = (1 >> bitSize) - 1`.
+	 * </p>
+	 *
+	 * @param value	The {@link BigInteger} value to be negated.
+	 * @param bitSize	The size in bits of the resulting negation.
+	 * @return	The negated {@link BigInteger} value masked to the specified bit size.
+	 */
+	static BigInteger negateValue(final BigInteger value, final int bitSize){
+		final BigInteger mask = MASKS.apply(bitSize);
+		return value.not()
 			.add(BigInteger.ONE)
 			.and(mask)
 			.negate();

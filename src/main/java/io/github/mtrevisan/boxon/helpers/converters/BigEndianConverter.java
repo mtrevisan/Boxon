@@ -47,15 +47,10 @@ public final class BigEndianConverter implements BitSetConverter{
 
 	@Override
 	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
-		BigInteger result;
-		if(JavaHelper.isMultipleOfByte(bitmapSize)){
-			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
-			if(bitmap.get(bitmapSize - 1))
-				result = BitSetConverter.negateValue(result, bitmapSize);
-		}
-		else
-			result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
-		return result;
+		final BigInteger result = BitSetConverter.toBigIntegerLittleEndian(bitmap);
+		return (JavaHelper.isMultipleOfByte(bitmapSize) && bitmap.get(bitmapSize - 1)
+			? BitSetConverter.negateValue(result, bitmapSize)
+			: result);
 	}
 
 }

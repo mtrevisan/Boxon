@@ -70,17 +70,10 @@ public final class Memoizer{
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function, final int maxSize){
 		return new Function<>(){
 			private final Map<IN, OUT> cache = createCache(maxSize);
-			private final Lock lock = new ReentrantLock();
 
 			@Override
 			public OUT apply(final IN input){
-				lock.lock();
-				try{
-					return cache.computeIfAbsent(input, function);
-				}
-				finally{
-					lock.unlock();
-				}
+				return cache.computeIfAbsent(input, function);
 			}
 		};
 	}

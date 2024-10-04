@@ -284,8 +284,9 @@ public final class DataType{
 	}
 
 	public static Class<?> allElementsSameClassType(final Object array, final int length){
+		int i = 0;
 		Class<?> firstClass = null;
-		for(int i = 0; i < length; i ++){
+		for(; i < length; i ++){
 			final Object element = Array.get(array, i);
 			if(element != null){
 				firstClass = element.getClass();
@@ -296,7 +297,7 @@ public final class DataType{
 		if(firstClass == null)
 			return null;
 
-		for(int i = 0; i < length; i ++){
+		for(i ++; i < length; i ++){
 			final Object element = Array.get(array, i);
 			if(element != null && !element.getClass().equals(firstClass))
 				return null;

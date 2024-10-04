@@ -43,24 +43,24 @@ public final class CRC16IBM implements Checksummer{
 
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end){
-		int value = 0x0000;
+		int checksum = 0x0000;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 
-			value = updateChecksum(datum, value);
+			checksum = updateChecksum(datum, checksum);
 		}
-		return (short)value;
+		return (short)checksum;
 	}
 
-	private static int updateChecksum(final byte datum, int value){
-		value ^= datum & 0xFF;
+	private static int updateChecksum(final byte datum, int checksum){
+		checksum ^= datum & 0xFF;
 		for(int j = 0; j < Byte.SIZE; j ++){
-			final boolean carry = ((value & 0x01) != 0);
-			value >>>= 1;
+			final boolean carry = ((checksum & 0x01) != 0);
+			checksum >>>= 1;
 			if(carry)
-				value ^= POLYNOMIAL_REVERSED;
+				checksum ^= POLYNOMIAL_REVERSED;
 		}
-		return value;
+		return checksum;
 	}
 
 }

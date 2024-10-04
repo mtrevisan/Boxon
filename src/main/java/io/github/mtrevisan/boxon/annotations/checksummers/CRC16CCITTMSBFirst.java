@@ -41,18 +41,18 @@ abstract class CRC16CCITTMSBFirst implements Checksummer{
 
 	@Override
 	public final short calculateChecksum(final byte[] data, final int start, final int end){
-		int value = initialValue();
+		int checksum = initialValue();
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 
-			value ^= datum << Byte.SIZE;
+			checksum ^= datum << Byte.SIZE;
 			for(int j = 0; j < Byte.SIZE; j ++){
-				value <<= 1;
-				if((value & 0x1_0000) != 0)
-					value ^= POLYNOMIAL;
+				checksum <<= 1;
+				if((checksum & 0x1_0000) != 0)
+					checksum ^= POLYNOMIAL;
 			}
 		}
-		return (short)value;
+		return (short)checksum;
 	}
 
 }

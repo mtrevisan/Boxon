@@ -130,7 +130,7 @@ public final class TemplateField implements FieldRetriever{
 	 * @return	The annotations of the skips that must be made before reading the field value.
 	 */
 	public SkipParams[] getSkips(){
-		return skips.clone();
+		return skips;
 	}
 
 	/**

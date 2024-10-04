@@ -66,12 +66,7 @@ public final class DeviceTypes<T extends Number>{
 	}
 
 	boolean has(final T deviceTypeCode){
-		try{
-			getDeviceTypeName(deviceTypeCode);
-			return true;
-		}
-		catch(final IllegalArgumentException ignored){}
-		return false;
+		return deviceTypes.containsKey(deviceTypeCode);
 	}
 
 	public Set<T> getDeviceTypeCodes(){

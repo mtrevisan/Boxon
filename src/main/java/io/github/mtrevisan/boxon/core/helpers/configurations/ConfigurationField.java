@@ -98,7 +98,7 @@ public final class ConfigurationField implements FieldRetriever{
 	 * @return	The annotations of the skips that must be made before the field value.
 	 */
 	public ConfigurationSkip[] getSkips(){
-		return skips.clone();
+		return skips;
 	}
 
 	/**
