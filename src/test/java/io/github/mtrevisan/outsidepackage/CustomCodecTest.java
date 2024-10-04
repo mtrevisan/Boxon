@@ -81,9 +81,31 @@ class CustomCodecTest{
 		ConverterChoices selectConverterFrom() default @ConverterChoices;
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Documented
+	@BindStringTerminated(terminator = ',')
+	public @interface BindStringCommaTerminated{
+		String condition() default "";
+
+		String charset() default "UTF-8";
+
+		byte terminator() default 0;
+
+		boolean consumeTerminator() default true;
+
+		Class<? extends Validator<?>> validator() default NullValidator.class;
+
+		Class<? extends Converter<?, ?>> converter() default NullConverter.class;
+
+		ConverterChoices selectConverterFrom() default @ConverterChoices;
+
+		String unitOfMeasure() default "";
+	}
+
 	@TemplateHeader(start = "tcc", end = "/")
 	private static class TestCustomCodec{
-		@BindStringTerminated(terminator = ',')
+		@BindStringCommaTerminated
 		String header;
 		@BindCustomData(size = "4")
 		String customData;
