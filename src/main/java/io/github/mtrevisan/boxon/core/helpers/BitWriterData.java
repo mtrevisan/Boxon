@@ -93,7 +93,7 @@ class BitWriterData{
 
 	private void writeToCache(final long value, final int bitsToProcess, final int length){
 		final long mask = (1l << length) - 1;
-		cache |= (byte)((value >> bitsToProcess) & mask);
+		cache |= (byte)((value >>> bitsToProcess) & mask);
 	}
 
 	/**
@@ -120,7 +120,7 @@ class BitWriterData{
 		final int consumed = byteComplement(remaining);
 		int index = offset + 2;
 		while((index = bitmap.previousSetBit(index - 1) - consumed) >= 0 && offset - index < size)
-			valueRead |= (byte)(0x80 >> (offset - index));
+			valueRead |= (byte)(0x80 >>> (offset - index));
 		cache |= valueRead;
 	}
 

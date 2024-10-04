@@ -43,7 +43,7 @@ public final class BSD16 implements Checksummer{
 		int checksum = 0;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
 			//apply circular right shift and add new value
-			checksum = ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
+			checksum = ((checksum >>> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
 		return (short)checksum;
 	}
 

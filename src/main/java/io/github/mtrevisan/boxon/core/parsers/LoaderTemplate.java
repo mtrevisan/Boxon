@@ -261,7 +261,7 @@ public final class LoaderTemplate{
 			final String header = entry.getKey();
 
 			//verify if it's a valid message header
-			final int length = header.length() >> 1;
+			final int length = header.length() >>> 1;
 			if(index + length <= array.length && byteArrayHexStringEquals(array, index, header, length))
 				return entry.getValue();
 		}

@@ -168,7 +168,7 @@ abstract class BitReaderData{
 		while(cache != 0 && (skip = countLeadingZerosInCache() - consumed) < size){
 			bitmap.set(offset - skip);
 
-			cache ^= (byte)(0x80 >> (skip + consumed));
+			cache ^= (byte)(0x80 >>> (skip + consumed));
 		}
 	}
 

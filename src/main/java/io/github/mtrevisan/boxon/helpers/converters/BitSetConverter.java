@@ -61,7 +61,7 @@ public interface BitSetConverter{
 	static void fillBits(final BitSet bitmap, final byte currentByte, final int index, final int size){
 		//iterate over the bits from left to right in the byte (most significant to least significant)
 		for(int j = 0, k = index << 3; j < Byte.SIZE && k < size; j ++, k ++)
-			if(((currentByte >> j) & 1) != 0)
+			if(((currentByte >>> j) & 1) != 0)
 				bitmap.set(k);
 	}
 
@@ -122,7 +122,7 @@ public interface BitSetConverter{
 	/**
 	 * Negates a given {@link BigInteger} value with a specified bit size.
 	 * <p>
-	 * NOTE: Calculate `-((~value + 1) && mask)`, where `mask = (1 >> bitSize) - 1`.
+	 * NOTE: Calculate `-((~value + 1) && mask)`, where `mask = (1 << bitSize) - 1`.
 	 * </p>
 	 *
 	 * @param value	The {@link BigInteger} value to be negated.
