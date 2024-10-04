@@ -157,13 +157,9 @@ final class TemplateDecoder extends TemplateCoderBase{
 			final TemplateField field) throws BoxonException{
 		final Annotation binding = field.getBinding();
 		final Annotation collectionBinding = field.getCollectionBinding();
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final Codec codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.createNoCodecForBinding(annotationType)
-				.withClassAndField(template.getType(), field.getField());
+		final Codec codec = retrieveCodec(binding, template, field);
 
-		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
+		eventListener.readingField(template.toString(), field.getFieldName(), binding.annotationType().getSimpleName());
 
 		final List<ContextParameter> contextParameters = field.getContextParameters();
 		try{
@@ -194,6 +190,16 @@ final class TemplateDecoder extends TemplateCoderBase{
 		finally{
 			clearContextParameters(contextParameters);
 		}
+	}
+
+	private Codec retrieveCodec(final Annotation binding, final Template<?> template, final TemplateField field) throws BoxonException{
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		final Codec codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			throw CodecException.createNoCodecForBinding(annotationType)
+				.withClassAndField(template.getType(), field.getField());
+
+		return codec;
 	}
 
 	private static void readMessageTerminator(final TemplateHeader header, final BitReaderInterface reader) throws TemplateException{

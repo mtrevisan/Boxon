@@ -75,10 +75,7 @@ final class ParserWriterHelper{
 		final Annotation collectionBinding = parserContext.getCollectionBinding();
 
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final Codec codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.createNoCodecForBinding(annotationType)
-				.withClassNameAndFieldName(className, fieldName);
+		final Codec codec = loadCodec(loaderCodec, annotationType, className, fieldName);
 
 		eventListener.writingField(className, fieldName, annotationType.getSimpleName());
 
@@ -98,6 +95,16 @@ final class ParserWriterHelper{
 			throw BoxonException.create(e)
 				.withClassNameAndFieldName(className, fieldName);
 		}
+	}
+
+	private static Codec loadCodec(final LoaderCodec loaderCodec, final Class<? extends Annotation> annotationType, final String className,
+			final String fieldName) throws BoxonException{
+		final Codec codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			throw CodecException.createNoCodecForBinding(annotationType)
+				.withClassNameAndFieldName(className, fieldName);
+
+		return codec;
 	}
 
 }
