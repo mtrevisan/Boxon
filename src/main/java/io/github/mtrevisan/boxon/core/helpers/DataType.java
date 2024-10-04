@@ -288,6 +288,7 @@ public final class DataType{
 		Class<?> firstClass = null;
 		for(; i < length; i ++){
 			final Object element = Array.get(array, i);
+
 			if(element != null){
 				firstClass = element.getClass();
 				break;
@@ -299,9 +300,11 @@ public final class DataType{
 
 		for(i ++; i < length; i ++){
 			final Object element = Array.get(array, i);
+
 			if(element != null && !element.getClass().equals(firstClass))
 				return null;
 		}
+
 		return firstClass;
 	}
 
