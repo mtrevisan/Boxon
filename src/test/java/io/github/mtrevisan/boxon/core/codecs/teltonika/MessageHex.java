@@ -62,27 +62,23 @@ public class MessageHex{
 	}
 
 	private static final class GPSElement{
-		//[°]
-		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
+		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class, unitOfMeasure = "°")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal longitude;
-		//[°]
-		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class)
+		@BindInteger(size = "32", converter = TeltonikaHelper.CoordinateConverter.class, unitOfMeasure = "°")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.BigDecimal).ZERO")
 		private BigDecimal latitude;
-		//[m]
-		@BindInteger(size = "16")
+		@BindInteger(size = "16", unitOfMeasure = "m")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short altitude;
-		//Heading measured from magnetic north [°]
-		@BindInteger(size = "16")
+		//Heading measured from magnetic north
+		@BindInteger(size = "16", unitOfMeasure = "°")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short heading;
 		@BindInteger(size = "8")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Byte).valueOf(0)")
 		private Byte satellitesCount;
-		//[km/h]
-		@BindInteger(size = "16")
+		@BindInteger(size = "16", unitOfMeasure = "km/h")
 		@PostProcess(condition = "#self.invalidPosition", valueDecode = "null", valueEncode = "T(java.math.Short).valueOf(0)")
 		private Short speed;
 
