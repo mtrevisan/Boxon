@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface BindInteger{
 

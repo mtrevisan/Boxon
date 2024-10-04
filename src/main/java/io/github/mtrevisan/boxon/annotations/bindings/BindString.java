@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  * Manages a {@link String} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface BindString{
 

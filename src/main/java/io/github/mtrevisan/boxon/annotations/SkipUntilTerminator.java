@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Repeatable(SkipUntilTerminator.Skips.class)
 @Documented
 public @interface SkipUntilTerminator{
@@ -56,7 +56,7 @@ public @interface SkipUntilTerminator{
 	 * Manages multiple {@link SkipUntilTerminator} annotations.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
+	@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 	@Documented
 	@interface Skips{
 

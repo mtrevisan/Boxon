@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * Marks a variable to be used as the checksum for the entire message.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface Checksum{
 

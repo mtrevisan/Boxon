@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Repeatable(SkipBits.Skips.class)
 @Documented
 public @interface SkipBits{
@@ -56,7 +56,7 @@ public @interface SkipBits{
 	 * Manages multiple {@link SkipBits} annotations.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
+	@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 	@Documented
 	@interface Skips{
 
