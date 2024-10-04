@@ -31,13 +31,13 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -112,7 +112,6 @@ public final class LoaderCodec{
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes that implements {@link Codec}. */
 		final List<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(Codec.class);
-		//TODO try to avoid creation of list
 		final List<Codec> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
@@ -121,7 +120,7 @@ public final class LoaderCodec{
 
 	private List<Codec> extractCodecs(final List<Class<?>> derivedClasses){
 		final int length = derivedClasses.size();
-		final List<Codec> codecs = new ArrayList<>(length);
+		final List<Codec> codecs = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final Class<?> type = derivedClasses.get(i);
 

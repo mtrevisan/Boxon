@@ -29,10 +29,12 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -354,6 +356,10 @@ public final class JavaHelper{
 	}
 
 
+
+	public static <V> List<V> createListOrEmpty(final int initialCapacity){
+		return (initialCapacity > 0? new ArrayList<>(initialCapacity): Collections.emptyList());
+	}
 
 	public static <K, V> Map<K, V> createMapOrEmpty(final int initialCapacity){
 		return (initialCapacity > 0? new HashMap<>(initialCapacity): Collections.emptyMap());

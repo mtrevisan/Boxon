@@ -116,7 +116,7 @@ public final class ConfigurationMessage<T>{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int size = fields.size();
 		final Collection<String> uniqueShortDescription = new HashSet<>(size);
-		final List<ConfigurationField> configurationFields = new ArrayList<>(size);
+		final List<ConfigurationField> configurationFields = JavaHelper.createListOrEmpty(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 
@@ -265,7 +265,7 @@ public final class ConfigurationMessage<T>{
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> fields){
 		final int length = fields.size();
-		final ArrayList<String> boundaries = new ArrayList<>((length << 1) + 2);
+		final List<String> boundaries = new ArrayList<>((length << 1) + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 

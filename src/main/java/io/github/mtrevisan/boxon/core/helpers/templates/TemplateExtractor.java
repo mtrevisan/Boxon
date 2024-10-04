@@ -31,11 +31,11 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,8 +85,9 @@ public final class TemplateExtractor{
 
 
 	static List<SkipParams> extractSkips(final Annotation[] annotations){
-		final List<SkipParams> skips = new ArrayList<>(annotations.length);
-		for(int i = 0, length = annotations.length; i < length; i ++){
+		final int length = annotations.length;
+		final List<SkipParams> skips = JavaHelper.createListOrEmpty(length);
+		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations[i];
 
 			final Function<Annotation, List<SkipParams>> processingFun = ANNOTATION_MAPPING.get(annotation.annotationType());
@@ -98,8 +99,9 @@ public final class TemplateExtractor{
 
 	static <T extends Annotation> List<EvaluatedField<T>> extractAnnotation(final Class<T> annotationType,
 			final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField<T>> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(int i = 0, length = declaredAnnotations.length; i < length; i++){
+		final int length = declaredAnnotations.length;
+		final List<EvaluatedField<T>> evaluations = JavaHelper.createListOrEmpty(length);
+		for(int i = 0; i < length; i++){
 			final Annotation declaredAnnotation = declaredAnnotations[i];
 
 			if(declaredAnnotation.annotationType() == annotationType)
@@ -110,7 +112,7 @@ public final class TemplateExtractor{
 
 	static List<ContextParameter> extractContextParameters(final List<? extends Annotation> annotations){
 		final int length = annotations.size();
-		final List<ContextParameter> contextParameters = new ArrayList<>(length);
+		final List<ContextParameter> contextParameters = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = annotations.get(i);
 

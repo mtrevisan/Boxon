@@ -26,10 +26,10 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +54,7 @@ final class EntityDescriber{
 	 */
 	static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
 			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException{
-		final List<Map<String, Object>> descriptions = new ArrayList<>(entities.size());
+		final List<Map<String, Object>> descriptions = JavaHelper.createListOrEmpty(entities.size());
 		for(final T entity : entities)
 			descriptions.add(mapper.apply(entity));
 		return Collections.unmodifiableList(descriptions);
@@ -76,7 +76,7 @@ final class EntityDescriber{
 	static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException, E{
-		final List<Map<String, Object>> description = new ArrayList<>(entitiesClass.length);
+		final List<Map<String, Object>> description = JavaHelper.createListOrEmpty(entitiesClass.length);
 		for(final Class<?> entityClass : entitiesClass)
 			if(entityClass.isAnnotationPresent(annotationClass)){
 				final T entity = extractor.apply(entityClass);

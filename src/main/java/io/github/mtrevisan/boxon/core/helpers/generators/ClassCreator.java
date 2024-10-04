@@ -78,8 +78,9 @@ public final class ClassCreator{
 
 	private static DynamicType.Builder<Object> annotateFields(DynamicType.Builder<Object> builder, final List<Map<String, Object>> fields,
 		final Map<String, Map<String, Object>> postProcessedNavigableFields) throws ClassNotFoundException{
-		final List<Annotation> additionalAnnotations = new ArrayList<>(0);
-		for(int i = 0, length = JavaHelper.sizeOrZero(fields); i < length; i ++){
+		final int length = JavaHelper.sizeOrZero(fields);
+		final List<Annotation> additionalAnnotations = JavaHelper.createListOrEmpty(length);
+		for(int i = 0; i < length; i ++){
 			final Map<String, Object> fieldValues = fields.get(i);
 
 			final String name = (String)fieldValues.get(DescriberKey.FIELD_NAME.toString());
@@ -170,7 +171,7 @@ public final class ClassCreator{
 	}
 
 	private static List<Annotation> reduceSimilarAnnotations(final Map<Class<?>, List<Annotation>> groupedAnnotations){
-		final List<Annotation> simpleAnnotations = new ArrayList<>(groupedAnnotations.size());
+		final List<Annotation> simpleAnnotations = JavaHelper.createListOrEmpty(groupedAnnotations.size());
 		for(final Map.Entry<Class<?>, List<Annotation>> entry : groupedAnnotations.entrySet()){
 			final List<Annotation> annotations = entry.getValue();
 			if(annotations.size() == 1){

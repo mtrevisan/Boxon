@@ -39,12 +39,12 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -99,7 +99,7 @@ public final class Configurator{
 	 */
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		final List<String> protocolVersionBoundaries = JavaHelper.createListOrEmpty(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues)
 			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
 		return Collections.unmodifiableList(protocolVersionBoundaries);
@@ -135,7 +135,7 @@ public final class Configurator{
 	 */
 	private static List<Map<String, Object>> extractConfigurations(final Collection<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws CodecException, ConfigurationException{
-		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		final List<Map<String, Object>> response = JavaHelper.createListOrEmpty(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
 			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))

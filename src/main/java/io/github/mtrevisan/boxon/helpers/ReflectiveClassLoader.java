@@ -126,8 +126,8 @@ public final class ReflectiveClassLoader{
 		return Collections.unmodifiableList(loadedClasses);
 	}
 
-	private ArrayList<Class<?>> getStoredClasses(final Class<?> type){
-		return (ArrayList<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(0));
+	private List<Class<?>> getStoredClasses(final Class<?> type){
+		return (List<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(1));
 	}
 
 	private void storeClasses(final Class<?> type, final Collection<Class<?>> list){

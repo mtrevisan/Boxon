@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -45,7 +46,6 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -319,7 +319,7 @@ public final class LoaderTemplate{
 
 	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
 		final int length = declaredAnnotations.length;
-		final List<Annotation> annotations = new ArrayList<>(length);
+		final List<Annotation> annotations = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation declaredAnnotation = declaredAnnotations[i];
 

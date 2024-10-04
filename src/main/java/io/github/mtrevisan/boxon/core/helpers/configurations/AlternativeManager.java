@@ -40,7 +40,6 @@ import io.github.mtrevisan.boxon.semanticversioning.VersionBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,7 +142,7 @@ final class AlternativeManager implements ConfigurationManager{
 			throws CodecException, ConfigurationException{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		final int length = alternativeFields.length;
-		final Collection<Map<String, Object>> alternatives = new ArrayList<>(length);
+		final Collection<Map<String, Object>> alternatives = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final AlternativeSubField alternativeField = alternativeFields[i];
 

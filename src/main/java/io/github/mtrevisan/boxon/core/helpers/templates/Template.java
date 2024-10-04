@@ -127,9 +127,9 @@ public final class Template<T>{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(templateType);
 
 		final int length = fields.size();
-		final ArrayList<TemplateField> templateFields = new ArrayList<>(length);
-		final ArrayList<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
-		final ArrayList<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
+		final List<TemplateField> templateFields = new ArrayList<>(length);
+		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
+		final List<EvaluatedField<PostProcess>> postProcessedFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
 

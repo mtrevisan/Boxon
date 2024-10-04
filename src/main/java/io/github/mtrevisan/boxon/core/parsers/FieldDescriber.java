@@ -208,7 +208,7 @@ public final class FieldDescriber{
 	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields, final FieldExtractor<F> fieldExtractor)
 			throws CodecException{
 		final int length = JavaHelper.sizeOrZero(fields);
-		final List<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		final List<Map<String, Object>> fieldsDescription = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);
 
@@ -256,7 +256,7 @@ public final class FieldDescriber{
 	private static <F> Collection<Map<String, Object>> describeEnumerations(final Collection<F> fields,
 			final FieldExtractor<F> fieldExtractor){
 		final int length = JavaHelper.sizeOrZero(fields);
-		final List<Map<String, Object>> enumerationsDescription = new ArrayList<>(length);
+		final List<Map<String, Object>> enumerationsDescription = JavaHelper.createListOrEmpty(length);
 		if(length > 0)
 			for(final F field : fields)
 				extractEnumerationParameters(field, fieldExtractor, enumerationsDescription);
@@ -355,7 +355,7 @@ public final class FieldDescriber{
 		if(length == 0)
 			return;
 
-		final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+		final Collection<Map<String, Object>> alternativesDescription = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation alternative = annotations[i];
 

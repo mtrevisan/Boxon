@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
@@ -46,7 +47,6 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -308,7 +308,7 @@ public final class LoaderConfiguration{
 
 	private static Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){
 		final int length = fields.size();
-		final Collection<ConfigurationField> mandatoryFields = new ArrayList<>(length);
+		final Collection<ConfigurationField> mandatoryFields = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
