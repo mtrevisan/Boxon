@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
@@ -45,6 +46,7 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +54,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 
@@ -66,6 +69,9 @@ public final class LoaderTemplate{
 	static{
 		initialize(Parser.UNBOUNDED_MEMOIZER_SIZE);
 	}
+
+	private static final Set<Class<? extends Annotation>> LIBRARY_ANNOTATIONS = ReflectiveClassLoader.extractAnnotations(
+		ElementType.ANNOTATION_TYPE);
 
 	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
 		BindAsArray.class, BindAsList.class));
@@ -324,10 +330,48 @@ public final class LoaderTemplate{
 			final Annotation declaredAnnotation = declaredAnnotations[i];
 
 			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
-			if(loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType))
+			final Annotation[] parentAnnotations = annotationType.getAnnotations();
+			final Annotation parentAnnotation = findParentAnnotation(parentAnnotations);
+			if(parentAnnotation != null){
+				final Annotation annotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation);
+				annotations.add(annotation);
+			}
+			else if(shouldIncludeAnnotation(annotationType))
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;
+	}
+
+	private static Annotation createAnnotationWithDefaults(final Annotation declaredAnnotation, final Annotation parentAnnotation){
+		final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
+		final Map<String, Object> values = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
+		populateDefaultValues(values, parentValues);
+		//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
+		// parameters from `declaredAnnotation`
+		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), values);
+	}
+
+	private static void populateDefaultValues(final Map<String, Object> values, final Map<String, Object> parentValues){
+		//replace with default parent values
+		for(final Map.Entry<String, Object> entry : parentValues.entrySet()){
+			final String key = entry.getKey();
+			final Object value = entry.getValue();
+
+			values.putIfAbsent(key, value);
+		}
+	}
+
+	private static Annotation findParentAnnotation(final Annotation[] parentAnnotations){
+		for(int j = 0, length = parentAnnotations.length; j < length; j ++){
+			final Annotation parentAnnotation = parentAnnotations[j];
+			if(LIBRARY_ANNOTATIONS.contains(parentAnnotation.annotationType()))
+				return parentAnnotation;
+		}
+		return null;
+	}
+
+	private boolean shouldIncludeAnnotation(final Class<? extends Annotation> annotationType){
+		return (loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType));
 	}
 
 	/**

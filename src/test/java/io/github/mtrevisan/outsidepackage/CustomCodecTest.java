@@ -81,9 +81,24 @@ class CustomCodecTest{
 		ConverterChoices selectConverterFrom() default @ConverterChoices;
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Documented
+	@BindStringTerminated(terminator = ',')
+	public @interface BindStringCommaTerminated{
+		//NOTE that only the parameters used by this annotation should be *copied as-is* from the parent annotation! Under the hood, however,
+		// all the elements will be inherited, and those that are redefined here replace those of the parent
+
+		String condition() default "";
+
+		String charset() default "UTF-8";
+
+		boolean consumeTerminator() default true;
+	}
+
 	@TemplateHeader(start = "tcc", end = "/")
 	private static class TestCustomCodec{
-		@BindStringTerminated(terminator = ',')
+		@BindStringCommaTerminated
 		String header;
 		@BindCustomData(size = "4")
 		String customData;

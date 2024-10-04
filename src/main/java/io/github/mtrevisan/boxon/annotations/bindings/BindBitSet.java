@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  * Manages a {@link java.util.BitSet java BitSet} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface BindBitSet{
 
@@ -79,6 +79,14 @@ public @interface BindBitSet{
 	 * @return	The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices;
+
+
+	/**
+	 * A long description of the field.
+	 *
+	 * @return	A long description of the field.
+	 */
+	String longDescription() default "";
 
 	/**
 	 * The unit of measure of the value (the format should follow

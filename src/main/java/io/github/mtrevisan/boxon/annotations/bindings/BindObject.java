@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  * Manages an annotated {@link Class} of the given {@link #type()} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface BindObject{
 
@@ -113,6 +113,14 @@ public @interface BindObject{
 	 * @return	The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices;
+
+
+	/**
+	 * A long description of the field.
+	 *
+	 * @return	A long description of the field.
+	 */
+	String longDescription() default "";
 
 	/**
 	 * The unit of measure of the value (the format should follow

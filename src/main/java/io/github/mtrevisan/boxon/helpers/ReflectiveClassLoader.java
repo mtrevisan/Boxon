@@ -25,17 +25,23 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -124,6 +130,35 @@ public final class ReflectiveClassLoader{
 			}
 		}
 		return Collections.unmodifiableList(loadedClasses);
+	}
+
+	public static Set<Class<? extends Annotation>> extractAnnotations(final ElementType targetType){
+		final ClassGraph classGraph = new ClassGraph()
+			.ignoreClassVisibility()
+			.enableAnnotationInfo()
+			.acceptPackages(Evaluate.class.getPackage().getName());
+		final Set<Class<? extends Annotation>> loadedAnnotations = new HashSet<>(0);
+		try(final ScanResult scanResult = classGraph.scan()){
+			scanResult.getClassesWithAnnotation(Target.class.getName())
+				.forEach(classInfo -> processClassWithTargetAnnotation(classInfo, targetType, loadedAnnotations));
+		}
+		return loadedAnnotations;
+	}
+
+	private static void processClassWithTargetAnnotation(final ClassInfo classInfo, final ElementType targetType,
+			final Collection<Class<? extends Annotation>> loadedAnnotations){
+		final Class<? extends Annotation> annotationType = (Class<? extends Annotation>)classInfo.loadClass();
+		final Annotation[] annotations = annotationType.getAnnotations();
+		for(int i = 0, length = annotations.length; i < length; i ++){
+			final Annotation annotation = annotations[i];
+
+			if(annotation instanceof final Target targetAnnotation){
+				final ElementType[] value = targetAnnotation.value();
+				for(int j = 0, valueLength = value.length; j < valueLength; j ++)
+					if(value[j] == targetType)
+						loadedAnnotations.add(annotationType);
+			}
+		}
 	}
 
 	private List<Class<?>> getStoredClasses(final Class<?> type){

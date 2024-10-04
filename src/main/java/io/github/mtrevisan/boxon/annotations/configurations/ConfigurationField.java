@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * Describe a configuration field.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface ConfigurationField{
 

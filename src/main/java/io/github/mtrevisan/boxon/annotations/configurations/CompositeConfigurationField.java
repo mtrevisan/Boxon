@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * <p>This field is mandatory only if one of its children is mandatory.</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface CompositeConfigurationField{
 

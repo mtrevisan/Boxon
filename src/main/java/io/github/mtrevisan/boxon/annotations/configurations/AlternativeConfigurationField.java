@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * Manages multiple {@link AlternativeSubField} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Documented
 public @interface AlternativeConfigurationField{
 

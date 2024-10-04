@@ -34,6 +34,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,23 @@ public final class AnnotationCreator{
 	}
 
 
-	private static final class DynamicAnnotationInvocationHandler implements InvocationHandler{
+	public static Map<String, Object> extractAnnotationValues(final Annotation annotation){
+		final Method[] methods = annotation.annotationType().getDeclaredMethods();
+		final int length = methods.length;
+		final Map<String, Object> values = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
+			try{
+				final Method method = methods[i];
+				final Object value = method.invoke(annotation);
+				values.put(method.getName(), value);
+			}
+			catch(final Exception ignored){}
+		}
+		return values;
+	}
+
+
+	public static final class DynamicAnnotationInvocationHandler implements InvocationHandler{
 		private final Class<? extends Annotation> annotationType;
 		private final Map<String, Object> values;
 
