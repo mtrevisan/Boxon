@@ -31,14 +31,16 @@ public final class TimeWatch{
 
 	private static final String TIMER_NOT_STOPPED = "timer not stopped";
 	private enum Scale{
-		SECONDS("s"),
-		MILLIS("ms"),
-		MICROS("µs");
+		SECONDS("s", "Hz"),
+		MILLIS("ms", "kHz"),
+		MICROS("µs", "MHz");
 
 		private final String uom;
+		private final String frequencyUOM;
 
-		Scale(final String uom){
+		Scale(final String uom, final String frequencyUOM){
 			this.uom = uom;
+			this.frequencyUOM = frequencyUOM;
 		}
 	}
 
@@ -112,18 +114,45 @@ public final class TimeWatch{
 		if(end < 0l)
 			return TIMER_NOT_STOPPED;
 
-		double delta = (end - start) / (runs * 1_000.);
+		//[µs]
+		double time = (end - start) / (runs * 1_000.);
 		final Scale[] scaleValues = Scale.values();
 		int scale = scaleValues.length - 1;
-		while(scale >= 0 && delta >= 1_500.){
-			delta /= 1000.;
+		while(scale >= 0 && time >= 1_500.){
+			time /= 1000.;
 			scale --;
 		}
-		final int fractionalDigits = (delta > 100? 0: (delta > 10? 1: 2));
+		final int fractionalDigits = (time > 100? 0: (time > 10? 1: 2));
 
 		final StringBuilder sb = new StringBuilder(16);
-		format(sb, delta, fractionalDigits);
+		format(sb, time, fractionalDigits);
 		sb.append(' ').append(scaleValues[scale].uom);
+		return sb.toString();
+	}
+
+	/**
+	 * A string representation of the (mean) elapsed time considering the given runs.
+	 *
+	 * @param runs	The number of runs the elapsed time will be divided to.
+	 * @return	The string representation of the mean elapsed time.
+	 */
+	public String toStringAsFrequency(final int runs){
+		if(end < 0l)
+			return TIMER_NOT_STOPPED;
+
+		//[MHz]
+		double frequency = (runs * 1_000.) / (end - start);
+		final Scale[] scaleValues = Scale.values();
+		int scale = scaleValues.length - 1;
+		while(scale >= 0 && frequency <= 1.){
+			frequency *= 1000.;
+			scale --;
+		}
+		final int fractionalDigits = (frequency > 100? 0: (frequency > 10? 1: 2));
+
+		final StringBuilder sb = new StringBuilder(16);
+		format(sb, frequency, fractionalDigits);
+		sb.append(' ').append(scaleValues[scale].frequencyUOM);
 		return sb.toString();
 	}
 
