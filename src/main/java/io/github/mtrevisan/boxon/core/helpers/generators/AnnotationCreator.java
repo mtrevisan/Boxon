@@ -63,7 +63,8 @@ public final class AnnotationCreator{
 
 
 	public static Map<String, Object> extractAnnotationValues(final Annotation annotation){
-		final Method[] methods = annotation.annotationType().getDeclaredMethods();
+		final Method[] methods = annotation.annotationType()
+			.getDeclaredMethods();
 		final int length = methods.length;
 		final Map<String, Object> values = new HashMap<>(length);
 		for(int i = 0; i < length; i ++){
@@ -78,7 +79,7 @@ public final class AnnotationCreator{
 	}
 
 
-	public static final class DynamicAnnotationInvocationHandler implements InvocationHandler{
+	private static final class DynamicAnnotationInvocationHandler implements InvocationHandler{
 		private final Class<? extends Annotation> annotationType;
 		private final Map<String, Object> values;
 
@@ -109,6 +110,10 @@ public final class AnnotationCreator{
 				final Class<?> elementType = returnType.getComponentType();
 				value = invokeArrayValues(elementType, (List<Map<String, Object>>)value);
 			}
+			else if(returnType.isArray() && value.getClass().isArray()){
+				final Class<?> elementType = returnType.getComponentType();
+				value = invokeArrayValues(elementType, (Annotation[])value);
+			}
 			else if(Annotation.class.isAssignableFrom(returnType) && value instanceof Map<?, ?>){
 				//manage `ConverterChoices`, `ObjectChoices`, and `ObjectChoicesList`
 				final Class<? extends Annotation> annotationType = (Class<? extends Annotation>)returnType;
@@ -118,7 +123,7 @@ public final class AnnotationCreator{
 		}
 
 		private static Object invokeArrayValues(final Class<?> elementType, final List<Map<String, Object>> values)
-			throws ClassNotFoundException{
+				throws ClassNotFoundException{
 			final int length = JavaHelper.sizeOrZero(values);
 			if(length == 0)
 				return CodecHelper.createArray(elementType, 0);
@@ -129,6 +134,22 @@ public final class AnnotationCreator{
 
 				final String subAnnotationType = (String)subs.get(DescriberKey.ANNOTATION_TYPE.toString());
 				final Class<? extends Annotation> annotationType = getAnnotationClass(subAnnotationType);
+				Array.set(result, i, createAnnotation(annotationType, subs));
+			}
+			return result;
+		}
+
+		private static Object invokeArrayValues(final Class<?> elementType, final Annotation[] values){
+			final int length = JavaHelper.sizeOrZero(values);
+			if(length == 0)
+				return CodecHelper.createArray(elementType, 0);
+
+			final Object result = CodecHelper.createArray(elementType, length);
+			for(int i = 0; i < length; i ++){
+				final Annotation value = values[i];
+
+				final Class<? extends Annotation> annotationType = value.annotationType();
+				final Map<String, Object> subs = extractAnnotationValues(value);
 				Array.set(result, i, createAnnotation(annotationType, subs));
 			}
 			return result;

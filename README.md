@@ -1352,20 +1352,35 @@ An annotation can be written by 'extending' an existing default annotation throu
 NOTE: If the extended annotation uses some elements of the parent one, these MUST BE reported as they are defined in the parent annotation.
 
 ```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@Documented
+@BindStringTerminated(terminator = ',')
+public @interface BindStringCommaTerminated{
+    //NOTE that only the parameters used by this annotation should be *copied as-is* from the parent annotation!
+    String condition() default "";
+
+    String charset() default "UTF-8";
+
+    byte terminator() default 0;
+
+    boolean consumeTerminator() default true;
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@Repeatable(SkipTwoBytes.Skips.class)
+@Documented
+@SkipBits("2*8")
+public @interface SkipTwoBytes{
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	@Documented
-	@BindStringTerminated(terminator = ',')
-	public @interface BindStringCommaTerminated{
-		//NOTE that only the parameters used by this annotation should be *copied as-is* from the parent annotation!
-		String condition() default "";
-
-		String charset() default "UTF-8";
-
-		byte terminator() default 0;
-
-		boolean consumeTerminator() default true;
+	@SkipBits.Skips
+	@interface Skips{
+		SkipTwoBytes[] value();
 	}
+}
 ```
 
 #### New annotation & codec

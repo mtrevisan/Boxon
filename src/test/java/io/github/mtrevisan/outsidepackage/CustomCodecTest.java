@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.outsidepackage;
 
+import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
@@ -55,6 +55,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -105,12 +106,28 @@ class CustomCodecTest{
 		boolean consumeTerminator() default true;
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Repeatable(SkipTwoBytes.Skips.class)
+	@Documented
+	@SkipBits("2*8")
+	public @interface SkipTwoBytes{
+		@Retention(RetentionPolicy.RUNTIME)
+		@Target(ElementType.FIELD)
+		@Documented
+		@SkipBits.Skips
+		@interface Skips{
+			SkipTwoBytes[] value();
+		}
+		String condition() default "";
+	}
+
 	@TemplateHeader(start = "tca", end = "/")
 	private static class TestCustomAnnotation{
 		@BindStringCommaTerminated
 		String header;
-		//TODO manage skips?
-		@BindString(size = "4")
+		@SkipTwoBytes(condition = "true")
+		@SkipTwoBytes
 		String customData;
 	}
 
@@ -228,13 +245,13 @@ class CustomCodecTest{
 		Assertions.assertEquals(TestCustomAnnotation.class, response.getMessage().getClass());
 		TestCustomAnnotation message = (TestCustomAnnotation)response.getMessage();
 		Assertions.assertEquals("tca", message.header);
-		Assertions.assertEquals("1234", message.customData);
+		Assertions.assertNull(message.customData);
 
 		Response<TestCustomAnnotation, byte[]> composeResult = composer.compose(message);
 
 		if(composeResult.hasError())
 			Assertions.fail(composeResult.getError());
-		Assertions.assertArrayEquals(payload, composeResult.getMessage());
+		Assertions.assertArrayEquals(TestHelper.toByteArray("tca,\0\0\0\0/"), composeResult.getMessage());
 	}
 
 }

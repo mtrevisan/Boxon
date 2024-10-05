@@ -65,7 +65,7 @@ public @interface ConfigurationSkip{
 		 *
 		 * @return	The array of Skip annotations.
 		 */
-		ConfigurationSkip[] value();
+		ConfigurationSkip[] value() default {};
 
 	}
 

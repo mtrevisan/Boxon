@@ -65,7 +65,7 @@ public @interface SkipUntilTerminator{
 		 *
 		 * @return	The array of Skip annotations.
 		 */
-		SkipUntilTerminator[] value();
+		SkipUntilTerminator[] value() default {};
 
 	}
 
