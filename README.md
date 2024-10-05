@@ -1569,6 +1569,7 @@ Pull requests are welcomed.
 - Added long description and unit of measure attribute to `BindBitSet`, `BindInteger`, `BindObject`, `BindString`, `BindStringTerminated`, `Evaluate`, and `PostProcess` annotations.
 - Fixed bug on missing `annotationType` in alternatives' description.
 - 2× in speed with respect to previous version due to efficient use of (configurable) memoizers (see `Parser`) and other improvements.
+- Custom `DeviceTypes` code length (no longer bounded to be a `byte`).
 
 <a name="changelog-5.0.0"></a>
 ### version 5.0.0 - 20240517
