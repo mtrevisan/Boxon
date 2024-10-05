@@ -119,13 +119,14 @@ class CustomCodecTest{
 		@interface Skips{
 			SkipTwoBytes[] value();
 		}
+		String condition() default "";
 	}
 
 	@TemplateHeader(start = "tca", end = "/")
 	private static class TestCustomAnnotation{
 		@BindStringCommaTerminated
 		String header;
-		@SkipTwoBytes
+		@SkipTwoBytes(condition = "true")
 		@SkipTwoBytes
 		String customData;
 	}
@@ -244,13 +245,13 @@ class CustomCodecTest{
 		Assertions.assertEquals(TestCustomAnnotation.class, response.getMessage().getClass());
 		TestCustomAnnotation message = (TestCustomAnnotation)response.getMessage();
 		Assertions.assertEquals("tca", message.header);
-		Assertions.assertEquals("1234", message.customData);
+		Assertions.assertNull(message.customData);
 
 		Response<TestCustomAnnotation, byte[]> composeResult = composer.compose(message);
 
 		if(composeResult.hasError())
 			Assertions.fail(composeResult.getError());
-		Assertions.assertArrayEquals(payload, composeResult.getMessage());
+		Assertions.assertArrayEquals(TestHelper.toByteArray("tca,\0\0\0\0/"), composeResult.getMessage());
 	}
 
 }

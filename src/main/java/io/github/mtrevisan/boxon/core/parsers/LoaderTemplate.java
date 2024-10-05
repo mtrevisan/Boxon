@@ -326,11 +326,11 @@ public final class LoaderTemplate{
 		return StringHelper.toHexString(headerStart.getBytes(charset));
 	}
 
-	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+	public static Annotation[] extractBaseAnnotations(final Annotation[] declaredAnnotations){
 		final int length = declaredAnnotations.length;
-		final List<Annotation> annotations = JavaHelper.createListOrEmpty(length);
+		final Annotation[] annotations = new Annotation[length];
 		for(int i = 0; i < length; i ++){
-			final Annotation declaredAnnotation = declaredAnnotations[i];
+			Annotation declaredAnnotation = declaredAnnotations[i];
 
 			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
 			final Annotation[] parentAnnotations = annotationType.getAnnotations();
@@ -344,24 +344,45 @@ public final class LoaderTemplate{
 					final Annotation[] declaredSkips = (Annotation[])declaredValues.get("value");
 					skips = new Annotation[declaredSkips.length];
 					int j = 0;
+					final Class<? extends Annotation> declaredSkipType = (Class<? extends Annotation>)parentAnnotationType.getEnclosingClass();
 					for(int k = 0, skipsLength = declaredSkips.length; k < skipsLength; k ++){
 						final Annotation declaredSkip = declaredSkips[k];
-
-						final Class<? extends Annotation> skipAnnotationType = declaredAnnotation.annotationType();
+						final Class<? extends Annotation> skipAnnotationType = declaredSkip.annotationType();
 						final Annotation[] skipParentAnnotations = skipAnnotationType.getAnnotations();
 						final Annotation skipParentAnnotation = findParentAnnotation(skipParentAnnotations);
 
-						skips[j ++] = createAnnotationWithDefaults(declaredSkip, skipParentAnnotation, null);
+						skips[j ++] = createSkipAnnotation(declaredSkip, declaredSkipType, skipParentAnnotation);
 					}
 				}
 
-				final Annotation annotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation, skips);
-				annotations.add(annotation);
+				declaredAnnotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation, skips);
 			}
-			else if(shouldIncludeAnnotation(annotationType))
+
+			annotations[i] = declaredAnnotation;
+		}
+		return annotations;
+	}
+
+	private List<Annotation> filterAnnotationsWithCodec(Annotation[] declaredAnnotations){
+		declaredAnnotations = extractBaseAnnotations(declaredAnnotations);
+		final int length = declaredAnnotations.length;
+		final List<Annotation> annotations = JavaHelper.createListOrEmpty(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation declaredAnnotation = declaredAnnotations[i];
+
+			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
+			if(shouldIncludeAnnotation(annotationType))
 				annotations.add(declaredAnnotation);
 		}
 		return annotations;
+	}
+
+	private static Annotation createSkipAnnotation(final Annotation declaredAnnotation,
+			final Class<? extends Annotation> declaredAnnotationType, final Annotation parentAnnotation){
+		final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
+		final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
+		populateDefaultValues(declaredValues, parentValues);
+		return AnnotationCreator.createAnnotation(declaredAnnotationType, declaredValues);
 	}
 
 	private static Annotation createAnnotationWithDefaults(final Annotation declaredAnnotation, final Annotation parentAnnotation,

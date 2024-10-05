@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
+import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.lang.annotation.Annotation;
@@ -134,7 +135,7 @@ public final class Template<T>{
 			final Field field = fields.get(i);
 
 			try{
-				final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
+				final Annotation[] declaredAnnotations = LoaderTemplate.extractBaseAnnotations(field.getDeclaredAnnotations());
 				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
 
 				final TemplateField templateField = createField(filterAnnotationsWithCodec, declaredAnnotations, field);
