@@ -234,8 +234,7 @@ public final class GenericHelper{
 		if(length == 1)
 			types.add(actualArgs[0]);
 		else
-			for(int i = 0; i < length; i ++)
-				types.add(actualArgs[i]);
+			types.addAll(Arrays.asList(actualArgs));
 
 		if(types.isEmpty())
 			types.add(currentOffspring);

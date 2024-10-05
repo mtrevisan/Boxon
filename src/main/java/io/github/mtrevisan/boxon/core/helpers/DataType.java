@@ -110,7 +110,7 @@ public final class DataType{
 				type = Class.forName(typeName);
 			}
 			catch(final Exception ignored){
-				throw new ClassNotFoundException("Cannot find class for `" + type + "`");
+				throw new ClassNotFoundException("Cannot find class for `" + typeName + "`");
 			}
 		}
 
@@ -243,12 +243,12 @@ public final class DataType{
 			return (value -> value);
 
 		return switch(targetType.getSimpleName()){
-			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> (value -> value.byteValue());
-			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> (value -> value.shortValue());
-			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> (value -> value.intValue());
-			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> (value -> value.longValue());
-			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> (value -> value.floatValue());
-			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> (value -> value.doubleValue());
+			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> Number::byteValue;
+			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> Number::shortValue;
+			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> BigInteger::intValue;
+			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> BigInteger::longValue;
+			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> BigInteger::floatValue;
+			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> BigInteger::doubleValue;
 			default -> (value -> value);
 		};
 	}
@@ -344,7 +344,7 @@ public final class DataType{
 			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> writer.writeInt(Float.floatToIntBits((Float)value), byteOrder);
 			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> writer.writeLong(Double.doubleToLongBits((Double)value), byteOrder);
 			default -> throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
-		};
+		}
 	}
 
 
