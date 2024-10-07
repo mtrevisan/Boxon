@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
@@ -62,20 +62,19 @@ final class ParserWriterHelper{
 	 *
 	 * @param parserContext	The parser context containing information about the field to encode.
 	 * @param writer	The bit writer to write the encoded field to.
-	 * @param loaderCodec	The loader codec used for encoding the field.
 	 * @param eventListener	The event listener.
 	 * @throws CodecException	If no suitable codec was found.
 	 * @throws BoxonException	If an error occurs during field encoding.
 	 */
-	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodec loaderCodec,
-			final EventListener eventListener) throws BoxonException{
+	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final EventListener eventListener)
+			throws BoxonException{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();
 		final Annotation binding = parserContext.getBinding();
 		final Annotation collectionBinding = parserContext.getCollectionBinding();
 
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final Codec codec = loadCodec(loaderCodec, annotationType, className, fieldName);
+		final Codec codec = loadCodec(annotationType, className, fieldName);
 
 		eventListener.writingField(className, fieldName, annotationType.getSimpleName());
 
@@ -97,9 +96,9 @@ final class ParserWriterHelper{
 		}
 	}
 
-	private static Codec loadCodec(final LoaderCodec loaderCodec, final Class<? extends Annotation> annotationType, final String className,
-			final String fieldName) throws BoxonException{
-		final Codec codec = loaderCodec.getCodec(annotationType);
+	private static Codec loadCodec(final Class<? extends Annotation> annotationType, final String className, final String fieldName)
+			throws BoxonException{
+		final Codec codec = CodecLoader.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassNameAndFieldName(className, fieldName);

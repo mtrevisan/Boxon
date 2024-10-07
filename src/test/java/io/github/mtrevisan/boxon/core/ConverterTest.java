@@ -92,7 +92,7 @@ class ConverterTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestConverter1.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("77633101");
@@ -113,7 +113,7 @@ class ConverterTest{
 			() -> CoreBuilder.builder()
 				.withDefaultCodecs()
 				.withTemplate(TestConverter2.class)
-				.create());
+				.build());
 		Assertions.assertEquals("Type mismatch between converter output (Byte) and field type (String) in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value",
 			exc.getMessage());
 	}
@@ -123,7 +123,7 @@ class ConverterTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestConverter3.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("77633301");

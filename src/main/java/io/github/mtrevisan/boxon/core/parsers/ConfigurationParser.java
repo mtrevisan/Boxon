@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManager;
@@ -51,8 +50,6 @@ import java.util.Map;
  */
 public final class ConfigurationParser{
 
-	private final LoaderCodec loaderCodec;
-
 	private final LoaderConfiguration loaderConfiguration;
 
 	private EventListener eventListener;
@@ -61,17 +58,14 @@ public final class ConfigurationParser{
 	/**
 	 * Create a configuration parser.
 	 *
-	 * @param loaderCodec	A codec loader.
 	 * @return	A configuration parser.
 	 */
-	public static ConfigurationParser create(final LoaderCodec loaderCodec){
-		return new ConfigurationParser(loaderCodec);
+	public static ConfigurationParser create(){
+		return new ConfigurationParser();
 	}
 
 
-	private ConfigurationParser(final LoaderCodec loaderCodec){
-		this.loaderCodec = loaderCodec;
-
+	private ConfigurationParser(){
 		loaderConfiguration = LoaderConfiguration.create();
 
 		withEventListener(null);
@@ -194,10 +188,10 @@ public final class ConfigurationParser{
 			parserContext.setField(field);
 			parserContext.setFieldName(field.getFieldName());
 			parserContext.setBinding(annotation);
-			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			ParserWriterHelper.encodeField(parserContext, writer, eventListener);
 			if(annotation != binding){
 				parserContext.setBinding(binding);
-				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+				ParserWriterHelper.encodeField(parserContext, writer, eventListener);
 			}
 		}
 

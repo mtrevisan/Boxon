@@ -54,7 +54,7 @@ class ParserTest{
 			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
 			.withContext(ParserTest.class, "headerLength")
-			.create();
+			.build();
 		Parser parser = Parser.create(core)
 			.withMaxSpELMemoizerSize(50);
 
@@ -62,7 +62,7 @@ class ParserTest{
 		//20240424: 50-53.8 µs/msg		= 18.6-20 kHz (2.1×)
 		//20240513: 49-51 µs/msg		= 19.8-20.4 kHz (2.2×)
 		//20240607: 43.9-47.6 µs/msg	= 21-22.8 kHz (2.4×)
-		//20241003: 22-23.5 µs/msg		= 42.6-45.4 kHz (4.8×) - cached SpEL
+		//20241007: 21.3-22.1 µs/msg	= 45.2-46.9 kHz (5.1×) - cached SpEL
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 		//warm-up
@@ -132,7 +132,7 @@ class ParserTest{
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -154,7 +154,7 @@ class ParserTest{
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageASCII.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,,,20170101123542,11F0$");
@@ -179,7 +179,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withTemplate(ACKMessageASCII.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
 
@@ -214,7 +214,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withTemplate(ACKMessageASCII.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -234,7 +234,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(NonByteMultipleLengths.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		//0x2B 0x55 0x4E 0x56 0b110 0x42 0x43 0x44 0b10110
@@ -260,7 +260,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(NonByteMultipleLengths2.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		//0x2B 0x55 0x4E 0x56 0b110 0x00 0x42 0x43 0x44 0b10110
@@ -286,7 +286,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(NonByteMultipleLengths3.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		//0x2B 0x55 0x4E 0x56 0b110 0x00 0x42 0x43 0x44 0b10110
@@ -322,7 +322,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(MessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF");
@@ -338,7 +338,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(MessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000002808010000016B40D9AD80010000000000000000000000000000000103021503010101425E100000010000F22A");
@@ -354,7 +354,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(MessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000004308020000016B40D57B480100000000000000000000000000000001010101000000000000016B40D5C198010000000000000000000000000000000101010101000000020000252C");
@@ -370,7 +370,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(MessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000004A8E010000016B412CEE000100000000000000000000000000000000010005000100010100010011001D00010010015E2C880002000B000000003544C87A000E000000001DD7E06A00000100002994");
@@ -386,7 +386,7 @@ class ParserTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(MessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("000000000000005F10020000016BDBC7833000000000000000000000000000000000000B05040200010000030002000B00270042563A00000000016BDBC7871800000000000000000000000000000000000B05040200010000030002000B00260042563A00000200005FB3");

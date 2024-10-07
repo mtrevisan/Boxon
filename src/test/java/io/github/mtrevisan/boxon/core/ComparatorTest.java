@@ -42,7 +42,7 @@ class ComparatorTest{
 			.withContext("deviceTypes", deviceTypes)
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
-			.create();
+			.build();
 		Comparator comparator = Comparator.create(core);
 
 		int distance = comparator.distance(ACKMessageHex.class, ACKMessageHexByteChecksum.class);

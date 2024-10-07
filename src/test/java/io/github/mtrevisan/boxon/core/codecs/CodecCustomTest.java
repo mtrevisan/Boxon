@@ -84,10 +84,10 @@ class CodecCustomTest{
 
 	@Test
 	void customAnnotation() throws BoxonException{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.addCodecs(new VariableLengthByteArray());
+		CodecLoader.clearCodecs();
+		CodecLoader.addCodecs(new VariableLengthByteArray());
 
-		Codec codec = loaderCodec.getCodec(VarLengthEncoded.class);
+		Codec codec = CodecLoader.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = {0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override

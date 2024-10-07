@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateValidator;
 import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.parsers.TemplateLoader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -123,7 +123,7 @@ public final class ConfigurationMessage<T>{
 
 			final ConfigurationSkip[] skips = field.getDeclaredAnnotationsByType(ConfigurationSkip.class);
 
-			final Annotation[] declaredAnnotations = LoaderTemplate.extractBaseAnnotations(field.getDeclaredAnnotations());
+			final Annotation[] declaredAnnotations = TemplateLoader.extractBaseAnnotations(field.getDeclaredAnnotations());
 			validateAnnotationsOrder(declaredAnnotations);
 
 			try{
@@ -150,8 +150,8 @@ public final class ConfigurationMessage<T>{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
-		for(final Annotation annotation : annotations){
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
+		for(int i = 0, count = annotations.length; i < count; i ++){
+			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
 
 			if(annotationType == AlternativeConfigurationField.class){
 				validateAlternativeAnnotationOrder(annotationFound);

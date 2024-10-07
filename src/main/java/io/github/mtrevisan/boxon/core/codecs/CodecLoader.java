@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Loader for the codecs.
  */
-public final class LoaderCodec{
+public final class CodecLoader{
 
 	private static final Set<Type> DEFAULT_BIND_TYPES = Set.of(
 		BindBitSet.class,
@@ -57,24 +57,14 @@ public final class LoaderCodec{
 		BindStringTerminated.class);
 
 
-	private final Map<Type, Codec> codecs = new ConcurrentHashMap<>(0);
-	private final Map<Type, AnnotationValidator> customCodecValidators = new ConcurrentHashMap<>(0);
+	private static final Map<Type, Codec> codecs = new ConcurrentHashMap<>(0);
+	private static final Map<Type, AnnotationValidator> customCodecValidators = new ConcurrentHashMap<>(0);
 
-	private EventListener eventListener;
-
-
-	/**
-	 * Create a codec loader.
-	 *
-	 * @return	A codec loader.
-	 */
-	public static LoaderCodec create(){
-		return new LoaderCodec();
-	}
+	private static EventListener eventListener = EventListener.getNoOpInstance();
 
 
-	private LoaderCodec(){
-		withEventListener(null);
+	private CodecLoader(){
+		setEventListener(null);
 	}
 
 
@@ -82,18 +72,16 @@ public final class LoaderCodec{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
 	 */
-	public LoaderCodec withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
-
-		return this;
+	public static void setEventListener(final EventListener eventListener){
+		if(eventListener != null)
+			CodecLoader.eventListener = eventListener;
 	}
 
 	/**
 	 * Loads all the codecs.
 	 */
-	public void loadDefaultCodecs(){
+	public static void loadDefaultCodecs(){
 		try{
 			loadCodecsFrom(CodecDefault.class);
 		}
@@ -106,7 +94,7 @@ public final class LoaderCodec{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @throws CodecException	If a codec was already loaded.
 	 */
-	public void loadCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
+	public static void loadCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
 		eventListener.loadingCodecsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
@@ -118,7 +106,7 @@ public final class LoaderCodec{
 		eventListener.loadedCodecs(codecs.size());
 	}
 
-	private List<Codec> extractCodecs(final List<Class<?>> derivedClasses){
+	private static List<Codec> extractCodecs(final List<Class<?>> derivedClasses){
 		final int length = derivedClasses.size();
 		final List<Codec> codecs = JavaHelper.createListOrEmpty(length);
 		for(int i = 0; i < length; i ++){
@@ -144,7 +132,7 @@ public final class LoaderCodec{
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	public void addCodec(final Codec codec) throws CodecException{
+	public static void addCodec(final Codec codec) throws CodecException{
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
 		eventListener.loadingCodec(codec);
@@ -162,7 +150,7 @@ public final class LoaderCodec{
 	 * @param validator	The codec validator.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	public void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
+	public static void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
 		eventListener.loadingCodec(codec.getClass(), validator);
@@ -179,7 +167,7 @@ public final class LoaderCodec{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If a codec was already loaded.
 	 */
-	public void addCodecs(final Codec... codecs) throws CodecException{
+	public static void addCodecs(final Codec... codecs) throws CodecException{
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
 		eventListener.loadingCodec(codecs);
@@ -189,7 +177,7 @@ public final class LoaderCodec{
 		eventListener.loadedCodecs(codecs.length);
 	}
 
-	private void addCodecsInner(final List<Codec> codecs) throws CodecException{
+	private static void addCodecsInner(final List<Codec> codecs) throws CodecException{
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.size(); i < length; i ++){
 			final Codec codec = codecs.get(i);
@@ -199,7 +187,7 @@ public final class LoaderCodec{
 		}
 	}
 
-	private void addCodecsInner(final Codec... codecs) throws CodecException{
+	private static void addCodecsInner(final Codec... codecs) throws CodecException{
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.length; i < length; i ++){
 			final Codec codec = codecs[i];
@@ -209,7 +197,7 @@ public final class LoaderCodec{
 		}
 	}
 
-	private void addCodecInner(final Codec codec, final AnnotationValidator validator) throws CodecException{
+	private static void addCodecInner(final Codec codec, final AnnotationValidator validator) throws CodecException{
 		final Class<?> codecType = codec.annotationType();
 		if(codecs.containsKey(codecType))
 			throw CodecException.create("Codec with type {} already added", codecType);
@@ -225,7 +213,7 @@ public final class LoaderCodec{
 	 * @param dependencies	The object to be injected.
 	 */
 	//FIXME is injection an ugliness?
-	public void injectDependenciesIntoCodecs(final Object... dependencies){
+	public static void injectDependenciesIntoCodecs(final Object... dependencies){
 		for(final Codec codec : codecs.values())
 			injectDependenciesIntoCodec(codec, dependencies);
 	}
@@ -246,7 +234,7 @@ public final class LoaderCodec{
 	 * @param type	The class type.
 	 * @return	Whether there is a codec for the given class type.
 	 */
-	public boolean hasCodec(final Type type){
+	public static boolean hasCodec(final Type type){
 		return codecs.containsKey(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
@@ -256,7 +244,7 @@ public final class LoaderCodec{
 	 * @param type	The class type.
 	 * @return	The codec for the given class type.
 	 */
-	public Codec getCodec(final Type type){
+	public static Codec getCodec(final Type type){
 		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
@@ -266,12 +254,17 @@ public final class LoaderCodec{
 	 * @param type	The class type.
 	 * @return	The codec validator for the given class type.
 	 */
-	public AnnotationValidator getCustomCodecValidator(final Type type){
+	public static AnnotationValidator getCustomCodecValidator(final Type type){
 		return customCodecValidators.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
 	}
 
 	private static boolean isDefaultBind(final Type type){
 		return DEFAULT_BIND_TYPES.contains(type);
+	}
+
+	public static void clearCodecs(){
+		codecs.clear();
+		customCodecValidators.clear();
 	}
 
 }

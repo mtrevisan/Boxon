@@ -93,7 +93,7 @@ final class ParserContext<T>{
 		if(value instanceof final BigInteger bi)
 			value = DataType.cast(bi, fieldType);
 		else if(fieldType.isArray() && value.getClass().getComponentType() == BigInteger.class)
-			value = DataType.cast((BigInteger[])value, fieldType.getComponentType());
+			value = DataType.cast(value, fieldType.getComponentType());
 
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);

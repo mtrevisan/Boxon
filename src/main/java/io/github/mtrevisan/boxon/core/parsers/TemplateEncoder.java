@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
@@ -44,17 +43,16 @@ final class TemplateEncoder extends TemplateCoderBase{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loaderCodec	A codec loader.
 	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	static TemplateEncoder create(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		return new TemplateEncoder(loaderCodec, evaluator);
+	static TemplateEncoder create(final Evaluator evaluator){
+		return new TemplateEncoder(evaluator);
 	}
 
 
-	private TemplateEncoder(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		super(loaderCodec, evaluator);
+	private TemplateEncoder(final Evaluator evaluator){
+		super(evaluator);
 	}
 
 
@@ -118,7 +116,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 		parserContext.setCollectionBinding(field.getCollectionBinding());
 
 		try{
-			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			ParserWriterHelper.encodeField(parserContext, writer, eventListener);
 		}
 		finally{
 			clearContextParameters(contextParameters);

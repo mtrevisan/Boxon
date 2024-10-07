@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.parsers.TemplateLoader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.lang.annotation.Annotation;
@@ -40,7 +40,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 
 /**
@@ -84,25 +83,11 @@ public final class Template<T>{
 	 * @throws AnnotationException	If an annotation error occurs.
 	 */
 	public static <T> Template<T> create(final Class<T> type) throws AnnotationException{
-		return new Template<>(type, List::of);
-	}
-
-	/**
-	 * Create an instance of a template.
-	 *
-	 * @param type	The template class.
-	 * @param filterAnnotationsWithCodec	A function that filters the annotation that have a corresponding codec.
-	 * @param <T>	The class type of the template.
-	 * @return	An instance of a template.
-	 * @throws AnnotationException	If an annotation error occurs.
-	 */
-	public static <T> Template<T> create(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
-			throws AnnotationException{
-		return new Template<>(type, filterAnnotationsWithCodec);
+		return new Template<>(type);
 	}
 
 
-	private Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+	private Template(final Class<T> type)
 			throws AnnotationException{
 		this.type = type;
 
@@ -113,7 +98,7 @@ public final class Template<T>{
 			headerValidator.validate(null, header);
 		}
 
-		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
+		final Triplet fields = loadAnnotatedFields(type);
 		templateFields = fields.templateFields;
 		evaluatedFields = fields.evaluatedFields;
 		postProcessedFields = fields.postProcessedFields;
@@ -123,8 +108,7 @@ public final class Template<T>{
 	}
 
 
-	private Triplet loadAnnotatedFields(final Class<T> templateType,
-			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+	private Triplet loadAnnotatedFields(final Class<T> templateType) throws AnnotationException{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(templateType);
 
 		final int length = fields.size();
@@ -135,10 +119,11 @@ public final class Template<T>{
 			final Field field = fields.get(i);
 
 			try{
-				final Annotation[] declaredAnnotations = LoaderTemplate.extractBaseAnnotations(field.getDeclaredAnnotations());
+				//FIXME a cycle between classes
+				final Annotation[] declaredAnnotations = TemplateLoader.extractBaseAnnotations(field.getDeclaredAnnotations());
 				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
 
-				final TemplateField templateField = createField(filterAnnotationsWithCodec, declaredAnnotations, field);
+				final TemplateField templateField = createField(declaredAnnotations, field);
 				if(templateField != null)
 					templateFields.add(templateField);
 
@@ -157,9 +142,9 @@ public final class Template<T>{
 		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
 	}
 
-	private static TemplateField createField(final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec,
-			final Annotation[] declaredAnnotations, final Field field) throws AnnotationException{
-		final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
+	private static TemplateField createField(final Annotation[] declaredAnnotations, final Field field) throws AnnotationException{
+		//FIXME a cycle between classes
+		final List<Annotation> boundedAnnotations = TemplateLoader.filterAnnotationsWithCodec(declaredAnnotations);
 		final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 		final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
 

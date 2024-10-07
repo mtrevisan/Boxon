@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -37,8 +38,10 @@ import io.github.mtrevisan.boxon.io.AnnotationValidator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -50,7 +53,8 @@ public final class TemplateExtractor{
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 
-	private static Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor = type -> null;
+	private static final Collection<Class<? extends Annotation>> COLLECTION_ANNOTATIONS = new HashSet<>(List.of(BindAsArray.class,
+		BindAsList.class));
 
 	/** Mapping of annotations to functions that extract skip parameters. */
 	private static final Map<Class<? extends Annotation>, Function<Annotation, List<SkipParams>>> ANNOTATION_MAPPING
@@ -68,16 +72,6 @@ public final class TemplateExtractor{
 			-> Arrays.stream(((SkipUntilTerminator.Skips)annotation).value())
 				.map(SkipParams::create)
 				.collect(Collectors.toList()));
-	}
-
-	/**
-	 * Sets a custom codec validator extractor.
-	 *
-	 * @param customCodecValidatorExtractor	A function that extracts a custom codec validator based on the annotation class.
-	 */
-	public static void setCustomCodecValidatorExtractor(
-			final Function<Class<? extends Annotation>, AnnotationValidator> customCodecValidatorExtractor){
-		TemplateExtractor.customCodecValidatorExtractor = customCodecValidatorExtractor;
 	}
 
 
@@ -148,7 +142,7 @@ public final class TemplateExtractor{
 		final Class<? extends Annotation> annotationType = annotation.annotationType();
 		boolean validAnnotation = isCustomAnnotation(annotationType);
 		final AnnotationValidator validator = (validAnnotation
-			? customCodecValidatorExtractor.apply(annotationType)
+			? CodecLoader.getCustomCodecValidator(annotationType)
 			: TemplateAnnotationValidator.fromAnnotationType(annotationType));
 		//validate with provided validator, if any
 		if(validator != null){
@@ -170,7 +164,7 @@ public final class TemplateExtractor{
 			final Annotation annotation = annotations.get(i);
 
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType == BindAsArray.class || annotationType == BindAsList.class)
+			if(COLLECTION_ANNOTATIONS.contains(annotationType))
 				foundAnnotation = annotation;
 		}
 		return foundAnnotation;

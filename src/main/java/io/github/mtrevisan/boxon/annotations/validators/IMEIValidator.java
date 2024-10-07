@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.validators;
 
-import java.nio.charset.StandardCharsets;
-
 
 /**
  * Validator for <a href="https://en.wikipedia.org/wiki/International_Mobile_Equipment_Identity">IMEI</a> codes.
@@ -44,20 +42,20 @@ public final class IMEIValidator implements Validator<String>{
 	 */
 	@Override
 	public boolean isValid(final String imei){
-		if(imei == null)
+		if(imei == null || imei.isEmpty())
 			return false;
 
 		int sum = 0;
-		final byte[] bytes = imei.getBytes(StandardCharsets.US_ASCII);
-		final int length = bytes.length;
+		final int length = imei.length();
 		final int parity = length % 2;
-		for(int i = length - 1; i >= 0; i --){
-			int k = Character.getNumericValue(bytes[i]);
-			if(i % 2 == parity)
-				k <<= 1;
-
-			sum += k / 10;
-			sum += k % 10;
+		for(int i = 0; i < length; i ++){
+			int digit = imei.charAt(i) - '0';
+			if((i % 2) == parity){
+				digit <<= 1;
+				if(digit > 9)
+					digit -= 9;
+			}
+			sum += digit;
 		}
 		return (sum % 10 == 0);
 	}

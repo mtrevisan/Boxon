@@ -100,8 +100,8 @@ public final class Configurator{
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		final List<String> protocolVersionBoundaries = JavaHelper.createListOrEmpty(configurationValues.size());
-		for(final ConfigurationMessage<?> configuration : configurationValues)
-			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
+		for(int i = 0, length = configurationValues.size(); i < length; i ++)
+			protocolVersionBoundaries.addAll(configurationValues.get(i).getProtocolVersionBoundaries());
 		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
@@ -189,13 +189,15 @@ public final class Configurator{
 			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
 		final Map<String, Object> fieldsMap = new LinkedHashMap<>(fields.size());
-		for(final ConfigurationField field : fields){
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final ConfigurationField field = fields.get(i);
+
 			final Annotation annotation = field.getBinding();
 			final Class<?> fieldType = field.getFieldType();
 
 			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
-			if(!fieldMap.isEmpty())
+			if(! fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;

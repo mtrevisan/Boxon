@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -69,7 +70,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function, final int maxSize){
 		return new Function<>(){
-			private final Map<IN, OUT> cache = createCache(maxSize);
+			private final Map<IN, OUT> cache = (maxSize <= 0? new ConcurrentHashMap<>(1): createErasableCache(maxSize));
 
 			@Override
 			public OUT apply(final IN input){
@@ -77,6 +78,7 @@ public final class Memoizer{
 			}
 		};
 	}
+
 
 	/**
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
@@ -109,7 +111,7 @@ public final class Memoizer{
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function, final int maxSize){
 		return new ThrowingFunction<>(){
-			private final Map<IN, OUT> cache = createCache(maxSize);
+			private final Map<IN, OUT> cache = (maxSize <= 0? new HashMap<>(1): createErasableCache(maxSize));
 			private final Lock lock = new ReentrantLock();
 
 			@Override
@@ -139,10 +141,7 @@ public final class Memoizer{
 	 * @param <V>	The type of mapped values.
 	 * @return	A map that removes the oldest entries when the cache is full.
 	 */
-	private static <K, V> Map<K, V> createCache(final int maxSize){
-		if(maxSize <= 0)
-			return new ConcurrentHashMap<>(0);
-
+	private static <K, V> Map<K, V> createErasableCache(final int maxSize){
 		return new LinkedHashMap<>(maxSize, 0.75f, true){
 			@Override
 			protected boolean removeEldestEntry(final Map.Entry<K, V> eldest){

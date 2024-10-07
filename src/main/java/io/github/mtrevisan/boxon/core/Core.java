@@ -26,8 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.helpers.templates.TemplateExtractor;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -49,8 +48,6 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
-
-	private final LoaderCodec loaderCodec;
 
 	private final Evaluator evaluator;
 
@@ -74,15 +71,10 @@ public final class Core{
 
 
 	private Core(){
-		loaderCodec = LoaderCodec.create();
-
-		//FIXME ugliness
-		TemplateExtractor.setCustomCodecValidatorExtractor(loaderCodec::getCustomCodecValidator);
-
 		evaluator = Evaluator.create();
 
-		templateParser = TemplateParser.create(loaderCodec, evaluator);
-		configurationParser = ConfigurationParser.create(loaderCodec);
+		templateParser = TemplateParser.create(evaluator);
+		configurationParser = ConfigurationParser.create();
 	}
 
 
@@ -95,7 +87,7 @@ public final class Core{
 		if(eventListener != null)
 			this.eventListener = eventListener;
 
-		loaderCodec.withEventListener(eventListener);
+		CodecLoader.setEventListener(eventListener);
 
 		templateParser.withEventListener(eventListener);
 		configurationParser.withEventListener(eventListener);
@@ -167,7 +159,7 @@ public final class Core{
 	 * Loads all the default codecs.
 	 */
 	void useDefaultCodecs(){
-		loaderCodec.loadDefaultCodecs();
+		CodecLoader.loadDefaultCodecs();
 
 		postProcessCodecs();
 	}
@@ -179,7 +171,7 @@ public final class Core{
 	 * @throws CodecException	If a codec was already loaded.
 	 */
 	void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
-		loaderCodec.loadCodecsFrom(basePackageClasses);
+		CodecLoader.loadCodecsFrom(basePackageClasses);
 
 		postProcessCodecs();
 	}
@@ -191,7 +183,7 @@ public final class Core{
 	 * @throws CodecException	If the codec was already loaded.
 	 */
 	void addCodec(final Codec codec) throws CodecException{
-		loaderCodec.addCodec(codec);
+		CodecLoader.addCodec(codec);
 
 		postProcessCodec(codec);
 	}
@@ -204,7 +196,7 @@ public final class Core{
 	 * @throws CodecException	If the codec was already loaded.
 	 */
 	void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
-		loaderCodec.addCodec(codec, validator);
+		CodecLoader.addCodec(codec, validator);
 
 		postProcessCodec(codec);
 	}
@@ -216,18 +208,18 @@ public final class Core{
 	 * @throws CodecException	If the codec was already loaded.
 	 */
 	void addCodecs(final Codec... codecs) throws CodecException{
-		loaderCodec.addCodecs(codecs);
+		CodecLoader.addCodecs(codecs);
 
 		for(int i = 0, length = codecs.length; i < length; i ++)
 			postProcessCodec(codecs[i]);
 	}
 
 	private void postProcessCodec(final Codec codec){
-		LoaderCodec.injectDependenciesIntoCodec(codec, templateParser, evaluator);
+		CodecLoader.injectDependenciesIntoCodec(codec, templateParser, evaluator);
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
+		CodecLoader.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 

@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -47,26 +46,25 @@ public final class TemplateParser implements TemplateParserInterface{
 	private final TemplateDecoder templateDecoder;
 	private final TemplateEncoder templateEncoder;
 
-	private final LoaderTemplate loaderTemplate;
+	private final TemplateLoader templateLoader;
 
 
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loaderCodec	A codec loader.
 	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		return new TemplateParser(loaderCodec, evaluator);
+	public static TemplateParser create(final Evaluator evaluator){
+		return new TemplateParser(evaluator);
 	}
 
 
-	private TemplateParser(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		templateDecoder = TemplateDecoder.create(loaderCodec, evaluator);
-		templateEncoder = TemplateEncoder.create(loaderCodec, evaluator);
+	private TemplateParser(final Evaluator evaluator){
+		templateDecoder = TemplateDecoder.create(evaluator);
+		templateEncoder = TemplateEncoder.create(evaluator);
 
-		loaderTemplate = LoaderTemplate.create(loaderCodec);
+		templateLoader = TemplateLoader.create();
 
 		withEventListener(null);
 	}
@@ -81,7 +79,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public TemplateParser withEventListener(final EventListener eventListener){
 		templateDecoder.withEventListener(eventListener);
 		templateEncoder.withEventListener(eventListener);
-		loaderTemplate.withEventListener(eventListener);
+		templateLoader.withEventListener(eventListener);
 
 		return this;
 	}
@@ -95,7 +93,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	public TemplateParser withTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplatesFrom(basePackageClasses);
+		templateLoader.loadTemplatesFrom(basePackageClasses);
 
 		return this;
 	}
@@ -109,7 +107,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If the template error occurs.
 	 */
 	public TemplateParser withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplate(templateClass);
+		templateLoader.loadTemplate(templateClass);
 
 		return this;
 	}
@@ -117,7 +115,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	@Override
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return loaderTemplate.createTemplate(type);
+		return templateLoader.createTemplate(type);
 	}
 
 	/**
@@ -127,7 +125,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
 	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
-		return loaderTemplate.getTemplate(reader);
+		return templateLoader.getTemplate(reader);
 	}
 
 	/**
@@ -137,7 +135,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The template that is able to decode/encode the given class.
 	 */
 	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
-		return loaderTemplate.getTemplate(type);
+		return templateLoader.getTemplate(type);
 	}
 
 	/**
@@ -147,7 +145,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The index of the next message.
 	 */
 	public int findNextMessageIndex(final BitReaderInterface reader){
-		return loaderTemplate.findNextMessageIndex(reader);
+		return templateLoader.findNextMessageIndex(reader);
 	}
 
 	/**
@@ -159,7 +157,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
-		return loaderTemplate.extractTemplate(type);
+		return templateLoader.extractTemplate(type);
 	}
 
 	/**
@@ -168,7 +166,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	Collection of templates.
 	 */
 	public Collection<Template<?>> getTemplates(){
-		return loaderTemplate.getTemplates();
+		return templateLoader.getTemplates();
 	}
 
 

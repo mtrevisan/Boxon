@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
@@ -59,13 +59,13 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<ACKMessageHex> template = loaderTemplate.createTemplate(ACKMessageHex.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<ACKMessageHex> template = templateLoader.createTemplate(ACKMessageHex.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -91,13 +91,13 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<ACKMessageHexByteChecksum> template = loaderTemplate.createTemplate(ACKMessageHexByteChecksum.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<ACKMessageHexByteChecksum> template = templateLoader.createTemplate(ACKMessageHexByteChecksum.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -127,13 +127,13 @@ class TemplateParserTest{
 		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,,,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<ACKMessageASCII> template = templateLoader.createTemplate(ACKMessageASCII.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -175,13 +175,13 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.hexToByteArray("746335011234");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<TestError1> template = templateLoader.createTemplate(TestError1.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class,
 			() -> templateParser.decode(template, reader, null));
@@ -212,11 +212,11 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConverterOutputError(){
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 
-		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> loaderTemplate.createTemplate(TestError3.class));
+		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> templateLoader.createTemplate(TestError3.class));
 		Assertions.assertEquals("Type mismatch between converter output (String) and field type (byte) in field "
 			+ TemplateParserTest.TestError3.class.getName() + ".type", exc.getMessage());
 	}
@@ -244,10 +244,10 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConverterInputError(){
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> loaderTemplate.createTemplate(TestError4.class));
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
+		Exception exc = Assertions.assertThrows(AnnotationException.class, () -> templateLoader.createTemplate(TestError4.class));
 		Assertions.assertEquals("Type mismatch between annotation output (BigInteger) and converter input (String) in field "
 			+ TemplateParserTest.TestError4.class.getName() + ".type", exc.getMessage());
 	}
@@ -279,13 +279,13 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.hexToByteArray("746D310102016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<TestComposition1> template = templateLoader.createTemplate(TestComposition1.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		TestComposition1 parsed = (TestComposition1)templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -344,13 +344,13 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.hexToByteArray("746D3201016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<TestComposition2> template = templateLoader.createTemplate(TestComposition2.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		TestComposition2 parsed = (TestComposition2)templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -372,13 +372,13 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.hexToByteArray("7463320202616263");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
-		postProcessCodecs(loaderCodec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		Template<TestComposition2> template = templateLoader.createTemplate(TestComposition2.class);
+		postProcessCodecs(templateParser, evaluator);
 
 		TestComposition2 parsed = (TestComposition2)templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -397,8 +397,8 @@ class TemplateParserTest{
 	}
 
 
-	private static void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
-		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
+	private static void postProcessCodecs(TemplateParserInterface templateParser, Evaluator evaluator){
+		CodecLoader.injectDependenciesIntoCodecs(templateParser, evaluator);
 	}
 
 }

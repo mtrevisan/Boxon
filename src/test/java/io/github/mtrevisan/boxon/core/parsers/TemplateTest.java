@@ -39,7 +39,7 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.IntegerToFloatConverter;
 import io.github.mtrevisan.boxon.annotations.converters.LongToDoubleConverter;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
@@ -157,10 +157,10 @@ class TemplateTest{
 
 	@Test
 	void creation() throws AnnotationException{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Template<Message> template = loaderTemplate.createTemplate(Message.class);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
+		Template<Message> template = templateLoader.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -221,10 +221,10 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		Template<MessageChild> template = loaderTemplate.createTemplate(MessageChild.class);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
+		Template<MessageChild> template = templateLoader.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());

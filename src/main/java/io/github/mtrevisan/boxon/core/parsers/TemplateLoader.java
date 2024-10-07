@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.Parser;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
@@ -65,7 +65,9 @@ import java.util.function.Function;
 /**
  * Loader for the templates.
  */
-public final class LoaderTemplate{
+public final class TemplateLoader{
+
+	private static final String MULTIPLE_ANNOTATIONS_VALUE = "value";
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static Function<byte[], int[]> PRE_PROCESSED_PATTERNS;
@@ -76,17 +78,16 @@ public final class LoaderTemplate{
 	private static final Set<Class<? extends Annotation>> LIBRARY_ANNOTATIONS = ReflectiveClassLoader.extractAnnotations(
 		ElementType.ANNOTATION_TYPE);
 
+	private static final Collection<Class<? extends Annotation>> SKIP_ANNOTATIONS = new HashSet<>(List.of(SkipBits.Skips.class,
+		SkipUntilTerminator.Skips.class, ConfigurationSkip.Skips.class));
 	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
 		BindAsArray.class, BindAsList.class));
 
 
-	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
-		= Memoizer.throwingMemoize(type -> Template.create(type, this::filterAnnotationsWithCodec));
+	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(Template::create);
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
-
-	private final LoaderCodec loaderCodec;
 
 	private EventListener eventListener;
 
@@ -94,17 +95,14 @@ public final class LoaderTemplate{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loaderCodec	A codec loader.
 	 * @return	A template parser.
 	 */
-	static LoaderTemplate create(final LoaderCodec loaderCodec){
-		return new LoaderTemplate(loaderCodec);
+	static TemplateLoader create(){
+		return new TemplateLoader();
 	}
 
 
-	private LoaderTemplate(final LoaderCodec loaderCodec){
-		this.loaderCodec = loaderCodec;
-
+	private TemplateLoader(){
 		withEventListener(null);
 	}
 
@@ -338,10 +336,9 @@ public final class LoaderTemplate{
 			if(parentAnnotation != null){
 				Annotation[] skips = null;
 				final Class<? extends Annotation> parentAnnotationType = parentAnnotation.annotationType();
-				if(parentAnnotationType == SkipBits.Skips.class || parentAnnotationType == SkipUntilTerminator.Skips.class
-						|| parentAnnotationType == ConfigurationSkip.Skips.class){
+				if(SKIP_ANNOTATIONS.contains(parentAnnotationType)){
 					final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-					final Annotation[] declaredSkips = (Annotation[])declaredValues.get("value");
+					final Annotation[] declaredSkips = (Annotation[])declaredValues.get(MULTIPLE_ANNOTATIONS_VALUE);
 					skips = new Annotation[declaredSkips.length];
 					int j = 0;
 					final Class<? extends Annotation> declaredSkipType = (Class<? extends Annotation>)parentAnnotationType.getEnclosingClass();
@@ -363,7 +360,7 @@ public final class LoaderTemplate{
 		return annotations;
 	}
 
-	private List<Annotation> filterAnnotationsWithCodec(Annotation[] declaredAnnotations){
+	public static List<Annotation> filterAnnotationsWithCodec(Annotation[] declaredAnnotations){
 		declaredAnnotations = extractBaseAnnotations(declaredAnnotations);
 		final int length = declaredAnnotations.length;
 		final List<Annotation> annotations = JavaHelper.createListOrEmpty(length);
@@ -391,7 +388,7 @@ public final class LoaderTemplate{
 		final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
 		populateDefaultValues(declaredValues, parentValues);
 		if(skips != null)
-			declaredValues.put("value", skips);
+			declaredValues.put(MULTIPLE_ANNOTATIONS_VALUE, skips);
 		//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
 		// parameters from `declaredAnnotation`
 		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), declaredValues);
@@ -416,8 +413,8 @@ public final class LoaderTemplate{
 		return null;
 	}
 
-	private boolean shouldIncludeAnnotation(final Class<? extends Annotation> annotationType){
-		return (loaderCodec.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType));
+	private static boolean shouldIncludeAnnotation(final Class<? extends Annotation> annotationType){
+		return (CodecLoader.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType));
 	}
 
 	/**

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
@@ -41,47 +41,47 @@ class LoaderTest{
 
 	@Test
 	void loadFromMap(){
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
 	}
 
 	@Test
 	void loadFromScan() throws Exception{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
 
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplatesFrom(ACKMessageHex.class);
+		TemplateLoader templateLoader = TemplateLoader.create();
+		templateLoader.loadTemplatesFrom(ACKMessageHex.class);
 	}
 
 	@Test
 	void loadFromScanWithBasePackage() throws Exception{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
 
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplatesFrom(ACKMessageASCII.class);
+		TemplateLoader templateLoader = TemplateLoader.create();
+		templateLoader.loadTemplatesFrom(ACKMessageASCII.class);
 	}
 
 	@Test
 	void loadCodecsAfterTemplates(){
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 		Exception exc = Assertions.assertThrows(AnnotationException.class,
-			() -> loaderTemplate.loadTemplatesFrom(LoaderTest.class));
+			() -> templateLoader.loadTemplatesFrom(LoaderTest.class));
 		Assertions.assertTrue(exc.getMessage().startsWith("No data can be extracted from this class: "));
 	}
 
 	@Test
 	void loadTemplate() throws Exception{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplate(ACKMessageHex.class);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
+		templateLoader.loadTemplate(ACKMessageHex.class);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
-		Template<?> template = loaderTemplate.getTemplate(reader);
+		Template<?> template = templateLoader.getTemplate(reader);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(ACKMessageHex.class, template.getType());
@@ -89,40 +89,40 @@ class LoaderTest{
 
 	@Test
 	void cannotLoadTemplate(){
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
 
 		byte[] payload = StringHelper.hexToByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
-		TemplateException exc = Assertions.assertThrows(TemplateException.class, () -> loaderTemplate.getTemplate(reader));
+		TemplateException exc = Assertions.assertThrows(TemplateException.class, () -> templateLoader.getTemplate(reader));
 		Assertions.assertEquals("Cannot find any template for given raw message", exc.getMessage());
 	}
 
 	@Test
 	void findNextTemplate() throws Exception{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplate(TemplateTest.Message.class);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
+		templateLoader.loadTemplate(TemplateTest.Message.class);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
-		int position = loaderTemplate.findNextMessageIndex(reader);
+		int position = templateLoader.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(36, position);
 	}
 
 	@Test
 	void cannotFindNextTemplate() throws Exception{
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplate(TemplateTest.Message.class);
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateLoader templateLoader = TemplateLoader.create();
+		templateLoader.loadTemplate(TemplateTest.Message.class);
 
 		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
-		int position = loaderTemplate.findNextMessageIndex(reader);
+		int position = templateLoader.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(-1, position);
 	}

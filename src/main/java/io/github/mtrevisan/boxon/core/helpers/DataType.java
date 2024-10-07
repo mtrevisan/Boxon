@@ -41,6 +41,8 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 
@@ -72,6 +74,28 @@ public final class DataType{
 	private static final String OBJECTIVE_TYPE_NAME_DOUBLE = "Double";
 	private static final String OBJECTIVE_TYPE_NAME_VOID = "Void";
 
+	private static final Map<String, Class<?>> TYPE_MAP = new HashMap<>(18);
+	static{
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_BOOLEAN, boolean.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_BOOLEAN, Boolean.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_BYTE, byte.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_BYTE, Byte.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_CHAR, char.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_CHARACTER, Character.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_SHORT, short.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_SHORT, Short.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_INT, int.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_INTEGER, Integer.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_LONG, long.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_LONG, Long.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_FLOAT, float.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_FLOAT, Float.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_DOUBLE, double.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_DOUBLE, Double.class);
+		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_VOID, void.class);
+		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_VOID, Void.class);
+	}
+
 
 	private DataType(){}
 
@@ -83,28 +107,7 @@ public final class DataType{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toTypeOrSelf(final String typeName) throws ClassNotFoundException{
-		Class<?> type = switch(typeName){
-			case PRIMITIVE_TYPE_NAME_BOOLEAN -> boolean.class;
-			case OBJECTIVE_TYPE_NAME_BOOLEAN -> Boolean.class;
-			case PRIMITIVE_TYPE_NAME_BYTE -> byte.class;
-			case OBJECTIVE_TYPE_NAME_BYTE -> Byte.class;
-			case PRIMITIVE_TYPE_NAME_CHAR -> char.class;
-			case OBJECTIVE_TYPE_NAME_CHARACTER -> Character.class;
-			case PRIMITIVE_TYPE_NAME_SHORT -> short.class;
-			case OBJECTIVE_TYPE_NAME_SHORT -> Short.class;
-			case PRIMITIVE_TYPE_NAME_INT -> int.class;
-			case OBJECTIVE_TYPE_NAME_INTEGER -> Integer.class;
-			case PRIMITIVE_TYPE_NAME_LONG -> long.class;
-			case OBJECTIVE_TYPE_NAME_LONG -> Long.class;
-			case PRIMITIVE_TYPE_NAME_FLOAT -> float.class;
-			case OBJECTIVE_TYPE_NAME_FLOAT -> Float.class;
-			case PRIMITIVE_TYPE_NAME_DOUBLE -> double.class;
-			case OBJECTIVE_TYPE_NAME_DOUBLE -> Double.class;
-			case PRIMITIVE_TYPE_NAME_VOID -> void.class;
-			case OBJECTIVE_TYPE_NAME_VOID -> Void.class;
-			default -> null;
-		};
-
+		Class<?> type = TYPE_MAP.get(typeName);
 		if(type == null){
 			try{
 				type = Class.forName(typeName);
@@ -264,9 +267,9 @@ public final class DataType{
 		return castFunction(targetType).apply(value);
 	}
 
-	public static Object cast(final BigInteger[] array, final Class<?> targetType){
+	public static Object cast(final Object array, final Class<?> targetType){
 		final int length = Array.getLength(array);
-		final Class<?> type = allElementsSameClassType(array, length);
+		final Class<?> type = elementsType(array, length);
 		final Function<BigInteger, Number> fun = (type != null? castFunction(targetType): null);
 		final Object convertedArray = Array.newInstance(targetType, length);
 		for(int i = 0; i < length; i ++){
@@ -274,38 +277,27 @@ public final class DataType{
 			if(element == null)
 				continue;
 
-			element = (fun != null
-				? fun.apply((BigInteger)element)
-				: cast((BigInteger)element, targetType));
+			element = applyCast(element, fun, targetType);
 
 			Array.set(convertedArray, i, element);
 		}
 		return convertedArray;
 	}
 
-	public static Class<?> allElementsSameClassType(final Object array, final int length){
-		int i = 0;
-		Class<?> firstClass = null;
-		for(; i < length; i ++){
+	private static Class<?> elementsType(final Object array, final int length){
+		for(int i = 0; i < length; i ++){
 			final Object element = Array.get(array, i);
 
-			if(element != null){
-				firstClass = element.getClass();
-				break;
-			}
+			if(element != null)
+				return element.getClass();
 		}
+		return null;
+	}
 
-		if(firstClass == null)
-			return null;
-
-		for(i ++; i < length; i ++){
-			final Object element = Array.get(array, i);
-
-			if(element != null && !element.getClass().equals(firstClass))
-				return null;
-		}
-
-		return firstClass;
+	private static Object applyCast(final Object element, final Function<BigInteger, Number> fun, final Class<?> targetType){
+		return (fun != null
+			? fun.apply((BigInteger)element)
+			: cast((BigInteger)element, targetType));
 	}
 
 	/**

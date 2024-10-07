@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
@@ -296,8 +297,25 @@ public final class CoreBuilder{
 	 * @throws CodecException	If a codec was already loaded.
 	 * @throws TemplateException	If a template error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
+	 * @deprecated	Use {@link #build()} instead.
 	 */
+	@Deprecated
 	public Core create() throws BoxonException{
+		return build();
+	}
+
+	/**
+	 * Create the common core data executing all the configuration commands called in the proper order.
+	 *
+	 * @return	{@link Core Core} data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
+	 * @throws AnnotationException	If an annotation error occurs.
+	 * @throws CodecException	If a codec was already loaded.
+	 * @throws TemplateException	If a template error occurs.
+	 * @throws ConfigurationException	If a configuration error occurs.
+	 */
+	public Core build() throws BoxonException{
+		CodecLoader.clearCodecs();
+
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);

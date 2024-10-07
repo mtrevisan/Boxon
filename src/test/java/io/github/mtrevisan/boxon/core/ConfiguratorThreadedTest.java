@@ -41,7 +41,7 @@ class ConfiguratorThreadedTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
-			.create();
+			.build();
 		Configurator configurator = Configurator.create(core);
 
 		MultithreadingHelper.testMultithreading(configurator::getConfigurations,
@@ -67,7 +67,7 @@ class ConfiguratorThreadedTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
-			.create();
+			.build();
 
 		MultithreadingHelper.testMultithreading(
 			() -> {
@@ -98,7 +98,7 @@ class ConfiguratorThreadedTest{
 				Core core = CoreBuilder.builder()
 					.withDefaultCodecs()
 					.withConfiguration(REGConfigurationASCII.class)
-					.create();
+					.build();
 				Configurator configurator = Configurator.create(core);
 				return configurator.getConfigurations();
 			},

@@ -127,10 +127,10 @@ class CodecListTest{
 		);
 		BindAsList collectionAnnotation = AnnotationCreator.createAnnotation(BindAsList.class, collectionAnnotationData);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		loaderCodec.loadDefaultCodecs();
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, collectionAnnotation, null, encodedValue);
@@ -155,7 +155,7 @@ class CodecListTest{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplate(TestChoice6.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = TestHelper.toByteArray("tc6,1,1.2,v1.v2.1,2.");

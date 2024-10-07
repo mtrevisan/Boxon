@@ -47,7 +47,7 @@ class ConfiguratorTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
-			.create();
+			.build();
 		Configurator configurator = Configurator.create(core);
 
 		List<Map<String, Object>> configurations = configurator.getConfigurations();
@@ -72,7 +72,7 @@ class ConfiguratorTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
-			.create();
+			.build();
 		Configurator configurator = Configurator.create(core);
 
 		List<String> protocolVersionBoundaries = configurator.getProtocolVersionBoundaries();
@@ -87,7 +87,7 @@ class ConfiguratorTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
-			.create();
+			.build();
 		Configurator configurator = Configurator.create(core);
 
 		List<Map<String, Object>> configurations = configurator.getConfigurations("1.19");
@@ -109,7 +109,7 @@ class ConfiguratorTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
-			.create();
+			.build();
 		Configurator configurator = Configurator.create(core);
 
 		//data:
@@ -149,7 +149,7 @@ class ConfiguratorTest{
 			.withContext(context)
 			.withDefaultCodecs()
 			.withConfiguration(HeartbeatAcknowledgeASCII.class)
-			.create();
+			.build();
 		Configurator configurator = Configurator.create(core);
 
 		Map<String, Object> data = Map.of(

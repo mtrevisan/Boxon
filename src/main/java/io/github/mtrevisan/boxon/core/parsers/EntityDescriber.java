@@ -77,11 +77,14 @@ final class EntityDescriber{
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, BoxonException> mapper) throws BoxonException, E{
 		final List<Map<String, Object>> description = JavaHelper.createListOrEmpty(entitiesClass.length);
-		for(final Class<?> entityClass : entitiesClass)
+		for(int i = 0, length = entitiesClass.length; i < length; i ++){
+			final Class<?> entityClass = entitiesClass[i];
+
 			if(entityClass.isAnnotationPresent(annotationClass)){
 				final T entity = extractor.apply(entityClass);
 				description.add(mapper.apply(entity));
 			}
+		}
 		return Collections.unmodifiableList(description);
 	}
 

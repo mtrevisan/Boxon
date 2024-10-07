@@ -92,11 +92,11 @@ class CodecObjectTest{
 		);
 		BindObject annotation = AnnotationCreator.createAnnotation(BindObject.class, annotationData);
 
-		LoaderCodec loaderCodec = LoaderCodec.create();
-		loaderCodec.loadDefaultCodecs();
+		CodecLoader.clearCodecs();
+		CodecLoader.loadDefaultCodecs();
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(loaderCodec, evaluator);
-		loaderCodec.injectDependenciesIntoCodecs(templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
+		CodecLoader.injectDependenciesIntoCodecs(templateParser, evaluator);
 		FieldAccessor.injectValues(codec, templateParser, evaluator);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, null, encodedValue);
@@ -170,7 +170,7 @@ class CodecObjectTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestChoice1.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 		Describer describer = Describer.create(core);
 
@@ -215,7 +215,7 @@ class CodecObjectTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestChoice2.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("7463320506001234");
@@ -251,7 +251,7 @@ class CodecObjectTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestChoice3.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.hexToByteArray("74633361611234");

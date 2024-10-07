@@ -201,7 +201,7 @@ class CustomCodecTest{
 			.withDefaultCodecs()
 			.withCodec(codec, codecValidator)
 			.withTemplate(TestCustomCodec.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
 
@@ -230,7 +230,7 @@ class CustomCodecTest{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplate(TestCustomAnnotation.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
 

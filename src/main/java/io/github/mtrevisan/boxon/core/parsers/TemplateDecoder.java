@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.SkipBits;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
@@ -58,17 +58,16 @@ final class TemplateDecoder extends TemplateCoderBase{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loaderCodec	A codec loader.
 	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	static TemplateDecoder create(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		return new TemplateDecoder(loaderCodec, evaluator);
+	static TemplateDecoder create(final Evaluator evaluator){
+		return new TemplateDecoder(evaluator);
 	}
 
 
-	private TemplateDecoder(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		super(loaderCodec, evaluator);
+	private TemplateDecoder(final Evaluator evaluator){
+		super(evaluator);
 	}
 
 
@@ -156,10 +155,11 @@ final class TemplateDecoder extends TemplateCoderBase{
 	private void decodeField(final Template<?> template, final BitReaderInterface reader, final ParserContext<Object> parserContext,
 			final TemplateField field) throws BoxonException{
 		final Annotation binding = field.getBinding();
+		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final Annotation collectionBinding = field.getCollectionBinding();
-		final Codec codec = retrieveCodec(binding, template, field);
+		final Codec codec = retrieveCodec(annotationType, template, field);
 
-		eventListener.readingField(template.toString(), field.getFieldName(), binding.annotationType().getSimpleName());
+		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 		final List<ContextParameter> contextParameters = field.getContextParameters();
 		try{
@@ -192,9 +192,9 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private Codec retrieveCodec(final Annotation binding, final Template<?> template, final TemplateField field) throws BoxonException{
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final Codec codec = loaderCodec.getCodec(annotationType);
+	private static Codec retrieveCodec(final Class<? extends Annotation> annotationType, final Template<?> template,
+			final TemplateField field) throws BoxonException{
+		final Codec codec = CodecLoader.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.createNoCodecForBinding(annotationType)
 				.withClassAndField(template.getType(), field.getField());

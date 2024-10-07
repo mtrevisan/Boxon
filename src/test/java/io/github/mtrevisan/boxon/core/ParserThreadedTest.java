@@ -51,7 +51,7 @@ class ParserThreadedTest{
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		AtomicInteger errors = new AtomicInteger();
@@ -79,7 +79,7 @@ class ParserThreadedTest{
 			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
-			.create();
+			.build();
 
 		AtomicInteger errors = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
@@ -113,7 +113,7 @@ class ParserThreadedTest{
 					.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
-					.create();
+					.build();
 				Parser parser = Parser.create(core);
 				return parser.parse(PAYLOAD);
 			},

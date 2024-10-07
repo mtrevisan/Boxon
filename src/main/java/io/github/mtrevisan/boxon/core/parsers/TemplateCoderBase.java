@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.ContextParameter;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.io.Evaluator;
@@ -39,17 +38,13 @@ import java.util.function.Function;
 
 class TemplateCoderBase{
 
-	protected final LoaderCodec loaderCodec;
-
 	protected final Evaluator evaluator;
 
 	protected EventListener eventListener;
 
 
 
-	TemplateCoderBase(final LoaderCodec loaderCodec, final Evaluator evaluator){
-		this.loaderCodec = loaderCodec;
-
+	TemplateCoderBase(final Evaluator evaluator){
 		this.evaluator = evaluator;
 
 		withEventListener(null);

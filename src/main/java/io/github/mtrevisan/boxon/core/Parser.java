@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.parsers.TemplateLoader;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
@@ -90,7 +90,7 @@ public final class Parser{
 	 * @return	This instance, used for chaining.
 	 */
 	public Parser withMaxTemplateMemoizerSize(final int maxSize){
-		LoaderTemplate.initialize(maxSize);
+		TemplateLoader.initialize(maxSize);
 
 		return this;
 	}

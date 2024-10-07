@@ -48,7 +48,7 @@ class ComposerThreadedTest{
 			.withContext(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
 
@@ -80,7 +80,7 @@ class ComposerThreadedTest{
 			.withContext(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
-			.create();
+			.build();
 		Parser parser = Parser.create(core);
 
 		//parse:
@@ -117,7 +117,7 @@ class ComposerThreadedTest{
 					.withContext(ParserTest.class, "headerLength")
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
-					.create();
+					.build();
 				Parser parser = Parser.create(core);
 
 				//parse:

@@ -741,7 +741,7 @@ Core core = CoreBuilder.builder()
     .withContext(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
-   .create();
+    .build();
 Describer describer = Describer.create(core);
 
 List<Map<String, Object>> descriptions = describer.describeTemplates();
@@ -1497,7 +1497,7 @@ Core core = CoreBuilder.builder()
    .withContext(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
    .withTemplate(...)
-   .create();
+   .build();
 Parser parser = Parser.create(core);
 
 //parse the message

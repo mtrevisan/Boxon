@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.function.Function;
 
 
 public abstract class CommonBehavior{
@@ -119,32 +118,9 @@ public abstract class CommonBehavior{
 		else if(collectionBinding instanceof BindAsArray && inputType != null){
 			inputType = inputType.getComponentType();
 			if(inputType != instance.getClass().getComponentType())
-				instance = convertArrayElements(instance, inputType);
+				instance = DataType.cast(instance, inputType);
 		}
 		return instance;
-	}
-
-	private static Object convertArrayElements(final Object array, final Class<?> targetType){
-		final int length = Array.getLength(array);
-		final Class<?> elementType = DataType.allElementsSameClassType(array, length);
-		final Function<BigInteger, Number> castFunction = (elementType != null? DataType.castFunction(targetType): null);
-		final Object convertedArray = CodecHelper.createArray(targetType, length);
-		for(int i = 0; i < length; i ++){
-			Object element = Array.get(array, i);
-			if(element == null)
-				continue;
-
-			element = applyCasting(element, castFunction, targetType);
-
-			Array.set(convertedArray, i, element);
-		}
-		return convertedArray;
-	}
-
-	private static Object applyCasting(final Object element, final Function<BigInteger, Number> castFunction, final Class<?> targetType){
-		return (castFunction != null
-			? castFunction.apply((BigInteger)element)
-			: DataType.cast((BigInteger)element, targetType));
 	}
 
 
