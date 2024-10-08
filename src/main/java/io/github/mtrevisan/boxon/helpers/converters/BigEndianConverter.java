@@ -30,6 +30,17 @@ import java.math.BigInteger;
 import java.util.BitSet;
 
 
+/**
+ * An implementation of the {@link BitSetConverter} interface that operates with {@link BigInteger}s and {@link BitSet}s using big-endian
+ * notation.
+ * <p>
+ * Big-endian notation stores the most significant byte of a word at the smallest memory address.
+ * </p>
+ * <p>
+ * This class provides methods to create a {@link BitSet} from a given {@link BigInteger} and convert a {@link BitSet} back to a
+ * {@link BigInteger}, taking into account the size of the bitmap and endianness.
+ * </p>
+ */
 public final class BigEndianConverter implements BitSetConverter{
 
 	@Override

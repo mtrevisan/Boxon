@@ -33,6 +33,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 
+/**
+ * A validation strategy that ensures the converter types and field types are non-null and appropriately matched.
+ * <p>
+ * This class implements the {@link ValidationStrategy} interface and overrides the validate method to perform type checks between the
+ * field type, the converter's input and output types, and the binding type.
+ * </p>
+ */
 class NonNullConverterValidationStrategy implements ValidationStrategy{
 
 	@Override

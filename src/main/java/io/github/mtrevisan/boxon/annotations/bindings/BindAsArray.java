@@ -40,7 +40,8 @@ import java.lang.annotation.Target;
 public @interface BindAsArray{
 
 	/**
-	 * The SpEL expression evaluating to the size of the array.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the size of
+	 * the array.
 	 *
 	 * @return	The number of elements of the array.
 	 */

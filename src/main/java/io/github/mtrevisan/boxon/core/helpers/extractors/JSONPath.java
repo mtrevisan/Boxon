@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -226,7 +225,7 @@ public final class JSONPath{
 			final Class<?> cls = data.getClass();
 			try{
 				final Field currentField = cls.getDeclaredField(currentPath);
-				FieldAccessor.makeAccessible(currentField);
+				currentField.setAccessible(true);
 				nextData = FieldMapper.getFieldValue(data, currentField);
 			}
 			catch(final NoSuchFieldException nsfe){

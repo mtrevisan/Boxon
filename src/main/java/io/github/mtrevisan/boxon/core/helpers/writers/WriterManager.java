@@ -27,6 +27,12 @@ package io.github.mtrevisan.boxon.core.helpers.writers;
 import io.github.mtrevisan.boxon.annotations.bindings.ByteOrder;
 
 
+/**
+ * Interface for managing the writing of values.
+ * <p>
+ * Implementations of this interface handle writing values to a specific writer in {@link ByteOrder#BIG_ENDIAN} format.
+ * </p>
+ */
 public interface WriterManager{
 
 	/**

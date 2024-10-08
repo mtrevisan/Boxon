@@ -38,6 +38,12 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Provides methods to generate class templates and configurations based on descriptions.
+ * <p>
+ * It integrates with an event listener and uses several methods to handle metadata and enumerations.
+ * </p>
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Generator{
 

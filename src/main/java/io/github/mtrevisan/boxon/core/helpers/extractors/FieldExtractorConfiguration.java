@@ -30,6 +30,12 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * An implementation of the {@link FieldExtractor} interface for {@link ConfigurationField} objects.
+ * <p>
+ * It provides methods to retrieve field-specific metadata such as skips, binding annotations, field names, and field types.
+ * </p>
+ */
 public final class FieldExtractorConfiguration implements FieldExtractor<ConfigurationField>{
 
 	@Override

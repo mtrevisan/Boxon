@@ -33,6 +33,12 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import java.nio.charset.Charset;
 
 
+/**
+ * This class extends {@link StringCommonBehavior} and represents the behavior of handling strings terminated by a specific byte.
+ * <p>
+ * It provides functionality for reading and writing strings that are terminated by a specified byte.
+ * </p>
+ */
 public final class StringTerminatedBehavior extends StringCommonBehavior{
 
 	private final byte terminator;

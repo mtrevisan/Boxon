@@ -58,7 +58,8 @@ public @interface ConverterChoices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #converter() converter} is to be applied.
-		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
+		 * <p>A <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression with the prefix value
+		 * in the context under the name {@code prefix}.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #converter() converter} is to be applied.
 		 */

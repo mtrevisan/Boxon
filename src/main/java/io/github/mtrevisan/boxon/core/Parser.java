@@ -108,7 +108,8 @@ public final class Parser{
 	}
 
 	/**
-	 * Loads the maximum memoizer size for the SpEL expressions.
+	 * Loads the maximum memoizer size for the <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a>
+	 * expressions.
 	 *
 	 * @param maxSize	The maximum number of elements for the memoizer.
 	 * @return	This instance, used for chaining.

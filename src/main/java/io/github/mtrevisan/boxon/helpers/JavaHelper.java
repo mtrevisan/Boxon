@@ -335,7 +335,7 @@ public final class JavaHelper{
 	}
 
 	private static boolean isClassOrRecord(final Class<?> type){
-		return (type.isRecord() || !type.isInterface() && ! Modifier.isAbstract(type.getModifiers()));
+		return (type.isRecord() || !type.isInterface() && !Modifier.isAbstract(type.getModifiers()));
 	}
 
 

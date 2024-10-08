@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.generators;
 
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeMapper;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Utility class for creating and manipulating annotation instances dynamically.
+ */
 public final class AnnotationCreator{
 
 	private AnnotationCreator(){}
@@ -105,7 +108,7 @@ public final class AnnotationCreator{
 
 		private static Object extractValueBasedOnReturnType(final Class<?> returnType, Object value) throws ClassNotFoundException{
 			if(returnType.equals(Class.class) && value instanceof final String v)
-				value = DataType.toTypeOrSelf(v);
+				value = DataTypeMapper.toTypeOrSelf(v);
 			else if(returnType.isArray() && value instanceof List<?>){
 				final Class<?> elementType = returnType.getComponentType();
 				value = invokeArrayValues(elementType, (List<Map<String, Object>>)value);

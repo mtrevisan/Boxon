@@ -37,6 +37,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 
+/**
+ * Helper class for parsing and writing operations.
+ */
 final class ParserWriterHelper{
 
 	private ParserWriterHelper(){}

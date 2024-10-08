@@ -34,7 +34,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 
-/** Interface for a reader bit-by-bit. */
+/**
+ * Interface for a reader bit-by-bit.
+ */
 public interface BitReaderInterface{
 
 	/**

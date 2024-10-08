@@ -27,6 +27,12 @@ package io.github.mtrevisan.boxon.core.similarity.distances;
 import java.util.Arrays;
 
 
+/**
+ * A class representing metric data encapsulated in a string array.
+ * <p>
+ * It implements the {@link MetricData} interface to provide methods for data comparison and metric-specific operations.
+ * </p>
+ */
 public final class StringArrayMetricData implements MetricData<StringArrayMetricData>{
 
 	private final String[] data;

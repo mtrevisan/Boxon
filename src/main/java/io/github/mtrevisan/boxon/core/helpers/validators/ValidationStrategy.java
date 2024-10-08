@@ -28,6 +28,13 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 
+/**
+ * Interface for implementing different validation strategies.
+ * <p>
+ * Classes implementing this interface provide a mechanism to validate the compatibility of field types, converters and binding types used
+ * in annotations. This is typically used to ensure that the types used are appropriate and compatible with each other.
+ * </p>
+ */
 interface ValidationStrategy{
 
 	void validate(Class<?> fieldType, Class<? extends Converter<?, ?>> converter, Class<?> bindingType) throws AnnotationException;

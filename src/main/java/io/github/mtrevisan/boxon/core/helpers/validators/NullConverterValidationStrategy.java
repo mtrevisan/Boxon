@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import java.util.List;
 
 
+/**
+ * Implements {@link ValidationStrategy} to validate the types for fields and converters ensuring compatibility.
+ */
 class NullConverterValidationStrategy implements ValidationStrategy{
 
 	@Override

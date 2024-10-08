@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.io.AnnotationValidator;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * Loader for the codecs.
+ * Utility class responsible for managing and loading codecs.
+ * <p>
+ * It supports operations to load, add, inject dependencies into, and manage codecs.
+ * </p>
  */
 public final class CodecLoader{
 
@@ -231,35 +235,35 @@ public final class CodecLoader{
 	/**
 	 * Whether there is a codec for the given class type.
 	 *
-	 * @param type	The class type.
+	 * @param annotationType	The class type.
 	 * @return	Whether there is a codec for the given class type.
 	 */
-	public static boolean hasCodec(final Type type){
-		return codecs.containsKey(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
+	public static boolean hasCodec(final Class<? extends Annotation> annotationType){
+		return codecs.containsKey(isDefaultBind(annotationType)? CodecDefault.DefaultCodecIdentifier.class: annotationType);
 	}
 
 	/**
 	 * Get the codec for the given class type.
 	 *
-	 * @param type	The class type.
+	 * @param annotationType	The class type.
 	 * @return	The codec for the given class type.
 	 */
-	public static Codec getCodec(final Type type){
-		return codecs.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
+	public static Codec getCodec(final Class<? extends Annotation> annotationType){
+		return codecs.get(isDefaultBind(annotationType)? CodecDefault.DefaultCodecIdentifier.class: annotationType);
 	}
 
 	/**
 	 * Get the codec validator for the given class type.
 	 *
-	 * @param type	The class type.
+	 * @param annotationType	The class type.
 	 * @return	The codec validator for the given class type.
 	 */
-	public static AnnotationValidator getCustomCodecValidator(final Type type){
-		return customCodecValidators.get(isDefaultBind(type)? CodecDefault.DefaultCodecIdentifier.class: type);
+	public static AnnotationValidator getCustomCodecValidator(final Class<? extends Annotation> annotationType){
+		return customCodecValidators.get(isDefaultBind(annotationType)? CodecDefault.DefaultCodecIdentifier.class: annotationType);
 	}
 
-	private static boolean isDefaultBind(final Type type){
-		return DEFAULT_BIND_TYPES.contains(type);
+	private static boolean isDefaultBind(final Class<? extends Annotation> annotationType){
+		return DEFAULT_BIND_TYPES.contains(annotationType);
 	}
 
 	public static void clearCodecs(){

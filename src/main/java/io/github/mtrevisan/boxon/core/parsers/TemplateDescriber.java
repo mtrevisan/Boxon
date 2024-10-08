@@ -39,7 +39,10 @@ import java.util.Map;
 
 
 /**
- * The TemplateDescriber class is responsible for describing templates.
+ * Provides methods to describe templates and their associated messages.
+ * <p>
+ * It utilizes a {@link TemplateParser} to parse the templates and a {@link MessageDescriber} to describe them.
+ * </p>
  */
 public final class TemplateDescriber{
 

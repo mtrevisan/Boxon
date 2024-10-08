@@ -36,6 +36,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 
+/**
+ * Codec for handling the {@link Checksum} annotation in encoding and decoding processes.
+ * <p>
+ * Implements the {@link Codec} interface to provide specific functionality for reading and writing checksum values, based on the
+ * properties defined in the {@link Checksum} annotation.
+ * </p>
+ */
 final class CodecChecksum implements Codec{
 
 	@Override

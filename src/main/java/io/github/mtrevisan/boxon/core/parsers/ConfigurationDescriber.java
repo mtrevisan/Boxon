@@ -39,7 +39,7 @@ import java.util.Map;
 
 
 /**
- * The ConfigurationDescriber class provides methods to describe loaded configurations.
+ * Provides methods to describe loaded configurations.
  */
 public final class ConfigurationDescriber{
 
@@ -110,7 +110,8 @@ public final class ConfigurationDescriber{
 		final ThrowingFunction<ConfigurationMessage<?>, Map<String, Object>, BoxonException> mapper
 			= configuration -> messageDescriber.describeMessage(configuration, FieldDescriber.MESSAGE_EXTRACTOR_CONFIGURATION,
 			FieldDescriber.FIELD_EXTRACTOR_CONFIGURATION);
-		return EntityDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration, mapper);
+		return EntityDescriber.describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
+			mapper);
 	}
 
 }

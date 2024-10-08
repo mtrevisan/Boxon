@@ -40,7 +40,8 @@ import java.lang.annotation.Target;
 public @interface Evaluate{
 
 	/**
-	 * The SpEL expression that determines if an evaluation has to be made.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression that determines if an
+	 * evaluation has to be made.
 	 *
 	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
@@ -49,7 +50,7 @@ public @interface Evaluate{
 	/**
 	 * The expression to be evaluated.
 	 *
-	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
+	 * @see <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">Spring Expression Language (SpEL)</a>.
 	 *
 	 * @return	The expression to be evaluated.
 	 */

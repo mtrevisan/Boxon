@@ -35,6 +35,19 @@ import java.util.HashSet;
 import java.util.List;
 
 
+/**
+ * A concrete implementation of the abstract class {@link MessageExtractor} specifically designed to handle {@link ConfigurationMessage}
+ * objects and their associated components: {@link ConfigurationHeader} and {@link ConfigurationField}.
+ * <p>
+ * This class provides methods to:
+ * </p>
+ * <ul>
+ *    <li>Retrieve the type name of the {@link ConfigurationMessage}.</li>
+ *    <li>Retrieve the header of the {@link ConfigurationMessage}.</li>
+ *    <li>Retrieve the list of configuration fields from the {@link ConfigurationMessage}.</li>
+ *    <li>Retrieve the configuration fields that are of enumeration type from the {@link ConfigurationMessage}.</li>
+ * </ul>
+ */
 public final class MessageExtractorConfiguration extends MessageExtractor<ConfigurationMessage<?>, ConfigurationHeader,
 		ConfigurationField>{
 

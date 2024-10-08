@@ -32,6 +32,9 @@ import io.github.mtrevisan.boxon.io.Codec;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Implementation of the {@link Codec} interface for handling {@link AlternativeConfigurationField} annotations.
+ */
 final class CodecAlternativeConfigurationFields implements Codec{
 
 	@Override

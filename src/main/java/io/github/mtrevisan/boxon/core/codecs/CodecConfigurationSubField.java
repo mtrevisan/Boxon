@@ -34,6 +34,9 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
+/**
+ * This class provides the functionality for encoding and decoding fields annotated with {@link CompositeSubField}.
+ */
 final class CodecConfigurationSubField implements Codec{
 
 	@Override

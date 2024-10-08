@@ -70,7 +70,7 @@ public final class MessageDescriber{
 	 * @param <M>	The type of the message.
 	 * @param <F>	The type of the fields.
 	 * @return	A map containing the description of the message.
-	 * @throws CodecException   If a codec is not found.
+	 * @throws CodecException	If a codec is not found.
 	 */
 	<M, F> Map<String, Object> describeMessage(final M message, final MessageExtractor<M, ? extends Annotation, F> messageExtractor,
 			final FieldExtractor<F> fieldExtractor) throws CodecException{

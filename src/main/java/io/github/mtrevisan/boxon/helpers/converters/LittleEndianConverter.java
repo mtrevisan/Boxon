@@ -30,6 +30,12 @@ import java.math.BigInteger;
 import java.util.BitSet;
 
 
+/**
+ * A class that implements the {@link BitSetConverter} interface.
+ * <p>
+ * It provides methods for converting between {@link BigInteger} and {@link BitSet} representations using little-endian byte order.
+ * </p>
+ */
 public final class LittleEndianConverter implements BitSetConverter{
 
 	@Override

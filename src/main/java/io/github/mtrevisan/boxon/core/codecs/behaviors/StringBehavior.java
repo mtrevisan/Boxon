@@ -33,6 +33,9 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import java.nio.charset.Charset;
 
 
+/**
+ * This class extends {@link StringCommonBehavior} to define specific behaviors for handling strings with a fixed maximum size.
+ */
 public final class StringBehavior extends StringCommonBehavior{
 
 	private final int size;

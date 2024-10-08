@@ -32,7 +32,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 
-/** Interface for a writer bit-by-bit. */
+/**
+ * Interface for a writer bit-by-bit.
+ */
 public interface BitWriterInterface{
 
 	/**

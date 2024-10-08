@@ -26,6 +26,9 @@ package io.github.mtrevisan.boxon.core.similarity.distances;
 
 
 /**
+ * Interface representing data that can be compared using a metric.
+ *
+ * @param <D>	The specific type of data that extends MetricData.
  * @see <a href="https://github.com/sergio-gomez/MultiDendrograms">MultiDendrograms</a>
  */
 public interface MetricData<D extends MetricData<D>>{

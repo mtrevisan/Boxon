@@ -30,6 +30,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 
+/**
+ * A manager for writing strings using a specific {@link BitWriterInterface} and {@link Charset}.
+ * <p>
+ * This class provides a way to configure the charset used for writing strings and delegates the actual writing to the underlying
+ * {@link BitWriterInterface}.
+ * </p>
+ */
 final class StringWriterManager implements WriterManager{
 
 	private final BitWriterInterface writer;

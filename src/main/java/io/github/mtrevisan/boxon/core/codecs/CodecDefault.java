@@ -45,7 +45,14 @@ import java.lang.reflect.Array;
 
 
 /**
- * Manages `BindBitSet`, `BindInteger`, `BindString`, and `BindStringTerminated`.
+ * Provides a default implementation of the Codec interface for encoding and decoding data based on annotations.
+ * <p>
+ * It leverages behaviors to read and write values, validate data, and convert between different types.
+ * </p>
+ * Manages {@link io.github.mtrevisan.boxon.annotations.bindings.BindBitSet BindBitSet},
+ * {@link io.github.mtrevisan.boxon.annotations.bindings.BindInteger BindInteger},
+ * {@link io.github.mtrevisan.boxon.annotations.bindings.BindString BindString}, and
+ * {@link io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated BindStringTerminated}.
  */
 final class CodecDefault implements Codec{
 

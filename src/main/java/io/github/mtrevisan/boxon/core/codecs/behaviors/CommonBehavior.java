@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Evaluator;
@@ -39,6 +39,10 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 
 
+/**
+ * Abstract class that defines common behavior for reading and writing arrays from and to a {@link BitReaderInterface} and
+ * {@link BitWriterInterface}, as well as converting values using converters and validators.
+ */
 public abstract class CommonBehavior{
 
 	private final ConverterChoices converterChoices;
@@ -112,13 +116,13 @@ public abstract class CommonBehavior{
 	//convert value type into converter/validator input type
 	private static Object convertValueType(final Annotation collectionBinding, final Class<? extends Converter<?, ?>> converterType,
 			final Class<? extends Validator<?>> validator, Object instance){
-		Class<?> inputType = DataType.resolveInputType(converterType, validator);
+		Class<?> inputType = DataTypeCaster.resolveInputType(converterType, validator);
 		if(collectionBinding == null)
-			instance = DataType.cast((BigInteger)instance, inputType);
+			instance = DataTypeCaster.cast((BigInteger)instance, inputType);
 		else if(collectionBinding instanceof BindAsArray && inputType != null){
 			inputType = inputType.getComponentType();
 			if(inputType != instance.getClass().getComponentType())
-				instance = DataType.cast(instance, inputType);
+				instance = DataTypeCaster.cast(instance, inputType);
 		}
 		return instance;
 	}

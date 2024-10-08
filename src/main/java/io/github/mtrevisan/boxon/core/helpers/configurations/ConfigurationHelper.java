@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -72,7 +72,7 @@ public final class ConfigurationHelper{
 			throws CodecException{
 		return (hasEnumeration(enumeration)
 			? extractEnumerationValue(fieldType, value, enumeration)
-			: DataType.getValueOrSelf(fieldType, value)
+			: DataTypeCaster.getValueOrSelf(fieldType, value)
 		);
 	}
 
@@ -86,7 +86,8 @@ public final class ConfigurationHelper{
 		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
-	static Object extractEnumerationValue(final Class<?> fieldType, Object value, final Class<? extends ConfigurationEnum<?>> enumerationClass){
+	static Object extractEnumerationValue(final Class<?> fieldType, Object value,
+			final Class<? extends ConfigurationEnum<?>> enumerationClass){
 		if(value instanceof final String v)
 			value = (fieldType.isArray()
 				? extractEnumerationArrayValue(v, enumerationClass)

@@ -45,7 +45,8 @@ import java.lang.annotation.Target;
 public @interface BindString{
 
 	/**
-	 * The SpEL expression that determines if an evaluation has to be made.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression that determines if an
+	 * evaluation has to be made.
 	 *
 	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
@@ -59,7 +60,8 @@ public @interface BindString{
 	String charset() default "UTF-8";
 
 	/**
-	 * The SpEL expression evaluating to the number of bytes.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the number
+	 * of bytes.
 	 *
 	 * @return	The number of bytes.
 	 */

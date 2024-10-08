@@ -27,6 +27,11 @@ package io.github.mtrevisan.boxon.core.similarity.metrics;
 import io.github.mtrevisan.boxon.core.similarity.distances.MetricData;
 
 
+/**
+ * Metric interface for measuring similarity and distance between data of type {@code D}.
+ *
+ * @param <D>	The type of data that this metric can handle, extending {@link MetricData}.
+ */
 public interface Metric<D extends MetricData<D>>{
 
 	/**

@@ -30,6 +30,13 @@ import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Implements the {@link FieldExtractor} interface for extracting information from a {@link TemplateField} object.
+ * <p>
+ * This strategy provides methods to retrieve various metadata associated with a field in a template, such as skips, bindings, collection
+ * bindings, field name, and field type.
+ * </p>
+ */
 public final class FieldExtractorStrategy implements FieldExtractor<TemplateField>{
 
 	@Override

@@ -29,6 +29,11 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Defines methods to extract various properties from a field.
+ *
+ * @param <F>	The type of field to be processed.
+ */
 public interface FieldExtractor<F>{
 
 	SkipParams[] getSkips(F field);

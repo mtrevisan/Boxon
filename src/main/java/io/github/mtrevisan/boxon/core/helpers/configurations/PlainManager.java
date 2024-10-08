@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -48,6 +48,10 @@ import java.util.Map;
 import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
+/**
+ * Implements the {@link ConfigurationManager} interface to provide a manager for handling configuration fields annotated with
+ * {@link ConfigurationField}.
+ */
 final class PlainManager implements ConfigurationManager{
 
 	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
@@ -140,7 +144,7 @@ final class PlainManager implements ConfigurationManager{
 			if(ConfigurationHelper.hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(field.getType(), dataValue, enumeration, dataKey);
 			else
-				dataValue = DataType.getValueOrSelf(field.getType(), dataValue);
+				dataValue = DataTypeCaster.getValueOrSelf(field.getType(), dataValue);
 		}
 		return dataValue;
 	}

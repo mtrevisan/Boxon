@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Implements methods to extract field information from an {@link EvaluatedField<PostProcess>} object.
+ */
 public final class FieldExtractorPostProcessedField implements FieldExtractor<EvaluatedField<PostProcess>>{
 
 	@Override

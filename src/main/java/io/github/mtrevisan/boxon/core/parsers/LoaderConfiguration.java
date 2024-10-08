@@ -57,6 +57,13 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * Represents the configuration for loading metadata for classes annotated with {@link ConfigurationHeader}.
+ * <p>
+ * It supports operations to load configurations from a set of classes, add new configurations, assign event listeners, and retrieve
+ * configuration details.
+ * </p>
+ */
 public final class LoaderConfiguration{
 
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore

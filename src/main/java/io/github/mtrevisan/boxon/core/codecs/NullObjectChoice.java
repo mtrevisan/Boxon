@@ -30,6 +30,12 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Implementation of the {@link ObjectChoices.ObjectChoice} interface that represents a null object choice.
+ * <p>
+ * This class defines default behaviors for methods in {@link ObjectChoices.ObjectChoice} interface.
+ * </p>
+ */
 @SuppressWarnings("ClassExplicitlyAnnotation")
 final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 

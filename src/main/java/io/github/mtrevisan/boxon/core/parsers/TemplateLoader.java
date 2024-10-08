@@ -24,23 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.ContextParameter;
-import io.github.mtrevisan.boxon.annotations.SkipBits;
-import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindAsList;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.Parser;
-import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
-import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -48,40 +39,26 @@ import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 
 /**
- * Loader for the templates.
+ * A loader for templates, responsible for loading and managing template classes annotated with {@link TemplateHeader}.
  */
 public final class TemplateLoader{
-
-	private static final String MULTIPLE_ANNOTATIONS_VALUE = "value";
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static Function<byte[], int[]> PRE_PROCESSED_PATTERNS;
 	static{
 		initialize(Parser.UNBOUNDED_MEMOIZER_SIZE);
 	}
-
-	private static final Set<Class<? extends Annotation>> LIBRARY_ANNOTATIONS = ReflectiveClassLoader.extractAnnotations(
-		ElementType.ANNOTATION_TYPE);
-
-	private static final Collection<Class<? extends Annotation>> SKIP_ANNOTATIONS = new HashSet<>(List.of(SkipBits.Skips.class,
-		SkipUntilTerminator.Skips.class, ConfigurationSkip.Skips.class));
-	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
-		BindAsArray.class, BindAsList.class));
 
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(Template::create);
@@ -322,99 +299,6 @@ public final class TemplateLoader{
 
 	private static String calculateKey(final String headerStart, final Charset charset){
 		return StringHelper.toHexString(headerStart.getBytes(charset));
-	}
-
-	public static Annotation[] extractBaseAnnotations(final Annotation[] declaredAnnotations){
-		final int length = declaredAnnotations.length;
-		final Annotation[] annotations = new Annotation[length];
-		for(int i = 0; i < length; i ++){
-			Annotation declaredAnnotation = declaredAnnotations[i];
-
-			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
-			final Annotation[] parentAnnotations = annotationType.getAnnotations();
-			final Annotation parentAnnotation = findParentAnnotation(parentAnnotations);
-			if(parentAnnotation != null){
-				Annotation[] skips = null;
-				final Class<? extends Annotation> parentAnnotationType = parentAnnotation.annotationType();
-				if(SKIP_ANNOTATIONS.contains(parentAnnotationType)){
-					final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-					final Annotation[] declaredSkips = (Annotation[])declaredValues.get(MULTIPLE_ANNOTATIONS_VALUE);
-					skips = new Annotation[declaredSkips.length];
-					int j = 0;
-					final Class<? extends Annotation> declaredSkipType = (Class<? extends Annotation>)parentAnnotationType.getEnclosingClass();
-					for(int k = 0, skipsLength = declaredSkips.length; k < skipsLength; k ++){
-						final Annotation declaredSkip = declaredSkips[k];
-						final Class<? extends Annotation> skipAnnotationType = declaredSkip.annotationType();
-						final Annotation[] skipParentAnnotations = skipAnnotationType.getAnnotations();
-						final Annotation skipParentAnnotation = findParentAnnotation(skipParentAnnotations);
-
-						skips[j ++] = createSkipAnnotation(declaredSkip, declaredSkipType, skipParentAnnotation);
-					}
-				}
-
-				declaredAnnotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation, skips);
-			}
-
-			annotations[i] = declaredAnnotation;
-		}
-		return annotations;
-	}
-
-	public static List<Annotation> filterAnnotationsWithCodec(Annotation[] declaredAnnotations){
-		declaredAnnotations = extractBaseAnnotations(declaredAnnotations);
-		final int length = declaredAnnotations.length;
-		final List<Annotation> annotations = JavaHelper.createListOrEmpty(length);
-		for(int i = 0; i < length; i ++){
-			final Annotation declaredAnnotation = declaredAnnotations[i];
-
-			final Class<? extends Annotation> annotationType = declaredAnnotation.annotationType();
-			if(shouldIncludeAnnotation(annotationType))
-				annotations.add(declaredAnnotation);
-		}
-		return annotations;
-	}
-
-	private static Annotation createSkipAnnotation(final Annotation declaredAnnotation,
-			final Class<? extends Annotation> declaredAnnotationType, final Annotation parentAnnotation){
-		final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
-		final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-		populateDefaultValues(declaredValues, parentValues);
-		return AnnotationCreator.createAnnotation(declaredAnnotationType, declaredValues);
-	}
-
-	private static Annotation createAnnotationWithDefaults(final Annotation declaredAnnotation, final Annotation parentAnnotation,
-			final Annotation[] skips){
-		final Map<String, Object> parentValues = AnnotationCreator.extractAnnotationValues(parentAnnotation);
-		final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-		populateDefaultValues(declaredValues, parentValues);
-		if(skips != null)
-			declaredValues.put(MULTIPLE_ANNOTATIONS_VALUE, skips);
-		//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
-		// parameters from `declaredAnnotation`
-		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), declaredValues);
-	}
-
-	private static void populateDefaultValues(final Map<String, Object> values, final Map<String, Object> parentValues){
-		//replace with default parent values
-		for(final Map.Entry<String, Object> entry : parentValues.entrySet()){
-			final String key = entry.getKey();
-			final Object value = entry.getValue();
-
-			values.putIfAbsent(key, value);
-		}
-	}
-
-	private static Annotation findParentAnnotation(final Annotation[] parentAnnotations){
-		for(int j = 0, length = parentAnnotations.length; j < length; j ++){
-			final Annotation parentAnnotation = parentAnnotations[j];
-			if(LIBRARY_ANNOTATIONS.contains(parentAnnotation.annotationType()))
-				return parentAnnotation;
-		}
-		return null;
-	}
-
-	private static boolean shouldIncludeAnnotation(final Class<? extends Annotation> annotationType){
-		return (CodecLoader.hasCodec(annotationType) || ANNOTATIONS_WITHOUT_CODEC.contains(annotationType));
 	}
 
 	/**

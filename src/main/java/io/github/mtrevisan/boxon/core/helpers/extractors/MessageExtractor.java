@@ -32,6 +32,13 @@ import java.util.Collection;
 import java.util.List;
 
 
+/**
+ * Abstract class to extract information from messages.
+ *
+ * @param <M>	The type of the message.
+ * @param <H>	The type of the header.
+ * @param <F>	The type of the fields.
+ */
 public abstract class MessageExtractor<M, H, F>{
 
 	/**

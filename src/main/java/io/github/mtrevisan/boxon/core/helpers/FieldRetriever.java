@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.core.helpers;
 
 
+/**
+ * Represents an interface for retrieving the value of a field from an object.
+ */
 public interface FieldRetriever{
 
 	/**

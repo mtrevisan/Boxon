@@ -147,6 +147,11 @@ public final class Memoizer{
 			protected boolean removeEldestEntry(final Map.Entry<K, V> eldest){
 				return (size() > maxSize);
 			}
+
+			@Override
+			public LinkedHashMap<K, V> clone() throws AssertionError{
+				throw new AssertionError();
+			}
 		};
 	}
 

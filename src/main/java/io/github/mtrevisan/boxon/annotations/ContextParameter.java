@@ -47,7 +47,8 @@ public @interface ContextParameter{
 	String name();
 
 	/**
-	 * The SpEL expression evaluating to the value of the parameter.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the value of
+	 * the parameter.
 	 *
 	 * @return	The value of the parameter.
 	 */

@@ -31,12 +31,22 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Encapsulates the parameters necessary for handling skip operations based on the annotations {@link SkipBits} and
+ * {@link SkipUntilTerminator}.
+ */
 public final class SkipParams{
 
-	/** The SpEL expression that determines if an evaluation has to be made (an empty string means “accept”). */
+	/**
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression that determines if an
+	 * evaluation has to be made (an empty string means “accept”).
+	 */
 	private final String condition;
 
-	/** The SpEL expression evaluating to the number of bits to be skipped. */
+	/**
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the number
+	 * of bits to be skipped.
+	 */
 	private String size;
 
 	/** The byte that terminates the skip. */

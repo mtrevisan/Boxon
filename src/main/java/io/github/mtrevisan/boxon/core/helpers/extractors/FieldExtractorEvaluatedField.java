@@ -31,6 +31,12 @@ import io.github.mtrevisan.boxon.core.helpers.templates.SkipParams;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * A class that implements the {@link FieldExtractor} interface for the {@link EvaluatedField} type.
+ * <p>
+ * This class provides methods to extract various properties from an {@link EvaluatedField} annotated with {@link Evaluate}.
+ * </p>
+ */
 public final class FieldExtractorEvaluatedField implements FieldExtractor<EvaluatedField<Evaluate>>{
 
 	@Override

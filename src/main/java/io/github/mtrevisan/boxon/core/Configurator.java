@@ -100,8 +100,11 @@ public final class Configurator{
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		final List<String> protocolVersionBoundaries = JavaHelper.createListOrEmpty(configurationValues.size());
-		for(int i = 0, length = configurationValues.size(); i < length; i ++)
-			protocolVersionBoundaries.addAll(configurationValues.get(i).getProtocolVersionBoundaries());
+		for(int i = 0, length = configurationValues.size(); i < length; i ++){
+			final ConfigurationMessage<?> configurationMessage = configurationValues.get(i);
+
+			protocolVersionBoundaries.addAll(configurationMessage.getProtocolVersionBoundaries());
+		}
 		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
 
@@ -197,7 +200,7 @@ public final class Configurator{
 
 			final ConfigurationManager manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
-			if(! fieldMap.isEmpty())
+			if(!fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;

@@ -30,6 +30,10 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * A concrete implementation of the {@link AlternativeSubField} interface that returns empty strings or default primitive values for all
+ * its methods.
+ */
 @SuppressWarnings("ClassExplicitlyAnnotation")
 final class NullAlternativeSubField implements AlternativeSubField{
 

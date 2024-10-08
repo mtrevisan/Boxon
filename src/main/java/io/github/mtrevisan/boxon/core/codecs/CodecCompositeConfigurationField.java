@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.UnhandledFieldException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
@@ -37,6 +37,12 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
+/**
+ * Codec implementation for managing {@link CompositeConfigurationField} annotations.
+ * <p>
+ * This class provides methods to encode and decode composite configuration fields.
+ * </p>
+ */
 final class CodecCompositeConfigurationField implements Codec{
 
 	@Override
@@ -57,7 +63,7 @@ final class CodecCompositeConfigurationField implements Codec{
 
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 
-		value = DataType.getValueOrSelf((Class<?>)fieldType, value);
+		value = DataTypeCaster.getValueOrSelf((Class<?>)fieldType, value);
 
 		if(value != null){
 			if(!(value instanceof final String v))

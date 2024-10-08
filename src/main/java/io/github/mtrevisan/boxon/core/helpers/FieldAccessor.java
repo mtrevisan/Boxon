@@ -28,12 +28,9 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.io.Injected;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.RecordComponent;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,7 +77,7 @@ public final class FieldAccessor{
 		}
 	}
 
-	//FIXME ugliness (set & create... also a cycle between classes...)
+	//FIXME ugliness? (set & create...)
 	private static <T> T updateObjectFieldValue(final T obj, final Field field, final Object value) throws IllegalArgumentException,
 			ReflectiveOperationException{
 		return (!isRecord(obj)
@@ -89,36 +86,14 @@ public final class FieldAccessor{
 		);
 	}
 
-	private static <T> T updateField(final T obj, final Field field, final Object value) throws IllegalAccessException{
-		field.set(obj, value);
-		return obj;
-	}
-
 	private static boolean isRecord(final Object obj){
 		return obj.getClass()
 			.isRecord();
 	}
 
-	static Object[] retrieveCurrentFieldValues(final Object obj, final RecordComponent[] components) throws ReflectiveOperationException{
-		final int length = components.length;
-		final Object[] recordValues = new Object[length];
-		for(int i = 0; i < length; i ++){
-			final RecordComponent recordComponent = components[i];
-
-			final Method accessor = recordComponent.getAccessor();
-			makeAccessible(accessor);
-			recordValues[i] = accessor.invoke(obj);
-		}
-		return recordValues;
-	}
-
-	static void updateFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
-			final Object[] recordValues){
-		for(int i = 0, length = recordComponents.length; i < length; i ++)
-			if(fieldName.equals(recordComponents[i].getName())){
-				recordValues[i] = value;
-				break;
-			}
+	private static <T> T updateField(final T obj, final Field field, final Object value) throws IllegalAccessException{
+		field.set(obj, value);
+		return obj;
 	}
 
 
@@ -251,17 +226,7 @@ public final class FieldAccessor{
 
 	private static void makeFieldsAccessible(final List<Field> fields){
 		for(int i = 0, length = fields.size(); i < length; i ++)
-			makeAccessible(fields.get(i));
-	}
-
-	/**
-	 * Makes the given {@code AccessibleObject} accessible, allowing it to be accessed or invoked regardless of the usual access
-	 * restrictions.
-	 *
-	 * @param obj	The {@code AccessibleObject} to make accessible.
-	 */
-	public static void makeAccessible(final AccessibleObject obj){
-		obj.setAccessible(true);
+			fields.get(i).setAccessible(true);
 	}
 
 }

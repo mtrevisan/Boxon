@@ -45,14 +45,16 @@ import java.lang.annotation.Target;
 public @interface BindBitSet{
 
 	/**
-	 * The SpEL expression that determines if an evaluation has to be made.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression that determines if an
+	 * evaluation has to be made.
 	 *
 	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
 	/**
-	 * The SpEL expression evaluating to the number of bits used to represent the numeric value.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the number
+	 * of bits used to represent the numeric value.
 	 *
 	 * @return	The number of bits used to represent the numeric value.
 	 */

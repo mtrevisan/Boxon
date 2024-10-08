@@ -41,27 +41,26 @@ import java.lang.annotation.Target;
 public @interface PostProcess{
 
 	/**
-	 * The SpEL expression that determines if an evaluation has to be made.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression that determines if an
+	 * evaluation has to be made.
 	 *
 	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
 	/**
-	 * The SpEL expression to be evaluated in the decode phase.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to be evaluated in the
+	 * decode phase.
 	 *
-	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
-	 *
-	 * @return	The SpEL expression to be evaluated.
+	 * @return	The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to be evaluated.
 	 */
 	String valueDecode();
 
 	/**
-	 * The SpEL expression to be evaluated in the encode phase.
+	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to be evaluated in the
+	 * encode phase.
 	 *
-	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
-	 *
-	 * @return	The SpEL expression to be evaluated.
+	 * @return	The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to be evaluated.
 	 */
 	String valueEncode();
 

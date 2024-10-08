@@ -28,6 +28,9 @@ import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Method;
 
 
+/**
+ * Utility class to ease method invocation and method searching operations.
+ */
 public final class MethodHelper{
 
 	private MethodHelper(){}
@@ -101,7 +104,7 @@ public final class MethodHelper{
 			method = cls.getDeclaredMethod(methodName, parameterTypes);
 
 			if(isReturnTypeCompatible(method, returnType))
-				FieldAccessor.makeAccessible(method);
+				method.setAccessible(true);
 			else
 				method = null;
 		}

@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
@@ -38,6 +38,12 @@ import java.math.BigInteger;
 import java.util.BitSet;
 
 
+/**
+ * Represents the behavior for handling integer values in a {@link BitSet}.
+ * <p>
+ * This class extends {@link BitSetBehavior} and adds support for specifying the byte order of the integer values.
+ * </p>
+ */
 public final class IntegerBehavior extends BitSetBehavior{
 
 	private final ByteOrder byteOrder;
@@ -63,7 +69,7 @@ public final class IntegerBehavior extends BitSetBehavior{
 
 	@Override
 	public void writeValue(final BitWriterInterface writer, final Object value){
-		final BigInteger v = DataType.reinterpretToBigInteger((Number)value);
+		final BigInteger v = DataTypeCaster.reinterpretToBigInteger((Number)value);
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
 		writer.writeBitSet(bitmap, size);

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.writers;
 
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeMapper;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
@@ -51,7 +51,7 @@ public final class WriterManagerFactory{
 	 */
 	public static WriterManager buildManager(final Class<?> valueClass, final BitWriterInterface writer, final int radix,
 			final String charsetName){
-		final Class<?> fieldClass = DataType.toObjectiveTypeOrSelf(valueClass);
+		final Class<?> fieldClass = DataTypeMapper.toObjectiveTypeOrSelf(valueClass);
 
 		WriterManager manager = null;
 		if(Number.class.isAssignableFrom(fieldClass))

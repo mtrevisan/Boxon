@@ -21,7 +21,8 @@ package io.github.mtrevisan.boxon.core.detect;
  * Utility class for computing a histogram of the bytes seen in a stream.
  *
  * @see <a href="https://github.com/apache/tika/">Apache Tika</a>.
- * @see <a href="https://github.com/apache/tika/blob/main/tika-core/src/main/java/org/apache/tika/detect/TextStatistics.java">TextStatistics.java</a>, accessed 20220725.
+ * @see <a href="https://github.com/apache/tika/blob/main/tika-core/src/main/java/org/apache/tika/detect/TextStatistics.java">TextStatistics.java</a>,
+ * 	accessed 20220725.
  */
 @SuppressWarnings("unused")
 public final class TextStatistics{

@@ -37,6 +37,9 @@ import io.github.mtrevisan.boxon.io.Codec;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * A final class that provides encoding and decoding functionalities for fields annotated with {@link AlternativeSubField}.
+ */
 final class CodecAlternativeConfigurationField implements Codec{
 
 	@Override

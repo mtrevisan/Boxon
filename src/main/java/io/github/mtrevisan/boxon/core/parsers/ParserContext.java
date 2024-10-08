@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.FieldRetriever;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
@@ -37,6 +37,11 @@ import java.lang.reflect.Field;
 import java.math.BigInteger;
 
 
+/**
+ * Holds context information for parsing operations.
+ *
+ * @param <T>	The type of the current object being parsed.
+ */
 final class ParserContext<T>{
 
 	private Object rootObject;
@@ -91,9 +96,9 @@ final class ParserContext<T>{
 	void setFieldValue(final Field field, Object value){
 		final Class<?> fieldType = field.getType();
 		if(value instanceof final BigInteger bi)
-			value = DataType.cast(bi, fieldType);
+			value = DataTypeCaster.cast(bi, fieldType);
 		else if(fieldType.isArray() && value.getClass().getComponentType() == BigInteger.class)
-			value = DataType.cast(value, fieldType.getComponentType());
+			value = DataTypeCaster.cast(value, fieldType.getComponentType());
 
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = FieldAccessor.setFieldValue(currentObject, field, value);

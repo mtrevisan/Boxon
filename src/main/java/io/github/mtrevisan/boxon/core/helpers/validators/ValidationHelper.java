@@ -24,7 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.validators;
 
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeMapper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
@@ -70,7 +71,7 @@ final class ValidationHelper{
 
 	private static void validateNonEnumerationType(final Class<?> fieldType, final String defaultValue, final ConfigFieldData configData)
 			throws AnnotationException, CodecException{
-		if(DataType.getValueOrSelf(fieldType, defaultValue) == null)
+		if(DataTypeCaster.getValueOrSelf(fieldType, defaultValue) == null)
 			throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 				configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
 	}
@@ -83,7 +84,7 @@ final class ValidationHelper{
 	}
 
 	private static void validateObjectiveType(final Class<?> fieldType, final ConfigFieldData configData) throws AnnotationException{
-		if(DataType.isPrimitive(fieldType))
+		if(DataTypeMapper.isPrimitive(fieldType))
 			throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
 				configData.getAnnotationName(), fieldType.getSimpleName(), fieldType.getSimpleName());
 	}
@@ -169,8 +170,8 @@ final class ValidationHelper{
 
 
 	static boolean validateTypes(final Class<?> checkType, final Class<?> baseType){
-		final Class<?> checkTypeObjective = DataType.toObjectiveTypeOrSelf(checkType);
-		final Class<?> baseTypeObjective = DataType.toObjectiveTypeOrSelf(baseType);
+		final Class<?> checkTypeObjective = DataTypeMapper.toObjectiveTypeOrSelf(checkType);
+		final Class<?> baseTypeObjective = DataTypeMapper.toObjectiveTypeOrSelf(baseType);
 		return (checkTypeObjective.isAssignableFrom(baseTypeObjective)
 			|| Number.class.isAssignableFrom(checkTypeObjective) && Number.class.isAssignableFrom(baseTypeObjective));
 	}

@@ -30,6 +30,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 
+/**
+ * Manages writing numeric values using a specified {@link BitWriterInterface}.
+ * <p>
+ * Provides functionality to set the numeric base (radix) and handles various numeric types.
+ * </p>
+ */
 final class NumberWriterManager implements WriterManager{
 
 	private final BitWriterInterface writer;

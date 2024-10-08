@@ -27,7 +27,9 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 
 
-/** The base class for pattern matching algorithm implementations. */
+/**
+ * The base class for pattern matching algorithm implementations.
+ */
 public interface PatternMatcher{
 
 	/**

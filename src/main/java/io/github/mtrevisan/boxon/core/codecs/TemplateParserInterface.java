@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 
+/**
+ * Designed to handle the encoding and decoding of templates.
+ */
 public interface TemplateParserInterface{
 
 	/**

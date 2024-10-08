@@ -53,6 +53,12 @@ import java.util.Arrays;
 import java.util.List;
 
 
+/**
+ * Responsible for decoding messages based on a given template and bit reader interface.
+ * <p>
+ * It extends the {@link TemplateCoderBase} class and leverages an evaluator for processing.
+ * </p>
+ */
 final class TemplateDecoder extends TemplateCoderBase{
 
 	/**

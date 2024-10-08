@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.core.helpers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -48,6 +48,32 @@ import java.util.Map;
 import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
+/**
+ * Responsible for managing alternative configuration fields as part of the application's configuration management system.
+ * <p>
+ * It implements the {@link ConfigurationManager} interface and provides functionalities to handle different configuration protocols,
+ * extract configuration maps, validate and convert values, and determine if configurations are mandatory.
+ * </p>
+ * <p>
+ * The class uses the {@link AlternativeConfigurationField} annotation to define various configuration properties and their constraints.
+ * Methods in this class ensure that configuration values adhere to the specified protocols and extract relevant configurations based on
+ * the provided version.
+ * </p>
+ * <p>
+ * Some key responsibilities of this class include:
+ * </p>
+ * <ul>
+ *   <li>Extracting and converting default values based on the field type and protocol version.</li>
+ *   <li>Adding protocol version boundaries to track configuration applicability.</li>
+ *   <li>Validating if a configuration is mandatory based on its default value.</li>
+ *   <li>Extracting specific configuration maps for either all protocols or a particular protocol.</li>
+ *   <li>Managing alternative sub-fields defined within the `AlternativeConfigurationField` annotation.</li>
+ * </ul>
+ * <p>
+ * The class ensures that configurations are processed correctly and are usable within the specified protocol constraints, enabling the
+ * application to adapt configuration settings dynamically based on versioning.
+ * </p>
+ */
 final class AlternativeManager implements ConfigurationManager{
 
 	private static final AlternativeSubField EMPTY_ALTERNATIVE = new NullAlternativeSubField();
@@ -231,7 +257,7 @@ final class AlternativeManager implements ConfigurationManager{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			dataValue = DataType.getValueOrSelf(field.getType(), dataValue);
+			dataValue = DataTypeCaster.getValueOrSelf(field.getType(), dataValue);
 
 			final Version minProtocolVersion = VersionBuilder.of(fieldBinding.minProtocol());
 			final Version maxProtocolVersion = VersionBuilder.of(fieldBinding.maxProtocol());

@@ -47,6 +47,15 @@ import java.util.HashSet;
 import java.util.List;
 
 
+/**
+ * Utility class that validates the order and compatibility of annotations on a field.
+ * <p>
+ * It ensures that annotations on a field follow a specific order and are compatible with each other.
+ * </p>
+ * <p>
+ * Throws {@code AnnotationException} if any validation rule is violated.
+ * </p>
+ */
 public final class TemplateValidator{
 
 	private static final int ORDER_BIND_INDEX = 0;

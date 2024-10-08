@@ -36,6 +36,9 @@ import java.util.List;
 import java.util.function.Function;
 
 
+/**
+ * Base class providing template processing functionality.
+ */
 class TemplateCoderBase{
 
 	protected final Evaluator evaluator;

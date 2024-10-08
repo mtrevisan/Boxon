@@ -57,6 +57,14 @@ import java.util.regex.Pattern;
 import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
 
 
+/**
+ * Responsible for managing configuration data annotated with the {@link CompositeConfigurationField} annotation.
+ *
+ * <p>
+ * This class processes configurations for fields that combine multiple sub-fields into a composite field, providing methods to extract and
+ * manipulate such configurations.
+ * </p>
+ */
 final class CompositeManager implements ConfigurationManager{
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
@@ -203,7 +211,9 @@ final class CompositeManager implements ConfigurationManager{
 		final int length = fields.length;
 		final Map<String, Object> trueReplacements = JavaHelper.createMapOrEmpty(length);
 		for(int i = 0; i < length; i ++){
-			final String key = fields[i].shortDescription();
+			final CompositeSubField field = fields[i];
+
+			final String key = field.shortDescription();
 			trueReplacements.put(key, replacements.get(key));
 		}
 		return substitutePlaceholders(text, trueReplacements);

@@ -37,6 +37,12 @@ import io.github.mtrevisan.boxon.io.Codec;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * Implements the {@link Codec} interface for handling configuration fields in a data transfer object (DTO).
+ * <p>
+ * It provides encoding and decoding functionalities for fields marked with the {@link ConfigurationField} annotation.
+ * </p>
+ */
 final class CodecConfigurationField implements Codec{
 
 	@Override

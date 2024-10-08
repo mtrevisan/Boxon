@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.validators.TemplateAnnotationValidator;
-import io.github.mtrevisan.boxon.core.parsers.TemplateLoader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.lang.annotation.Annotation;
@@ -119,8 +118,7 @@ public final class Template<T>{
 			final Field field = fields.get(i);
 
 			try{
-				//FIXME a cycle between classes
-				final Annotation[] declaredAnnotations = TemplateLoader.extractBaseAnnotations(field.getDeclaredAnnotations());
+				final Annotation[] declaredAnnotations = TemplateExtractor.extractBaseAnnotations(field.getDeclaredAnnotations());
 				TemplateValidator.validateAnnotationsOrder(declaredAnnotations);
 
 				final TemplateField templateField = createField(declaredAnnotations, field);
@@ -143,8 +141,7 @@ public final class Template<T>{
 	}
 
 	private static TemplateField createField(final Annotation[] declaredAnnotations, final Field field) throws AnnotationException{
-		//FIXME a cycle between classes
-		final List<Annotation> boundedAnnotations = TemplateLoader.filterAnnotationsWithCodec(declaredAnnotations);
+		final List<Annotation> boundedAnnotations = TemplateExtractor.filterAnnotationsWithCodec(declaredAnnotations);
 		final Annotation validAnnotation = TemplateExtractor.extractAndValidateAnnotation(field.getType(), boundedAnnotations);
 		final List<SkipParams> skips = TemplateExtractor.extractSkips(declaredAnnotations);
 

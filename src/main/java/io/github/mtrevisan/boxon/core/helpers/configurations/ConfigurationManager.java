@@ -38,6 +38,9 @@ import java.util.Collection;
 import java.util.Map;
 
 
+/**
+ * Interface for managing configurations in a consistent manner.
+ */
 public interface ConfigurationManager{
 
 	/**

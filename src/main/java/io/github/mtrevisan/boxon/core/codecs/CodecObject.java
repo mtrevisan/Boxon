@@ -56,6 +56,14 @@ import java.util.Collection;
 import java.util.List;
 
 
+/**
+ * Responsible for encoding and decoding objects based on annotations and type information.
+ * <p>
+ * This class implements the {@link Codec} interface and provides methods for handling different scenarios such as alternative types,
+ * arrays, and lists.<br />
+ * It utilizes injected dependencies such as {@link Evaluator} and {@link TemplateParserInterface}.
+ * </p>
+ */
 final class CodecObject implements Codec{
 
 	@Injected

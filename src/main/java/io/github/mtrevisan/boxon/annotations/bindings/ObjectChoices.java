@@ -70,7 +70,10 @@ public @interface ObjectChoices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * <p>A SpEL expression with the header value in the context under the name {@code header}.</p>
+		 * <p>
+		 * </p>A <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression with the header value
+		 * in the context under the name {@code header}.
+		 * </p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 */
@@ -79,7 +82,7 @@ public @interface ObjectChoices{
 		/**
 		 * The header to be written when serializing the object.
 		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
-		 * <p>Can be a SpEL expression.</p>
+		 * <p>Can be a <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression.</p>
 		 *
 		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference.
 		 */

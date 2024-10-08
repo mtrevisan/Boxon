@@ -37,6 +37,13 @@ import java.util.HashSet;
 import java.util.List;
 
 
+/**
+ * A strategy for extracting full information from a {@link Template} message.
+ * <p>
+ * This class extends {@link MessageExtractorBasicStrategy} to provide additional methods for retrieving evaluated and post-processed
+ * fields, as well as enumeration fields.
+ * </p>
+ */
 public final class MessageExtractorFullStrategy extends MessageExtractorBasicStrategy{
 
 	@Override

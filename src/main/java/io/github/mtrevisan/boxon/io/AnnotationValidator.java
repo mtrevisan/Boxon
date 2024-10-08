@@ -29,7 +29,9 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import java.lang.annotation.Annotation;
 
 
-/** Interface that defines the validation method of a given annotation. */
+/**
+ * Interface that defines the validation method of a given annotation.
+ */
 public interface AnnotationValidator{
 
 	/**

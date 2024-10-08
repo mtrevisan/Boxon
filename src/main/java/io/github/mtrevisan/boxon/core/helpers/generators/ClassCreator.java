@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.generators;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
-import io.github.mtrevisan.boxon.core.helpers.DataType;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeMapper;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -49,6 +49,12 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * The ClassCreator class provides functionality to dynamically generate classes and enums with specific annotations and fields.
+ * <p>
+ * It leverages {@link ByteBuddy} for runtime class creation.
+ * </p>
+ */
 public final class ClassCreator{
 
 	private static final ByteBuddy BYTE_BUDDY = new ByteBuddy();
@@ -113,7 +119,7 @@ public final class ClassCreator{
 		final int arraysCount = GenericHelper.countArrays(fieldType);
 		if(arraysCount > 0)
 			fieldType = fieldType.substring(0, fieldType.length() - JavaHelper.ARRAY_VARIABLE.length() * arraysCount);
-		Class<?> type = DataType.toTypeOrSelf(fieldType);
+		Class<?> type = DataTypeMapper.toTypeOrSelf(fieldType);
 		if(arraysCount > 0)
 			type = GenericHelper.addArrayToType(type, arraysCount);
 		return type;
@@ -153,7 +159,7 @@ public final class ClassCreator{
 	}
 
 	private static DynamicType.Builder<Object> addAnnotations(final DynamicType.Builder<Object> builder, final String name,
-		final Class<?> type, final List<Annotation> additionalAnnotations){
+			final Class<?> type, final List<Annotation> additionalAnnotations){
 		final Map<Class<?>, List<Annotation>> groupedAnnotations = groupSimilarAnnotations(additionalAnnotations);
 
 		final List<Annotation> simpleAnnotations = reduceSimilarAnnotations(groupedAnnotations);
@@ -218,7 +224,7 @@ public final class ClassCreator{
 
 			final String name = (String)field.get(DescriberKey.FIELD_NAME.toString());
 			final String fieldType = (String)field.get(DescriberKey.FIELD_TYPE.toString());
-			final Class<?> type = DataType.toTypeOrSelf(fieldType);
+			final Class<?> type = DataTypeMapper.toTypeOrSelf(fieldType);
 
 			final Annotation annotation = createAnnotation(field);
 

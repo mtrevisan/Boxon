@@ -124,7 +124,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public Object read(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
-		return DataType.read(this, byteOrder, type);
+		return DataTypeReaderWriter.read(this, byteOrder, type);
 	}
 
 	@Override

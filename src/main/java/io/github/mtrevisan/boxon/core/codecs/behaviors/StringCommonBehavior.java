@@ -32,6 +32,12 @@ import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import java.nio.charset.Charset;
 
 
+/**
+ * Abstract class providing common behavior for handling strings.
+ * <p>
+ * This class extends {@link CommonBehavior} and provides a Charset for string operations.
+ * </p>
+ */
 abstract class StringCommonBehavior extends CommonBehavior{
 
 	protected final Charset charset;

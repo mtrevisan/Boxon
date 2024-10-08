@@ -85,7 +85,8 @@ abstract class BitReaderData{
 	/**
 	 * Create a fallback point that can later be restored (see {@link #restoreSavepoint()}).
 	 * <p>
-	 * If a savepoint already exists, it updates the current savepoint by updating the cache, buffer position, and remaining bits in cache.<br />
+	 * If a savepoint already exists, it updates the current savepoint by updating the cache, buffer position, and remaining bits in
+	 * cache.<br />
 	 * If a savepoint does not exist, it creates a new savepoint by creating a snapshot of the buffer state using createSnapshot method.
 	 * </p>
 	 */
@@ -159,7 +160,8 @@ abstract class BitReaderData{
 	 *
 	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a> of the cache.
+	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a>
+	 * 	of the cache.
 	 */
 	private void readFromCache(final BitSet bitmap, int offset, final int size){
 		offset += size - 1;

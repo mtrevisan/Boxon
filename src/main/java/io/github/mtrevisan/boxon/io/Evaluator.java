@@ -219,7 +219,8 @@ public final class Evaluator{
 	/**
 	 * Evaluates an expression.
 	 *
-	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
+	 * @param expression	The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to
+	 * 	evaluate (empty string returns {@code true}).
 	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @param returnType	The class for the return type.
 	 * @param <T>	The class type of the result.
@@ -234,7 +235,8 @@ public final class Evaluator{
 	/**
 	 * Convenience method to fast evaluate a boolean value.
 	 *
-	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
+	 * @param expression	The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to
+	 * 	evaluate (empty string returns {@code true}).
 	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @return	The result of the expression.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
@@ -248,7 +250,8 @@ public final class Evaluator{
 	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
-	 * @param expression	The SpEL expression to evaluate (empty string returns {@code -1}).
+	 * @param expression	The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression to
+	 * 	evaluate (empty string returns {@code -1}).
 	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.

@@ -36,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * A utility class for describing entities by mapping them to a list of maps or a single map representation.
+ */
 final class EntityDescriber{
 
 	private EntityDescriber(){}

@@ -32,6 +32,7 @@ import org.springframework.objenesis.ObjenesisStd;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.util.AbstractMap;
 import java.util.Map;
@@ -98,7 +99,7 @@ public final class ConstructorHelper{
 
 	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws ReflectiveOperationException{
 		final Constructor<T> constructor = type.getDeclaredConstructor();
-		FieldAccessor.makeAccessible(constructor);
+		constructor.setAccessible(true);
 
 		//try creating an instance
 		constructor.newInstance();
@@ -119,7 +120,7 @@ public final class ConstructorHelper{
 			final Class<?> type = tuple.getKey();
 			final Class<?>[] parametersClass = tuple.getValue();
 			final Constructor<?> constructor = type.getDeclaredConstructor(parametersClass);
-			FieldAccessor.makeAccessible(constructor);
+			constructor.setAccessible(true);
 
 			instantiator = (final Object[] constructorValues) -> {
 				try{
@@ -141,12 +142,38 @@ public final class ConstructorHelper{
 		final RecordComponent[] recordComponents = objClass.getRecordComponents();
 
 		//extract the current field values from the record class
-		final Object[] recordValues = FieldAccessor.retrieveCurrentFieldValues(obj, recordComponents);
+		final Object[] recordValues = retrieveCurrentFieldValues(obj, recordComponents);
 
 		//find the index of the field to update
-		FieldAccessor.updateFieldValue(fieldName, value, recordComponents, recordValues);
+		updateFieldValue(fieldName, value, recordComponents, recordValues);
 
 		return createRecordInstance(recordComponents, objClass, recordValues);
+	}
+
+	private static Object[] retrieveCurrentFieldValues(final Object obj, final RecordComponent[] components)
+			throws ReflectiveOperationException{
+		final int length = components.length;
+		final Object[] recordValues = new Object[length];
+		for(int i = 0; i < length; i ++){
+			final RecordComponent recordComponent = components[i];
+
+			final Method accessor = recordComponent.getAccessor();
+			accessor.setAccessible(true);
+			recordValues[i] = accessor.invoke(obj);
+		}
+		return recordValues;
+	}
+
+	private static void updateFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
+			final Object[] recordValues){
+		for(int i = 0, length = recordComponents.length; i < length; i ++){
+			final RecordComponent recordComponent = recordComponents[i];
+
+			if(fieldName.equals(recordComponent.getName())){
+				recordValues[i] = value;
+				break;
+			}
+		}
 	}
 
 	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass,

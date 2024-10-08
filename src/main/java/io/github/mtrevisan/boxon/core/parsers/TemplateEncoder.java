@@ -38,6 +38,12 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 import java.util.List;
 
 
+/**
+ * Responsible for encoding messages based on provided templates.
+ * <p>
+ * It extends the {@link TemplateCoderBase} class and utilizes an evaluator for context-based encoding.
+ * </p>
+ */
 final class TemplateEncoder extends TemplateCoderBase{
 
 	/**

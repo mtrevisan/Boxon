@@ -319,6 +319,7 @@ public final class CoreBuilder{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
+
 			executeCommands(executors);
 		}
 

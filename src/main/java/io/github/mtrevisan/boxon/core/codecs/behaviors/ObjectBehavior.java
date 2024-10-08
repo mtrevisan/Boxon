@@ -37,6 +37,9 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * A concrete implementation of {@link CommonBehavior} tailored to handle object-specific behavior based on annotations.
+ */
 public final class ObjectBehavior extends CommonBehavior{
 
 	private final Class<?> objectType;

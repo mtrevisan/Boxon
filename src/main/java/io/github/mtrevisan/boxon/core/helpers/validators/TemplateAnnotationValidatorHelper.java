@@ -144,7 +144,9 @@ final class TemplateAnnotationValidatorHelper{
 	private static int calculateMinHeaderLength(final ObjectChoices.ObjectChoice[] alternatives){
 		int minHeaderLength = Integer.MAX_VALUE;
 		for(int i = 0, length = alternatives.length; i < length; i ++){
-			final int headerLength = alternatives[i].prefix()
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
+			final int headerLength = alternative.prefix()
 				.length();
 			if(headerLength < minHeaderLength)
 				minHeaderLength = headerLength;

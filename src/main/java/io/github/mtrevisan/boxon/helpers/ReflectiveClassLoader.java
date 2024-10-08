@@ -28,7 +28,6 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import io.github.mtrevisan.boxon.annotations.Evaluate;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -48,7 +47,12 @@ import java.util.stream.Collectors;
 
 
 /**
- * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
+ * A class to load and scan classes reflectively based on specified packages using {@link ClassGraph} library.
+ * <p>
+ * It uses a metadata store to cache and retrieve information about scanned classes.
+ * </p>
+ *
+ * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>.
  */
 public final class ReflectiveClassLoader{
 
@@ -132,11 +136,11 @@ public final class ReflectiveClassLoader{
 		return Collections.unmodifiableList(loadedClasses);
 	}
 
-	public static Set<Class<? extends Annotation>> extractAnnotations(final ElementType targetType){
+	public static Set<Class<? extends Annotation>> extractAnnotations(final Class<?> basePackageClass, final ElementType targetType){
 		final ClassGraph classGraph = new ClassGraph()
 			.ignoreClassVisibility()
 			.enableAnnotationInfo()
-			.acceptPackages(Evaluate.class.getPackage().getName());
+			.acceptPackages(basePackageClass.getPackage().getName());
 		final Set<Class<? extends Annotation>> loadedAnnotations = new HashSet<>(0);
 		try(final ScanResult scanResult = classGraph.scan()){
 			scanResult.getClassesWithAnnotation(Target.class.getName())
@@ -184,8 +188,11 @@ public final class ReflectiveClassLoader{
 
 		final Class<?>[] classes = new Class[classNames.size()];
 		try{
-			for(int i = 0; i < classNames.size(); i ++)
-				classes[i] = Class.forName(classNames.get(i));
+			for(int i = 0; i < classNames.size(); i ++){
+				final String className = classNames.get(i);
+
+				classes[i] = Class.forName(className);
+			}
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;
