@@ -184,7 +184,8 @@ public final class ClassCreator{
 		final List<Annotation> simpleAnnotations = JavaHelper.createListOrEmpty(groupedAnnotations.size());
 		for(final Map.Entry<Class<?>, List<Annotation>> entry : groupedAnnotations.entrySet()){
 			final List<Annotation> annotations = entry.getValue();
-			if(annotations.size() == 1){
+			final int size = annotations.size();
+			if(size == 1){
 				simpleAnnotations.add(annotations.getFirst());
 
 				continue;
@@ -192,8 +193,8 @@ public final class ClassCreator{
 
 			final Class<?> annotationType = entry.getKey();
 
-			final Object array = CodecHelper.createArray(annotationType, annotations.size());
-			for(int i = 0, count = annotations.size(); i < count; i ++)
+			final Object array = CodecHelper.createArray(annotationType, size);
+			for(int i = 0; i < size; i ++)
 				Array.set(array, i, annotations.get(i));
 			final Repeatable repeatable = annotationType.getAnnotation(Repeatable.class);
 			final Annotation repeatableAnnotation = AnnotationCreator.createAnnotation(repeatable.value(), Map.of(REPEATABLE_VALUE, array));

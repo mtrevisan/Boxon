@@ -94,7 +94,7 @@ public class EncodeException extends BoxonException{
 
 
 	@Override
-	public String getMessage(){
+	public final String getMessage(){
 		String message = JavaHelper.EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)

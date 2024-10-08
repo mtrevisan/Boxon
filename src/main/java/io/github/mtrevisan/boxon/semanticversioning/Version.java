@@ -143,7 +143,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementMajor(final int amount) throws VersionException{
-		final int major = JavaHelper.nonNullOrDefault(this.major, 0) + amount;
+		final Integer major = (this.major != null? this.major: 0) + amount;
 		final Integer minor = (this.minor != null? 0: null);
 		final Integer patch = (this.patch != null? 0: null);
 		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
@@ -164,7 +164,7 @@ public final class Version implements Comparable<Version>{
 		if(major == null)
 			throw new IllegalArgumentException("Cannot increment minor part of an invalid version: " + this);
 
-		final int minor = JavaHelper.nonNullOrDefault(this.minor, 0) + amount;
+		final Integer minor = (this.minor != null? this.minor: 0) + amount;
 		final Integer patch = (this.patch != null? 0: null);
 		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
@@ -183,7 +183,7 @@ public final class Version implements Comparable<Version>{
 		if(major == null || minor == null)
 			throw new IllegalArgumentException("Cannot increment patch part of an invalid version: " + this);
 
-		final int patch = JavaHelper.nonNullOrDefault(this.patch, 0) + amount;
+		final Integer patch = (this.patch != null? this.patch: 0) + amount;
 		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 

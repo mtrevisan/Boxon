@@ -100,7 +100,7 @@ class TemplateCoderBase{
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
-	protected void addContextParameters(final List<ContextParameter> contextParameters){
+	protected final void addContextParameters(final List<ContextParameter> contextParameters){
 		for(int i = 0, length = contextParameters.size(); i < length; i ++){
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
@@ -110,7 +110,7 @@ class TemplateCoderBase{
 		}
 	}
 
-	protected void clearContextParameters(final List<ContextParameter> contextParameters){
+	protected final void clearContextParameters(final List<ContextParameter> contextParameters){
 		for(int i = 0, length = contextParameters.size(); i < length; i ++){
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
