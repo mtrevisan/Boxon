@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.helpers;
 
-import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import org.springframework.objenesis.Objenesis;
 import org.springframework.objenesis.ObjenesisException;
@@ -48,7 +47,7 @@ public final class ConstructorHelper{
 	private static Function<Class<?>, Supplier<?>> EMPTY_CREATORS;
 	private static Function<Map.Entry<Class<?>, Class<?>[]>, Function<Object[], ?>> NON_EMPTY_CREATORS;
 	static{
-		initialize(Parser.UNBOUNDED_MEMOIZER_SIZE, Parser.UNBOUNDED_MEMOIZER_SIZE);
+		initialize(Memoizer.UNBOUNDED_MEMOIZER_SIZE, Memoizer.UNBOUNDED_MEMOIZER_SIZE);
 	}
 
 	private static final Objenesis OBJENESIS = new ObjenesisStd();

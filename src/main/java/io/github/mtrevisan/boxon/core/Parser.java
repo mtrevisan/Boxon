@@ -48,9 +48,6 @@ import java.util.List;
  */
 public final class Parser{
 
-	public static final int UNBOUNDED_MEMOIZER_SIZE = 0;
-
-
 	private final TemplateParser templateParser;
 
 

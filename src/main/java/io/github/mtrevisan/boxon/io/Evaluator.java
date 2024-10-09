@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import org.springframework.expression.EvaluationException;
@@ -112,7 +111,7 @@ public final class Evaluator{
 
 	private static Function<String, Expression> CACHED_EXPRESSIONS;
 	static{
-		initialize(Parser.UNBOUNDED_MEMOIZER_SIZE);
+		initialize(Memoizer.UNBOUNDED_MEMOIZER_SIZE);
 	}
 
 

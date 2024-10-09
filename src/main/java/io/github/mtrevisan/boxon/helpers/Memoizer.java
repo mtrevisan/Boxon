@@ -40,6 +40,9 @@ import java.util.function.Function;
  */
 public final class Memoizer{
 
+	public static final int UNBOUNDED_MEMOIZER_SIZE = 0;
+
+
 	private Memoizer(){}
 
 
@@ -54,7 +57,7 @@ public final class Memoizer{
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
-		return memoize(function, 0);
+		return memoize(function, UNBOUNDED_MEMOIZER_SIZE);
 	}
 
 	/**
@@ -70,7 +73,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function, final int maxSize){
 		return new Function<>(){
-			private final Map<IN, OUT> cache = (maxSize <= 0? new ConcurrentHashMap<>(1): createErasableCache(maxSize));
+			private final Map<IN, OUT> cache = (maxSize <= UNBOUNDED_MEMOIZER_SIZE? new ConcurrentHashMap<>(1): createErasableCache(maxSize));
 
 			@Override
 			public OUT apply(final IN input){
@@ -93,7 +96,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
-		return throwingMemoize(function, 0);
+		return throwingMemoize(function, UNBOUNDED_MEMOIZER_SIZE);
 	}
 
 	/**
@@ -111,7 +114,7 @@ public final class Memoizer{
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function, final int maxSize){
 		return new ThrowingFunction<>(){
-			private final Map<IN, OUT> cache = (maxSize <= 0? new HashMap<>(1): createErasableCache(maxSize));
+			private final Map<IN, OUT> cache = (maxSize <= UNBOUNDED_MEMOIZER_SIZE? new HashMap<>(1): createErasableCache(maxSize));
 			private final Lock lock = new ReentrantLock();
 
 			@Override
