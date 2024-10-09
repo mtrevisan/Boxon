@@ -42,9 +42,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -63,11 +61,11 @@ public final class TemplateValidator{
 	private static final int ORDER_EVALUATE_INDEX = 2;
 	private static final int ORDER_POST_PROCESS_INDEX = 3;
 
-	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_BIND_ORDER = new HashSet<>(List.of(BindBitSet.class,
+	private static final Set<Class<? extends Annotation>> ANNOTATIONS_BIND_ORDER = Set.of(BindBitSet.class,
 		BindInteger.class, BindObject.class, BindString.class, BindStringTerminated.class, ConverterChoices.class, ObjectChoices.class,
-		ObjectChoicesList.class));
-	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_SKIP = new HashSet<>(List.of(SkipBits.class,
-		SkipUntilTerminator.class));
+		ObjectChoicesList.class);
+	private static final Set<Class<? extends Annotation>> ANNOTATIONS_SKIP = Set.of(SkipBits.class,
+		SkipUntilTerminator.class);
 
 	private static final String ANNOTATION_NAME_BIND = JavaHelper.commonPrefix(BindBitSet.class, BindInteger.class, BindObject.class,
 		BindString.class, BindStringTerminated.class);

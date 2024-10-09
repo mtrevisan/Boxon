@@ -43,10 +43,8 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,14 +63,14 @@ public final class TemplateExtractor{
 
 	private static final String MULTIPLE_ANNOTATIONS_VALUE = "value";
 
-	private static final Collection<Class<? extends Annotation>> SKIP_ANNOTATIONS = new HashSet<>(List.of(SkipBits.Skips.class,
-		SkipUntilTerminator.Skips.class, ConfigurationSkip.Skips.class));
-	private static final Collection<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = new HashSet<>(List.of(ContextParameter.class,
-		BindAsArray.class, BindAsList.class));
+	private static final Set<Class<? extends Annotation>> SKIP_ANNOTATIONS = Set.of(SkipBits.Skips.class,
+		SkipUntilTerminator.Skips.class, ConfigurationSkip.Skips.class);
+	private static final Set<Class<? extends Annotation>> ANNOTATIONS_WITHOUT_CODEC = Set.of(ContextParameter.class,
+		BindAsArray.class, BindAsList.class);
 	private static final Set<Class<? extends Annotation>> LIBRARY_ANNOTATIONS = ReflectiveClassLoader.extractAnnotations(Evaluate.class,
 		ElementType.ANNOTATION_TYPE);
-	private static final Collection<Class<? extends Annotation>> COLLECTION_ANNOTATIONS = new HashSet<>(List.of(BindAsArray.class,
-		BindAsList.class));
+	private static final Set<Class<? extends Annotation>> COLLECTION_ANNOTATIONS = Set.of(BindAsArray.class,
+		BindAsList.class);
 
 	private static final String LIBRARY_ROOT_PACKAGE_NAME = extractLibraryRootPackage();
 

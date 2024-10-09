@@ -54,10 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class CodecLoader{
 
-	private static final Set<Type> DEFAULT_BIND_TYPES = Set.of(
-		BindBitSet.class,
-		BindInteger.class,
-		BindString.class,
+	private static final Set<Class<? extends Annotation>> DEFAULT_BIND_TYPES = Set.of(BindBitSet.class, BindInteger.class, BindString.class,
 		BindStringTerminated.class);
 
 
