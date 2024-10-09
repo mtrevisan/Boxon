@@ -71,7 +71,7 @@ public @interface ObjectChoices{
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 * <p>
-		 * </p>A <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression with the header value
+		 * A <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression with the header value
 		 * in the context under the name {@code header}.
 		 * </p>
 		 *
