@@ -49,7 +49,7 @@ import java.util.Objects;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
 
-	private final Evaluator evaluator;
+	private static final Evaluator EVALUATOR = Evaluator.getInstance();
 
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
@@ -71,9 +71,7 @@ public final class Core{
 
 
 	private Core(){
-		evaluator = Evaluator.create();
-
-		templateParser = TemplateParser.create(evaluator);
+		templateParser = TemplateParser.create();
 		configurationParser = ConfigurationParser.create();
 	}
 
@@ -100,8 +98,8 @@ public final class Core{
 	 * @param key	The key used to reference the value.
 	 * @param value	The value.
 	 */
-	void putToContext(final String key, final Object value){
-		evaluator.putToContext(key, value);
+	static void putToContext(final String key, final Object value){
+		EVALUATOR.putToContext(key, value);
 	}
 
 	/**
@@ -109,11 +107,11 @@ public final class Core{
 	 *
 	 * @param context	The context map.
 	 */
-	void putToContext(final Map<String, Object> context){
+	static void putToContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
-			evaluator.putToContext(entry.getKey(), entry.getValue());
+			EVALUATOR.putToContext(entry.getKey(), entry.getValue());
 	}
 
 	/**
@@ -121,8 +119,8 @@ public final class Core{
 	 *
 	 * @param method	The method.
 	 */
-	void putToContext(final Method method){
-		evaluator.putToContext(method);
+	static void putToContext(final Method method){
+		EVALUATOR.putToContext(method);
 	}
 
 	/**
@@ -130,8 +128,8 @@ public final class Core{
 	 *
 	 * @param key	The key used to reference the value.
 	 */
-	void removeFromContext(final String key){
-		evaluator.removeFromContext(key);
+	static void removeFromContext(final String key){
+		EVALUATOR.removeFromContext(key);
 	}
 
 	/**
@@ -139,19 +137,19 @@ public final class Core{
 	 *
 	 * @param method	The method.
 	 */
-	void removeFromContext(final Method method){
-		evaluator.removeFromContext(method);
+	static void removeFromContext(final Method method){
+		EVALUATOR.removeFromContext(method);
 	}
 
 	/**
 	 * Clear the context for the {@link Evaluator}.
 	 */
-	void clearContext(){
-		evaluator.clearContext();
+	static void clearContext(){
+		EVALUATOR.clearContext();
 	}
 
-	Map<String, Object> getContext(){
-		return evaluator.getContext();
+	static Map<String, Object> getContext(){
+		return EVALUATOR.getContext();
 	}
 
 
@@ -215,11 +213,11 @@ public final class Core{
 	}
 
 	private void postProcessCodec(final Codec codec){
-		CodecLoader.injectDependenciesIntoCodec(codec, templateParser, evaluator);
+		CodecLoader.injectDependenciesIntoCodec(codec, templateParser, EVALUATOR);
 	}
 
 	private void postProcessCodecs(){
-		CodecLoader.injectDependenciesIntoCodecs(templateParser, evaluator);
+		CodecLoader.injectDependenciesIntoCodecs(templateParser, EVALUATOR);
 	}
 
 

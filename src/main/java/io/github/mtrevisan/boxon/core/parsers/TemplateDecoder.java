@@ -45,7 +45,6 @@ import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
-import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -64,17 +63,14 @@ final class TemplateDecoder extends TemplateCoderBase{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	static TemplateDecoder create(final Evaluator evaluator){
-		return new TemplateDecoder(evaluator);
+	static TemplateDecoder create(){
+		return new TemplateDecoder();
 	}
 
 
-	private TemplateDecoder(final Evaluator evaluator){
-		super(evaluator);
-	}
+	private TemplateDecoder(){}
 
 
 	/**
@@ -92,7 +88,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		Object currentObject = template.createEmptyObject();
 
 		final ParserContext<Object> parserContext = ParserContext.create(currentObject, parentObject);
-		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+		EVALUATOR.addCurrentObjectToEvaluatorContext(currentObject);
 
 		//decode message fields:
 		decodeMessageFields(template, reader, parserContext);
@@ -134,19 +130,19 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
+	private static void readSkips(final SkipParams[] skips, final BitReaderInterface reader, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			readSkip(skips[i], reader, rootObject);
 	}
 
-	private void readSkip(final SkipParams skip, final BitReaderInterface reader, final Object rootObject){
+	private static void readSkip(final SkipParams skip, final BitReaderInterface reader, final Object rootObject){
 		final boolean process = shouldProcessField(skip.condition(), rootObject);
 		if(!process)
 			return;
 
 		//choose between skip-by-size and skip-by-terminator
 		if(skip.annotationType() == SkipBits.class){
-			final int size = evaluator.evaluateSize(skip.size(), rootObject);
+			final int size = EVALUATOR.evaluateSize(skip.size(), rootObject);
 			reader.skip(size);
 		}
 		else{
@@ -179,7 +175,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			final Object value = codec.decode(reader, binding, collectionBinding, rootObject);
 
 			//restore original current object
-			evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+			EVALUATOR.addCurrentObjectToEvaluatorContext(currentObject);
 
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
@@ -221,7 +217,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private void verifyChecksum(final Template<?> template, final Object data, final int startPosition, final BitReaderInterface reader){
+	private static void verifyChecksum(final Template<?> template, final Object data, final int startPosition, final BitReaderInterface reader){
 		if(!template.isChecksumPresent())
 			return;
 
@@ -239,7 +235,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 				StringHelper.toHexString(givenChecksum, Short.BYTES));
 	}
 
-	private <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
+	private static <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
 		return shouldProcessField(checksum.condition(), data);
 	}
 
@@ -268,7 +264,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 			eventListener.evaluatingField(template.getName(), field.getFieldName());
 
-			final Object value = evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
+			final Object value = EVALUATOR.evaluate(binding.value(), rootObject, field.getFieldType());
 
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);

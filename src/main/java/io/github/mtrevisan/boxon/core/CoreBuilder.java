@@ -77,6 +77,8 @@ public final class CoreBuilder{
 	 * @return	A core builder.
 	 */
 	public static CoreBuilder builder(){
+		Evaluator.getInstance().clearContext();
+
 		return new CoreBuilder();
 	}
 
@@ -107,7 +109,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final String key, final Object value){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(key, value));
+		addMethod(ConfigurationStep.CONTEXT, () -> Core.putToContext(key, value));
 
 		return this;
 	}
@@ -119,7 +121,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(context));
+		addMethod(ConfigurationStep.CONTEXT, () -> Core.putToContext(context));
 
 		return this;
 	}
@@ -166,7 +168,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(method));
+		addMethod(ConfigurationStep.CONTEXT, () -> Core.putToContext(method));
 
 		return this;
 	}

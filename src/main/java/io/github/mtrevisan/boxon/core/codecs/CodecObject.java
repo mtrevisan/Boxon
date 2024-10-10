@@ -66,8 +66,8 @@ import java.util.List;
  */
 final class CodecObject implements Codec{
 
-	@Injected
-	private Evaluator evaluator;
+	private static final Evaluator EVALUATOR = Evaluator.getInstance();
+
 	@Injected
 	private TemplateParserInterface templateParser;
 
@@ -88,7 +88,7 @@ final class CodecObject implements Codec{
 			instance = readValue(reader, chosenAlternativeType, rootObject);
 		}
 		else if(collectionBinding instanceof final BindAsArray superBinding){
-			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
+			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), rootObject);
 			instance = decodeArray(reader, behavior, arraySize, rootObject);
 		}
 		else if(collectionBinding instanceof BindAsList)
@@ -97,7 +97,7 @@ final class CodecObject implements Codec{
 			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 
-		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(rootObject);
 		final Object convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
 
 		CodecHelper.validate(convertedValue, behavior.validator());
@@ -171,7 +171,8 @@ final class CodecObject implements Codec{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
 	 */
-	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject){
+	private static Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final ObjectBehavior behavior,
+			final Object rootObject){
 		final ObjectChoices.ObjectChoice[] alternatives = behavior.objectChoicesList().alternatives();
 		if(!CodecHelper.hasSelectAlternatives((alternatives)))
 			return behavior.objectType();
@@ -195,14 +196,14 @@ final class CodecObject implements Codec{
 	 * @param rootObject	The root object for the evaluator.
 	 * @return	The chosen alternative type. If none of the alternatives evaluate to {@code true}, it returns the default alternative type.
 	 */
-	private Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
+	private static Class<?> chooseAlternativeType(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> defaultAlternative,
 			final Object rootObject){
 		Class<?> chosenAlternativeType = defaultAlternative;
 		for(int i = 0, length = alternatives.length; chosenAlternativeType == defaultAlternative && i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
 			final String condition = alternative.condition();
-			if(evaluator.evaluateBoolean(condition, rootObject))
+			if(EVALUATOR.evaluateBoolean(condition, rootObject))
 				chosenAlternativeType = alternative.type();
 		}
 		return chosenAlternativeType;
@@ -217,7 +218,7 @@ final class CodecObject implements Codec{
 	 * @return	The class type of the chosen alternative, or the default alternative type if no alternative was found.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject)
+	private static Class<?> chooseAlternativeType(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject)
 			throws CodecException{
 		final ObjectChoices objectChoices = behavior.selectFrom();
 		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
@@ -238,14 +239,14 @@ final class CodecObject implements Codec{
 	 *
 	 * @param reader	The reader from which to read the prefix.
 	 */
-	private void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices){
+	private static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices){
 		final byte prefixSize = objectChoices.prefixLength();
 		if(prefixSize > 0){
 			final BitSet bitmap = reader.readBitSet(prefixSize);
 			final ByteOrder byteOrder = objectChoices.byteOrder();
 			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
 
-			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+			EVALUATOR.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 	}
 
@@ -255,11 +256,11 @@ final class CodecObject implements Codec{
 	 * @param reader	The reader from which to read the header.
 	 * @return	Whether a prefix was retrieved.
 	 */
-	private boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
+	private static boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
 		final byte terminator = objectChoicesList.terminator();
 		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
 		final String prefix = reader.readTextUntilTerminatorWithoutConsuming(terminator, charset);
-		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		EVALUATOR.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
 	}
 
@@ -271,7 +272,7 @@ final class CodecObject implements Codec{
 
 		CodecHelper.validate(value, behavior.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(rootObject);
 
 		if(collectionBinding == null){
 			final ObjectChoices objectChoices = behavior.selectFrom();
@@ -281,7 +282,7 @@ final class CodecObject implements Codec{
 				type = value.getClass();
 				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(objectChoices.alternatives(), type);
 
-				CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
+				CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, rootObject);
 			}
 
 			final Object object = CodecHelper.converterEncode(chosenConverter, value);
@@ -289,7 +290,7 @@ final class CodecObject implements Codec{
 			writeValue(writer, type, object, rootObject);
 		}
 		else if(collectionBinding instanceof final BindAsArray superBinding){
-			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
+			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), rootObject);
 			final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 			CodecHelper.assertSizeEquals(arraySize, array.length);
 
@@ -323,7 +324,7 @@ final class CodecObject implements Codec{
 			final Class<?> type = element.getClass();
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 
-			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
+			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, rootObject);
 
 			writeValue(writer, type, element, rootObject);
 		}

@@ -41,15 +41,14 @@ import java.util.function.Function;
  */
 class TemplateCoderBase{
 
-	protected final Evaluator evaluator;
+	protected static final Evaluator EVALUATOR = Evaluator.getInstance();
+
 
 	protected EventListener eventListener;
 
 
 
-	TemplateCoderBase(final Evaluator evaluator){
-		this.evaluator = evaluator;
-
+	TemplateCoderBase(){
 		withEventListener(null);
 	}
 
@@ -88,7 +87,7 @@ class TemplateCoderBase{
 		eventListener.evaluatingField(templateName, fieldName);
 
 		final String expression = valueExtractor.apply(binding);
-		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
+		final Object value = EVALUATOR.evaluate(expression, rootObject, field.getFieldType());
 
 		//store value in the current object
 		parserContext.setFieldValue(field.getField(), value);
@@ -96,33 +95,33 @@ class TemplateCoderBase{
 		eventListener.evaluatedField(templateName, fieldName, value);
 	}
 
-	protected final boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
+	protected static boolean shouldProcessField(final String condition, final Object rootObject){
+		return (condition != null && (condition.isEmpty() || EVALUATOR.evaluateBoolean(condition, rootObject)));
 	}
 
-	protected final void addContextParameters(final List<ContextParameter> contextParameters){
+	protected static void addContextParameters(final List<ContextParameter> contextParameters){
 		for(int i = 0, length = contextParameters.size(); i < length; i ++){
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
 			final String name = contextParameterBinding.name();
 			final Object value = tryEvaluateContextValue(contextParameterBinding.value());
-			evaluator.putToContext(name, value);
+			EVALUATOR.putToContext(name, value);
 		}
 	}
 
-	protected final void clearContextParameters(final List<ContextParameter> contextParameters){
+	protected static void clearContextParameters(final List<ContextParameter> contextParameters){
 		for(int i = 0, length = contextParameters.size(); i < length; i ++){
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
 			final String name = contextParameterBinding.name();
-			evaluator.removeFromContext(name);
+			EVALUATOR.removeFromContext(name);
 		}
 	}
 
-	private Object tryEvaluateContextValue(final String contextValue){
+	private static Object tryEvaluateContextValue(final String contextValue){
 		Object value;
 		try{
-			value = evaluator.evaluate(contextValue, null, Object.class);
+			value = EVALUATOR.evaluate(contextValue, null, Object.class);
 		}
 		catch(final EvaluationException ignored){
 			value = contextValue;

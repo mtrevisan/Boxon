@@ -213,7 +213,6 @@ public final class CodecLoader{
 	 *
 	 * @param dependencies	The object to be injected.
 	 */
-	//FIXME is injection an ugliness?
 	public static void injectDependenciesIntoCodecs(final Object... dependencies){
 		for(final Codec codec : codecs.values())
 			injectDependenciesIntoCodec(codec, dependencies);

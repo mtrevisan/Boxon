@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -58,34 +57,33 @@ public final class BehaviorBuilder{
 	 * Creates and returns a {@link CommonBehavior} instance based on the given {@link Annotation} and parameters.
 	 *
 	 * @param annotation	The {@link Annotation} to be used for creating the {@link CommonBehavior} instance.
-	 * @param evaluator	The {@link Evaluator} instance to be used for evaluating the annotation.
 	 * @param rootObject	The root object for which the {@link CommonBehavior} instance is created.
 	 * @return	The {@link CommonBehavior} instance created based on the given parameters.
 	 * @throws AnnotationException	If an exception occurs while creating the {@link CommonBehavior} instance.
 	 */
-	public static CommonBehavior of(final Annotation annotation, final Evaluator evaluator, final Object rootObject)
+	public static CommonBehavior of(final Annotation annotation, final Object rootObject)
 			throws AnnotationException{
 		return switch(annotation){
-			case final BindBitSet bindBitSet -> ofBitSet(bindBitSet, evaluator, rootObject);
-			case final BindInteger bindInteger -> ofInteger(bindInteger, evaluator, rootObject);
-			case final BindString bindString -> ofString(bindString, evaluator, rootObject);
+			case final BindBitSet bindBitSet -> ofBitSet(bindBitSet, rootObject);
+			case final BindInteger bindInteger -> ofInteger(bindInteger, rootObject);
+			case final BindString bindString -> ofString(bindString, rootObject);
 			case final BindStringTerminated bindStringTerminated -> ofStringTerminated(bindStringTerminated);
 			case null, default -> null;
 		};
 	}
 
-	private static BitSetBehavior ofBitSet(final BindBitSet binding, final Evaluator evaluator, final Object rootObject)
+	private static BitSetBehavior ofBitSet(final BindBitSet binding, final Object rootObject)
 			throws AnnotationException{
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+		final int size = CodecHelper.evaluateSize(binding.size(), rootObject);
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Validator<?>> validator = binding.validator();
 		return new BitSetBehavior(size, converterChoices, defaultConverter, validator);
 	}
 
-	private static IntegerBehavior ofInteger(final BindInteger binding, final Evaluator evaluator, final Object rootObject)
+	private static IntegerBehavior ofInteger(final BindInteger binding, final Object rootObject)
 			throws AnnotationException{
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+		final int size = CodecHelper.evaluateSize(binding.size(), rootObject);
 		final ByteOrder byteOrder = binding.byteOrder();
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -93,9 +91,9 @@ public final class BehaviorBuilder{
 		return new IntegerBehavior(size, byteOrder, converterChoices, defaultConverter, validator);
 	}
 
-	private static StringBehavior ofString(final BindString binding, final Evaluator evaluator, final Object rootObject)
+	private static StringBehavior ofString(final BindString binding, final Object rootObject)
 			throws AnnotationException{
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+		final int size = CodecHelper.evaluateSize(binding.size(), rootObject);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();

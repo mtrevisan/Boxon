@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -105,12 +104,11 @@ public abstract class CommonBehavior{
 	/**
 	 * Retrieves the chosen converter for the given evaluator and root object.
 	 *
-	 * @param evaluator	The evaluator used for the conversion.
 	 * @param rootObject	The root object being converted.
 	 * @return	The chosen converter for the given evaluator and root object.
 	 */
-	public final Class<? extends Converter<?, ?>> getChosenConverter(final Evaluator evaluator, final Object rootObject){
-		return CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator, rootObject);
+	public final Class<? extends Converter<?, ?>> getChosenConverter(final Object rootObject){
+		return CodecHelper.getChosenConverter(converterChoices, defaultConverter, rootObject);
 	}
 
 	//convert value type into converter/validator input type

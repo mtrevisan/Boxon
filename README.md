@@ -188,7 +188,7 @@ You can use them as a starting point to build your own customized readers.
 
 Here is a brief summary of the parameters (described in detail below) for each annotation.
 
-Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParser` or `Evaluator` IF annotated with `@Injected`.
+Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` IF annotated with `@Injected`.
 
 |                      | condition |  type   | charset | terminator /<br/>consumeTerminator |  size   | byteOrder | selectFrom /<br/>selectDefault | validator | converter /<br/>selectConverterFrom |                      |
 |----------------------|:---------:|:-------:|:-------:|:----------------------------------:|:-------:|:---------:|:------------------------------:|:---------:|:-----------------------------------:|---------------------:|
@@ -1403,6 +1403,7 @@ Optionally, the method `String condition()` could be defined.
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements Codec{
+   private static final Evaluator EVALUATOR = Evaluator.getInstance();
 
    public Class<?> type(){
       return VarLengthEncoded.class;

@@ -47,7 +47,6 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
-import io.github.mtrevisan.boxon.io.Injected;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -135,8 +134,7 @@ class CustomCodecTest{
 	@Test
 	void testCustomCodec() throws BoxonException{
 		Codec codec = new Codec(){
-			@Injected
-			private Evaluator evaluator;
+			private static final Evaluator EVALUATOR = Evaluator.getInstance();
 
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -147,7 +145,7 @@ class CustomCodecTest{
 			public Object decode(BitReaderInterface reader, Annotation annotation, Annotation collectionBinding, Object rootObject){
 				BindCustomData binding = (BindCustomData)annotation;
 
-				int size = evaluator.evaluateSize(binding.size(), rootObject);
+				int size = EVALUATOR.evaluateSize(binding.size(), rootObject);
 				BigInteger value = reader.readBigInteger(size * Byte.SIZE, ByteOrder.BIG_ENDIAN);
 
 				return bigIntegerToAscii(value);
@@ -170,7 +168,7 @@ class CustomCodecTest{
 					Object value){
 				BindCustomData binding = (BindCustomData)annotation;
 
-				int size = evaluator.evaluateSize(binding.size(), rootObject);
+				int size = EVALUATOR.evaluateSize(binding.size(), rootObject);
 
 				BigInteger v = asciiToBigInteger((String)value);
 				BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);

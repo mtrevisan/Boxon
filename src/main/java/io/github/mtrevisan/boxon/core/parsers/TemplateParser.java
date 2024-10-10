@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.util.Collection;
@@ -52,17 +51,16 @@ public final class TemplateParser implements TemplateParserInterface{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final Evaluator evaluator){
-		return new TemplateParser(evaluator);
+	public static TemplateParser create(){
+		return new TemplateParser();
 	}
 
 
-	private TemplateParser(final Evaluator evaluator){
-		templateDecoder = TemplateDecoder.create(evaluator);
-		templateEncoder = TemplateEncoder.create(evaluator);
+	private TemplateParser(){
+		templateDecoder = TemplateDecoder.create();
+		templateEncoder = TemplateEncoder.create();
 
 		templateLoader = TemplateLoader.create();
 

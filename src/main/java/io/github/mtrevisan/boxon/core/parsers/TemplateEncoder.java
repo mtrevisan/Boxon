@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.util.List;
 
@@ -49,17 +48,14 @@ final class TemplateEncoder extends TemplateCoderBase{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	static TemplateEncoder create(final Evaluator evaluator){
-		return new TemplateEncoder(evaluator);
+	static TemplateEncoder create(){
+		return new TemplateEncoder();
 	}
 
 
-	private TemplateEncoder(final Evaluator evaluator){
-		super(evaluator);
-	}
+	private TemplateEncoder(){}
 
 
 	/**
@@ -75,7 +71,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 			throws BoxonException{
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		parserContext.setClassName(template.getName());
-		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+		EVALUATOR.addCurrentObjectToEvaluatorContext(currentObject);
 
 		preProcessFields(template, parserContext);
 
@@ -127,19 +123,19 @@ final class TemplateEncoder extends TemplateCoderBase{
 		}
 	}
 
-	private void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){
+	private static void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, rootObject);
 	}
 
-	private void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
+	private static void writeSkip(final SkipParams skip, final BitWriterInterface writer, final Object rootObject){
 		final boolean process = shouldProcessField(skip.condition(), rootObject);
 		if(!process)
 			return;
 
 		//choose between skip-by-size and skip-by-terminator
 		if(skip.annotationType() == SkipBits.class){
-			final int size = evaluator.evaluateSize(skip.size(), rootObject);
+			final int size = EVALUATOR.evaluateSize(skip.size(), rootObject);
 			writer.skipBits(size);
 		}
 		else if(skip.consumeTerminator())

@@ -65,7 +65,7 @@ public final class Describer{
 
 
 	private Describer(final Core core){
-		final Map<String, Object> context = core.getContext();
+		final Map<String, Object> context = Core.getContext();
 		final TemplateParser templateParser = core.getTemplateParser();
 		final ConfigurationParser configurationParser = core.getConfigurationParser();
 

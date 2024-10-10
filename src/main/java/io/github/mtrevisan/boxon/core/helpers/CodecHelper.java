@@ -50,6 +50,9 @@ import java.util.List;
  */
 public final class CodecHelper{
 
+	private static final Evaluator EVALUATOR = Evaluator.getInstance();
+
+
 	private CodecHelper(){}
 
 
@@ -72,13 +75,12 @@ public final class CodecHelper{
 	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @param size	The size to be evaluated.
-	 * @param evaluator	The evaluator.
 	 * @param rootObject	Root object for the evaluator.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	public static int evaluateSize(final String size, final Evaluator evaluator, final Object rootObject) throws AnnotationException{
-		final int evaluatedSize = evaluator.evaluateSize(size, rootObject);
+	public static int evaluateSize(final String size, final Object rootObject) throws AnnotationException{
+		final int evaluatedSize = EVALUATOR.evaluateSize(size, rootObject);
 		if(evaluatedSize < 0)
 			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
 
@@ -130,17 +132,16 @@ public final class CodecHelper{
 	 *
 	 * @param converterChoices	The converter choices annotation.
 	 * @param defaultConverter	The default converter.
-	 * @param evaluator	The evaluator.
 	 * @param rootObject	Root object for the evaluator.
 	 * @return	The converter class.
 	 */
 	public static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
-			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
+			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = converterChoices.alternatives();
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
 
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			if(EVALUATOR.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();
 		}
 		return defaultConverter;
@@ -188,16 +189,15 @@ public final class CodecHelper{
 	 * @param writer	The {@link BitWriterInterface} object to write the header to.
 	 * @param chosenAlternative	The {@link ObjectChoices.ObjectChoice} representing the chosen alternative.
 	 * @param selectFrom	The {@link ObjectChoices} representing the choices to select from.
-	 * @param evaluator	The {@link Evaluator} interface for evaluating expressions.
 	 * @param rootObject	The root object for the evaluator.
 	 */
 	public static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
-			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
+			final ObjectChoices selectFrom, final Object rootObject){
 		//if `chosenAlternative.condition()` contains '#prefix', then write `@ObjectChoice.prefix()`
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final byte prefixSize = selectFrom.prefixLength();
 
-			final int prefix = evaluator.evaluateSize(chosenAlternative.prefix(), rootObject);
+			final int prefix = EVALUATOR.evaluateSize(chosenAlternative.prefix(), rootObject);
 			if(prefixSize == Byte.SIZE)
 				writer.writeByte((byte)prefix);
 			else{

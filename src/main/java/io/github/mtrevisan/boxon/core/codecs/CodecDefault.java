@@ -37,8 +37,6 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
-import io.github.mtrevisan.boxon.io.Evaluator;
-import io.github.mtrevisan.boxon.io.Injected;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -67,9 +65,6 @@ final class CodecDefault implements Codec{
 	}
 
 
-	@Injected
-	private Evaluator evaluator;
-
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
@@ -79,7 +74,7 @@ final class CodecDefault implements Codec{
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject) throws AnnotationException{
-		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
+		final CommonBehavior behavior = BehaviorBuilder.of(annotation, rootObject);
 		if(behavior == null)
 			throw AnnotationException.create("Cannot handle this type of annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(annotation.getClass()));
@@ -88,7 +83,7 @@ final class CodecDefault implements Codec{
 		if(collectionBinding == null)
 			instance = behavior.readValue(reader);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
-			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
+			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), rootObject);
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
 		else if(collectionBinding instanceof BindAsList)
@@ -98,7 +93,7 @@ final class CodecDefault implements Codec{
 			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 
-		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(rootObject);
 		if(behavior instanceof IntegerBehavior)
 			instance = behavior.convertValueType(instance, chosenConverter, collectionBinding);
 		final Object convertedValue = CodecHelper.converterDecode(chosenConverter, instance);
@@ -113,7 +108,7 @@ final class CodecDefault implements Codec{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Annotation collectionBinding,
 			final Object rootObject, final Object value) throws AnnotationException{
-		final CommonBehavior behavior = BehaviorBuilder.of(annotation, evaluator, rootObject);
+		final CommonBehavior behavior = BehaviorBuilder.of(annotation, rootObject);
 		if(behavior == null)
 			throw AnnotationException.create("Cannot handle this type of annotation: {}, please report to the developer",
 				JavaHelper.prettyPrintClassName(annotation.getClass()));
@@ -121,13 +116,13 @@ final class CodecDefault implements Codec{
 		final Class<? extends Validator<?>> validator = behavior.validator();
 		CodecHelper.validate(value, validator);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(evaluator, rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(rootObject);
 		final Object convertedValue = CodecHelper.converterEncode(chosenConverter, value);
 
 		if(collectionBinding == null)
 			behavior.writeValue(writer, convertedValue);
 		else if(collectionBinding instanceof final BindAsArray superBinding){
-			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), evaluator, rootObject);
+			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), rootObject);
 			CodecHelper.assertSizeEquals(arraySize, Array.getLength(convertedValue));
 
 			behavior.writeArrayWithoutAlternatives(writer, convertedValue);

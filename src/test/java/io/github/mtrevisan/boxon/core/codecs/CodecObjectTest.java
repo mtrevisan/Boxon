@@ -47,7 +47,6 @@ import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -94,10 +93,9 @@ class CodecObjectTest{
 
 		CodecLoader.clearCodecs();
 		CodecLoader.loadDefaultCodecs();
-		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create(evaluator);
-		CodecLoader.injectDependenciesIntoCodecs(templateParser, evaluator);
-		FieldAccessor.injectValues(codec, templateParser, evaluator);
+		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create();
+		CodecLoader.injectDependenciesIntoCodecs(templateParser);
+		FieldAccessor.injectValues(codec, templateParser);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();

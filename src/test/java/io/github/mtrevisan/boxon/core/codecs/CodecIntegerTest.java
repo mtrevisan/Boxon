@@ -32,13 +32,11 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
-import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,7 +67,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -99,7 +96,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -129,7 +125,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -160,7 +155,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -190,7 +184,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -220,7 +213,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -251,7 +243,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -301,7 +292,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -332,7 +322,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 
@@ -362,7 +351,6 @@ class CodecIntegerTest{
 		BindInteger annotation = AnnotationCreator.createAnnotation(BindInteger.class, annotationData);
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValues(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, null, encodedValue);
 		writer.flush();
 

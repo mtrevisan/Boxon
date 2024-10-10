@@ -56,6 +56,11 @@ public final class Evaluator{
 	private static final String BOOLEAN_FALSE = Boolean.FALSE.toString();
 
 
+	private static final class SingletonHelper{
+		private static final Evaluator INSTANCE = new Evaluator();
+	}
+
+
 	private static final class EvaluationContext extends StandardEvaluationContext{
 
 		private final Map<String, Object> backupContext = new HashMap<>(0);
@@ -119,12 +124,12 @@ public final class Evaluator{
 
 
 	/**
-	 * Creates an instance.
+	 * Singleton instance of this evaluator.
 	 *
-	 * @return	An instance.
+	 * @return	The instance of this evaluator.
 	 */
-	public static Evaluator create(){
-		return new Evaluator();
+	public static Evaluator getInstance(){
+		return SingletonHelper.INSTANCE;
 	}
 
 
