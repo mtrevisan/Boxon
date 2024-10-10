@@ -121,6 +121,11 @@ public final class Generator{
 
 			return null;
 		}
+		catch(final ClassNotFoundException cnfe){
+			eventListener.generatorException(className, cnfe.getMessage());
+
+			throw cnfe;
+		}
 	}
 
 	private void loadEnumerations(final List<Map<String, Object>> enumerations){

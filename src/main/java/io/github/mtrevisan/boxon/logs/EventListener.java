@@ -211,6 +211,14 @@ public class EventListener{
 
 
 	/**
+	 * Called when the generator fails to create an annotation or a field type in a template or configuration.
+	 *
+	 * @param name	The template or configuration name.
+	 * @param reason	The reason from the exception thrown.
+	 */
+	public void generatorException(final String name, final String reason){}
+
+	/**
 	 * Called when a generated template or configuration already exists.
 	 *
 	 * @param name	The template or configuration name.
