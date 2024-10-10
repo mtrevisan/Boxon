@@ -77,12 +77,11 @@ public final class FieldAccessor{
 		}
 	}
 
-	//FIXME ugliness? (set & create...)
 	private static <T> T updateObjectFieldValue(final T obj, final Field field, final Object value) throws IllegalArgumentException,
 			ReflectiveOperationException{
 		return (!isRecord(obj)
 			? updateField(obj, field, value)
-			: ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
+			: ConstructorHelper.createRecordWithUpdatedField(obj, field.getName(), value)
 		);
 	}
 

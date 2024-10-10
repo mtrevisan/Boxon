@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.similarity.metrics;
 
 import io.github.mtrevisan.boxon.core.similarity.distances.StringMetricData;
+import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -169,6 +170,51 @@ class DamerauLevenshteinMetricTest{
 
 		Assertions.assertEquals(2, distance);
 		Assertions.assertEquals(6./7., similarity, 0.0001);
+	}
+
+
+	public static void main(String[] args){
+		DamerauLevenshteinMetric<StringMetricData> metric = DamerauLevenshteinMetric.create();
+		StringMetricData[] data1 = {
+			StringMetricData.of(""),
+			StringMetricData.of("java"),
+			StringMetricData.of("abc"),
+			StringMetricData.of("he"),
+			StringMetricData.of("hd"),
+			StringMetricData.of("d"),
+			StringMetricData.of("head"),
+			StringMetricData.of("kitten"),
+			StringMetricData.of("Saturday"),
+			StringMetricData.of("Saturday")
+		};
+		StringMetricData[] data2 = {
+			StringMetricData.of(""),
+			StringMetricData.of("java"),
+			StringMetricData.of("def"),
+			StringMetricData.of("head"),
+			StringMetricData.of("head"),
+			StringMetricData.of("head"),
+			StringMetricData.of("he"),
+			StringMetricData.of("sitting"),
+			StringMetricData.of("Sunday"),
+			StringMetricData.of("Satudray")
+		};
+
+
+		//warm-up
+		for(int i = 0; i < 2_000; i ++){
+			final int index = i % data1.length;
+			metric.distance(data1[index], data2[index]);
+		}
+
+		TimeWatch watch = TimeWatch.start();
+		for(int i = 0; i < 10_000_000; i ++){
+			final int index = i % data1.length;
+			metric.distance(data1[index], data2[index]);
+		}
+		watch.stop();
+
+		System.out.println(watch.toString(10_000_000 * data1.length) + " (" + watch.toStringAsFrequency(10_000_000 * data1.length) + ")");
 	}
 
 }

@@ -175,7 +175,8 @@ final class TemplateDecoder extends TemplateCoderBase{
 			addContextParameters(contextParameters);
 
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, collectionBinding, parserContext.getRootObject());
+			final Object rootObject = parserContext.getRootObject();
+			final Object value = codec.decode(reader, binding, collectionBinding, rootObject);
 
 			//restore original current object
 			evaluator.addCurrentObjectToEvaluatorContext(currentObject);

@@ -40,7 +40,7 @@ import java.util.function.Function;
  */
 public final class Memoizer{
 
-	public static final int UNBOUNDED_MEMOIZER_SIZE = 0;
+	public static final int UNBOUNDED_SIZE = 0;
 
 
 	private Memoizer(){}
@@ -57,7 +57,7 @@ public final class Memoizer{
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
-		return memoize(function, UNBOUNDED_MEMOIZER_SIZE);
+		return memoize(function, UNBOUNDED_SIZE);
 	}
 
 	/**
@@ -73,7 +73,9 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function, final int maxSize){
 		return new Function<>(){
-			private final Map<IN, OUT> cache = (maxSize <= UNBOUNDED_MEMOIZER_SIZE? new ConcurrentHashMap<>(1): createErasableCache(maxSize));
+			private final Map<IN, OUT> cache = (maxSize <= UNBOUNDED_SIZE
+				? new ConcurrentHashMap<>(1)
+				: createErasableCache(maxSize));
 
 			@Override
 			public OUT apply(final IN input){
@@ -96,7 +98,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
-		return throwingMemoize(function, UNBOUNDED_MEMOIZER_SIZE);
+		return throwingMemoize(function, UNBOUNDED_SIZE);
 	}
 
 	/**
@@ -114,23 +116,29 @@ public final class Memoizer{
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function, final int maxSize){
 		return new ThrowingFunction<>(){
-			private final Map<IN, OUT> cache = (maxSize <= UNBOUNDED_MEMOIZER_SIZE? new HashMap<>(1): createErasableCache(maxSize));
+			private final Map<IN, OUT> cache = (maxSize <= UNBOUNDED_SIZE
+				? new HashMap<>(1)
+				: createErasableCache(maxSize));
 			private final Lock lock = new ReentrantLock();
 
 			@Override
 			public OUT apply(final IN input) throws E{
 				lock.lock();
 				try{
-					OUT value = cache.get(input);
-					if(value == null){
-						value = function.apply(input);
-						cache.put(input, value);
-					}
-					return value;
+					return computeIfAbsent(input);
 				}
 				finally{
 					lock.unlock();
 				}
+			}
+
+			private OUT computeIfAbsent(final IN input) throws E{
+				OUT output = cache.get(input);
+				if(output == null){
+					output = function.apply(input);
+					cache.put(input, output);
+				}
+				return output;
 			}
 		};
 	}

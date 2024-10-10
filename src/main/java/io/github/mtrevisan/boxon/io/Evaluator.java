@@ -111,7 +111,7 @@ public final class Evaluator{
 
 	private static Function<String, Expression> CACHED_EXPRESSIONS;
 	static{
-		initialize(Memoizer.UNBOUNDED_MEMOIZER_SIZE);
+		initialize(Memoizer.UNBOUNDED_SIZE);
 	}
 
 

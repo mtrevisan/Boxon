@@ -85,7 +85,8 @@ final class ParserWriterHelper{
 			//encode value from current object
 			final Object value = parserContext.getFieldValue();
 			//write value to raw message
-			codec.encode(writer, binding, collectionBinding, parserContext.getRootObject(), value);
+			final Object rootObject = parserContext.getRootObject();
+			codec.encode(writer, binding, collectionBinding, rootObject, value);
 
 			eventListener.writtenField(className, fieldName, value);
 		}

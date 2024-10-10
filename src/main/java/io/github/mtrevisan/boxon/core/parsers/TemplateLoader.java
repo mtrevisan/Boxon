@@ -56,7 +56,7 @@ public final class TemplateLoader{
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static Function<byte[], int[]> PRE_PROCESSED_PATTERNS;
 	static{
-		initialize(Memoizer.UNBOUNDED_MEMOIZER_SIZE);
+		initialize(Memoizer.UNBOUNDED_SIZE);
 	}
 
 

@@ -108,7 +108,6 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 		final int maximumDistance = length1 + length2;
 
 		//create and initialize the element array indices
-		//TODO use fastutil?
 		final Map<Object, Integer> da = JavaHelper.createMapOrEmpty(maximumDistance);
 		for(int d = 0; d < length1; d ++)
 			da.put(input1.elementAt(d), 0);

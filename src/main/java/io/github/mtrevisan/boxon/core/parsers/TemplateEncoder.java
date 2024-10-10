@@ -79,10 +79,8 @@ final class TemplateEncoder extends TemplateCoderBase{
 
 		preProcessFields(template, parserContext);
 
-		final Object rootObject = parserContext.getRootObject();
-
 		//encode message fields:
-		encodeMessageFields(template.getTemplateFields(), writer, rootObject, parserContext);
+		encodeMessageFields(template.getTemplateFields(), writer, parserContext);
 
 		final TemplateHeader header = template.getHeader();
 		if(header != null)
@@ -93,8 +91,9 @@ final class TemplateEncoder extends TemplateCoderBase{
 		processFields(template, parserContext, PostProcess::valueEncode);
 	}
 
-	private <T> void encodeMessageFields(final List<TemplateField> fields, final BitWriterInterface writer, final Object rootObject,
+	private <T> void encodeMessageFields(final List<TemplateField> fields, final BitWriterInterface writer,
 			final ParserContext<T> parserContext) throws BoxonException{
+		final Object rootObject = parserContext.getRootObject();
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final TemplateField field = fields.get(i);
 
@@ -104,10 +103,9 @@ final class TemplateEncoder extends TemplateCoderBase{
 
 			//check if field has to be processed...
 			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
-			if(shouldProcessField){
+			if(shouldProcessField)
 				//... and if so, process it
 				encodeField(writer, parserContext, field);
-			}
 		}
 	}
 

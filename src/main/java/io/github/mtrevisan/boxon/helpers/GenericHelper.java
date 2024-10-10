@@ -50,7 +50,7 @@ public final class GenericHelper{
 
 	private static Function<Class<?>, List<Type>> RESOLVED_OFFSPRINGS;
 	static{
-		initialize(Memoizer.UNBOUNDED_MEMOIZER_SIZE);
+		initialize(Memoizer.UNBOUNDED_SIZE);
 	}
 
 

@@ -47,7 +47,7 @@ public final class ConstructorHelper{
 	private static Function<Class<?>, Supplier<?>> EMPTY_CREATORS;
 	private static Function<Map.Entry<Class<?>, Class<?>[]>, Function<Object[], ?>> NON_EMPTY_CREATORS;
 	static{
-		initialize(Memoizer.UNBOUNDED_MEMOIZER_SIZE, Memoizer.UNBOUNDED_MEMOIZER_SIZE);
+		initialize(Memoizer.UNBOUNDED_SIZE, Memoizer.UNBOUNDED_SIZE);
 	}
 
 	private static final Objenesis OBJENESIS = new ObjenesisStd();
@@ -135,7 +135,7 @@ public final class ConstructorHelper{
 	}
 
 
-	static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
+	static <T> T createRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
 			throws ReflectiveOperationException{
 		final Class<T> objClass = (Class<T>)obj.getClass();
 		final RecordComponent[] recordComponents = objClass.getRecordComponents();
