@@ -205,24 +205,7 @@ public final class TemplateExtractor{
 			final Annotation[] parentAnnotations = annotationType.getAnnotations();
 			final Annotation parentAnnotation = findParentAnnotation(parentAnnotations);
 			if(parentAnnotation != null){
-				Annotation[] skips = null;
-				final Class<? extends Annotation> parentAnnotationType = parentAnnotation.annotationType();
-				if(SKIP_ANNOTATIONS.contains(parentAnnotationType)){
-					final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
-					final Annotation[] declaredSkips = (Annotation[])declaredValues.get(MULTIPLE_ANNOTATIONS_VALUE);
-					skips = new Annotation[declaredSkips.length];
-					int j = 0;
-					final Class<? extends Annotation> declaredSkipType = (Class<? extends Annotation>)parentAnnotationType.getEnclosingClass();
-					for(int k = 0, skipsLength = declaredSkips.length; k < skipsLength; k ++){
-						final Annotation declaredSkip = declaredSkips[k];
-
-						final Class<? extends Annotation> skipAnnotationType = declaredSkip.annotationType();
-						final Annotation[] skipParentAnnotations = skipAnnotationType.getAnnotations();
-						final Annotation skipParentAnnotation = findParentAnnotation(skipParentAnnotations);
-
-						skips[j ++] = createSkipAnnotation(declaredSkip, declaredSkipType, skipParentAnnotation);
-					}
-				}
+				final Annotation[] skips = extractSkips(declaredAnnotation, parentAnnotation);
 
 				declaredAnnotation = createAnnotationWithDefaults(declaredAnnotation, parentAnnotation, skips);
 			}
@@ -230,6 +213,28 @@ public final class TemplateExtractor{
 			annotations[i] = declaredAnnotation;
 		}
 		return annotations;
+	}
+
+	private static Annotation[] extractSkips(final Annotation declaredAnnotation, final Annotation parentAnnotation){
+		Annotation[] skips = null;
+		final Class<? extends Annotation> parentAnnotationType = parentAnnotation.annotationType();
+		if(SKIP_ANNOTATIONS.contains(parentAnnotationType)){
+			final Map<String, Object> declaredValues = AnnotationCreator.extractAnnotationValues(declaredAnnotation);
+			final Annotation[] declaredSkips = (Annotation[])declaredValues.get(MULTIPLE_ANNOTATIONS_VALUE);
+			skips = new Annotation[declaredSkips.length];
+			int j = 0;
+			final Class<? extends Annotation> declaredSkipType = (Class<? extends Annotation>)parentAnnotationType.getEnclosingClass();
+			for(int k = 0, skipsLength = declaredSkips.length; k < skipsLength; k ++){
+				final Annotation declaredSkip = declaredSkips[k];
+
+				final Class<? extends Annotation> skipAnnotationType = declaredSkip.annotationType();
+				final Annotation[] skipParentAnnotations = skipAnnotationType.getAnnotations();
+				final Annotation skipParentAnnotation = findParentAnnotation(skipParentAnnotations);
+
+				skips[j ++] = createSkipAnnotation(declaredSkip, declaredSkipType, skipParentAnnotation);
+			}
+		}
+		return skips;
 	}
 
 	private static Annotation findParentAnnotation(final Annotation[] parentAnnotations){

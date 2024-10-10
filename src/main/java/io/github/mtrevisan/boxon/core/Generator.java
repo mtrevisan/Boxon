@@ -132,22 +132,7 @@ public final class Generator{
 
 			final String enumName = (String)enumeration.get(DescriberKey.ENUMERATION_NAME.toString());
 			final String[] enumValues = (String[])enumeration.get(DescriberKey.ENUMERATION_VALUES.toString());
-			final int count = enumValues.length;
-			elementNames.ensureCapacity(count);
-			elementValues.ensureCapacity(count);
-			for(int j = 0; j < count; j ++){
-				final String enumValue = enumValues[j];
-
-				String elementName = enumValue;
-				BigInteger elementValue = null;
-				final int index = enumValue.indexOf('(');
-				if(index > 0){
-					elementName = enumValue.substring(0, index);
-					elementValue = new BigInteger(enumValue.substring(index + 1, enumValue.length() - 1));
-				}
-				elementNames.add(elementName);
-				elementValues.add(elementValue);
-			}
+			fillElements(enumValues, elementNames, elementValues);
 
 			try{
 				ClassCreator.loadEnumeration(enumName, elementNames, elementValues);
@@ -158,6 +143,26 @@ public final class Generator{
 
 			elementNames.clear();
 			elementValues.clear();
+		}
+	}
+
+	private static void fillElements(final String[] enumValues, final ArrayList<String> elementNames,
+			final ArrayList<BigInteger> elementValues){
+		final int count = enumValues.length;
+		elementNames.ensureCapacity(count);
+		elementValues.ensureCapacity(count);
+		for(int j = 0; j < count; j ++){
+			final String enumValue = enumValues[j];
+
+			String elementName = enumValue;
+			BigInteger elementValue = null;
+			final int index = enumValue.indexOf('(');
+			if(index > 0){
+				elementName = enumValue.substring(0, index);
+				elementValue = new BigInteger(enumValue.substring(index + 1, enumValue.length() - 1));
+			}
+			elementNames.add(elementName);
+			elementValues.add(elementValue);
 		}
 	}
 
