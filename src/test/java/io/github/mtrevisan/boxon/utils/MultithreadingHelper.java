@@ -44,7 +44,6 @@ public final class MultithreadingHelper{
 	public static <T> void testMultithreading(final Callable<? extends T> fun, final Consumer<? super T> combiner, final int threadCount)
 			throws ExecutionException, InterruptedException{
 		try(final ExecutorService service = Executors.newFixedThreadPool(threadCount)){
-
 			final CountDownLatch latch = new CountDownLatch(1);
 			final AtomicBoolean running = new AtomicBoolean();
 			final AtomicInteger overlaps = new AtomicInteger();

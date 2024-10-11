@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
@@ -206,26 +205,6 @@ public final class CodecLoader{
 		codecs.put(codecType, codec);
 		if(validator != null)
 			customCodecValidators.put(codecType, validator);
-	}
-
-	/**
-	 * Inject the give object in all the codecs.
-	 *
-	 * @param dependencies	The object to be injected.
-	 */
-	public static void injectDependenciesIntoCodecs(final Object... dependencies){
-		for(final Codec codec : codecs.values())
-			injectDependenciesIntoCodec(codec, dependencies);
-	}
-
-	/**
-	 * Inject the give object in the given codec.
-	 *
-	 * @param codec	The codec to be injected into.
-	 * @param dependencies	The object(s) to be injected.
-	 */
-	public static void injectDependenciesIntoCodec(final Codec codec, final Object... dependencies){
-		FieldAccessor.injectValues(codec, dependencies);
 	}
 
 	/**

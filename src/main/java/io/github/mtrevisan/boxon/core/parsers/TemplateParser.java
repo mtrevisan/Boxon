@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
-import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -40,7 +40,13 @@ import java.util.Collection;
 /**
  * Declarative data binding parser for message templates.
  */
-public final class TemplateParser implements TemplateParserInterface{
+public final class TemplateParser{
+
+
+	private static final class SingletonHelper{
+		private static final TemplateParser INSTANCE = new TemplateParser();
+	}
+
 
 	private final TemplateDecoder templateDecoder;
 	private final TemplateEncoder templateEncoder;
@@ -49,12 +55,12 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	/**
-	 * Create a template parser.
+	 * Singleton instance of this evaluator.
 	 *
-	 * @return	A template parser.
+	 * @return	The instance of this evaluator.
 	 */
-	public static TemplateParser create(){
-		return new TemplateParser();
+	public static TemplateParser getInstance(){
+		return SingletonHelper.INSTANCE;
 	}
 
 
@@ -111,7 +117,14 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
-	@Override
+	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param type	The class of the object to be returned as a {@link Template}.
+	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @return	The {@link Template} for the given type.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 */
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return templateLoader.createTemplate(type);
 	}
@@ -168,16 +181,39 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
-	@Override
+	/**
+	 * Decode the template using the given reader with the parent object.
+	 *
+	 * @param template	The template to decode.
+	 * @param reader	The reader that holds the decoded template.
+	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
+	 * @return	The data read.
+	 * @throws CodecException   If a codec is not found.
+	 * @throws TemplateException	If a template error occurs.
+	 */
 	public Object decode(final Template<?> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{
 		return templateDecoder.decode(template, reader, parentObject);
 	}
 
 
-	@Override
+	/**
+	 * Encode the template using the given writer with the given object that contains the values.
+	 *
+	 * @param template	The template to encode.
+	 * @param writer	The writer that holds the encoded template.
+	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
+	 * @param currentObject	The current object that holds the values.
+	 * @throws CodecException	If a codec is not found.
+	 * @throws BoxonException	If an error occurs.
+	 */
 	public void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final Object currentObject)
 			throws BoxonException{
 		templateEncoder.encode(template, writer, parentObject, currentObject);
+	}
+
+
+	public void clear(){
+		templateLoader.clear();
 	}
 
 }

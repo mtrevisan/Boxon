@@ -26,8 +26,8 @@ package io.github.mtrevisan.boxon.core.helpers;
 
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
-import io.github.mtrevisan.boxon.io.Injected;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
@@ -163,7 +163,7 @@ public final class FieldAccessor{
 		final List<Field> allFields = new ArrayList<>(0);
 		while(cls != null && cls != PARENT_CLASS_LIMIT){
 			final Field[] rawChildFields = cls.getDeclaredFields();
-			final List<Field> childFields = extractChildFields(rawChildFields, fieldType);
+			final List<Field> childFields = extractChildFields(rawChildFields, fieldType, null);
 
 			if(!childFields.isEmpty())
 				//place parent's fields before all the child's fields
@@ -176,10 +176,11 @@ public final class FieldAccessor{
 		return allFields;
 	}
 
-	private static List<Field> extractChildFields(final Field[] rawChildFields, final Class<?> fieldType){
+	private static List<Field> extractChildFields(final Field[] rawChildFields, final Class<?> fieldType,
+			final Class<? extends Annotation> injection){
 		final List<Field> childFields = new ArrayList<>(0);
 		if(fieldType != null)
-			extractInjectableChildFields(rawChildFields, fieldType, childFields);
+			extractInjectableChildFields(rawChildFields, fieldType, injection, childFields);
 		else
 			extractChildFields(rawChildFields, childFields);
 		return childFields;
@@ -187,20 +188,23 @@ public final class FieldAccessor{
 
 	/**
 	 * Extracts the child fields from the given array of fields and adds them to the provided collection, keeping those fields that have
-	 * the {@link Injected} annotation and are of the given (field) type.
+	 * the given annotation and are of the given (field) type.
 	 *
 	 * @param rawFields	The array of fields to extract child fields from.
 	 * @param fieldType	The class of the fields to be extracted.
+	 * @param injection	The annotation that marks a parameter as a recipient to an injection.
 	 * @param fields	The collection to which the child fields will be added.
 	 */
-	private static void extractInjectableChildFields(final Field[] rawFields, final Class<?> fieldType, final Collection<Field> fields){
-		for(int i = 0, length = rawFields.length; i < length; i ++){
-			final Field rawField = rawFields[i];
+	private static void extractInjectableChildFields(final Field[] rawFields, final Class<?> fieldType,
+			final Class<? extends Annotation> injection, final Collection<Field> fields){
+		if(injection != null)
+			for(int i = 0, length = rawFields.length; i < length; i ++){
+				final Field rawField = rawFields[i];
 
-			//an injection should be performed
-			if(rawField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawField.getType()))
-				fields.add(rawField);
-		}
+				//an injection should be performed
+				if(rawField.isAnnotationPresent(injection) && fieldType.isAssignableFrom(rawField.getType()))
+					fields.add(rawField);
+			}
 	}
 
 	/**

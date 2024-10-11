@@ -55,8 +55,7 @@ final class ConfigFieldDataBuilder{
 		configData.setPattern(annotation.pattern());
 		configData.setEnumeration(annotation.enumeration());
 		configData.setDefaultValue(annotation.defaultValue());
-		configData.setCharset(annotation.charset());
-		configData.setRadix(annotation.radix());
+		//NOTE: charset and radix are validated elsewhere
 		return configData;
 	}
 
@@ -71,7 +70,7 @@ final class ConfigFieldDataBuilder{
 		final ConfigFieldData configData = new ConfigFieldData(field, annotation.annotationType().getSimpleName());
 		configData.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
 		configData.setPattern(annotation.pattern());
-		configData.setCharset(annotation.charset());
+		//NOTE: charset is validated elsewhere
 		return configData;
 	}
 
@@ -116,8 +115,7 @@ final class ConfigFieldDataBuilder{
 		configData.setMinMaxValues(annotation.minValue(), annotation.maxValue());
 		configData.setPattern(annotation.pattern());
 		configData.setDefaultValue(annotation.defaultValue());
-		configData.setCharset(annotation.charset());
-		configData.setRadix(annotation.radix());
+		//NOTE: charset and radix are validated elsewhere
 		return configData;
 	}
 

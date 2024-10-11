@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.SkipUntilTerminator;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
+import java.util.Objects;
 
 
 /**
@@ -47,13 +48,13 @@ public final class SkipParams{
 	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the number
 	 * of bits to be skipped.
 	 */
-	private String size;
+	private final String size;
 
 	/** The byte that terminates the skip. */
-	private byte terminator;
+	private final byte terminator;
 
 	/** Whether to consume the terminator. */
-	private boolean consumeTerminator;
+	private final boolean consumeTerminator;
 
 
 	public static SkipParams create(final SkipBits annotation){
@@ -68,12 +69,17 @@ public final class SkipParams{
 	private SkipParams(final SkipBits annotation){
 		condition = annotation.condition();
 		size = annotation.value();
+
+		terminator = 0;
+		consumeTerminator = false;
 	}
 
 	private SkipParams(final SkipUntilTerminator annotation){
 		condition = annotation.condition();
 		terminator = annotation.value();
 		consumeTerminator = annotation.consumeTerminator();
+
+		size = null;
 	}
 
 
@@ -121,6 +127,30 @@ public final class SkipParams{
 	 */
 	public boolean consumeTerminator(){
 		return consumeTerminator;
+	}
+
+
+	@Override
+	public boolean equals(final Object obj){
+		if(this == obj)
+			return true;
+		if(obj == null || getClass() != obj.getClass())
+			return false;
+
+		final SkipParams other = (SkipParams)obj;
+		return (terminator == other.terminator
+			&& consumeTerminator == other.consumeTerminator
+			&& Objects.equals(condition, other.condition)
+			&& Objects.equals(size, other.size));
+	}
+
+	@Override
+	public int hashCode(){
+		int result = condition.hashCode();
+		result = 31 * result + Objects.hashCode(size);
+		result = 31 * result + Byte.hashCode(terminator);
+		result = 31 * result + Boolean.hashCode(consumeTerminator);
+		return result;
 	}
 
 }

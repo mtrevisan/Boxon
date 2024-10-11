@@ -44,7 +44,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 
 
@@ -62,7 +62,7 @@ public final class TemplateLoader{
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(Template::create);
 
-	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
+	private final Map<String, Template<?>> templates = new ConcurrentSkipListMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 
 	private EventListener eventListener;
@@ -220,7 +220,8 @@ public final class TemplateLoader{
 
 	private void processTemplate(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
 		final String key = calculateKey(headerStart, charset);
-		if(templates.containsKey(key))
+		final Template<?> temp = templates.get(key);
+		if(temp != null && temp.hashCode() != template.hashCode())
 			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getName());
 
 		templates.put(key, template);
@@ -335,6 +336,11 @@ public final class TemplateLoader{
 		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);
 		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, preProcessedPattern);
 		return (index >= startIndex? index: -1);
+	}
+
+
+	void clear(){
+		templates.clear();
 	}
 
 }

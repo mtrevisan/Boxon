@@ -47,10 +47,6 @@ final class ConfigFieldData{
 
 	private String defaultValue;
 
-	private String charset;
-
-	private int radix;
-
 
 	ConfigFieldData(final Field field, final String annotationName){
 		this.field = field;
@@ -202,42 +198,6 @@ final class ConfigFieldData{
 	 */
 	void setDefaultValue(final String defaultValue){
 		this.defaultValue = defaultValue;
-	}
-
-	/**
-	 * The charset for the configuration field.
-	 *
-	 * @return	The charset for the configuration field.
-	 */
-	String getCharset(){
-		return charset;
-	}
-
-	/**
-	 * Set the charset for the configuration field.
-	 *
-	 * @param charset	The charset.
-	 */
-	void setCharset(final String charset){
-		this.charset = charset;
-	}
-
-	/**
-	 * The radix for the configuration field.
-	 *
-	 * @return	The radix for the configuration field.
-	 */
-	int getRadix(){
-		return radix;
-	}
-
-	/**
-	 * Set the radix for the configuration field.
-	 *
-	 * @param radix	The radix.
-	 */
-	void setRadix(final int radix){
-		this.radix = radix;
 	}
 
 }

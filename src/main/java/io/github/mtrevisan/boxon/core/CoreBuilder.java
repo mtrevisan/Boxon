@@ -180,7 +180,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withDefaultCodecs(){
-		addMethod(ConfigurationStep.CODEC, core::useDefaultCodecs);
+		addMethod(ConfigurationStep.CODEC, Core::useDefaultCodecs);
 
 		return this;
 	}
@@ -192,7 +192,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.CODEC, () -> core.addCodecsFrom(basePackageClasses));
+		addMethod(ConfigurationStep.CODEC, () -> Core.addCodecsFrom(basePackageClasses));
 
 		return this;
 	}
@@ -204,7 +204,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodec(final Codec codec){
-		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
+		addMethod(ConfigurationStep.CODEC, () -> Core.addCodec(codec));
 
 		return this;
 	}
@@ -217,7 +217,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodec(final Codec codec, final AnnotationValidator validator){
-		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec, validator));
+		addMethod(ConfigurationStep.CODEC, () -> Core.addCodec(codec, validator));
 
 		return this;
 	}
@@ -229,7 +229,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodecs(final Codec... codecs){
-		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
+		addMethod(ConfigurationStep.CODEC, () -> Core.addCodecs(codecs));
 
 		return this;
 	}
@@ -290,21 +290,6 @@ public final class CoreBuilder{
 			.add(runnable);
 	}
 
-
-	/**
-	 * Create the common core data executing all the configuration commands called in the proper order.
-	 *
-	 * @return	{@link Core Core} data used by {@link Parser}, {@link Describer}, {@link Composer}, and {@link Configurator}.
-	 * @throws AnnotationException	If an annotation error occurs.
-	 * @throws CodecException	If a codec was already loaded.
-	 * @throws TemplateException	If a template error occurs.
-	 * @throws ConfigurationException	If a configuration error occurs.
-	 * @deprecated	Use {@link #build()} instead.
-	 */
-	@Deprecated
-	public Core create() throws BoxonException{
-		return build();
-	}
 
 	/**
 	 * Create the common core data executing all the configuration commands called in the proper order.

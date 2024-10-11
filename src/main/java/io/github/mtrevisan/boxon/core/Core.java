@@ -71,7 +71,9 @@ public final class Core{
 
 
 	private Core(){
-		templateParser = TemplateParser.create();
+		templateParser = TemplateParser.getInstance();
+		templateParser.clear();
+
 		configurationParser = ConfigurationParser.create();
 	}
 
@@ -156,10 +158,8 @@ public final class Core{
 	/**
 	 * Loads all the default codecs.
 	 */
-	void useDefaultCodecs(){
+	static void useDefaultCodecs(){
 		CodecLoader.loadDefaultCodecs();
-
-		postProcessCodecs();
 	}
 
 	/**
@@ -168,10 +168,8 @@ public final class Core{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @throws CodecException	If a codec was already loaded.
 	 */
-	void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
+	static void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
 		CodecLoader.loadCodecsFrom(basePackageClasses);
-
-		postProcessCodecs();
 	}
 
 	/**
@@ -180,10 +178,8 @@ public final class Core{
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final Codec codec) throws CodecException{
+	static void addCodec(final Codec codec) throws CodecException{
 		CodecLoader.addCodec(codec);
-
-		postProcessCodec(codec);
 	}
 
 	/**
@@ -193,10 +189,8 @@ public final class Core{
 	 * @param validator	The codec validator.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
+	static void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
 		CodecLoader.addCodec(codec, validator);
-
-		postProcessCodec(codec);
 	}
 
 	/**
@@ -205,19 +199,8 @@ public final class Core{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
 	 */
-	void addCodecs(final Codec... codecs) throws CodecException{
+	static void addCodecs(final Codec... codecs) throws CodecException{
 		CodecLoader.addCodecs(codecs);
-
-		for(int i = 0, length = codecs.length; i < length; i ++)
-			postProcessCodec(codecs[i]);
-	}
-
-	private void postProcessCodec(final Codec codec){
-		CodecLoader.injectDependenciesIntoCodec(codec, templateParser, EVALUATOR);
-	}
-
-	private void postProcessCodecs(){
-		CodecLoader.injectDependenciesIntoCodecs(templateParser, EVALUATOR);
 	}
 
 

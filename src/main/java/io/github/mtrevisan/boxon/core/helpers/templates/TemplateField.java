@@ -34,9 +34,11 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 /** Data associated with an annotated field. */
@@ -167,6 +169,34 @@ public final class TemplateField implements FieldRetriever{
 	 */
 	public String getCondition(){
 		return condition;
+	}
+
+
+	@Override
+	public boolean equals(final Object obj){
+		if(this == obj)
+			return true;
+		if(obj == null || getClass() != obj.getClass())
+			return false;
+
+		final TemplateField other = (TemplateField)obj;
+		return (Objects.equals(field, other.field)
+			&& Objects.deepEquals(skips, other.skips)
+			&& Objects.equals(binding, other.binding)
+			&& Objects.equals(collectionBinding, other.collectionBinding)
+			&& Objects.equals(contextParameters, other.contextParameters)
+			&& Objects.equals(condition, other.condition));
+	}
+
+	@Override
+	public int hashCode(){
+		int result = field.hashCode();
+		result = 31 * result + Arrays.hashCode(skips);
+		result = 31 * result + Objects.hashCode(binding);
+		result = 31 * result + Objects.hashCode(collectionBinding);
+		result = 31 * result + Objects.hashCode(contextParameters);
+		result = 31 * result + Objects.hashCode(condition);
+		return result;
 	}
 
 }

@@ -39,6 +39,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -86,8 +87,7 @@ public final class Template<T>{
 	}
 
 
-	private Template(final Class<T> type)
-			throws AnnotationException{
+	private Template(final Class<T> type) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(TemplateHeader.class);
@@ -263,18 +263,27 @@ public final class Template<T>{
 
 	@Override
 	public boolean equals(final Object obj){
-		if(obj == this)
+		if(this == obj)
 			return true;
-		if(obj == null || obj.getClass() != getClass())
+		if(obj == null || getClass() != obj.getClass())
 			return false;
 
-		final Template<?> rhs = (Template<?>)obj;
-		return (type == rhs.type);
+		final Template<?> other = (Template<?>)obj;
+		return (Objects.equals(type, other.type)
+			&& Objects.equals(header, other.header)
+			&& Objects.equals(templateFields, other.templateFields)
+			&& Objects.equals(evaluatedFields, other.evaluatedFields)
+			&& Objects.equals(postProcessedFields, other.postProcessedFields));
 	}
 
 	@Override
 	public int hashCode(){
-		return getName().hashCode();
+		int result = Objects.hashCode(type);
+		result = 31 * result + Objects.hashCode(header);
+		result = 31 * result + Objects.hashCode(templateFields);
+		result = 31 * result + Objects.hashCode(evaluatedFields);
+		result = 31 * result + Objects.hashCode(postProcessedFields);
+		return result;
 	}
 
 }

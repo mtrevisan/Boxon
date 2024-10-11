@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcess;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 
 /**
@@ -88,9 +89,28 @@ public final class EvaluatedField<B>{
 		return binding;
 	}
 
+
 	@Override
 	public String toString(){
 		return "EvaluatedField{" + "field=" + field + ", binding=" + binding + '}';
+	}
+
+	@Override
+	public boolean equals(final Object obj){
+		if(this == obj)
+			return true;
+		if(obj == null || getClass() != obj.getClass())
+			return false;
+
+		final EvaluatedField<?> other = (EvaluatedField<?>)obj;
+		return (Objects.equals(field, other.field) && Objects.equals(binding, other.binding));
+	}
+
+	@Override
+	public int hashCode(){
+		int result = Objects.hashCode(field);
+		result = 31 * result + Objects.hashCode(binding);
+		return result;
 	}
 
 }

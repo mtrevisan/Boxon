@@ -188,8 +188,6 @@ You can use them as a starting point to build your own customized readers.
 
 Here is a brief summary of the parameters (described in detail below) for each annotation.
 
-Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` IF annotated with `@Injected`.
-
 |                      | condition |  type   | charset | terminator /<br/>consumeTerminator |  size   | byteOrder | selectFrom /<br/>selectDefault | validator | converter /<br/>selectConverterFrom |                      |
 |----------------------|:---------:|:-------:|:-------:|:----------------------------------:|:-------:|:---------:|:------------------------------:|:---------:|:-----------------------------------:|---------------------:|
 | BindObject           |  &#9745;  | &#9745; |         |                                    |         |           |            &#9745;             |  &#9745;  |               &#9745;               |           BindObject |
@@ -1403,17 +1401,18 @@ Optionally, the method `String condition()` could be defined.
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements Codec{
-   private static final Evaluator EVALUATOR = Evaluator.getInstance();
+   private static Evaluator EVALUATOR = Evaluator.getInstance();
+   private static TemplateParser TEMPLATE_PARSER = TemplateParser.getInstance();
 
    public Class<?> type(){
       return VarLengthEncoded.class;
    }
 
    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){
-            final byte b = reader.getByte();
+            byte b = reader.getByte();
             baos.write(b & 0x7F);
 
             continuing = ((b & 0x80) != 0x00);
@@ -1422,7 +1421,7 @@ class VariableLengthByteArray implements Codec{
     }
 
     public void encode(TemplateParser templateParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
-        final int size = Array.getLength(value);
+        int size = Array.getLength(value);
         for(int i = 0; i < size; i ++)
             writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
     }

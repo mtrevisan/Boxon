@@ -39,7 +39,6 @@ import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.helpers.BitReader;
 import io.github.mtrevisan.boxon.core.helpers.BitWriter;
-import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.core.helpers.generators.AnnotationCreator;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -128,8 +127,6 @@ class CodecListTest{
 
 		CodecLoader.clearCodecs();
 		CodecLoader.loadDefaultCodecs();
-		TemplateParserInterface templateParser = io.github.mtrevisan.boxon.core.parsers.TemplateParser.create();
-		FieldAccessor.injectValues(codec, templateParser);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, collectionAnnotation, null, encodedValue);
 		writer.flush();

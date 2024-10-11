@@ -217,7 +217,8 @@ final class TemplateDecoder extends TemplateCoderBase{
 		}
 	}
 
-	private static void verifyChecksum(final Template<?> template, final Object data, final int startPosition, final BitReaderInterface reader){
+	private static void verifyChecksum(final Template<?> template, final Object data, final int startPosition,
+			final BitReaderInterface reader){
 		if(!template.isChecksumPresent())
 			return;
 

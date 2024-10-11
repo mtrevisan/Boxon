@@ -88,7 +88,7 @@
 
 		<!-- Code generator -->
 		<!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-		<bytebuddy.version>1.15.3</bytebuddy.version>
+		<bytebuddy.version>1.15.4</bytebuddy.version>
 
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->

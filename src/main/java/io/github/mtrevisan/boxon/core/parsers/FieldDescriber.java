@@ -72,6 +72,8 @@ import java.util.Map;
  */
 public final class FieldDescriber{
 
+	private static final String HASH_CODE = "hashCode";
+
 	static final MessageExtractorBasicStrategy MESSAGE_EXTRACTOR_BASIC_STRATEGY = new MessageExtractorBasicStrategy();
 	static final MessageExtractorBasicStrategy MESSAGE_EXTRACTOR_FULL_STRATEGY = new MessageExtractorFullStrategy();
 	static final MessageExtractorConfiguration MESSAGE_EXTRACTOR_CONFIGURATION = new MessageExtractorConfiguration();
@@ -305,7 +307,7 @@ public final class FieldDescriber{
 	 * @throws CodecException	If a codec is not found.
 	 */
 	private static void putIfNotEmpty(final String key, final Object value, final Map<String, Object> rootDescription) throws CodecException{
-		if(value == null)
+		if(value == null || HASH_CODE.equals(key))
 			return;
 
 		switch(value){

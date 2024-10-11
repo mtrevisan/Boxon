@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.core.codecs.behaviors.ObjectBehavior;
 import io.github.mtrevisan.boxon.core.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.core.helpers.CodecHelper;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -45,7 +46,6 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.Codec;
 import io.github.mtrevisan.boxon.io.Evaluator;
-import io.github.mtrevisan.boxon.io.Injected;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -61,15 +61,13 @@ import java.util.List;
  * <p>
  * This class implements the {@link Codec} interface and provides methods for handling different scenarios such as alternative types,
  * arrays, and lists.<br />
- * It utilizes injected dependencies such as {@link Evaluator} and {@link TemplateParserInterface}.
  * </p>
  */
 final class CodecObject implements Codec{
 
 	private static final Evaluator EVALUATOR = Evaluator.getInstance();
 
-	@Injected
-	private TemplateParserInterface templateParser;
+	private static final TemplateParser TEMPLATE_PARSER = TemplateParser.getInstance();
 
 
 	@Override
@@ -105,8 +103,8 @@ final class CodecObject implements Codec{
 		return convertedValue;
 	}
 
-	private Object decodeArray(final BitReaderInterface reader, final ObjectBehavior behavior, final int arraySize, final Object rootObject)
-			throws BoxonException{
+	private static Object decodeArray(final BitReaderInterface reader, final ObjectBehavior behavior, final int arraySize,
+			final Object rootObject) throws BoxonException{
 		final Object array = behavior.createArray(arraySize);
 
 		if(CodecHelper.hasSelectAlternatives(behavior.selectFrom().alternatives()))
@@ -116,7 +114,7 @@ final class CodecObject implements Codec{
 		return array;
 	}
 
-	private void readArrayWithAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
+	private static void readArrayWithAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Class<?> chosenAlternativeType = chooseAlternativeType(reader, behavior, rootObject);
@@ -126,9 +124,9 @@ final class CodecObject implements Codec{
 		}
 	}
 
-	private void readArrayWithoutAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
+	private static void readArrayWithoutAlternatives(final BitReaderInterface reader, final Object array, final ObjectBehavior behavior,
 			final Object rootObject) throws BoxonException{
-		final Template<?> template = templateParser.createTemplate(behavior.objectType());
+		final Template<?> template = TEMPLATE_PARSER.createTemplate(behavior.objectType());
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = readValue(reader, template, rootObject);
 
@@ -136,7 +134,7 @@ final class CodecObject implements Codec{
 		}
 	}
 
-	private List<Object> decodeList(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject)
+	private static List<Object> decodeList(final BitReaderInterface reader, final ObjectBehavior behavior, final Object rootObject)
 			throws BoxonException{
 		final List<Object> list = CodecHelper.createList(behavior.objectType());
 
@@ -145,8 +143,8 @@ final class CodecObject implements Codec{
 		return list;
 	}
 
-	private void readListWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final ObjectBehavior behavior,
-			final Object rootObject) throws BoxonException{
+	private static void readListWithAlternatives(final BitReaderInterface reader, final Collection<Object> list,
+			final ObjectBehavior behavior, final Object rootObject) throws BoxonException{
 		Class<?> chosenAlternativeType;
 		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, behavior, rootObject)) != void.class){
 			final Object element = readValue(reader, chosenAlternativeType, rootObject);
@@ -155,14 +153,15 @@ final class CodecObject implements Codec{
 		}
 	}
 
-	private Object readValue(final BitReaderInterface reader, final Class<?> chosenAlternativeType, final Object rootObject)
+	private static Object readValue(final BitReaderInterface reader, final Class<?> chosenAlternativeType, final Object rootObject)
 			throws BoxonException{
-		final Template<?> template = templateParser.createTemplate(chosenAlternativeType);
+		final Template<?> template = TEMPLATE_PARSER.createTemplate(chosenAlternativeType);
 		return readValue(reader, template, rootObject);
 	}
 
-	private Object readValue(final BitReaderInterface reader, final Template<?> template, final Object rootObject) throws BoxonException{
-		return templateParser.decode(template, reader, rootObject);
+	private static Object readValue(final BitReaderInterface reader, final Template<?> template, final Object rootObject)
+			throws BoxonException{
+		return TEMPLATE_PARSER.decode(template, reader, rootObject);
 	}
 
 	/**
@@ -306,8 +305,8 @@ final class CodecObject implements Codec{
 				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
 	}
 
-	private void encodeArray(final BitWriterInterface writer, final Object[] array, final ObjectBehavior behavior, final Object rootObject)
-			throws BoxonException{
+	private static void encodeArray(final BitWriterInterface writer, final Object[] array, final ObjectBehavior behavior,
+			final Object rootObject) throws BoxonException{
 		final ObjectChoices objectChoices = behavior.selectFrom();
 		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
 			writeArrayWithAlternatives(writer, array, objectChoices, rootObject);
@@ -315,7 +314,7 @@ final class CodecObject implements Codec{
 			writeArrayWithoutAlternatives(writer, array, behavior.objectType(), rootObject);
 	}
 
-	private void writeArrayWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom,
+	private static void writeArrayWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom,
 			final Object rootObject) throws BoxonException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0, length = array.length; i < length; i ++){
@@ -330,9 +329,9 @@ final class CodecObject implements Codec{
 		}
 	}
 
-	private void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final Class<?> type,
+	private static void writeArrayWithoutAlternatives(final BitWriterInterface writer, final Object array, final Class<?> type,
 			final Object rootObject) throws BoxonException{
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = TEMPLATE_PARSER.createTemplate(type);
 		for(int i = 0, length = Array.getLength(array); i < length; i ++){
 			final Object element = Array.get(array, i);
 
@@ -340,7 +339,7 @@ final class CodecObject implements Codec{
 		}
 	}
 
-	private void writeListWithAlternatives(final BitWriterInterface writer, final List<Object> list, final Object rootObject)
+	private static void writeListWithAlternatives(final BitWriterInterface writer, final List<Object> list, final Object rootObject)
 			throws BoxonException{
 		for(int i = 0, length = list.size(); i < length; i ++){
 			final Object element = list.get(i);
@@ -350,15 +349,15 @@ final class CodecObject implements Codec{
 		}
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Class<?> type, final Object object, final Object rootObject)
+	private static void writeValue(final BitWriterInterface writer, final Class<?> type, final Object object, final Object rootObject)
 			throws BoxonException{
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = TEMPLATE_PARSER.createTemplate(type);
 		writeValue(writer, template, object, rootObject);
 	}
 
-	private void writeValue(final BitWriterInterface writer, final Template<?> template, final Object object, final Object rootObject)
+	private static void writeValue(final BitWriterInterface writer, final Template<?> template, final Object object, final Object rootObject)
 			throws BoxonException{
-		templateParser.encode(template, writer, rootObject, object);
+		TEMPLATE_PARSER.encode(template, writer, rootObject, object);
 	}
 
 }
