@@ -147,7 +147,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 13. [Contributing](#contributing)
 14. [Changelog](#changelog)
-    1. [version 5.1.0](#changelog-5.1.0)
+    1. [version 6.0.0](#changelog-6.0.0)
     2. [version 5.0.0](#changelog-5.0.0)
     3. [version 4.0.0](#changelog-4.0.0)
     4. [version 3.6.0](#changelog-3.6.0)
@@ -1557,8 +1557,8 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-5.1.0"></a>
-### version 5.1.0 - 20240???
+<a name="changelog-6.0.0"></a>
+### version 6.0.0 - 202410??
 
 - Improve error messages and handling in encoding and decoding process.
 - Now it's possible to extends a codec.
