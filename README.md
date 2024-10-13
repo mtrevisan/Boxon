@@ -1558,7 +1558,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-6.0.0"></a>
-### version 6.0.0 - 202410??
+### version 6.0.0 - 20241013
 
 - Improve error messages and handling in encoding and decoding process.
 - Now it's possible to extends a codec.
