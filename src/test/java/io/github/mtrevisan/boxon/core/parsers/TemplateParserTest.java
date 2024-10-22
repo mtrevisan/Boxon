@@ -69,12 +69,11 @@ class TemplateParserTest{
 
 		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
-		Evaluator evaluator = Evaluator.getInstance();
-		evaluator.clearContext();
-		evaluator.putToContext("deviceTypes", deviceTypes);
-		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
+		Evaluator.clearContext();
+		Evaluator.putToContext("deviceTypes", deviceTypes);
+		Evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = (ACKMessageHex)templateParser.decode(template, reader, null);
-		evaluator.removeFromContext("deviceTypes");
+		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -101,12 +100,11 @@ class TemplateParserTest{
 
 		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0x46, "QUECLINK_GB200S");
-		Evaluator evaluator = Evaluator.getInstance();
-		evaluator.clearContext();
-		evaluator.putToContext("deviceTypes", deviceTypes);
-		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
+		Evaluator.clearContext();
+		Evaluator.putToContext("deviceTypes", deviceTypes);
+		Evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = (ACKMessageHexByteChecksum)templateParser.decode(template, reader, null);
-		evaluator.removeFromContext("deviceTypes");
+		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -137,11 +135,10 @@ class TemplateParserTest{
 
 		DeviceTypes<Byte> deviceTypes = DeviceTypes.<Byte>create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
-		Evaluator evaluator = Evaluator.getInstance();
-		evaluator.clearContext();
-		evaluator.putToContext("deviceTypes", deviceTypes);
+		Evaluator.clearContext();
+		Evaluator.putToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = (ACKMessageASCII)templateParser.decode(template, reader, null);
-		evaluator.removeFromContext("deviceTypes");
+		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -154,8 +151,7 @@ class TemplateParserTest{
 
 	@Test
 	void evaluate(){
-		Evaluator evaluator = Evaluator.getInstance();
-		Integer result = evaluator.evaluate("8/4", null, Integer.class);
+		Integer result = Evaluator.evaluate("8/4", null, Integer.class);
 
 		Assertions.assertEquals(2, result);
 	}

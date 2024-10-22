@@ -37,6 +37,12 @@ public final class StringMetricData implements MetricData<StringMetricData>{
 	private final String data;
 
 
+	/**
+	 * Creates a new instance with the given string.
+	 *
+	 * @param str	The string to be wrapped.
+	 * @return	A new instance containing the provided string.
+	 */
 	public static StringMetricData of(final String str){
 		return new StringMetricData(str);
 	}

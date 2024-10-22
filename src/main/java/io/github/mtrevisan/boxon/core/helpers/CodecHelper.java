@@ -50,9 +50,6 @@ import java.util.List;
  */
 public final class CodecHelper{
 
-	private static final Evaluator EVALUATOR = Evaluator.getInstance();
-
-
 	private CodecHelper(){}
 
 
@@ -80,7 +77,7 @@ public final class CodecHelper{
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	public static int evaluateSize(final String size, final Object rootObject) throws AnnotationException{
-		final int evaluatedSize = EVALUATOR.evaluateSize(size, rootObject);
+		final int evaluatedSize = Evaluator.evaluateSize(size, rootObject);
 		if(evaluatedSize < 0)
 			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
 
@@ -141,7 +138,7 @@ public final class CodecHelper{
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
 
-			if(EVALUATOR.evaluateBoolean(alternative.condition(), rootObject))
+			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();
 		}
 		return defaultConverter;
@@ -197,7 +194,7 @@ public final class CodecHelper{
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final byte prefixSize = selectFrom.prefixLength();
 
-			final int prefix = EVALUATOR.evaluateSize(chosenAlternative.prefix(), rootObject);
+			final int prefix = Evaluator.evaluateSize(chosenAlternative.prefix(), rootObject);
 			if(prefixSize == Byte.SIZE)
 				writer.writeByte((byte)prefix);
 			else{
