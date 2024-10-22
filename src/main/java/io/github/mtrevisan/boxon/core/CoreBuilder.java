@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -109,7 +110,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final String key, final Object value){
-		addMethod(ConfigurationStep.CONTEXT, () -> Core.putToContext(key, value));
+		addMethod(ConfigurationStep.CONTEXT, () -> Evaluator.putToContext(key, value));
 
 		return this;
 	}
@@ -121,7 +122,13 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> Core.putToContext(context));
+		Objects.requireNonNull(context, "Context cannot be null");
+
+		addMethod(ConfigurationStep.CONTEXT, () -> {
+			for(final Map.Entry<String, Object> entry : context.entrySet())
+				Evaluator.putToContext(entry.getKey(), entry.getValue());
+			}
+		);
 
 		return this;
 	}
@@ -168,7 +175,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> Core.putToContext(method));
+		addMethod(ConfigurationStep.CONTEXT, () -> Evaluator.putToContext(method));
 
 		return this;
 	}
@@ -180,7 +187,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withDefaultCodecs(){
-		addMethod(ConfigurationStep.CODEC, Core::useDefaultCodecs);
+		addMethod(ConfigurationStep.CODEC, CodecLoader::loadDefaultCodecs);
 
 		return this;
 	}
@@ -192,7 +199,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.CODEC, () -> Core.addCodecsFrom(basePackageClasses));
+		addMethod(ConfigurationStep.CODEC, () -> CodecLoader.loadCodecsFrom(basePackageClasses));
 
 		return this;
 	}
@@ -204,7 +211,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodec(final Codec codec){
-		addMethod(ConfigurationStep.CODEC, () -> Core.addCodec(codec));
+		addMethod(ConfigurationStep.CODEC, () -> CodecLoader.addCodec(codec));
 
 		return this;
 	}
@@ -217,7 +224,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodec(final Codec codec, final AnnotationValidator validator){
-		addMethod(ConfigurationStep.CODEC, () -> Core.addCodec(codec, validator));
+		addMethod(ConfigurationStep.CODEC, () -> CodecLoader.addCodec(codec, validator));
 
 		return this;
 	}
@@ -229,7 +236,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodecs(final Codec... codecs){
-		addMethod(ConfigurationStep.CODEC, () -> Core.addCodecs(codecs));
+		addMethod(ConfigurationStep.CODEC, () -> CodecLoader.addCodecs(codecs));
 
 		return this;
 	}

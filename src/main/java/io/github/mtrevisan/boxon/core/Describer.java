@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public final class Describer{
 
 
 	private Describer(final Core core){
-		final Map<String, Object> context = Core.getContext();
+		final Map<String, Object> context = Evaluator.getContext();
 		final TemplateParser templateParser = core.getTemplateParser();
 		final ConfigurationParser configurationParser = core.getConfigurationParser();
 
