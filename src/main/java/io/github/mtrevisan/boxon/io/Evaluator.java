@@ -105,7 +105,7 @@ public final class Evaluator{
 	private static final ExpressionParser PARSER;
 	static{
 		//allow for immediate compilation of SpEL expressions
-		final SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
+		final SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.MIXED, null);
 		PARSER = new SpelExpressionParser(config);
 	}
 
