@@ -33,12 +33,38 @@ package io.github.mtrevisan.boxon.core.similarity.distances;
  */
 public interface MetricData<D extends MetricData<D>>{
 
+	/**
+	 * Returns the length of the metric data.
+	 *
+	 * @return	The length of the metric data.
+	 */
 	int length();
 
+	/**
+	 * Retrieves the element at the specified index.
+	 *
+	 * @param index	The index of the desired element.
+	 * @return	The element at the specified index.
+	 */
 	Object elementAt(int index);
 
+	/**
+	 * Compares this instance with another instance of the same type.
+	 *
+	 * @param other	The instance to compare with this instance.
+	 * @return	Whether the specified instance is equal to this instance.
+	 */
 	boolean equals(D other);
 
+	/**
+	 * Checks if the element at the specified index in the current instance is equal to the element
+	 * at the specified index in another instance of the same type.
+	 *
+	 * @param index	The index of the element in the current instance.
+	 * @param other	The other instance to compare against.
+	 * @param otherIndex	The index of the element in the other instance.
+	 * @return	Whether the elements at the specified indices are equal.
+	 */
 	boolean equalsAtIndex(int index, D other, int otherIndex);
 
 }

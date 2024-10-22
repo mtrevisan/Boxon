@@ -37,6 +37,8 @@ import java.util.Map;
  * <p>It does respect triangle inequality (the distance between two inputs is no greater than the sum Levenshtein distances from a third
  * input), and is thus a metric distance.</p>
  *
+ * @param <D>	The type of data this metric can handle, extending {@link MetricData}.
+ *
  * @see <a href="https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance">Damerau-Levenshtein distance</a>
  * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Damerau.java">Damerau.java</a>
  */
@@ -50,10 +52,26 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 	private final int maxCost;
 
 
+	/**
+	 * Creates a new instance with default costs for insertion, deletion, substitution, and transposition.
+	 *
+	 * @param <D>	The specific type of data that extends {@link MetricData}.
+	 * @return	A new instance with default costs.
+	 */
 	public static <D extends MetricData<D>> DamerauLevenshteinMetric<D> create(){
 		return new DamerauLevenshteinMetric<>(1, 1, 1, 1);
 	}
 
+	/**
+	 * Creates a new instance with the specified costs for insertion, deletion, substitution, and transposition.
+	 *
+	 * @param insertionCost	The cost of an insertion operation.
+	 * @param deletionCost	The cost of a deletion operation.
+	 * @param substitutionCost	The cost of a substitution operation.
+	 * @param transpositionCost	The cost of a transposition operation.
+	 * @param <D>	The specific type of data that extends {@link MetricData}.
+	 * @return	A new instance configured with the specified costs.
+	 */
 	public static <D extends MetricData<D>> DamerauLevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
 			final int substitutionCost, final int transpositionCost){
 		return new DamerauLevenshteinMetric<>(insertionCost, deletionCost, substitutionCost, transpositionCost);

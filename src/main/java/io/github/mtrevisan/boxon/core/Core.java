@@ -257,6 +257,11 @@ public final class Core{
 	}
 
 
+	/**
+	 * Retrieves the event listener associated with the core.
+	 *
+	 * @return	The event listener instance.
+	 */
 	public EventListener getEventListener(){
 		return eventListener;
 	}

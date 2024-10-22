@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.configurations;
 
 /**
  * Interface every enumeration used in a configuration MUST implement.
+ *
+ * @param <T>	The type of the code associated with the enumeration.
  */
 public interface ConfigurationEnum<T>{
 

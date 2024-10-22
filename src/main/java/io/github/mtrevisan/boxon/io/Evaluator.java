@@ -125,6 +125,11 @@ public final class Evaluator{
 	private Evaluator(){}
 
 
+	/**
+	 * Initializes the object with a specified cache size for expression memoization.
+	 *
+	 * @param maxSpELMemoizerSize	The maximum size of the SpEL memoizer cache.
+	 */
 	public static void initialize(final int maxSpELMemoizerSize){
 		CACHED_EXPRESSIONS = Memoizer.memoize(PARSER::parseExpression, maxSpELMemoizerSize);
 	}
