@@ -115,12 +115,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 		parserContext.setBinding(field.getBinding());
 		parserContext.setCollectionBinding(field.getCollectionBinding());
 
-		try{
-			ParserWriterHelper.encodeField(parserContext, writer, eventListener);
-		}
-		finally{
-			clearContextParameters(contextParameters);
-		}
+		ParserWriterHelper.encodeField(parserContext, writer, eventListener);
 	}
 
 	private static void writeSkips(final SkipParams[] skips, final BitWriterInterface writer, final Object rootObject){

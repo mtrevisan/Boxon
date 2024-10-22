@@ -95,12 +95,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 		processEvaluatedFields(template, parserContext);
 
-		try{
-			postProcessFields(template, parserContext);
-		}
-		catch(final Exception e){
-			postProcessFields(template, parserContext);
-		}
+		postProcessFields(template, parserContext);
 
 		readMessageTerminator(template.getHeader(), reader);
 
@@ -189,9 +184,6 @@ final class TemplateDecoder extends TemplateCoderBase{
 		catch(final Exception e){
 			throw BoxonException.create(e)
 				.withClassAndField(template.getType(), field.getField());
-		}
-		finally{
-			clearContextParameters(contextParameters);
 		}
 	}
 
