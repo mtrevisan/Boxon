@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Contains utility methods such as calculating the size of primitive or wrapper types and checking whether a type is primitive or not.
  */
-public final class DataTypeHelper{
+final class DataTypeHelper{
 
 	static final String PRIMITIVE_TYPE_NAME_BOOLEAN = "boolean";
 	static final String PRIMITIVE_TYPE_NAME_BYTE = "byte";

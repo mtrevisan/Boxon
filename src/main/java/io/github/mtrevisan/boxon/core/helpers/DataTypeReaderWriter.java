@@ -35,7 +35,7 @@ import java.util.Arrays;
 /**
  * Handles reading and writing data using {@link BitReaderInterface} and {@link BitWriterInterface}.
  */
-public final class DataTypeReaderWriter{
+final class DataTypeReaderWriter{
 
 	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
 		int.class.getSimpleName(), long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
