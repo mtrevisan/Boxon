@@ -77,7 +77,7 @@ public final class CoreBuilder{
 	 * @return	A core builder.
 	 */
 	public static CoreBuilder builder(){
-		Evaluator.getInstance().clearContext();
+		Evaluator.clearContext();
 
 		return new CoreBuilder();
 	}

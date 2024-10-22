@@ -45,6 +45,7 @@ import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.Codec;
+import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -88,7 +89,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 		Object currentObject = template.createEmptyObject();
 
 		final ParserContext<Object> parserContext = ParserContext.create(currentObject, parentObject);
-		EVALUATOR.addCurrentObjectToEvaluatorContext(currentObject);
+		Evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 
 		//decode message fields:
 		decodeMessageFields(template, reader, parserContext);
@@ -137,7 +138,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 		//choose between skip-by-size and skip-by-terminator
 		if(skip.annotationType() == SkipBits.class){
-			final int size = EVALUATOR.evaluateSize(skip.size(), rootObject);
+			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			reader.skip(size);
 		}
 		else{
@@ -170,7 +171,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			final Object value = codec.decode(reader, binding, collectionBinding, rootObject);
 
 			//restore original current object
-			EVALUATOR.addCurrentObjectToEvaluatorContext(currentObject);
+			Evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);
@@ -257,7 +258,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 			eventListener.evaluatingField(template.getName(), field.getFieldName());
 
-			final Object value = EVALUATOR.evaluate(binding.value(), rootObject, field.getFieldType());
+			final Object value = Evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
 
 			//store value in the current object
 			parserContext.setFieldValue(field.getField(), value);

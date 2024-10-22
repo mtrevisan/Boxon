@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.BoxonException;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.Evaluator;
 
 import java.util.List;
 
@@ -71,7 +72,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 			throws BoxonException{
 		final ParserContext<T> parserContext = ParserContext.create(currentObject, parentObject);
 		parserContext.setClassName(template.getName());
-		EVALUATOR.addCurrentObjectToEvaluatorContext(currentObject);
+		Evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 
 		preProcessFields(template, parserContext);
 
@@ -130,7 +131,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 
 		//choose between skip-by-size and skip-by-terminator
 		if(skip.annotationType() == SkipBits.class){
-			final int size = EVALUATOR.evaluateSize(skip.size(), rootObject);
+			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			writer.skipBits(size);
 		}
 		else if(skip.consumeTerminator())

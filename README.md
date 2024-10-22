@@ -1397,11 +1397,13 @@ Optionally, the method `String condition()` could be defined.
 ```
 
 ```java
+import io.github.mtrevisan.boxon.io.Evaluator;
+
+
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements Codec{
-   private static Evaluator EVALUATOR = Evaluator.getInstance();
    private static TemplateParser TEMPLATE_PARSER = TemplateParser.getInstance();
 
    public Class<?> type(){
@@ -1409,22 +1411,24 @@ class VariableLengthByteArray implements Codec{
    }
 
    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        boolean continuing = true;
-        while(continuing){
-            byte b = reader.getByte();
-            baos.write(b & 0x7F);
+      Evaluator.evaluate("1+2");
 
-            continuing = ((b & 0x80) != 0x00);
-        }
-        return baos.toByteArray();
-    }
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      boolean continuing = true;
+      while(continuing){
+         byte b = reader.getByte();
+         baos.write(b & 0x7F);
 
-    public void encode(TemplateParser templateParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
-        int size = Array.getLength(value);
-        for(int i = 0; i < size; i ++)
-            writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
-    }
+         continuing = ((b & 0x80) != 0x00);
+      }
+      return baos.toByteArray();
+   }
+
+   public void encode(TemplateParser templateParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
+      int size = Array.getLength(value);
+      for(int i = 0; i < size; i++)
+         writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
+   }
 }
 ```
 

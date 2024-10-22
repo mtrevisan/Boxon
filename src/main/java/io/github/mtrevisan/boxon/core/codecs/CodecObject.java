@@ -65,8 +65,6 @@ import java.util.List;
  */
 final class CodecObject implements Codec{
 
-	private static final Evaluator EVALUATOR = Evaluator.getInstance();
-
 	private static final TemplateParser TEMPLATE_PARSER = TemplateParser.getInstance();
 
 
@@ -202,7 +200,7 @@ final class CodecObject implements Codec{
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
 			final String condition = alternative.condition();
-			if(EVALUATOR.evaluateBoolean(condition, rootObject))
+			if(Evaluator.evaluateBoolean(condition, rootObject))
 				chosenAlternativeType = alternative.type();
 		}
 		return chosenAlternativeType;
@@ -245,7 +243,7 @@ final class CodecObject implements Codec{
 			final ByteOrder byteOrder = objectChoices.byteOrder();
 			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
 
-			EVALUATOR.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+			Evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 	}
 
@@ -259,7 +257,7 @@ final class CodecObject implements Codec{
 		final byte terminator = objectChoicesList.terminator();
 		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
 		final String prefix = reader.readTextUntilTerminatorWithoutConsuming(terminator, charset);
-		EVALUATOR.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		Evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
 	}
 

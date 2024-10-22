@@ -56,11 +56,6 @@ public final class Evaluator{
 	private static final String BOOLEAN_FALSE = Boolean.FALSE.toString();
 
 
-	private static final class SingletonHelper{
-		private static final Evaluator INSTANCE = new Evaluator();
-	}
-
-
 	private static final class EvaluationContext extends StandardEvaluationContext{
 
 		private final Map<String, Object> backupContext = new HashMap<>(0);
@@ -120,24 +115,14 @@ public final class Evaluator{
 	}
 
 
-	private final EvaluationContext context;
-
-
-	/**
-	 * Singleton instance of this evaluator.
-	 *
-	 * @return	The instance of this evaluator.
-	 */
-	public static Evaluator getInstance(){
-		return SingletonHelper.INSTANCE;
-	}
-
-
-	private Evaluator(){
-		context = new EvaluationContext();
+	private static final EvaluationContext CONTEXT = new EvaluationContext();
+	static{
 		//trick to allow accessing private fields
-		context.addPropertyAccessor(new ReflectiveProperty());
+		CONTEXT.addPropertyAccessor(new ReflectiveProperty());
 	}
+
+
+	private Evaluator(){}
 
 
 	public static void initialize(final int maxSpELMemoizerSize){
@@ -152,11 +137,11 @@ public final class Evaluator{
 	 * @param key	The key used to reference the value.
 	 * @param value	The value (pass {@code null} to remove the {@code key} from the context).
 	 */
-	public void putToContext(final String key, final Object value){
+	public static void putToContext(final String key, final Object value){
 		Objects.requireNonNull(key, "Key cannot be null");
 		Objects.requireNonNull(value, "Value cannot be null");
 
-		context.setVariable(key, value);
+		CONTEXT.setVariable(key, value);
 	}
 
 	/**
@@ -164,10 +149,10 @@ public final class Evaluator{
 	 *
 	 * @param method	The method.
 	 */
-	public void putToContext(final Method method){
+	public static void putToContext(final Method method){
 		Objects.requireNonNull(method, "Method cannot be null");
 
-		context.registerFunction(method.getName(), method);
+		CONTEXT.registerFunction(method.getName(), method);
 	}
 
 	/**
@@ -175,10 +160,10 @@ public final class Evaluator{
 	 *
 	 * @param key	The key used to reference the value.
 	 */
-	public void removeFromContext(final String key){
+	public static void removeFromContext(final String key){
 		Objects.requireNonNull(key, "Key cannot be null");
 
-		context.removeVariable(key);
+		CONTEXT.removeVariable(key);
 	}
 
 	/**
@@ -186,7 +171,7 @@ public final class Evaluator{
 	 *
 	 * @param method	The method.
 	 */
-	public void removeFromContext(final Method method){
+	public static void removeFromContext(final Method method){
 		Objects.requireNonNull(method, "Method cannot be null");
 
 		removeFromContext(method.getName());
@@ -195,8 +180,8 @@ public final class Evaluator{
 	/**
 	 * Clear the context of this evaluator.
 	 */
-	public void clearContext(){
-		context.clearContext();
+	public static void clearContext(){
+		CONTEXT.clearContext();
 	}
 
 	/**
@@ -204,8 +189,8 @@ public final class Evaluator{
 	 *
 	 * @return	The context.
 	 */
-	public Map<String, Object> getContext(){
-		return context.getContext();
+	public static Map<String, Object> getContext(){
+		return CONTEXT.getContext();
 	}
 
 
@@ -216,7 +201,7 @@ public final class Evaluator{
 	 *
 	 * @param currentObject	The current object.
 	 */
-	public void addCurrentObjectToEvaluatorContext(final Object currentObject){
+	public static void addCurrentObjectToEvaluatorContext(final Object currentObject){
 		putToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
@@ -231,9 +216,9 @@ public final class Evaluator{
 	 * @return	The result of the expression.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	public <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
+	public static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
 		final Expression exp = CACHED_EXPRESSIONS.apply(expression);
-		return exp.getValue(context, rootObject, returnType);
+		return exp.getValue(CONTEXT, rootObject, returnType);
 	}
 
 	/**
@@ -245,7 +230,7 @@ public final class Evaluator{
 	 * @return	The result of the expression.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	public boolean evaluateBoolean(final String expression, final Object rootObject){
+	public static boolean evaluateBoolean(final String expression, final Object rootObject){
 		return (expression.isEmpty()
 			|| BOOLEAN_TRUE.equalsIgnoreCase(expression)
 			|| !BOOLEAN_FALSE.equalsIgnoreCase(expression) && evaluate(expression, rootObject, boolean.class));
@@ -260,7 +245,7 @@ public final class Evaluator{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	public int evaluateSize(final String expression, final Object rootObject){
+	public static int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
 		if(!expression.isEmpty())
 			size = (isPositiveInteger(expression)

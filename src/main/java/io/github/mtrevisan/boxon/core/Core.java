@@ -49,8 +49,6 @@ import java.util.Objects;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
 
-	private static final Evaluator EVALUATOR = Evaluator.getInstance();
-
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
@@ -101,7 +99,7 @@ public final class Core{
 	 * @param value	The value.
 	 */
 	static void putToContext(final String key, final Object value){
-		EVALUATOR.putToContext(key, value);
+		Evaluator.putToContext(key, value);
 	}
 
 	/**
@@ -113,7 +111,7 @@ public final class Core{
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
-			EVALUATOR.putToContext(entry.getKey(), entry.getValue());
+			Evaluator.putToContext(entry.getKey(), entry.getValue());
 	}
 
 	/**
@@ -122,7 +120,7 @@ public final class Core{
 	 * @param method	The method.
 	 */
 	static void putToContext(final Method method){
-		EVALUATOR.putToContext(method);
+		Evaluator.putToContext(method);
 	}
 
 	/**
@@ -131,7 +129,7 @@ public final class Core{
 	 * @param key	The key used to reference the value.
 	 */
 	static void removeFromContext(final String key){
-		EVALUATOR.removeFromContext(key);
+		Evaluator.removeFromContext(key);
 	}
 
 	/**
@@ -140,18 +138,18 @@ public final class Core{
 	 * @param method	The method.
 	 */
 	static void removeFromContext(final Method method){
-		EVALUATOR.removeFromContext(method);
+		Evaluator.removeFromContext(method);
 	}
 
 	/**
 	 * Clear the context for the {@link Evaluator}.
 	 */
 	static void clearContext(){
-		EVALUATOR.clearContext();
+		Evaluator.clearContext();
 	}
 
 	static Map<String, Object> getContext(){
-		return EVALUATOR.getContext();
+		return Evaluator.getContext();
 	}
 
 
