@@ -33,46 +33,22 @@ import java.util.Map;
  */
 final class DataTypeHelper{
 
-	static final String PRIMITIVE_TYPE_NAME_BOOLEAN = "boolean";
-	static final String PRIMITIVE_TYPE_NAME_BYTE = "byte";
-	static final String PRIMITIVE_TYPE_NAME_CHAR = "char";
-	static final String PRIMITIVE_TYPE_NAME_SHORT = "short";
-	static final String PRIMITIVE_TYPE_NAME_INT = "int";
-	static final String PRIMITIVE_TYPE_NAME_LONG = "long";
-	static final String PRIMITIVE_TYPE_NAME_FLOAT = "float";
-	static final String PRIMITIVE_TYPE_NAME_DOUBLE = "double";
-	static final String PRIMITIVE_TYPE_NAME_VOID = "void";
-	static final String OBJECTIVE_TYPE_NAME_BOOLEAN = "Boolean";
-	static final String OBJECTIVE_TYPE_NAME_BYTE = "Byte";
-	static final String OBJECTIVE_TYPE_NAME_CHARACTER = "Character";
-	static final String OBJECTIVE_TYPE_NAME_SHORT = "Short";
-	static final String OBJECTIVE_TYPE_NAME_INTEGER = "Integer";
-	static final String OBJECTIVE_TYPE_NAME_LONG = "Long";
-	static final String OBJECTIVE_TYPE_NAME_FLOAT = "Float";
-	static final String OBJECTIVE_TYPE_NAME_DOUBLE = "Double";
-	static final String OBJECTIVE_TYPE_NAME_VOID = "Void";
-
-	static final Map<String, Class<?>> TYPE_MAP = new HashMap<>(18);
+	private static final Map<Class<?>, Integer> SIZE_MAP = new HashMap<>(12);
 	static{
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_BOOLEAN, boolean.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_BOOLEAN, Boolean.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_BYTE, byte.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_BYTE, Byte.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_CHAR, char.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_CHARACTER, Character.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_SHORT, short.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_SHORT, Short.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_INT, int.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_INTEGER, Integer.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_LONG, long.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_LONG, Long.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_FLOAT, float.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_FLOAT, Float.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_DOUBLE, double.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_DOUBLE, Double.class);
-		TYPE_MAP.put(PRIMITIVE_TYPE_NAME_VOID, void.class);
-		TYPE_MAP.put(OBJECTIVE_TYPE_NAME_VOID, Void.class);
+		SIZE_MAP.put(byte.class, Byte.SIZE);
+		SIZE_MAP.put(Byte.class, Byte.SIZE);
+		SIZE_MAP.put(short.class, Short.SIZE);
+		SIZE_MAP.put(Short.class, Short.SIZE);
+		SIZE_MAP.put(int.class, Integer.SIZE);
+		SIZE_MAP.put(Integer.class, Integer.SIZE);
+		SIZE_MAP.put(long.class, Long.SIZE);
+		SIZE_MAP.put(Long.class, Long.SIZE);
+		SIZE_MAP.put(float.class, Float.SIZE);
+		SIZE_MAP.put(Float.class, Float.SIZE);
+		SIZE_MAP.put(double.class, Double.SIZE);
+		SIZE_MAP.put(Double.class, Double.SIZE);
 	}
+	private static final Integer SIZE_DEFAULT_VALUE = -1;
 
 
 	private DataTypeHelper(){}
@@ -85,15 +61,7 @@ final class DataTypeHelper{
 	 * @return	The number of bits.
 	 */
 	public static int getSize(final Class<?> objectiveType){
-		return switch(objectiveType.getSimpleName()){
-			case PRIMITIVE_TYPE_NAME_BYTE, OBJECTIVE_TYPE_NAME_BYTE -> Byte.SIZE;
-			case PRIMITIVE_TYPE_NAME_SHORT, OBJECTIVE_TYPE_NAME_SHORT -> Short.SIZE;
-			case PRIMITIVE_TYPE_NAME_INT, OBJECTIVE_TYPE_NAME_INTEGER -> Integer.SIZE;
-			case PRIMITIVE_TYPE_NAME_LONG, OBJECTIVE_TYPE_NAME_LONG -> Long.SIZE;
-			case PRIMITIVE_TYPE_NAME_FLOAT, OBJECTIVE_TYPE_NAME_FLOAT -> Float.SIZE;
-			case PRIMITIVE_TYPE_NAME_DOUBLE, OBJECTIVE_TYPE_NAME_DOUBLE -> Double.SIZE;
-			default -> -1;
-		};
+		return SIZE_MAP.getOrDefault(objectiveType, SIZE_DEFAULT_VALUE);
 	}
 
 }
