@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.logs;
 
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.Codec;
 import org.slf4j.ILoggerFactory;
@@ -210,23 +209,23 @@ public final class EventLogger extends EventListener{
 	}
 
 	private static String compose(final String message, final Object... parameters){
-		String outputMessage = JavaHelper.EMPTY_STRING;
+		final StringBuilder outputMessage = new StringBuilder();
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			final Class<?> callerClass = Class.forName(stackTrace[3].getClassName());
 			final int callerLineNumber = stackTrace[3].getLineNumber();
 
-			outputMessage += "(" + callerClass.getSimpleName();
+			outputMessage.append('(').append(callerClass.getSimpleName());
 			if(callerLineNumber >= 0)
-				outputMessage += ":" + callerLineNumber;
-			outputMessage += ") ";
+				outputMessage.append(':').append(callerLineNumber);
+			outputMessage.append(')');
 		}
 		catch(final ClassNotFoundException ignored){}
 
 		if(!message.isEmpty())
-			outputMessage += message;
+			outputMessage.append(message);
 
-		return StringHelper.format(outputMessage, extractParameters(parameters));
+		return StringHelper.format(outputMessage.toString(), extractParameters(parameters));
 	}
 
 	private static Object extractParameters(final Object[] parameters){
