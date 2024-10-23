@@ -96,15 +96,10 @@ public final class DataTypeMapper{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toTypeOrSelf(final String typeName) throws ClassNotFoundException{
-		//check if it's an objective type
-		Class<?> type = PRIMITIVE_TYPE_MAP.get(typeName);
-
-		//check if it's a primitive type
-		if(type == null){
-			type = OBJECTIVE_TYPE_MAP.get(typeName);
-			if(type != null)
-				type = PRIMITIVE_TYPE_MAP.get(type.getName());
-		}
+		//check if it's an objective or primitive type
+		final Class<?> objectiveType = OBJECTIVE_TYPE_MAP.get(typeName);
+		Class<?> type = PRIMITIVE_TYPE_MAP.getOrDefault(typeName,
+			(objectiveType != null? PRIMITIVE_TYPE_MAP.get(objectiveType.getName()): null));
 
 		//try to extract the class
 		if(type == null){
