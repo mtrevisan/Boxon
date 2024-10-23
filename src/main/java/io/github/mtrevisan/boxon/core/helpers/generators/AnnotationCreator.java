@@ -109,18 +109,24 @@ public final class AnnotationCreator{
 		private static Object extractValueBasedOnReturnType(final Class<?> returnType, Object value) throws ClassNotFoundException{
 			if(returnType.equals(Class.class) && value instanceof final String v)
 				value = DataTypeMapper.toTypeOrSelf(v);
-			else if(returnType.isArray() && value instanceof List<?>){
-				final Class<?> elementType = returnType.getComponentType();
-				value = invokeArrayValues(elementType, (List<Map<String, Object>>)value);
-			}
-			else if(returnType.isArray() && value.getClass().isArray()){
-				final Class<?> elementType = returnType.getComponentType();
-				value = invokeArrayValues(elementType, (Annotation[])value);
-			}
+			else if(returnType.isArray())
+				value = handleArrayType(returnType, value);
 			else if(Annotation.class.isAssignableFrom(returnType) && value instanceof Map<?, ?>){
 				//manage `ConverterChoices`, `ObjectChoices`, and `ObjectChoicesList`
 				final Class<? extends Annotation> annotationType = (Class<? extends Annotation>)returnType;
 				value = createAnnotation(annotationType, (Map<String, Object>)value);
+			}
+			return value;
+		}
+
+		private static Object handleArrayType(final Class<?> returnType, Object value) throws ClassNotFoundException{
+			if(value instanceof List<?>){
+				final Class<?> elementType = returnType.getComponentType();
+				value = invokeArrayValues(elementType, (List<Map<String, Object>>)value);
+			}
+			else if(value.getClass().isArray()){
+				final Class<?> elementType = returnType.getComponentType();
+				value = invokeArrayValues(elementType, (Annotation[])value);
 			}
 			return value;
 		}

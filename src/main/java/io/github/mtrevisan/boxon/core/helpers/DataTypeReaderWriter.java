@@ -35,7 +35,7 @@ import java.util.Arrays;
 /**
  * Handles reading and writing data using {@link BitReaderInterface} and {@link BitWriterInterface}.
  */
-public final class DataTypeReaderWriter{
+final class DataTypeReaderWriter{
 
 	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
 		int.class.getSimpleName(), long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
@@ -54,12 +54,12 @@ public final class DataTypeReaderWriter{
 	 */
 	static Number read(final BitReaderInterface reader, final ByteOrder byteOrder, final Class<?> targetType) throws AnnotationException{
 		return switch(targetType.getSimpleName()){
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_BYTE, DataTypeHelper.OBJECTIVE_TYPE_NAME_BYTE -> reader.readByte();
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_SHORT, DataTypeHelper.OBJECTIVE_TYPE_NAME_SHORT -> reader.readShort(byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_INT, DataTypeHelper.OBJECTIVE_TYPE_NAME_INTEGER -> reader.readInt(byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_LONG, DataTypeHelper.OBJECTIVE_TYPE_NAME_LONG -> reader.readLong(byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_FLOAT, DataTypeHelper.OBJECTIVE_TYPE_NAME_FLOAT -> Float.intBitsToFloat(reader.readInt(byteOrder));
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_DOUBLE, DataTypeHelper.OBJECTIVE_TYPE_NAME_DOUBLE -> Double.longBitsToDouble(reader.readLong(byteOrder));
+			case "byte", "Byte" -> reader.readByte();
+			case "short", "Short" -> reader.readShort(byteOrder);
+			case "int", "Integer" -> reader.readInt(byteOrder);
+			case "long", "Long" -> reader.readLong(byteOrder);
+			case "float", "Float" -> Float.intBitsToFloat(reader.readInt(byteOrder));
+			case "double", "Double" -> Double.longBitsToDouble(reader.readLong(byteOrder));
 			default -> throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
 				targetType.getSimpleName(), CLASS_DESCRIPTOR);
 		};
@@ -73,12 +73,12 @@ public final class DataTypeReaderWriter{
 	 */
 	static void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		switch(value.getClass().getSimpleName()){
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_BYTE, DataTypeHelper.OBJECTIVE_TYPE_NAME_BYTE -> writer.writeByte((Byte)value);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_SHORT, DataTypeHelper.OBJECTIVE_TYPE_NAME_SHORT -> writer.writeShort((Short)value, byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_INT, DataTypeHelper.OBJECTIVE_TYPE_NAME_INTEGER -> writer.writeInt((Integer)value, byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_LONG, DataTypeHelper.OBJECTIVE_TYPE_NAME_LONG -> writer.writeLong((Long)value, byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_FLOAT, DataTypeHelper.OBJECTIVE_TYPE_NAME_FLOAT -> writer.writeInt(Float.floatToIntBits((Float)value), byteOrder);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_DOUBLE, DataTypeHelper.OBJECTIVE_TYPE_NAME_DOUBLE -> writer.writeLong(Double.doubleToLongBits((Double)value), byteOrder);
+			case "byte", "Byte" -> writer.writeByte((Byte)value);
+			case "short", "Short" -> writer.writeShort((Short)value, byteOrder);
+			case "int", "Integer" -> writer.writeInt((Integer)value, byteOrder);
+			case "long", "Long" -> writer.writeLong((Long)value, byteOrder);
+			case "float", "Float" -> writer.writeInt(Float.floatToIntBits((Float)value), byteOrder);
+			case "double", "Double" -> writer.writeLong(Double.doubleToLongBits((Double)value), byteOrder);
 			default -> throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
 		}
 	}

@@ -60,11 +60,6 @@ public final class ConfigurationMessage<T>{
 	private static final int ORDER_COMPOSITE_INDEX = 1;
 	private static final int ORDER_FIELD_INDEX = 2;
 
-	private static final String CONFIGURATION_NAME_ALTERNATIVE = "AlternativeConfigurationField";
-	private static final String CONFIGURATION_NAME_COMPOSITE = "CompositeConfigurationField";
-	private static final String CONFIGURATION_NAME_FIELD = "ConfigurationField";
-	private static final String CONFIGURATION_NAME_SKIP = "ConfigurationSkip";
-
 
 	private final Class<T> type;
 
@@ -150,75 +145,79 @@ public final class ConfigurationMessage<T>{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
-		for(int i = 0, count = annotations.length; i < count; i ++){
-			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
+		for(int i = 0, count = annotations.length; i < count; i ++)
+			switch(annotations[i]){
+				case final AlternativeConfigurationField acf -> {
+					validateAlternativeAnnotationOrder(annotationFound);
 
-			if(annotationType == AlternativeConfigurationField.class){
-				validateAlternativeAnnotationOrder(annotationFound);
+					annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
+				}
+				case final CompositeConfigurationField ccf -> {
+					validateCompositeAnnotationOrder(annotationFound);
 
-				annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
+					annotationFound[ORDER_COMPOSITE_INDEX] = true;
+				}
+				case final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField cf -> {
+					validateFieldAnnotationOrder(annotationFound);
+
+					annotationFound[ORDER_FIELD_INDEX] = true;
+				}
+				case final ConfigurationSkip cs -> validateSkipAnnotationOrder(annotationFound);
+				default -> {}
 			}
-			else if(annotationType == CompositeConfigurationField.class){
-				validateCompositeAnnotationOrder(annotationFound);
-
-				annotationFound[ORDER_COMPOSITE_INDEX] = true;
-			}
-			else if(annotationType == io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class){
-				validateFieldAnnotationOrder(annotationFound);
-
-				annotationFound[ORDER_FIELD_INDEX] = true;
-			}
-			else if(annotationType == ConfigurationSkip.class)
-				validateSkipAnnotationOrder(annotationFound);
-		}
 	}
 
 	private static void validateAlternativeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				CONFIGURATION_NAME_ALTERNATIVE);
+				AlternativeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_COMPOSITE);
+				AlternativeConfigurationField.class.getSimpleName(), CompositeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				CONFIGURATION_NAME_ALTERNATIVE, CONFIGURATION_NAME_FIELD);
+				AlternativeConfigurationField.class.getSimpleName(),
+				io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class.getSimpleName());
 	}
 
 	private static void validateCompositeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_ALTERNATIVE);
+				CompositeConfigurationField.class.getSimpleName(), AlternativeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				CONFIGURATION_NAME_COMPOSITE);
+				CompositeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				CONFIGURATION_NAME_COMPOSITE, CONFIGURATION_NAME_FIELD);
+				CompositeConfigurationField.class.getSimpleName(),
+				io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class.getSimpleName());
 	}
 
 	private static void validateFieldAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_ALTERNATIVE);
+				io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class.getSimpleName(),
+				AlternativeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_INCOMPATIBLE,
-				CONFIGURATION_NAME_FIELD, CONFIGURATION_NAME_COMPOSITE);
+				io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class.getSimpleName(),
+				CompositeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_NUMBER,
-				CONFIGURATION_NAME_FIELD);
+				io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class.getSimpleName());
 	}
 
 	private static void validateSkipAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
 		if(annotationFound[ORDER_ALTERNATIVE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_ALTERNATIVE);
+				ConfigurationSkip.class.getSimpleName(), AlternativeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_COMPOSITE_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_COMPOSITE);
+				ConfigurationSkip.class.getSimpleName(), CompositeConfigurationField.class.getSimpleName());
 		if(annotationFound[ORDER_FIELD_INDEX])
 			throw AnnotationException.create(TemplateValidator.ANNOTATION_ORDER_ERROR_WRONG_ORDER,
-				CONFIGURATION_NAME_SKIP, CONFIGURATION_NAME_FIELD);
+				ConfigurationSkip.class.getSimpleName(),
+				io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class.getSimpleName());
 	}
 
 

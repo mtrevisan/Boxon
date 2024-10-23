@@ -41,11 +41,7 @@ import java.util.function.Function;
  */
 class TemplateCoderBase{
 
-	protected static final Evaluator EVALUATOR = Evaluator.getInstance();
-
-
 	protected EventListener eventListener;
-
 
 
 	TemplateCoderBase(){
@@ -87,7 +83,7 @@ class TemplateCoderBase{
 		eventListener.evaluatingField(templateName, fieldName);
 
 		final String expression = valueExtractor.apply(binding);
-		final Object value = EVALUATOR.evaluate(expression, rootObject, field.getFieldType());
+		final Object value = Evaluator.evaluate(expression, rootObject, field.getFieldType());
 
 		//store value in the current object
 		parserContext.setFieldValue(field.getField(), value);
@@ -96,7 +92,7 @@ class TemplateCoderBase{
 	}
 
 	protected static boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition != null && (condition.isEmpty() || EVALUATOR.evaluateBoolean(condition, rootObject)));
+		return (condition != null && (condition.isEmpty() || Evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
 	protected static void addContextParameters(final List<ContextParameter> contextParameters){
@@ -105,7 +101,7 @@ class TemplateCoderBase{
 
 			final String name = contextParameterBinding.name();
 			final Object value = tryEvaluateContextValue(contextParameterBinding.value());
-			EVALUATOR.putToContext(name, value);
+			Evaluator.putToContext(name, value);
 		}
 	}
 
@@ -114,14 +110,14 @@ class TemplateCoderBase{
 			final ContextParameter contextParameterBinding = contextParameters.get(i);
 
 			final String name = contextParameterBinding.name();
-			EVALUATOR.removeFromContext(name);
+			Evaluator.removeFromContext(name);
 		}
 	}
 
 	private static Object tryEvaluateContextValue(final String contextValue){
 		Object value;
 		try{
-			value = EVALUATOR.evaluate(contextValue, null, Object.class);
+			value = Evaluator.evaluate(contextValue, null, Object.class);
 		}
 		catch(final EvaluationException ignored){
 			value = contextValue;

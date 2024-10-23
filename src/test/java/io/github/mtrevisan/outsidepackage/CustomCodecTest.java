@@ -134,8 +134,6 @@ class CustomCodecTest{
 	@Test
 	void testCustomCodec() throws BoxonException{
 		Codec codec = new Codec(){
-			private static final Evaluator EVALUATOR = Evaluator.getInstance();
-
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindCustomData.class;
@@ -145,7 +143,7 @@ class CustomCodecTest{
 			public Object decode(BitReaderInterface reader, Annotation annotation, Annotation collectionBinding, Object rootObject){
 				BindCustomData binding = (BindCustomData)annotation;
 
-				int size = EVALUATOR.evaluateSize(binding.size(), rootObject);
+				int size = Evaluator.evaluateSize(binding.size(), rootObject);
 				BigInteger value = reader.readBigInteger(size * Byte.SIZE, ByteOrder.BIG_ENDIAN);
 
 				return bigIntegerToAscii(value);
@@ -168,7 +166,7 @@ class CustomCodecTest{
 					Object value){
 				BindCustomData binding = (BindCustomData)annotation;
 
-				int size = EVALUATOR.evaluateSize(binding.size(), rootObject);
+				int size = Evaluator.evaluateSize(binding.size(), rootObject);
 
 				BigInteger v = asciiToBigInteger((String)value);
 				BitSet bitmap = BitSetHelper.createBitSet(size * Byte.SIZE, v, ByteOrder.BIG_ENDIAN);

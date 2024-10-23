@@ -30,17 +30,9 @@ import io.github.mtrevisan.boxon.core.codecs.CodecLoader;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.io.AnnotationValidator;
-import io.github.mtrevisan.boxon.io.Codec;
-import io.github.mtrevisan.boxon.io.Evaluator;
 import io.github.mtrevisan.boxon.logs.EventListener;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Objects;
 
 
 /**
@@ -48,8 +40,6 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
-
-	private static final Evaluator EVALUATOR = Evaluator.getInstance();
 
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
@@ -91,116 +81,6 @@ public final class Core{
 
 		templateParser.withEventListener(eventListener);
 		configurationParser.withEventListener(eventListener);
-	}
-
-
-	/**
-	 * Adds a key-value pair to the context of this evaluator.
-	 *
-	 * @param key	The key used to reference the value.
-	 * @param value	The value.
-	 */
-	static void putToContext(final String key, final Object value){
-		EVALUATOR.putToContext(key, value);
-	}
-
-	/**
-	 * Loads the context for the {@link Evaluator}.
-	 *
-	 * @param context	The context map.
-	 */
-	static void putToContext(final Map<String, Object> context){
-		Objects.requireNonNull(context, "Context cannot be null");
-
-		for(final Map.Entry<String, Object> entry : context.entrySet())
-			EVALUATOR.putToContext(entry.getKey(), entry.getValue());
-	}
-
-	/**
-	 * Add a method to the context for the {@link Evaluator}.
-	 *
-	 * @param method	The method.
-	 */
-	static void putToContext(final Method method){
-		EVALUATOR.putToContext(method);
-	}
-
-	/**
-	 * Remove a key-value pair to the context of this evaluator.
-	 *
-	 * @param key	The key used to reference the value.
-	 */
-	static void removeFromContext(final String key){
-		EVALUATOR.removeFromContext(key);
-	}
-
-	/**
-	 * Remove a method to the context of this evaluator.
-	 *
-	 * @param method	The method.
-	 */
-	static void removeFromContext(final Method method){
-		EVALUATOR.removeFromContext(method);
-	}
-
-	/**
-	 * Clear the context for the {@link Evaluator}.
-	 */
-	static void clearContext(){
-		EVALUATOR.clearContext();
-	}
-
-	static Map<String, Object> getContext(){
-		return EVALUATOR.getContext();
-	}
-
-
-	/**
-	 * Loads all the default codecs.
-	 */
-	static void useDefaultCodecs(){
-		CodecLoader.loadDefaultCodecs();
-	}
-
-	/**
-	 * Loads all the codecs that extends {@link Codec}.
-	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
-	 * @throws CodecException	If a codec was already loaded.
-	 */
-	static void addCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
-		CodecLoader.loadCodecsFrom(basePackageClasses);
-	}
-
-	/**
-	 * Loads the given codec.
-	 *
-	 * @param codec	The codec to be loaded.
-	 * @throws CodecException	If the codec was already loaded.
-	 */
-	static void addCodec(final Codec codec) throws CodecException{
-		CodecLoader.addCodec(codec);
-	}
-
-	/**
-	 * Loads the given codec.
-	 *
-	 * @param codec	The codec to be loaded.
-	 * @param validator	The codec validator.
-	 * @throws CodecException	If the codec was already loaded.
-	 */
-	static void addCodec(final Codec codec, final AnnotationValidator validator) throws CodecException{
-		CodecLoader.addCodec(codec, validator);
-	}
-
-	/**
-	 * Loads all the given codecs.
-	 *
-	 * @param codecs	The list of codecs to be loaded.
-	 * @throws CodecException	If the codec was already loaded.
-	 */
-	static void addCodecs(final Codec... codecs) throws CodecException{
-		CodecLoader.addCodecs(codecs);
 	}
 
 
@@ -259,6 +139,11 @@ public final class Core{
 	}
 
 
+	/**
+	 * Retrieves the event listener associated with the core.
+	 *
+	 * @return	The event listener instance.
+	 */
 	public EventListener getEventListener(){
 		return eventListener;
 	}

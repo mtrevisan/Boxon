@@ -38,7 +38,7 @@ class NullConverterValidationStrategy implements ValidationStrategy{
 
 	@Override
 	public final void validate(Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
-		throws AnnotationException{
+			throws AnnotationException{
 		fieldType = (fieldType != List.class
 			? FieldAccessor.extractFieldType(fieldType)
 			: bindingType

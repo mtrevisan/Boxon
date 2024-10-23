@@ -44,7 +44,7 @@ class NonNullConverterValidationStrategy implements ValidationStrategy{
 
 	@Override
 	public final void validate(final Class<?> fieldType, final Class<? extends Converter<?, ?>> converter, final Class<?> bindingType)
-		throws AnnotationException{
+			throws AnnotationException{
 		final List<Type> inOutTypes = GenericHelper.resolveGenericTypes(converter);
 		final Class<?> inputType = FieldAccessor.extractFieldType((Class<?>)inOutTypes.getFirst());
 		final Class<?> outputType = (Class<?>)inOutTypes.getLast();

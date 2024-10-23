@@ -24,11 +24,40 @@
  */
 package io.github.mtrevisan.boxon.core.helpers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Takes care of the conversion between primitive types and their wrappers, and vice versa.
  */
 public final class DataTypeMapper{
+
+	private static final Map<String, Class<?>> PRIMITIVE_TYPE_MAP = new HashMap<>(9);
+	static{
+		PRIMITIVE_TYPE_MAP.put(Boolean.class.getName(), boolean.class);
+		PRIMITIVE_TYPE_MAP.put(Byte.class.getName(), byte.class);
+		PRIMITIVE_TYPE_MAP.put(Character.class.getName(), char.class);
+		PRIMITIVE_TYPE_MAP.put(Short.class.getName(), short.class);
+		PRIMITIVE_TYPE_MAP.put(Integer.class.getName(), int.class);
+		PRIMITIVE_TYPE_MAP.put(Long.class.getName(), long.class);
+		PRIMITIVE_TYPE_MAP.put(Float.class.getName(), float.class);
+		PRIMITIVE_TYPE_MAP.put(Double.class.getName(), double.class);
+		PRIMITIVE_TYPE_MAP.put(Void.class.getName(), void.class);
+	}
+	private static final Map<String, Class<?>> OBJECTIVE_TYPE_MAP = new HashMap<>(9);
+	static{
+		OBJECTIVE_TYPE_MAP.put(boolean.class.getSimpleName(), Boolean.class);
+		OBJECTIVE_TYPE_MAP.put(byte.class.getSimpleName(), Byte.class);
+		OBJECTIVE_TYPE_MAP.put(char.class.getSimpleName(), Character.class);
+		OBJECTIVE_TYPE_MAP.put(short.class.getSimpleName(), Short.class);
+		OBJECTIVE_TYPE_MAP.put(int.class.getSimpleName(), Integer.class);
+		OBJECTIVE_TYPE_MAP.put(long.class.getSimpleName(), Long.class);
+		OBJECTIVE_TYPE_MAP.put(float.class.getSimpleName(), Float.class);
+		OBJECTIVE_TYPE_MAP.put(double.class.getSimpleName(), Double.class);
+		OBJECTIVE_TYPE_MAP.put(void.class.getSimpleName(), Void.class);
+	}
+
 
 	private DataTypeMapper(){}
 
@@ -67,7 +96,17 @@ public final class DataTypeMapper{
 	 * @return	The converted type;
 	 */
 	public static Class<?> toTypeOrSelf(final String typeName) throws ClassNotFoundException{
-		Class<?> type = DataTypeHelper.TYPE_MAP.get(typeName);
+		//check if it's an objective type
+		Class<?> type = PRIMITIVE_TYPE_MAP.get(typeName);
+
+		//check if it's a primitive type
+		if(type == null){
+			type = OBJECTIVE_TYPE_MAP.get(typeName);
+			if(type != null)
+				type = PRIMITIVE_TYPE_MAP.get(type.getName());
+		}
+
+		//try to extract the class
 		if(type == null){
 			try{
 				type = Class.forName(typeName);
@@ -76,7 +115,6 @@ public final class DataTypeMapper{
 				throw new ClassNotFoundException("Cannot find class for `" + typeName + "`");
 			}
 		}
-
 		return type;
 	}
 
@@ -92,18 +130,7 @@ public final class DataTypeMapper{
 		if(!isPrimitive(primitiveType))
 			return primitiveType;
 
-		return switch(primitiveType.getSimpleName()){
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_BOOLEAN -> Boolean.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_BYTE -> Byte.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_CHAR -> Character.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_SHORT -> Short.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_INT -> Integer.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_LONG -> Long.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_FLOAT -> Float.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_DOUBLE -> Double.class;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_VOID -> Void.class;
-			default -> primitiveType;
-		};
+		return OBJECTIVE_TYPE_MAP.getOrDefault(primitiveType.getSimpleName(), primitiveType);
 	}
 
 	/**
@@ -112,24 +139,13 @@ public final class DataTypeMapper{
 	 * @param objectiveType	The type to be converted.
 	 * @return	The converted type;
 	 */
-	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
+	private static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
 		if(objectiveType == null)
 			return null;
 		if(isPrimitive(objectiveType))
 			return objectiveType;
 
-		return switch(objectiveType.getSimpleName()){
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_BOOLEAN -> boolean.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_BYTE -> byte.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_CHARACTER -> char.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_SHORT -> short.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_INTEGER -> int.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_LONG -> long.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_FLOAT -> float.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_DOUBLE -> double.class;
-			case DataTypeHelper.OBJECTIVE_TYPE_NAME_VOID -> void.class;
-			default -> objectiveType;
-		};
+		return PRIMITIVE_TYPE_MAP.getOrDefault(objectiveType.getSimpleName(), objectiveType);
 	}
 
 }

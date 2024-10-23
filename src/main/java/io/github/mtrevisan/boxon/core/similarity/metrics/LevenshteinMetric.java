@@ -34,6 +34,8 @@ import io.github.mtrevisan.boxon.core.similarity.distances.MetricData;
  * <p>It does respect triangle inequality (the distance between two inputs is no greater than the sum Levenshtein distances from a third
  * input), and is thus a metric distance.</p>
  *
+ * @param <D>	The type of data this metric can handle, extending {@link MetricData}.
+ *
  * @see <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>
  * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Levenshtein.java">Levenstein.java</a>
  */
@@ -46,10 +48,25 @@ public final class LevenshteinMetric<D extends MetricData<D>> implements Metric<
 	private final int maxCost;
 
 
+	/**
+	 * Creates a new instance with default costs for insertion, deletion, and substitution operations.
+	 *
+	 * @param <D>	The type of {@link MetricData} that this metric will handle.
+	 * @return	A new instance with default costs ({@code 1} for insertion, deletion, and substitution).
+	 */
 	public static <D extends MetricData<D>> LevenshteinMetric<D> create(){
 		return new LevenshteinMetric<>(1, 1, 1);
 	}
 
+	/**
+	 * Creates a new instance with specified costs for insertion, deletion, and substitution.
+	 *
+	 * @param insertionCost	Cost of an insertion operation.
+	 * @param deletionCost	Cost of a deletion operation.
+	 * @param substitutionCost	Cost of a substitution operation.
+	 * @param <D>	The type of {@link MetricData} that this metric will handle.
+	 * @return	A new instance configured with the specified costs.
+	 */
 	public static <D extends MetricData<D>> LevenshteinMetric<D> create(final int insertionCost, final int deletionCost,
 			final int substitutionCost){
 		return new LevenshteinMetric<>(insertionCost, deletionCost, substitutionCost);

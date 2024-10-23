@@ -38,6 +38,12 @@ public final class StringArrayMetricData implements MetricData<StringArrayMetric
 	private final String[] data;
 
 
+	/**
+	 * Creates a new instance using the provided string array.
+	 *
+	 * @param genome	The string array to be encapsulated within the object.
+	 * @return	A new instance containing the provided string array data.
+	 */
 	public static StringArrayMetricData of(final String... genome){
 		return new StringArrayMetricData(genome);
 	}

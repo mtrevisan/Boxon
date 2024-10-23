@@ -36,6 +36,8 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 
@@ -46,29 +48,25 @@ public final class DataTypeCaster{
 
 	private static final String METHOD_VALUE_OF = "valueOf";
 
+	private static final Map<Class<?>, Function<BigInteger, Number>> CAST_MAP = new HashMap<>(12);
+	static{
+		CAST_MAP.put(byte.class, BigInteger::byteValue);
+		CAST_MAP.put(Byte.class, BigInteger::byteValue);
+		CAST_MAP.put(short.class, BigInteger::shortValue);
+		CAST_MAP.put(Short.class, BigInteger::shortValue);
+		CAST_MAP.put(int.class, BigInteger::intValue);
+		CAST_MAP.put(Integer.class, BigInteger::intValue);
+		CAST_MAP.put(long.class, BigInteger::longValue);
+		CAST_MAP.put(Long.class, BigInteger::longValue);
+		CAST_MAP.put(float.class, BigInteger::floatValue);
+		CAST_MAP.put(Float.class, BigInteger::floatValue);
+		CAST_MAP.put(double.class, BigInteger::doubleValue);
+		CAST_MAP.put(Double.class, BigInteger::doubleValue);
+	}
+
 
 	private DataTypeCaster(){}
 
-
-
-	/**
-	 * Retrieves the computed value based on the objective type.
-	 *
-	 * @param value	The input value to be processed.
-	 * @param type	The class type from which to convert.
-	 * @return	The computed value based on the objective type.
-	 */
-	private static Number value(final String value, final Class<?> type){
-		return switch(type.getSimpleName()){
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_BYTE, DataTypeHelper.OBJECTIVE_TYPE_NAME_BYTE -> Byte.valueOf(value);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_SHORT, DataTypeHelper.OBJECTIVE_TYPE_NAME_SHORT -> Short.valueOf(value);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_INT, DataTypeHelper.OBJECTIVE_TYPE_NAME_INTEGER -> Integer.valueOf(value);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_LONG, DataTypeHelper.OBJECTIVE_TYPE_NAME_LONG -> Long.valueOf(value);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_FLOAT, DataTypeHelper.OBJECTIVE_TYPE_NAME_FLOAT -> Float.valueOf(value);
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_DOUBLE, DataTypeHelper.OBJECTIVE_TYPE_NAME_DOUBLE -> Double.valueOf(value);
-			default -> null;
-		};
-	}
 
 	/**
 	 * Casts the given {@code value} to the specified {@code inputType}.
@@ -104,19 +102,11 @@ public final class DataTypeCaster{
 	 * @param targetType The target data type to cast the value to.
 	 * @return The cast value if successful, otherwise the original value.
 	 */
-	public static Function<BigInteger, Number> castFunction(final Class<?> targetType){
+	private static Function<BigInteger, Number> castFunction(final Class<?> targetType){
 		if(targetType == null)
 			return (value -> value);
 
-		return switch(targetType.getSimpleName()){
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_BYTE, DataTypeHelper.OBJECTIVE_TYPE_NAME_BYTE -> Number::byteValue;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_SHORT, DataTypeHelper.OBJECTIVE_TYPE_NAME_SHORT -> Number::shortValue;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_INT, DataTypeHelper.OBJECTIVE_TYPE_NAME_INTEGER -> BigInteger::intValue;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_LONG, DataTypeHelper.OBJECTIVE_TYPE_NAME_LONG -> BigInteger::longValue;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_FLOAT, DataTypeHelper.OBJECTIVE_TYPE_NAME_FLOAT -> BigInteger::floatValue;
-			case DataTypeHelper.PRIMITIVE_TYPE_NAME_DOUBLE, DataTypeHelper.OBJECTIVE_TYPE_NAME_DOUBLE -> BigInteger::doubleValue;
-			default -> (value -> value);
-		};
+		return CAST_MAP.getOrDefault(targetType, value -> value);
 	}
 
 	private static Class<?> elementsType(final Object array, final int length){
@@ -178,21 +168,17 @@ public final class DataTypeCaster{
 	}
 
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
-		Object result;
+		final Object result;
 		if(BigDecimal.class.isAssignableFrom(objectiveType))
 			result = new BigDecimal(value);
 		else if(BigInteger.class.isAssignableFrom(objectiveType))
 			result = JavaHelper.convertToBigInteger(value);
 		else{
-			result = value(value, objectiveType);
-			if(result == null){
-				//try with `.valueOf()`
-				try{
-					result = MethodHelper.invokeStaticMethod(objectiveType, METHOD_VALUE_OF, value);
-				}
-				catch(final Exception ignored){
-					throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
-				}
+			try{
+				result = MethodHelper.invokeStaticMethod(objectiveType, METHOD_VALUE_OF, value);
+			}
+			catch(final Exception ignored){
+				throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
 			}
 		}
 		return result;
