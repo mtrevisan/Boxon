@@ -104,7 +104,7 @@ public final class DataTypeCaster{
 	 * @param targetType The target data type to cast the value to.
 	 * @return The cast value if successful, otherwise the original value.
 	 */
-	public static Function<BigInteger, Number> castFunction(final Class<?> targetType){
+	private static Function<BigInteger, Number> castFunction(final Class<?> targetType){
 		if(targetType == null)
 			return (value -> value);
 

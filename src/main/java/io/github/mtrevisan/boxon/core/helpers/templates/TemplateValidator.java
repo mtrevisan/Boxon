@@ -61,9 +61,8 @@ public final class TemplateValidator{
 	private static final int ORDER_EVALUATE_INDEX = 2;
 	private static final int ORDER_POST_PROCESS_INDEX = 3;
 
-	private static final Set<Class<? extends Annotation>> ANNOTATIONS_BIND_ORDER = Set.of(BindBitSet.class,
-		BindInteger.class, BindObject.class, BindString.class, BindStringTerminated.class, ConverterChoices.class, ObjectChoices.class,
-		ObjectChoicesList.class);
+	private static final Set<Class<? extends Annotation>> ANNOTATIONS_BIND = Set.of(BindBitSet.class, BindInteger.class, BindObject.class,
+		BindString.class, BindStringTerminated.class, ConverterChoices.class, ObjectChoices.class, ObjectChoicesList.class);
 	private static final Set<Class<? extends Annotation>> ANNOTATIONS_SKIP = Set.of(SkipBits.class,
 		SkipUntilTerminator.class);
 
@@ -101,7 +100,7 @@ public final class TemplateValidator{
 			if(annotationType == ContextParameter.class)
 				continue;
 
-			if(ANNOTATIONS_BIND_ORDER.contains(annotationType)){
+			if(ANNOTATIONS_BIND.contains(annotationType)){
 				validateBindAnnotationOrder(annotationFound);
 
 				annotationFound[ORDER_BIND_INDEX] = true;

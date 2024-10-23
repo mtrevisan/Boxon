@@ -86,12 +86,15 @@ final class CodecDefault implements Codec{
 			final int arraySize = CodecHelper.evaluateSize(superBinding.size(), rootObject);
 			instance = behavior.readArrayWithoutAlternatives(reader, arraySize);
 		}
-		else if(collectionBinding instanceof BindAsList)
-			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@{}` instead",
-				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()), BindAsArray.class.getSimpleName());
-		else
-			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
-				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
+		else{
+			final String annotationType = JavaHelper.prettyPrintClassName(collectionBinding.annotationType());
+			if(collectionBinding instanceof BindAsList)
+				throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@{}` instead",
+					annotationType, BindAsArray.class.getSimpleName());
+			else
+				throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
+					annotationType);
+		}
 
 		final Class<? extends Converter<?, ?>> chosenConverter = behavior.getChosenConverter(rootObject);
 		if(behavior instanceof IntegerBehavior)
@@ -127,12 +130,15 @@ final class CodecDefault implements Codec{
 
 			behavior.writeArrayWithoutAlternatives(writer, convertedValue);
 		}
-		else if(collectionBinding instanceof BindAsList)
-			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@{}` instead",
-				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()), BindAsArray.class.getSimpleName());
-		else
-			throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
-				JavaHelper.prettyPrintClassName(collectionBinding.annotationType()));
+		else{
+			final String annotationType = JavaHelper.prettyPrintClassName(collectionBinding.annotationType());
+			if(collectionBinding instanceof BindAsList)
+				throw AnnotationException.create("Cannot handle this type of collection annotation: {}, use `@{}` instead",
+					annotationType, BindAsArray.class.getSimpleName());
+			else
+				throw AnnotationException.create("Cannot handle this type of collection annotation: {}, please report to the developer",
+					annotationType);
+		}
 	}
 
 }

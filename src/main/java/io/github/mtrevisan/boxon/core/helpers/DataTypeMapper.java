@@ -112,7 +112,7 @@ public final class DataTypeMapper{
 	 * @param objectiveType	The type to be converted.
 	 * @return	The converted type;
 	 */
-	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
+	private static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
 		if(objectiveType == null)
 			return null;
 		if(isPrimitive(objectiveType))

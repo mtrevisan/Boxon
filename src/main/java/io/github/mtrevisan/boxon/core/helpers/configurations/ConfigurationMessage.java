@@ -150,27 +150,26 @@ public final class ConfigurationMessage<T>{
 			return;
 
 		final boolean[] annotationFound = new boolean[ORDER_FIELD_INDEX + 1];
-		for(int i = 0, count = annotations.length; i < count; i ++){
-			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
+		for(int i = 0, count = annotations.length; i < count; i ++)
+			switch(annotations[i]){
+				case final AlternativeConfigurationField acf -> {
+					validateAlternativeAnnotationOrder(annotationFound);
 
-			if(annotationType == AlternativeConfigurationField.class){
-				validateAlternativeAnnotationOrder(annotationFound);
+					annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
+				}
+				case final CompositeConfigurationField ccf -> {
+					validateCompositeAnnotationOrder(annotationFound);
 
-				annotationFound[ORDER_ALTERNATIVE_INDEX] = true;
+					annotationFound[ORDER_COMPOSITE_INDEX] = true;
+				}
+				case final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField cf -> {
+					validateFieldAnnotationOrder(annotationFound);
+
+					annotationFound[ORDER_FIELD_INDEX] = true;
+				}
+				case final ConfigurationSkip cs -> validateSkipAnnotationOrder(annotationFound);
+				default -> {}
 			}
-			else if(annotationType == CompositeConfigurationField.class){
-				validateCompositeAnnotationOrder(annotationFound);
-
-				annotationFound[ORDER_COMPOSITE_INDEX] = true;
-			}
-			else if(annotationType == io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField.class){
-				validateFieldAnnotationOrder(annotationFound);
-
-				annotationFound[ORDER_FIELD_INDEX] = true;
-			}
-			else if(annotationType == ConfigurationSkip.class)
-				validateSkipAnnotationOrder(annotationFound);
-		}
 	}
 
 	private static void validateAlternativeAnnotationOrder(final boolean[] annotationFound) throws AnnotationException{
