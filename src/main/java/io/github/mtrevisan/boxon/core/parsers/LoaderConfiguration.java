@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.helpers.FieldAccessor;
@@ -113,7 +112,7 @@ public final class LoaderConfiguration{
 		eventListener.loadingConfigurationsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link TemplateHeader}. */
+		/** extract all classes annotated with {@link io.github.mtrevisan.boxon.annotations.TemplateHeader}. */
 		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(ConfigurationHeader.class);
 		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
