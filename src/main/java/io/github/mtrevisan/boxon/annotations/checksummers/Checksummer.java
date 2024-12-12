@@ -100,7 +100,6 @@ public interface Checksummer{
 
 		if(reflectCRCOut())
 			crc = reflect(crc, width);
-
 		crc ^= xorOut();
 		return crc & crcMask;
 	}
