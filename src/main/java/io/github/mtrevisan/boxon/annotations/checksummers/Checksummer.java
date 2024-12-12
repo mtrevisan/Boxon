@@ -43,7 +43,7 @@ public interface Checksummer{
 	int crcWidth();
 
 	/** Generator polynomial. */
-	int getPolynomial();
+	long getPolynomial();
 
 	/** Reflect input data. */
 	default boolean reflectData(){
@@ -76,9 +76,9 @@ public interface Checksummer{
 	default Number calculateCRC(final byte[] data, final int start, final int end){
 		final int width = crcWidth();
 		final int topBit = 1 << (width - 1);
-		final long crcMask = (1L << width) - 1;
+		final long crcMask = (1l << width) - 1;
 
-		final int polynomial = getPolynomial();
+		final long polynomial = getPolynomial();
 		final boolean reflectData = reflectData();
 		long crc = initialValue();
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
@@ -113,10 +113,10 @@ public interface Checksummer{
 	 */
 	private static long reflect(final long value, final int bitCount){
 		long reflected = 0;
-		long topBit = 1L;
+		long topBit = 1l;
 		for(int i = 0; i < bitCount; i ++){
 			if((value & topBit) != 0)
-				reflected |= (1L << (bitCount - 1 - i));
+				reflected |= (1l << (bitCount - 1 - i));
 
 			topBit <<= 1;
 		}

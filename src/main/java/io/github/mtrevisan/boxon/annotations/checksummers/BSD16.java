@@ -41,8 +41,8 @@ public final class BSD16 implements Checksummer{
 	}
 
 	@Override
-	public int getPolynomial(){
-		return 0;
+	public long getPolynomial(){
+		return 0l;
 	}
 
 	@Override

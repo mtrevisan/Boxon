@@ -34,8 +34,8 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class CRC16IBM implements Checksummer{
 
-	/** CCITT polynomial: x^16 + x^15 + x^2 + 1 -> 1000_0000_0000_0101 = 0x8005 (reversed is 0xA001). */
-	private static final int POLYNOMIAL_REVERSED = 0x0000_A001;
+	/** x^16 + x^15 + x^2 + 1 -> 1000_0000_0000_0101 = 0x8005. */
+	private static final int POLYNOMIAL = 0x0000_8005;
 
 
 	@Override
@@ -44,16 +44,23 @@ public final class CRC16IBM implements Checksummer{
 	}
 
 	@Override
-	public int getPolynomial(){
-		return 0x8005;
+	public long getPolynomial(){
+		return POLYNOMIAL;
+	}
+
+	@Override
+	public boolean reflectData(){
+		return true;
+	}
+
+	@Override
+	public boolean reflectCRCOut(){
+		return true;
 	}
 
 	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
-		//FIXME
-//		final Number crc = calculateCRC(data, start, end,
-//			true, 0x0000, true, 0x0000);
-		final Number crc = calculateChecksumReversed(data, POLYNOMIAL_REVERSED, 0x0000, start, end);
+		final Number crc = calculateCRC(data, start, end);
 		return crc.shortValue();
 	}
 

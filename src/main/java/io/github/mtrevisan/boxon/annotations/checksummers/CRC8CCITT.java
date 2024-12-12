@@ -33,8 +33,8 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class CRC8CCITT implements Checksummer{
 
-	/** CCITT polynomial: x^8 + x^2 + x + 1 -> 1_0000_0111 = 0x07. */
-	private static final int POLYNOMIAL = 0x0000_0007;
+	/** x^8 + x^2 + x + 1 -> 1_0000_0111 = 0x07. */
+	private static final long POLYNOMIAL = 0x0000_0007;
 
 
 	@Override
@@ -43,7 +43,7 @@ public final class CRC8CCITT implements Checksummer{
 	}
 
 	@Override
-	public int getPolynomial(){
+	public long getPolynomial(){
 		return POLYNOMIAL;
 	}
 
