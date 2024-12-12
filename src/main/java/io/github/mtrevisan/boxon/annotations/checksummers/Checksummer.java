@@ -39,40 +39,89 @@ public interface Checksummer{
 	Number calculateChecksum(byte[] data, int start, int end);
 
 
-	static Number calculateChecksum(final byte[] data, final int polynomial, final int initialValue, final int start, final int end){
-		int checksum = initialValue;
-		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
-			final byte datum = data[i];
+	/** Width of the CRC in bits. */
+	int crcWidth();
 
-			checksum ^= datum << Byte.SIZE;
+	/** Generator polynomial. */
+	int getPolynomial();
+
+	/** Reflect input data. */
+	default boolean reflectData(){
+		return false;
+	}
+
+	/** Initial value of the CRC register. */
+	default long initialValue(){
+		return 0;
+	}
+
+	/** Reflect output of the CRC. */
+	default boolean reflectCRCOut(){
+		return false;
+	}
+
+	/** Final XOR to apply to the computed CRC. */
+	default long xorOut(){
+		return 0;
+	}
+
+	/**
+	 * Compute a generic CRC.
+	 *
+	 * @param data	Array of bytes to process.
+	 * @param start	Start index of the input array.
+	 * @param end	End index of the input array.
+	 * @return	The computed CRC value.
+	 */
+	default Number calculateCRC(final byte[] data, final int start, final int end){
+		final int width = crcWidth();
+		final int topBit = 1 << (width - 1);
+		final long crcMask = (1L << width) - 1;
+
+		final int polynomial = getPolynomial();
+		final boolean reflectData = reflectData();
+		long crc = initialValue();
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			long datum = data[i] & 0xFF;
+
+			if(reflectData)
+				datum = reflect(datum, Byte.SIZE);
+			crc ^= (datum << (width - Byte.SIZE));
+
 			for(int j = 0; j < Byte.SIZE; j ++){
-				checksum <<= 1;
-				if((checksum & 0x1_0000) != 0)
-					checksum ^= polynomial;
+				final boolean highBit = ((crc & topBit) != 0);
+				crc <<= 1;
+				if(highBit)
+					crc ^= polynomial;
 			}
+
+			crc &= crcMask;
 		}
-		return checksum;
+
+		if(reflectCRCOut())
+			crc = reflect(crc, width);
+
+		crc ^= xorOut();
+		return crc & crcMask;
 	}
 
-	static Number calculateChecksumReversed(final byte[] data, final int polynomialReversed, final int start, final int end){
-		int checksum = 0x0000;
-		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
-			final byte datum = data[i];
+	/**
+	 * Reflects the order of bits in a value.
+	 *
+	 * @param value	The value to reflect.
+	 * @param bitCount	The number of bits to reflect.
+	 * @return	The reflected value.
+	 */
+	private static long reflect(final long value, final int bitCount){
+		long reflected = 0;
+		long topBit = 1L;
+		for(int i = 0; i < bitCount; i ++){
+			if((value & topBit) != 0)
+				reflected |= (1L << (bitCount - 1 - i));
 
-			checksum = updateChecksum(datum, polynomialReversed, checksum);
+			topBit <<= 1;
 		}
-		return checksum;
-	}
-
-	private static int updateChecksum(final byte datum, final int polynomialReversed, int checksum){
-		checksum ^= datum & 0xFF;
-		for(int j = 0; j < Byte.SIZE; j ++){
-			final boolean carry = ((checksum & 0x01) != 0);
-			checksum >>>= 1;
-			if(carry)
-				checksum ^= polynomialReversed;
-		}
-		return checksum;
+		return reflected;
 	}
 
 }

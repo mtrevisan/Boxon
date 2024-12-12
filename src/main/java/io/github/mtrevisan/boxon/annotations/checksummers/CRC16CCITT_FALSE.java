@@ -31,11 +31,11 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
  */
-public final class CRC16CCITT_FALSE extends CRC16CCITTMSBFirst{
+public final class CRC16CCITT_FALSE extends CRC16CCITT_XMODEM{
 
 	@Override
-	int initialValue(){
-		return 0xFFFF;
+	public long initialValue(){
+		return 0x0000FFFF;
 	}
 
 }

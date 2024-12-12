@@ -32,13 +32,33 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class CRC8DallasMaxim implements Checksummer{
 
-	/** CCITT polynomial: x^8 + x^5 + x^4 + 1 -> 1_0011_0001 = 0x31 (reversed is 0x8C). */
-	private static final int POLYNOMIAL_REVERSED = 0x0000_008C;
+	/** CCITT polynomial: x^8 + x^5 + x^4 + 1 -> 1_0011_0001 = 0x31. */
+	private static final int POLYNOMIAL = 0x0000_0031;
 
 
 	@Override
+	public int crcWidth(){
+		return 8;
+	}
+
+	@Override
+	public int getPolynomial(){
+		return POLYNOMIAL;
+	}
+
+	@Override
+	public boolean reflectData(){
+		return true;
+	}
+
+	@Override
+	public boolean reflectCRCOut(){
+		return true;
+	}
+
+	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
-		final Number crc = Checksummer.calculateChecksumReversed(data, POLYNOMIAL_REVERSED, start, end);
+		final Number crc = calculateCRC(data, start, end);
 		return crc.byteValue();
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,25 +24,28 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/**
- * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT algorithms.
- *
- * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
- * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
- */
-abstract class CRC16CCITTMSBFirst implements Checksummer{
-
-	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021. */
-	private static final int POLYNOMIAL = 0x0000_1021;
+import java.nio.charset.StandardCharsets;
 
 
-	abstract int initialValue();
+class CRC8CCITTTest{
 
-	@Override
-	public final Number calculateChecksum(final byte[] data, final int start, final int end){
-		final Number crc = Checksummer.calculateChecksum(data, POLYNOMIAL, initialValue(), start, end);
-		return crc.shortValue();
+	@Test
+	void oneToFour(){
+		Checksummer crc = new CRC8CCITT();
+		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+
+		Assertions.assertEquals((byte)0xE3, crc8.byteValue());
+	}
+
+	@Test
+	void test(){
+		Checksummer crc = new CRC8CCITT();
+		Number crc8 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+
+		Assertions.assertEquals((byte)0x31, crc8.byteValue());
 	}
 
 }

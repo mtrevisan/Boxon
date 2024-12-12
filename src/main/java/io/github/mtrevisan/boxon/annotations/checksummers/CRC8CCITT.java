@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,21 +25,21 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
+
 /**
- * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT algorithms.
+ * Calculates a 8 bit Cyclic Redundancy Check of a sequence of bytes using CCITT algorithm.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
- * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
  */
-public class CRC16CCITT_XMODEM implements Checksummer{
+public final class CRC8CCITT implements Checksummer{
 
-	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021. */
-	private static final int POLYNOMIAL = 0x0000_1021;
+	/** CCITT polynomial: x^8 + x^2 + x + 1 -> 1_0000_0111 = 0x07. */
+	private static final int POLYNOMIAL = 0x0000_0007;
 
 
 	@Override
 	public int crcWidth(){
-		return 16;
+		return 8;
 	}
 
 	@Override
@@ -48,9 +48,9 @@ public class CRC16CCITT_XMODEM implements Checksummer{
 	}
 
 	@Override
-	public final Number calculateChecksum(final byte[] data, final int start, final int end){
+	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		final Number crc = calculateCRC(data, start, end);
-		return crc.shortValue();
+		return crc.byteValue();
 	}
 
 }
