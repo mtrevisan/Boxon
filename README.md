@@ -1568,6 +1568,7 @@ Pull requests are welcomed.
 ### version 7.0.0 - 20241212
 
 - Added `crcSize` parameter to `Checksum` annotation to specify the size of the CRC field in the stream, allowing for different checksum algorithms to be coded.
+- Enhanced `Checksummer` capabilities to encompass more CRC algorithms.
 
 <a name="changelog-6.0.1"></a>
 ### version 6.0.1 - 20241022
