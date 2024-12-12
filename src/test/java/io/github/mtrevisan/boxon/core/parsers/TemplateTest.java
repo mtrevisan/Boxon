@@ -141,7 +141,7 @@ class TemplateTest{
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 
-		@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class)
+		@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class, crcSize = 16)
 		private short checksum;
 
 		@Evaluate("T(java.time.ZonedDateTime).now()")
@@ -209,6 +209,11 @@ class TemplateTest{
 			@Override
 			public Class<? extends Checksummer> algorithm(){
 				return CRC16CCITT_FALSE.class;
+			}
+
+			@Override
+			public int crcSize(){
+				return 16;
 			}
 
 			@Override

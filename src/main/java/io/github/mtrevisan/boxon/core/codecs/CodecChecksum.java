@@ -57,15 +57,8 @@ final class CodecChecksum implements Codec{
 			final Object rootObject) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
-		//retrieve the CRC size
-		final int crcSize;
-		try{
-			crcSize = MethodHelper.invokeStaticMethodFromClassHierarchy(binding.algorithm(), "getCRCSize", int.class);
-		}
-		catch(final ReflectiveOperationException roe){
-			throw AnnotationException.create("Unable to retrieve CRC size", roe);
-		}
-		final Class<?> crcType = DataTypeHelper.getPrimitive(crcSize);
+		//retrieve the CRC class
+		final Class<?> crcType = DataTypeHelper.getPrimitive(binding.crcSize());
 		return reader.read(crcType, binding.byteOrder());
 	}
 

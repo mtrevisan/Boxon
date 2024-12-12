@@ -36,15 +36,6 @@ public final class CRC8DallasMaxim implements Checksummer{
 	private static final int POLYNOMIAL_REVERSED = 0x0000_008C;
 
 
-	/**
-	 * The size in bits of the CRC read from the stream (NOT the real CRC size!).
-	 *
-	 * @return The size in bit of the CRC.
-	 */
-	public static int getCRCSize(){
-		return 8;
-	}
-
 	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		final Number crc = Checksummer.calculateChecksumReversed(data, POLYNOMIAL_REVERSED, start, end);

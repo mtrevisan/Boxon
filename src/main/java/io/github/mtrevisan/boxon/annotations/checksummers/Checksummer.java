@@ -39,6 +39,21 @@ public interface Checksummer{
 	Number calculateChecksum(byte[] data, int start, int end);
 
 
+	static Number calculateChecksum(final byte[] data, final int polynomial, final int initialValue, final int start, final int end){
+		int checksum = initialValue;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
+
+			checksum ^= datum << Byte.SIZE;
+			for(int j = 0; j < Byte.SIZE; j ++){
+				checksum <<= 1;
+				if((checksum & 0x1_0000) != 0)
+					checksum ^= polynomial;
+			}
+		}
+		return checksum;
+	}
+
 	static Number calculateChecksumReversed(final byte[] data, final int polynomialReversed, final int start, final int end){
 		int checksum = 0x0000;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){

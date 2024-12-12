@@ -35,15 +35,6 @@ public final class BSD16 implements Checksummer{
 	private static final int LEFT_SHIFT = Short.SIZE - 1;
 
 
-	/**
-	 * The size in bits of the CRC read from the stream (NOT the real CRC size!).
-	 *
-	 * @return The size in bit of the CRC.
-	 */
-	public static int getCRCSize(){
-		return 16;
-	}
-
 	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		int checksum = 0;

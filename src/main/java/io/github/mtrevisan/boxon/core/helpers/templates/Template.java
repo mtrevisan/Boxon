@@ -164,6 +164,8 @@ public final class Template<T>{
 				throw AnnotationException.create("Cannot have more than one {} annotations",
 					Checksum.class.getSimpleName());
 
+			TemplateValidator.validateChecksumAnnotation(checksum, field);
+
 			this.checksum = TemplateField.create(field, checksum);
 		}
 	}

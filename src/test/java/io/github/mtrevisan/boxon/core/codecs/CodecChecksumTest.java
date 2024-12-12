@@ -52,7 +52,8 @@ class CodecChecksumTest{
 			"byteOrder", ByteOrder.BIG_ENDIAN,
 			"skipStart", 2,
 			"skipEnd", 0,
-			"algorithm", CRC16CCITT_FALSE.class.getName()
+			"algorithm", CRC16CCITT_FALSE.class.getName(),
+			"crcSize", 16
 		);
 		Checksum annotation = AnnotationCreator.createAnnotation(Checksum.class, annotationData);
 

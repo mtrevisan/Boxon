@@ -38,10 +38,13 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeHelper;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeMapper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Set;
 
 
@@ -82,6 +85,7 @@ public final class TemplateValidator{
 	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
 	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
 	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
+	public static final String CHECKSUM_ANNOTATION_MISMATCHED_SIZES = "Wrong checksum field size: the field is {} bits in size, should be {}";
 
 
 	private TemplateValidator(){}
@@ -168,6 +172,14 @@ public final class TemplateValidator{
 		if(annotationFound[ORDER_POST_PROCESS_INDEX])
 			throw AnnotationException.create(ANNOTATION_ORDER_ERROR_WRONG_ORDER,
 				ANNOTATION_NAME_SKIP_STAR, ANNOTATION_NAME_POST_PROCESS);
+	}
+
+	public static void validateChecksumAnnotation(final Checksum checksum, final Field field) throws AnnotationException{
+		final int crcSize = checksum.crcSize();
+		final int fieldSize = DataTypeHelper.getSize(field.getType());
+		if(crcSize != fieldSize)
+			throw AnnotationException.create(CHECKSUM_ANNOTATION_MISMATCHED_SIZES,
+				fieldSize, crcSize);
 	}
 
 }

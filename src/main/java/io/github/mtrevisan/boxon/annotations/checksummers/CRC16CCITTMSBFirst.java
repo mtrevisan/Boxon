@@ -37,31 +37,12 @@ abstract class CRC16CCITTMSBFirst implements Checksummer{
 	private static final int POLYNOMIAL = 0x0000_1021;
 
 
-	/**
-	 * The size in bits of the CRC read from the stream (NOT the real CRC size!).
-	 *
-	 * @return The size in bit of the CRC.
-	 */
-	public static int getCRCSize(){
-		return 16;
-	}
-
 	abstract int initialValue();
 
 	@Override
 	public final Number calculateChecksum(final byte[] data, final int start, final int end){
-		int checksum = initialValue();
-		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
-			final byte datum = data[i];
-
-			checksum ^= datum << Byte.SIZE;
-			for(int j = 0; j < Byte.SIZE; j ++){
-				checksum <<= 1;
-				if((checksum & 0x1_0000) != 0)
-					checksum ^= POLYNOMIAL;
-			}
-		}
-		return (short)checksum;
+		final Number crc = Checksummer.calculateChecksum(data, POLYNOMIAL, initialValue(), start, end);
+		return crc.shortValue();
 	}
 
 }

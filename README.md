@@ -147,32 +147,33 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 13. [Contributing](#contributing)
 14. [Changelog](#changelog)
-    1. [version 6.0.1](#changelog-6.0.1)
-    2. [version 6.0.0](#changelog-6.0.0)
-    3. [version 5.0.0](#changelog-5.0.0)
-    4. [version 4.0.0](#changelog-4.0.0)
-    5. [version 3.6.0](#changelog-3.6.0)
-    6. [version 3.5.1](#changelog-3.5.1)
-    7. [version 3.5.0](#changelog-3.5.0)
-    8. [version 3.4.0](#changelog-3.4.0)
-    9. [version 3.3.0](#changelog-3.3.0)
-    10. [version 3.2.0](#changelog-3.2.0)
-    11. [version 3.1.3](#changelog-3.1.3)
-    12. [version 3.1.2](#changelog-3.1.2)
-    13. [version 3.1.1](#changelog-3.1.1)
-    14. [version 3.1.0](#changelog-3.1.0)
-    15. [version 3.0.2](#changelog-3.0.2)
-    16. [version 3.0.1](#changelog-3.0.1)
-    17. [version 3.0.0](#changelog-3.0.0)
-    18. [version 2.1.2](#changelog-2.1.2)
-    19. [version 2.1.1](#changelog-2.1.1)
-    20. [version 2.1.0](#changelog-2.1.0)
-    21. [version 2.0.0](#changelog-2.0.0)
-    22. [version 1.1.0](#changelog-1.1.0)
-    23. [version 1.0.0](#changelog-1.0.0)
-    24. [version 0.0.2](#changelog-0.0.2)
-    25. [version 0.0.1](#changelog-0.0.1)
-    26. [version 0.0.0](#changelog-0.0.0)
+    1. [version 7.0.0](#changelog-7.0.0)
+    2. [version 6.0.1](#changelog-6.0.1)
+    3. [version 6.0.0](#changelog-6.0.0)
+    4. [version 5.0.0](#changelog-5.0.0)
+    5. [version 4.0.0](#changelog-4.0.0)
+    6. [version 3.6.0](#changelog-3.6.0)
+    7. [version 3.5.1](#changelog-3.5.1)
+    8. [version 3.5.0](#changelog-3.5.0)
+    9. [version 3.4.0](#changelog-3.4.0)
+    10. [version 3.3.0](#changelog-3.3.0)
+    11. [version 3.2.0](#changelog-3.2.0)
+    12. [version 3.1.3](#changelog-3.1.3)
+    13. [version 3.1.2](#changelog-3.1.2)
+    14. [version 3.1.1](#changelog-3.1.1)
+    15. [version 3.1.0](#changelog-3.1.0)
+    16. [version 3.0.2](#changelog-3.0.2)
+    17. [version 3.0.1](#changelog-3.0.1)
+    18. [version 3.0.0](#changelog-3.0.0)
+    19. [version 2.1.2](#changelog-2.1.2)
+    20. [version 2.1.1](#changelog-2.1.1)
+    21. [version 2.1.0](#changelog-2.1.0)
+    22. [version 2.0.0](#changelog-2.0.0)
+    23. [version 1.1.0](#changelog-1.1.0)
+    24. [version 1.0.0](#changelog-1.0.0)
+    25. [version 0.0.2](#changelog-0.0.2)
+    26. [version 0.0.1](#changelog-0.0.1)
+    27. [version 0.0.0](#changelog-0.0.0)
 15. [License](#license)
 
 <br/>
@@ -604,6 +605,7 @@ public Void lastUnreadPlaceholder;
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
+ - `crcSize`: the size of the CRC field in the stream (must match the size of the field type size).
 
 #### description
 
@@ -619,7 +621,7 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class)
+@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class, crcSize = 16)
 private short checksum;
 ```
 
@@ -1561,6 +1563,11 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-7.0.0"></a>
+### version 7.0.0 - 20241212
+
+- Added `crcSize` parameter to `Checksum` annotation to specify the size of the CRC field in the stream, allowing for different checksum algorithms to be coded.
 
 <a name="changelog-6.0.1"></a>
 ### version 6.0.1 - 20241022
