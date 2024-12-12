@@ -51,6 +51,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -220,20 +221,19 @@ final class TemplateDecoder extends TemplateCoderBase{
 		if(!shouldCalculateChecksum(checksum, data))
 			return;
 
-		final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
-		final short givenChecksum = ((Number)checksumField.getFieldValue(data))
-			.shortValue();
-		if(calculatedChecksum != givenChecksum)
+		final Number calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
+		final Number givenChecksum = (Number)checksumField.getFieldValue(data);
+		if(!Objects.equals(calculatedChecksum, givenChecksum))
 			throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
-				StringHelper.toHexString(calculatedChecksum, Short.BYTES),
-				StringHelper.toHexString(givenChecksum, Short.BYTES));
+				StringHelper.toHexString(calculatedChecksum.longValue(), Short.BYTES),
+				StringHelper.toHexString(givenChecksum.longValue(), Short.BYTES));
 	}
 
 	private static <T> boolean shouldCalculateChecksum(final Checksum checksum, final T data){
 		return shouldProcessField(checksum.condition(), data);
 	}
 
-	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
+	private static Number calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
 		final int skipStart = checksum.skipStart();
 		final int skipEnd = checksum.skipEnd();
 		final Class<? extends Checksummer> algorithm = checksum.algorithm();

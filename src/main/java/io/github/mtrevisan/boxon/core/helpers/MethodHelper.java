@@ -64,8 +64,25 @@ public final class MethodHelper{
 	 */
 	public static Object invokeStaticMethod(final Class<?> type, final String methodName, final Object input)
 			throws ReflectiveOperationException{
-		final Method method = type.getDeclaredMethod(methodName, input.getClass());
+		final Method method = (input != null
+			? type.getDeclaredMethod(methodName, input.getClass())
+			: type.getDeclaredMethod(methodName));
 		return method.invoke(null, input);
+	}
+
+	/**
+	 * Invokes the underlying static method represented by the given {@code Method} object.
+	 *
+	 * @param type	The class containing the method.
+	 * @param methodName	The method name.
+	 * @param returnType	The method return type.
+	 * @return	The value returned by the given method.
+	 * @param <T>	The return type.
+	 */
+	public static <T> T invokeStaticMethodFromClassHierarchy(final Class<?> type, final String methodName, final Class<T> returnType)
+			throws ReflectiveOperationException{
+		final Method method = getAccessibleMethodFromClassHierarchy(type, methodName, returnType, null);
+		return (T)method.invoke(null);
 	}
 
 	/**

@@ -35,11 +35,17 @@ public final class BSD16 implements Checksummer{
 	private static final int LEFT_SHIFT = Short.SIZE - 1;
 
 
-	BSD16(){}
-
+	/**
+	 * The size in bits of the CRC read from the stream (NOT the real CRC size!).
+	 *
+	 * @return The size in bit of the CRC.
+	 */
+	public static int getCRCSize(){
+		return 16;
+	}
 
 	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end){
+	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		int checksum = 0;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
 			//apply circular right shift and add new value

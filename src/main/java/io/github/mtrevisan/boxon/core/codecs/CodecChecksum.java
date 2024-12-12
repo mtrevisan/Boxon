@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeCaster;
+import io.github.mtrevisan.boxon.core.helpers.DataTypeHelper;
 import io.github.mtrevisan.boxon.core.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -55,9 +57,16 @@ final class CodecChecksum implements Codec{
 			final Object rootObject) throws AnnotationException{
 		final Checksum binding = (Checksum)annotation;
 
-		final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
-		final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
-		return reader.read(interfaceReturnType, binding.byteOrder());
+		//retrieve the CRC size
+		final int crcSize;
+		try{
+			crcSize = MethodHelper.invokeStaticMethodFromClassHierarchy(binding.algorithm(), "getCRCSize", int.class);
+		}
+		catch(final ReflectiveOperationException roe){
+			throw AnnotationException.create("Unable to retrieve CRC size", roe);
+		}
+		final Class<?> crcType = DataTypeHelper.getPrimitive(crcSize);
+		return reader.read(crcType, binding.byteOrder());
 	}
 
 	@Override

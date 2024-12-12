@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -30,22 +30,22 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 
-class BSD16Test{
+class CRC8DallasMaximTest{
 
 	@Test
 	void oneToFour(){
-		Checksummer crc = new BSD16();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Checksummer crc = new CRC8DallasMaxim();
+		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
-		Assertions.assertEquals((short)0x2006, crc16.shortValue());
+		Assertions.assertEquals((byte)0xF4, crc8.byteValue());
 	}
 
 	@Test
 	void test(){
-		Checksummer crc = new BSD16();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+		Checksummer crc = new CRC8DallasMaxim();
+		Number crc8 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
-		Assertions.assertEquals((short)0xEC69, crc16.shortValue());
+		Assertions.assertEquals((byte)0x68, crc8.byteValue());
 	}
 
 }

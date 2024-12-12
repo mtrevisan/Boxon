@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Contains utility methods such as calculating the size of primitive or wrapper types and checking whether a type is primitive or not.
  */
-final class DataTypeHelper{
+public final class DataTypeHelper{
 
 	private static final Map<Class<?>, Integer> SIZE_MAP = new HashMap<>(12);
 	static{
@@ -62,6 +62,77 @@ final class DataTypeHelper{
 	 */
 	public static int getSize(final Class<?> objectiveType){
 		return SIZE_MAP.getOrDefault(objectiveType, SIZE_DEFAULT_VALUE);
+	}
+
+	/**
+	 * Return the number of bits used to represent a value of the given type.
+	 *
+	 * @param size	The size of the number in bits.
+	 * @return	The primitive number class.
+	 */
+	public static Class<?> getPrimitive(final int size){
+		for(final Map.Entry<Class<?>, Integer> entry : SIZE_MAP.entrySet()){
+			final Class<?> key = entry.getKey();
+			if(key.isPrimitive() && !isFloatType(key) && entry.getValue() == size)
+				return key;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the number of bits used to represent a value of the given type.
+	 *
+	 * @param size	The size of the number in bits.
+	 * @return	The primitive number class.
+	 */
+	public static Class<?> getFloatPrimitive(final int size){
+		for(final Map.Entry<Class<?>, Integer> entry : SIZE_MAP.entrySet()){
+			final Class<?> key = entry.getKey();
+			if(key.isPrimitive() && isFloatType(key) && entry.getValue() == size)
+				return key;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the number of bits used to represent a value of the given type.
+	 *
+	 * @param size	The size of the number in bits.
+	 * @return	The wrapper number class.
+	 */
+	public static Class<?> getWrapper(final int size){
+		for(final Map.Entry<Class<?>, Integer> entry : SIZE_MAP.entrySet()){
+			final Class<?> key = entry.getKey();
+			if(!key.isPrimitive() && !isFloatType(key) && entry.getValue() == size)
+				return key;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the number of bits used to represent a value of the given type.
+	 *
+	 * @param size	The size of the number in bits.
+	 * @return	The wrapper number class.
+	 */
+	public static Class<?> getFloatWrapper(final int size){
+		for(final Map.Entry<Class<?>, Integer> entry : SIZE_MAP.entrySet()){
+			final Class<?> key = entry.getKey();
+			if(!key.isPrimitive() && isFloatType(key) && entry.getValue() == size)
+				return key;
+		}
+		return null;
+	}
+
+	/**
+	 * Tests whether a class represents a float or double type.
+	 *
+	 * @param type	The class to test.
+	 * @return	Whether is a float type.
+	 */
+	public static boolean isFloatType(final Class<?> type){
+		return (type == float.class || type == Float.class
+			|| type == double.class || type == Double.class);
 	}
 
 }

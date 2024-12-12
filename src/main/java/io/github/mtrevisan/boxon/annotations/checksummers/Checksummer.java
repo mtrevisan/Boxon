@@ -36,6 +36,28 @@ public interface Checksummer{
 	 * @param end	The ending byte on the given array.
 	 * @return	The checksum.
 	 */
-	short calculateChecksum(byte[] data, int start, int end);
+	Number calculateChecksum(byte[] data, int start, int end);
+
+
+	static Number calculateChecksumReversed(final byte[] data, final int polynomialReversed, final int start, final int end){
+		int checksum = 0x0000;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
+
+			checksum = updateChecksum(datum, polynomialReversed, checksum);
+		}
+		return checksum;
+	}
+
+	private static int updateChecksum(final byte datum, final int polynomialReversed, int checksum){
+		checksum ^= datum & 0xFF;
+		for(int j = 0; j < Byte.SIZE; j ++){
+			final boolean carry = ((checksum & 0x01) != 0);
+			checksum >>>= 1;
+			if(carry)
+				checksum ^= polynomialReversed;
+		}
+		return checksum;
+	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,28 +24,31 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
+/**
+ * Calculates a 8 bit Cyclic Redundancy Check of a sequence of bytes using the Dallas/Maxim algorithm.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ */
+public final class CRC8DallasMaxim implements Checksummer{
+
+	/** CCITT polynomial: x^8 + x^5 + x^4 + 1 -> 1_0011_0001 = 0x31 (reversed is 0x8C). */
+	private static final int POLYNOMIAL_REVERSED = 0x0000_008C;
 
 
-class BSD16Test{
-
-	@Test
-	void oneToFour(){
-		Checksummer crc = new BSD16();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
-
-		Assertions.assertEquals((short)0x2006, crc16.shortValue());
+	/**
+	 * The size in bits of the CRC read from the stream (NOT the real CRC size!).
+	 *
+	 * @return The size in bit of the CRC.
+	 */
+	public static int getCRCSize(){
+		return 8;
 	}
 
-	@Test
-	void test(){
-		Checksummer crc = new BSD16();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
-
-		Assertions.assertEquals((short)0xEC69, crc16.shortValue());
+	@Override
+	public Number calculateChecksum(final byte[] data, final int start, final int end){
+		final Number crc = Checksummer.calculateChecksumReversed(data, POLYNOMIAL_REVERSED, start, end);
+		return crc.byteValue();
 	}
 
 }
