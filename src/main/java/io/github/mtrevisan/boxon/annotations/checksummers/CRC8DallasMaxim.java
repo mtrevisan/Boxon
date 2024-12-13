@@ -37,12 +37,12 @@ public final class CRC8DallasMaxim implements Checksummer{
 
 
 	@Override
-	public int crcWidth(){
+	public int crcSize(){
 		return 8;
 	}
 
 	@Override
-	public long getPolynomial(){
+	public long polynomial(){
 		return POLYNOMIAL;
 	}
 

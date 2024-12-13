@@ -36,12 +36,12 @@ public final class BSD16 implements Checksummer{
 
 
 	@Override
-	public int crcWidth(){
+	public int crcSize(){
 		return 16;
 	}
 
 	@Override
-	public long getPolynomial(){
+	public long polynomial(){
 		return 0l;
 	}
 

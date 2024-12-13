@@ -39,11 +39,11 @@ public interface Checksummer{
 	Number calculateChecksum(byte[] data, int start, int end);
 
 
-	/** Width of the CRC in bits. */
-	int crcWidth();
+	/** Size of the CRC in bits. */
+	int crcSize();
 
 	/** Generator polynomial. */
-	long getPolynomial();
+	long polynomial();
 
 	/** Reflect input data. */
 	default boolean reflectData(){
@@ -74,11 +74,11 @@ public interface Checksummer{
 	 * @return	The computed CRC value.
 	 */
 	default Number calculateCRC(final byte[] data, final int start, final int end){
-		final int width = crcWidth();
+		final int width = crcSize();
 		final int topBit = 1 << (width - 1);
 		final long crcMask = (1l << width) - 1;
 
-		final long polynomial = getPolynomial();
+		final long polynomial = polynomial();
 		final boolean reflectData = reflectData();
 		long crc = initialValue();
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
