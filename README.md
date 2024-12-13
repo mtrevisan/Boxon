@@ -605,7 +605,7 @@ public Void lastUnreadPlaceholder;
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
- - `crcSize`: the size of the CRC field in the stream (must match the size of the field type size).
+ - `checksumSize`: the size of the checksum field in the stream (must match the size of the field type size).
 
 #### description
 
@@ -621,7 +621,7 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class, crcSize = 16)
+@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class, checksumSize = 16)
 private short checksum;
 ```
 
@@ -1567,7 +1567,7 @@ Pull requests are welcomed.
 <a name="changelog-7.0.0"></a>
 ### version 7.0.0 - 20241212
 
-- Added `crcSize` parameter to `Checksum` annotation to specify the size of the CRC field in the stream, allowing for different checksum algorithms to be coded.
+- Added `checksumSize` parameter to `Checksum` annotation to specify the size of the CRC field in the stream, allowing for different checksum algorithms to be coded.
 - Enhanced `Checksummer` capabilities to encompass more CRC algorithms.
 
 <a name="changelog-6.0.1"></a>

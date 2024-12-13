@@ -79,10 +79,10 @@ public @interface Checksum{
 	Class<? extends Checksummer> algorithm();
 
 	/**
-	 * The size in bits of the CRC.
+	 * The size in bits of the checksum.
 	 *
-	 * @return	The size in bits of the CRC.
+	 * @return	The size in bits of the checksum.
 	 */
-	int crcSize();
+	int checksumSize();
 
 }

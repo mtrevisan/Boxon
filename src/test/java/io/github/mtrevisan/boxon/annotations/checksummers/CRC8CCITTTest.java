@@ -34,18 +34,18 @@ class CRC8CCITTTest{
 
 	@Test
 	void oneToFour(){
-		Checksummer crc = new CRC8CCITT();
-		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Checksummer checksummer = new CRC8CCITT();
+		Number checksum = checksummer.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
-		Assertions.assertEquals((byte)0xE3, crc8.byteValue());
+		Assertions.assertEquals((byte)0xE3, checksum.byteValue());
 	}
 
 	@Test
 	void test(){
-		Checksummer crc = new CRC8CCITT();
-		Number crc8 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+		Checksummer checksummer = new CRC8CCITT();
+		Number checksum = checksummer.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
-		Assertions.assertEquals((byte)0x31, crc8.byteValue());
+		Assertions.assertEquals((byte)0x31, checksum.byteValue());
 	}
 
 }

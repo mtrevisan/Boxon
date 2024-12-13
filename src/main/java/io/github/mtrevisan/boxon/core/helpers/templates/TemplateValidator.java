@@ -174,7 +174,7 @@ public final class TemplateValidator{
 	}
 
 	public static void validateChecksumAnnotation(final Checksum checksum, final Field field) throws AnnotationException{
-		final int crcSize = checksum.crcSize();
+		final int crcSize = checksum.checksumSize();
 		final int fieldSize = DataTypeHelper.getSize(field.getType());
 		if(crcSize != fieldSize)
 			throw AnnotationException.create(CHECKSUM_ANNOTATION_MISMATCHED_SIZES,

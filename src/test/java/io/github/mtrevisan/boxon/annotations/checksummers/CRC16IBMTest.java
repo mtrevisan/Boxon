@@ -34,18 +34,18 @@ class CRC16IBMTest{
 
 	@Test
 	void oneToFour(){
-		Checksummer crc = new CRC16IBM();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Checksummer checksummer = new CRC16IBM();
+		Number checksum = checksummer.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
-		Assertions.assertEquals((short)0x0FA1, crc16.shortValue());
+		Assertions.assertEquals((short)0x0FA1, checksum.shortValue());
 	}
 
 	@Test
 	void test(){
-		Checksummer crc = new CRC16IBM();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+		Checksummer checksummer = new CRC16IBM();
+		Number checksum = checksummer.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
-		Assertions.assertEquals((short)0x1665, crc16.shortValue());
+		Assertions.assertEquals((short)0x1665, checksum.shortValue());
 	}
 
 }

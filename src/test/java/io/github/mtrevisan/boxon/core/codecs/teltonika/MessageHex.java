@@ -161,7 +161,7 @@ public class MessageHex{
 	private AVLData[] data;
 	//skip a copy of `dataCount` and other reserved data
 	@SkipBits("8+16")
-	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class, crcSize = 16)
+	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class, checksumSize = 16)
 	private short checksum;
 
 	@Evaluate("T(java.time.ZonedDateTime).now()")

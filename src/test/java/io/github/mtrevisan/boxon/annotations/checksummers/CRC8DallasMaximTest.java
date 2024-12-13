@@ -34,18 +34,18 @@ class CRC8DallasMaximTest{
 
 	@Test
 	void oneToFour(){
-		Checksummer crc = new CRC8DallasMaxim();
-		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Checksummer checksummer = new CRC8DallasMaxim();
+		Number checksum = checksummer.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
-		Assertions.assertEquals((byte)0xF4, crc8.byteValue());
+		Assertions.assertEquals((byte)0xF4, checksum.byteValue());
 	}
 
 	@Test
 	void test(){
-		Checksummer crc = new CRC8DallasMaxim();
-		Number crc8 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+		Checksummer checksummer = new CRC8DallasMaxim();
+		Number checksum = checksummer.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
-		Assertions.assertEquals((byte)0x68, crc8.byteValue());
+		Assertions.assertEquals((byte)0x68, checksum.byteValue());
 	}
 
 }

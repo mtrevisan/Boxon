@@ -54,7 +54,7 @@ final class CodecChecksum implements Codec{
 		final Checksum binding = (Checksum)annotation;
 
 		//retrieve the CRC class
-		final Class<?> crcType = DataTypeHelper.getPrimitive(binding.crcSize());
+		final Class<?> crcType = DataTypeHelper.getPrimitive(binding.checksumSize());
 		return reader.read(crcType, binding.byteOrder());
 	}
 

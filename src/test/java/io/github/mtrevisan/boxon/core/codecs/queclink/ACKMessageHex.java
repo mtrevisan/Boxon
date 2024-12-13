@@ -137,7 +137,7 @@ public final class ACKMessageHex{
 	@BindInteger(condition = "mask.hasMessageId()", size = "16")
 	private short messageId;
 
-	@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class, crcSize = 16)
+	@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class, checksumSize = 16)
 	private short checksum;
 
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
