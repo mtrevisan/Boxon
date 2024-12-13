@@ -37,7 +37,7 @@ public final class CRC16CCITT_FALSE extends CRC16CCITT_XMODEM{
 
 
 	@Override
-	public long initialValue(){
+	public long crcInitialValue(){
 		return 0x0000FFFF;
 	}
 

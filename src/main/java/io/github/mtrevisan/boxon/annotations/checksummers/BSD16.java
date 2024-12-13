@@ -39,16 +39,6 @@ public final class BSD16 implements Checksummer{
 
 
 	@Override
-	public int crcSize(){
-		return 16;
-	}
-
-	@Override
-	public long polynomial(){
-		return 0l;
-	}
-
-	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		int checksum = 0;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
