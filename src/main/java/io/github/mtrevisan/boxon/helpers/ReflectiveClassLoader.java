@@ -90,9 +90,9 @@ public final class ReflectiveClassLoader{
 	/**
 	 * Get types annotated with a given annotation, both classes and annotations.
 	 * <p>{@link Inherited} is not honored by default.</p>
-	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
+	 * <p>When honoring {@link Inherited}, meta-annotation should only affect annotated super classes and its subtypes.</p>
 	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
-	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * anything other than a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
 	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
 	 * @param type	The annotation to search for.

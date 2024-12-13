@@ -321,7 +321,9 @@ public final class JavaHelper{
 
 		final String variableName = cls.getName();
 		final int length = variableName.length();
-		return DESCRIPTOR_MAP.get(variableName.charAt(length - 1)) + ARRAY_VARIABLE.repeat(length - 1);
+		final String descriptor = DESCRIPTOR_MAP.get(variableName.charAt(length - 1));
+		final String array = ARRAY_VARIABLE.repeat(length - 1);
+		return descriptor + array;
 	}
 
 	/**

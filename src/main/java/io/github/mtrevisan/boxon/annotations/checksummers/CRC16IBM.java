@@ -38,6 +38,9 @@ public final class CRC16IBM implements Checksummer{
 	private static final int POLYNOMIAL = 0x0000_8005;
 
 
+	CRC16IBM(){}
+
+
 	@Override
 	public int crcSize(){
 		return 16;
@@ -62,28 +65,6 @@ public final class CRC16IBM implements Checksummer{
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		final Number crc = calculateCRC(data, start, end);
 		return crc.shortValue();
-	}
-
-	private static Number calculateChecksumReversed(final byte[] data, final int polynomialReversed, final int initialValue,
-		final int start, final int end){
-		int checksum = initialValue;
-		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
-			final byte datum = data[i];
-
-			checksum = updateChecksum(datum, polynomialReversed, checksum);
-		}
-		return checksum;
-	}
-
-	private static int updateChecksum(final byte datum, final int polynomialReversed, int crc){
-		crc ^= datum & 0xFF;
-		for(int j = 0; j < Byte.SIZE; j ++){
-			final boolean carry = ((crc & 0x01) != 0);
-			crc >>>= 1;
-			if(carry)
-				crc ^= polynomialReversed;
-		}
-		return crc;
 	}
 
 }

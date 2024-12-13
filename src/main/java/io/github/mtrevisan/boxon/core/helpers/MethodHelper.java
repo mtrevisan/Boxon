@@ -81,7 +81,7 @@ public final class MethodHelper{
 	 */
 	public static <T> T invokeStaticMethodFromClassHierarchy(final Class<?> type, final String methodName, final Class<T> returnType)
 			throws ReflectiveOperationException{
-		final Method method = getAccessibleMethodFromClassHierarchy(type, methodName, returnType, null);
+		final Method method = getAccessibleMethodFromClassHierarchy(type, methodName, returnType);
 		return (T)method.invoke(null);
 	}
 

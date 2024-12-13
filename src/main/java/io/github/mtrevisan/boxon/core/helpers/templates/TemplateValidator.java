@@ -84,7 +84,7 @@ public final class TemplateValidator{
 	public static final String ANNOTATION_ORDER_ERROR_WRONG_NUMBER = "Wrong number of `{}`: there must be at most one";
 	public static final String ANNOTATION_ORDER_ERROR_INCOMPATIBLE = "Incompatible annotations: `{}` and `{}`";
 	public static final String ANNOTATION_ORDER_ERROR_WRONG_ORDER = "Wrong order of annotation: a `{}` must precede any `{}`";
-	public static final String CHECKSUM_ANNOTATION_MISMATCHED_SIZES = "Wrong checksum field size: the field is {} bits in size, should be {}";
+	private static final String CHECKSUM_ANNOTATION_MISMATCHED_SIZES = "Wrong checksum field size: the field is {} bits in size, should be {}";
 
 
 	private TemplateValidator(){}

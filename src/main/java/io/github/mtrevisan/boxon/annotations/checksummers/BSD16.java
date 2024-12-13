@@ -35,6 +35,9 @@ public final class BSD16 implements Checksummer{
 	private static final int LEFT_SHIFT = Short.SIZE - 1;
 
 
+	BSD16(){}
+
+
 	@Override
 	public int crcSize(){
 		return 16;

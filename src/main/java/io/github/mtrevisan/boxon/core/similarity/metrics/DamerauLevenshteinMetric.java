@@ -44,6 +44,9 @@ import java.util.Map;
  */
 public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements Metric<D>{
 
+	private static final Integer ZERO = 0;
+
+
 	private final int insertionCost;
 	private final int deletionCost;
 	private final int substitutionCost;
@@ -128,9 +131,9 @@ public final class DamerauLevenshteinMetric<D extends MetricData<D>> implements 
 		//create and initialize the element array indices
 		final Map<Object, Integer> da = JavaHelper.createMapOrEmpty(maximumDistance);
 		for(int d = 0; d < length1; d ++)
-			da.put(input1.elementAt(d), 0);
+			da.put(input1.elementAt(d), ZERO);
 		for(int d = 0; d < length2; d ++)
-			da.put(input2.elementAt(d), 0);
+			da.put(input2.elementAt(d), ZERO);
 
 		final int[][] h = createInitialDistanceMatrix(length1, length2, maximumDistance);
 

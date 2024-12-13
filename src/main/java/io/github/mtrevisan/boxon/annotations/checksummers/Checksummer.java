@@ -39,28 +39,55 @@ public interface Checksummer{
 	Number calculateChecksum(byte[] data, int start, int end);
 
 
-	/** Size of the CRC in bits. */
+	/**
+	 * Returns the size of the CRC (Cyclic Redundancy Check) in bits.
+	 *
+	 * @return	The number of bits used for the CRC.
+	 */
 	int crcSize();
 
-	/** Generator polynomial. */
+	/**
+	 * Returns the polynomial value used in the checksum calculation.
+	 *
+	 * @return	The polynomial value as a long.
+	 */
 	long polynomial();
 
-	/** Reflect input data. */
+	/**
+	 * Determines whether the input data should be reflected (bitwise reversed) before performing a checksum calculation.
+	 *
+	 * @return	Whether data reflection is enabled.
+	 */
 	default boolean reflectData(){
 		return false;
 	}
 
-	/** Initial value of the CRC register. */
+	/**
+	 * Provides the initial value used in the checksum calculation.
+	 *
+	 * @return	The initial value for the checksum computation.
+	 */
 	default long initialValue(){
 		return 0;
 	}
 
-	/** Reflect output of the CRC. */
+	/**
+	 * Determines whether the CRC (Cyclic Redundancy Check) output should be reflected (bitwise reversed) after computation.
+	 *
+	 * @return	Whether the CRC output should be reflected.
+	 */
 	default boolean reflectCRCOut(){
 		return false;
 	}
 
-	/** Final XOR to apply to the computed CRC. */
+	/**
+	 * Returns the XOR-out value used in the checksum calculation process.
+	 * <p>
+	 * The XOR-out value is a final bitwise operation applied to the computed checksum value.
+	 * </p>
+	 *
+	 * @return	The XOR-out value.
+	 */
 	default long xorOut(){
 		return 0;
 	}

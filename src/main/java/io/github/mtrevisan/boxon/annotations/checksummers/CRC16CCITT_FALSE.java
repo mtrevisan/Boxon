@@ -33,6 +33,9 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class CRC16CCITT_FALSE extends CRC16CCITT_XMODEM{
 
+	CRC16CCITT_FALSE(){}
+
+
 	@Override
 	public long initialValue(){
 		return 0x0000FFFF;
