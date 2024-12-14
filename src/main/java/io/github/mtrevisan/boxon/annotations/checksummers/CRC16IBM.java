@@ -32,7 +32,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
  */
-public final class CRC16IBM implements Checksummer, ChecksumCRC{
+public final class CRC16IBM extends ChecksumCRC implements Checksummer{
 
 	/** x^16 + x^15 + x^2 + 1 -> 1000_0000_0000_0101 = 0x8005. */
 	private static final int POLYNOMIAL = 0x0000_8005;

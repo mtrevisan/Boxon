@@ -25,28 +25,28 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-public interface ChecksumCRC{
+public abstract class ChecksumCRC{
 
 	/**
 	 * Returns the size of the CRC (Cyclic Redundancy Check) in bits.
 	 *
 	 * @return	The number of bits used for the CRC.
 	 */
-	int crcSize();
+    abstract int crcSize();
 
 	/**
 	 * Returns the polynomial value used in the checksum calculation.
 	 *
 	 * @return	The polynomial value as a long.
 	 */
-	long crcPolynomial();
+	abstract long crcPolynomial();
 
 	/**
 	 * Determines whether the input data should be reflected (bitwise reversed) before performing a checksum calculation.
 	 *
 	 * @return	Whether data reflection is enabled.
 	 */
-	default boolean crcReflectData(){
+	boolean crcReflectData(){
 		return false;
 	}
 
@@ -55,7 +55,7 @@ public interface ChecksumCRC{
 	 *
 	 * @return	The initial value for the checksum computation.
 	 */
-	default long crcInitialValue(){
+	long crcInitialValue(){
 		return 0;
 	}
 
@@ -64,7 +64,7 @@ public interface ChecksumCRC{
 	 *
 	 * @return	Whether the CRC output should be reflected.
 	 */
-	default boolean crcReflectOut(){
+	boolean crcReflectOut(){
 		return false;
 	}
 
@@ -76,7 +76,7 @@ public interface ChecksumCRC{
 	 *
 	 * @return	The XOR-out value.
 	 */
-	default long crcXorOut(){
+	long crcXorOut(){
 		return 0;
 	}
 
@@ -88,7 +88,7 @@ public interface ChecksumCRC{
 	 * @param end	End index of the input array.
 	 * @return	The computed CRC value.
 	 */
-	default Number calculateCRC(final byte[] data, final int start, final int end){
+	protected Number calculateCRC(final byte[] data, final int start, final int end){
 		final int width = crcSize();
 		final int topBit = 1 << (width - 1);
 		final long crcMask = (1l << width) - 1;

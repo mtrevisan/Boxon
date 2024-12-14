@@ -30,7 +30,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */
-public final class CRC8DallasMaxim implements Checksummer, ChecksumCRC{
+public final class CRC8DallasMaxim extends ChecksumCRC implements Checksummer{
 
 	/** x^8 + x^5 + x^4 + 1 -> 1_0011_0001 = 0x31. */
 	private static final long POLYNOMIAL = 0x0000_0031;
