@@ -37,9 +37,6 @@ public final class CRC8CCITT extends ChecksumCRC implements Checksummer{
 	private static final long POLYNOMIAL = 0x0000_0007;
 
 
-	CRC8CCITT(){}
-
-
 	@Override
 	public int crcSize(){
 		return 8;

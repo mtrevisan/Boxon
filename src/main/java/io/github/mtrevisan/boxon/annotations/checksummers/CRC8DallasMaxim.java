@@ -36,9 +36,6 @@ public final class CRC8DallasMaxim extends ChecksumCRC implements Checksummer{
 	private static final long POLYNOMIAL = 0x0000_0031;
 
 
-	CRC8DallasMaxim(){}
-
-
 	@Override
 	public int crcSize(){
 		return 8;
@@ -50,12 +47,12 @@ public final class CRC8DallasMaxim extends ChecksumCRC implements Checksummer{
 	}
 
 	@Override
-	public boolean crcReflectData(){
+	public boolean crcReflectInput(){
 		return true;
 	}
 
 	@Override
-	public boolean crcReflectOut(){
+	public boolean crcReflectOutput(){
 		return true;
 	}
 

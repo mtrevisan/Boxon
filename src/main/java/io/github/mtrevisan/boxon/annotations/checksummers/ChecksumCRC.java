@@ -25,7 +25,11 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
+/** Abstraction of CRC classes. */
 public abstract class ChecksumCRC{
+
+	protected ChecksumCRC(){}
+
 
 	/**
 	 * Returns the size of the CRC (Cyclic Redundancy Check) in bits.
@@ -46,7 +50,7 @@ public abstract class ChecksumCRC{
 	 *
 	 * @return	Whether data reflection is enabled.
 	 */
-	boolean crcReflectData(){
+	boolean crcReflectInput(){
 		return false;
 	}
 
@@ -60,11 +64,11 @@ public abstract class ChecksumCRC{
 	}
 
 	/**
-	 * Determines whether the CRC (Cyclic Redundancy Check) output should be reflected (bitwise reversed) after computation.
+	 * Determines whether the output should be reflected (bitwise reversed) after computation.
 	 *
-	 * @return	Whether the CRC output should be reflected.
+	 * @return	Whether the output should be reflected.
 	 */
-	boolean crcReflectOut(){
+	boolean crcReflectOutput(){
 		return false;
 	}
 
@@ -94,12 +98,12 @@ public abstract class ChecksumCRC{
 		final long crcMask = (1l << width) - 1;
 
 		final long polynomial = crcPolynomial();
-		final boolean reflectData = crcReflectData();
+		final boolean reflectInput = crcReflectInput();
 		long crc = crcInitialValue();
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			long datum = data[i] & 0xFF;
 
-			if(reflectData)
+			if(reflectInput)
 				datum = reflect(datum, Byte.SIZE);
 			crc ^= (datum << (width - Byte.SIZE));
 
@@ -113,7 +117,7 @@ public abstract class ChecksumCRC{
 			crc &= crcMask;
 		}
 
-		if(crcReflectOut())
+		if(crcReflectOutput())
 			crc = reflect(crc, width);
 		crc ^= crcXorOut();
 		return crc & crcMask;

@@ -37,9 +37,6 @@ public class CRC16CCITT_XMODEM extends ChecksumCRC implements Checksummer{
 	private static final long POLYNOMIAL = 0x0000_1021;
 
 
-	CRC16CCITT_XMODEM(){}
-
-
 	@Override
 	public int crcSize(){
 		return 16;

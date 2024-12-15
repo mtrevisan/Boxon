@@ -38,9 +38,6 @@ public final class CRC16IBM extends ChecksumCRC implements Checksummer{
 	private static final int POLYNOMIAL = 0x0000_8005;
 
 
-	CRC16IBM(){}
-
-
 	@Override
 	public int crcSize(){
 		return 16;
@@ -52,12 +49,12 @@ public final class CRC16IBM extends ChecksumCRC implements Checksummer{
 	}
 
 	@Override
-	public boolean crcReflectData(){
+	public boolean crcReflectInput(){
 		return true;
 	}
 
 	@Override
-	public boolean crcReflectOut(){
+	public boolean crcReflectOutput(){
 		return true;
 	}
 
