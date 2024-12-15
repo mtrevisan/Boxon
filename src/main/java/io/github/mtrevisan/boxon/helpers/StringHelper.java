@@ -252,6 +252,16 @@ public final class StringHelper{
 	}
 
 	/**
+	 * Converts a number into the corresponding hexadecimal string.
+	 *
+	 * @param value	Number to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final Number value){
+		return toHexString(JavaHelper.convertToBigInteger(value.toString()));
+	}
+
+	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
 	 *
 	 * @param array	Array to be converted to hexadecimal characters.

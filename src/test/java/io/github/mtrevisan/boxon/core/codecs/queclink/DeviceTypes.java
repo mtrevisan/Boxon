@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.exceptions.DataException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.math.BigInteger;
@@ -47,15 +48,11 @@ public final class DeviceTypes<T extends Number>{
 
 	private DeviceTypes(){
 		final Comparator<T> comparator = (code1, code2) -> {
-			final BigInteger bd1 = convertToBigInteger(code1);
-			final BigInteger bd2 = convertToBigInteger(code2);
+			final BigInteger bd1 = JavaHelper.convertToBigInteger(code1.toString());
+			final BigInteger bd2 = JavaHelper.convertToBigInteger(code2.toString());
 			return bd1.compareTo(bd2);
 		};
 		deviceTypes = new ConcurrentSkipListMap<>(comparator);
-	}
-
-	private static BigInteger convertToBigInteger(final Number number){
-		return (number instanceof BigInteger? (BigInteger)number: BigInteger.valueOf(number.longValue()));
 	}
 
 
@@ -85,10 +82,10 @@ public final class DeviceTypes<T extends Number>{
 		final String deviceTypeName = deviceTypes.get(deviceTypeCode);
 
 		if(deviceTypeName == null){
-			final String actualCode = StringHelper.toHexString(convertToBigInteger(deviceTypeCode));
+			final String actualCode = StringHelper.toHexString(deviceTypeCode);
 			final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
 			for(final Map.Entry<T, String> deviceType : deviceTypes.entrySet())
-				sj.add(StringHelper.toHexString(convertToBigInteger(deviceType.getKey())));
+				sj.add(StringHelper.toHexString(deviceType.getKey()));
 			throw DataException.create("Cannot decode message from another device, device type is 0x{}, should be one of {}",
 				actualCode, sj);
 		}
@@ -99,7 +96,7 @@ public final class DeviceTypes<T extends Number>{
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(final Map.Entry<T, String> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getValue() + "(0x" + StringHelper.toHexString(convertToBigInteger(deviceType.getKey())) + ")");
+			sj.add(deviceType.getValue() + "(0x" + StringHelper.toHexString(deviceType.getKey()) + ")");
 		return sj.toString();
 	}
 
