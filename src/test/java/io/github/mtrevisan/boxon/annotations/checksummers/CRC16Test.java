@@ -24,19 +24,29 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
+
 
 /**
- * Calculates an 8 bit Cyclic Redundancy Check of a sequence of bytes using the Dallas/Maxim algorithm.
+ * @see <a href="https://www.sunshine2k.de/coding/javascript/crc/crc_js.html">CRC Calculator (Javascript)</a>
  */
-public final class CRC8DallasMaxim implements Checksummer{
+class CRC16Test{
 
-	private CRC8DallasMaxim(){}
+	@Test
+	void oneToFour(){
+		Number checksum = CRCHelper.calculateCRC(CRCParameters.CRC16, new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
+		Assertions.assertEquals((short)0x0FA1, checksum.shortValue());
+	}
 
-	@Override
-	public Number calculateChecksum(final byte[] data, final int start, final int end){
-		return CRCHelper.calculateCRC(CRCParameters.CRC8_DALLAS_MAXIM, data, start, end)
-			.byteValue();
+	@Test
+	void test(){
+		Number checksum = CRCHelper.calculateCRC(CRCParameters.CRC16, "9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+
+		Assertions.assertEquals((short)0x1665, checksum.shortValue());
 	}
 
 }

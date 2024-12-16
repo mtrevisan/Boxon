@@ -30,20 +30,21 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 
+/**
+ * @see <a href="https://www.sunshine2k.de/coding/javascript/crc/crc_js.html">CRC Calculator (Javascript)</a>
+ */
 class CRC8DallasMaximTest{
 
 	@Test
 	void oneToFour(){
-		Checksummer checksummer = new CRC8DallasMaxim();
-		Number checksum = checksummer.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Number checksum = CRCHelper.calculateCRC(CRCParameters.CRC8_DALLAS_MAXIM, new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
 		Assertions.assertEquals((byte)0xF4, checksum.byteValue());
 	}
 
 	@Test
 	void test(){
-		Checksummer checksummer = new CRC8DallasMaxim();
-		Number checksum = checksummer.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+		Number checksum = CRCHelper.calculateCRC(CRCParameters.CRC8_DALLAS_MAXIM, "9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
 		Assertions.assertEquals((byte)0x68, checksum.byteValue());
 	}

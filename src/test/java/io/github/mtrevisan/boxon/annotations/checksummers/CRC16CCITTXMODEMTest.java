@@ -30,20 +30,21 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 
+/**
+ * @see <a href="https://www.sunshine2k.de/coding/javascript/crc/crc_js.html">CRC Calculator (Javascript)</a>
+ */
 class CRC16CCITTXMODEMTest{
 
 	@Test
 	void oneToFour(){
-		Checksummer checksummer = new CRC16CCITT_XMODEM();
-		Number checksum = checksummer.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Number checksum = CRCHelper.calculateCRC(CRCParameters.CRC16_CCITT_XMODEM, new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
 
 		Assertions.assertEquals((short)0x0D03, checksum.shortValue());
 	}
 
 	@Test
 	void test(){
-		Checksummer checksummer = new CRC16CCITT_XMODEM();
-		Number checksum = checksummer.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+		Number checksum = CRCHelper.calculateCRC(CRCParameters.CRC16_CCITT_XMODEM, "9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
 
 		Assertions.assertEquals((short)0x87F4, checksum.shortValue());
 	}

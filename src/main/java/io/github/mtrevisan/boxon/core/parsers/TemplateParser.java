@@ -188,7 +188,7 @@ public final class TemplateParser{
 	 * @param reader	The reader that holds the decoded template.
 	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
 	 * @return	The data read.
-	 * @throws CodecException   If a codec is not found.
+	 * @throws CodecException	If a codec is not found.
 	 * @throws TemplateException	If a template error occurs.
 	 */
 	public Object decode(final Template<?> template, final BitReaderInterface reader, final Object parentObject) throws BoxonException{

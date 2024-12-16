@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,28 +24,19 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
+/**
+ * Calculates a 32 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
+ */
+public final class CRC32 implements Checksummer{
+
+	private CRC32(){}
 
 
-class CRC16IBMTest{
-
-	@Test
-	void oneToFour(){
-		Checksummer checksummer = new CRC16IBM();
-		Number checksum = checksummer.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
-
-		Assertions.assertEquals((short)0x0FA1, checksum.shortValue());
-	}
-
-	@Test
-	void test(){
-		Checksummer checksummer = new CRC16IBM();
-		Number checksum = checksummer.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
-
-		Assertions.assertEquals((short)0x1665, checksum.shortValue());
+	@Override
+	public Number calculateChecksum(final byte[] data, final int start, final int end){
+		return CRCHelper.calculateCRC(CRCParameters.CRC32, data, start, end)
+			.intValue();
 	}
 
 }

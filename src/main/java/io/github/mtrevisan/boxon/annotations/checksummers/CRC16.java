@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,17 +26,20 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates an 8 bit Cyclic Redundancy Check of a sequence of bytes using the Dallas/Maxim algorithm.
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
+ * <p>Also known as CRC-16, CRC-16-ARC, and CRC-16-ANSI</p>
+ *
+ * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
  */
-public final class CRC8DallasMaxim implements Checksummer{
+public final class CRC16 implements Checksummer{
 
-	private CRC8DallasMaxim(){}
+	private CRC16(){}
 
 
 	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
-		return CRCHelper.calculateCRC(CRCParameters.CRC8_DALLAS_MAXIM, data, start, end)
-			.byteValue();
+		return CRCHelper.calculateCRC(CRCParameters.CRC16, data, start, end)
+			.shortValue();
 	}
 
 }

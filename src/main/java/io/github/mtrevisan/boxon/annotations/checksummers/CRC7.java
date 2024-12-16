@@ -26,42 +26,17 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
- * <p>Also known as CRC-16 and CRC-16-ANSI</p>
- *
- * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
- * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>
+ * Calculates a 7 bit Cyclic Redundancy Check of a sequence of bytes using the CRC algorithm.
  */
-public final class CRC16IBM extends ChecksumCRC implements Checksummer{
+public final class CRC7 implements Checksummer{
 
-	/** x^16 + x^15 + x^2 + 1 -> 1000_0000_0000_0101 = 0x8005. */
-	private static final int POLYNOMIAL = 0x0000_8005;
+	private CRC7(){}
 
-
-	@Override
-	public int crcSize(){
-		return 16;
-	}
-
-	@Override
-	public long crcPolynomial(){
-		return POLYNOMIAL;
-	}
-
-	@Override
-	public boolean crcReflectInput(){
-		return true;
-	}
-
-	@Override
-	public boolean crcReflectOutput(){
-		return true;
-	}
 
 	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
-		final Number crc = calculateCRC(data, start, end);
-		return crc.shortValue();
+		return CRCHelper.calculateCRC(CRCParameters.CRC7, data, start, end)
+			.byteValue();
 	}
 
 }

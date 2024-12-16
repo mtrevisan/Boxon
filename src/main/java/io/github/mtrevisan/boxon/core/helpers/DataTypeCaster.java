@@ -99,7 +99,7 @@ public final class DataTypeCaster{
 	/**
 	 * Returns the method that perform the cast to the specified {@code inputType}.
 	 *
-	 * @param targetType The target data type to cast the value to.
+	 * @param targetType	The target data type to cast the value to.
 	 * @return The cast value if successful, otherwise the original value.
 	 */
 	private static Function<BigInteger, Number> castFunction(final Class<?> targetType){

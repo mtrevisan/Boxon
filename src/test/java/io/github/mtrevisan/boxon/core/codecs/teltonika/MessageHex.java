@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindAsArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16IBM;
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -161,7 +161,7 @@ public class MessageHex{
 	private AVLData[] data;
 	//skip a copy of `dataCount` and other reserved data
 	@SkipBits("8+16")
-	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16IBM.class, checksumSize = 16)
+	@Checksum(skipStart = 8, skipEnd = 4, algorithm = CRC16.class, checksumSize = 16)
 	private short checksum;
 
 	@Evaluate("T(java.time.ZonedDateTime).now()")

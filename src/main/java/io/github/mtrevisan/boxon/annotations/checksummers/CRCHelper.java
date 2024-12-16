@@ -25,63 +25,29 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-/** Abstraction of CRC classes. */
-public abstract class ChecksumCRC{
+/**
+ * An abstract class for calculating Cyclic Redundancy Checks (CRC).
+ * <p>
+ * This class provides a framework for implementing various CRC algorithms by defining necessary methods and utilities for CRC computation.
+ * </p>
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ * @see <a href="https://reveng.sourceforge.io/crc-catalogue/">CRC RevEng</a>
+ * @see <a href="https://www.sunshine2k.de/articles/coding/crc/understanding_crc.html">Understanding and implementing CRC (Cyclic Redundancy Check) calculation</a>
+ */
+public final class CRCHelper{
 
-	protected ChecksumCRC(){}
+	private CRCHelper(){}
 
-
-	/**
-	 * Returns the size of the CRC (Cyclic Redundancy Check) in bits.
-	 *
-	 * @return	The number of bits used for the CRC.
-	 */
-    abstract int crcSize();
-
-	/**
-	 * Returns the polynomial value used in the checksum calculation.
-	 *
-	 * @return	The polynomial value as a long.
-	 */
-	abstract long crcPolynomial();
 
 	/**
-	 * Determines whether the input data should be reflected (bitwise reversed) before performing a checksum calculation.
+	 * Compute a generic CRC.
 	 *
-	 * @return	Whether data reflection is enabled.
+	 * @param data	Array of bytes to process.
+	 * @return	The computed CRC value.
 	 */
-	boolean crcReflectInput(){
-		return false;
-	}
-
-	/**
-	 * Provides the initial value used in the checksum calculation.
-	 *
-	 * @return	The initial value for the checksum computation.
-	 */
-	long crcInitialValue(){
-		return 0;
-	}
-
-	/**
-	 * Determines whether the output should be reflected (bitwise reversed) after computation.
-	 *
-	 * @return	Whether the output should be reflected.
-	 */
-	boolean crcReflectOutput(){
-		return false;
-	}
-
-	/**
-	 * Returns the XOR-out value used in the checksum calculation process.
-	 * <p>
-	 * The XOR-out value is a final bitwise operation applied to the computed checksum value.
-	 * </p>
-	 *
-	 * @return	The XOR-out value.
-	 */
-	long crcXorOut(){
-		return 0;
+	public static Number calculateCRC(final CRCParameters parameters, final byte[] data){
+		return calculateCRC(parameters, data, 0, data.length);
 	}
 
 	/**
@@ -92,23 +58,24 @@ public abstract class ChecksumCRC{
 	 * @param end	End index of the input array.
 	 * @return	The computed CRC value.
 	 */
-	protected Number calculateCRC(final byte[] data, final int start, final int end){
-		final int width = crcSize();
-		final int topBit = 1 << (width - 1);
-		final long crcMask = (1l << width) - 1;
+	public static Number calculateCRC(final CRCParameters parameters, final byte[] data, final int start, final int end){
+		final int width = parameters.width;
+		final int bitOffsetToByteSize = Math.max(Byte.SIZE - width, 0);
+		final int bitsToShift = Math.max(width - Byte.SIZE, 0);
+		final long highBitMask = (1l << (width - 1)) << bitOffsetToByteSize;
+		final long crcMask = (highBitMask << 1) - 1;
+		final long polynomial = (parameters.polynomial << bitOffsetToByteSize);
+		final boolean reflectInput = parameters.reflectInput;
 
-		final long polynomial = crcPolynomial();
-		final boolean reflectInput = crcReflectInput();
-		long crc = crcInitialValue();
-		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
-			long datum = data[i] & 0xFF;
+		long crc = (parameters.initialValue << bitOffsetToByteSize);
+		for(int i = start; i < end; i ++){
+			final long datum = (reflectInput? reflect(data[i], Byte.SIZE): data[i]);
 
-			if(reflectInput)
-				datum = reflect(datum, Byte.SIZE);
-			crc ^= (datum << (width - Byte.SIZE));
+			//move byte into MSB of CRC and XOR with CRC
+			crc ^= (datum << bitsToShift);
 
 			for(int j = 0; j < Byte.SIZE; j ++){
-				final boolean highBit = ((crc & topBit) != 0);
+				final boolean highBit = ((crc & highBitMask) != 0);
 				crc <<= 1;
 				if(highBit)
 					crc ^= polynomial;
@@ -117,9 +84,10 @@ public abstract class ChecksumCRC{
 			crc &= crcMask;
 		}
 
-		if(crcReflectOutput())
+		crc >>>= bitOffsetToByteSize;
+		if(parameters.reflectOutput)
 			crc = reflect(crc, width);
-		crc ^= crcXorOut();
+		crc ^= parameters.xorOutputValue;
 		return crc & crcMask;
 	}
 

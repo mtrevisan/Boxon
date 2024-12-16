@@ -25,32 +25,18 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-
 /**
  * Calculates an 8 bit Cyclic Redundancy Check of a sequence of bytes using CCITT algorithm.
- *
- * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */
-public final class CRC8CCITT extends ChecksumCRC implements Checksummer{
+public final class CRC8CCITT implements Checksummer{
 
-	/** x^8 + x^2 + x + 1 -> 1_0000_0111 = 0x07. */
-	private static final long POLYNOMIAL = 0x0000_0007;
+	private CRC8CCITT(){}
 
-
-	@Override
-	public int crcSize(){
-		return 8;
-	}
-
-	@Override
-	public long crcPolynomial(){
-		return POLYNOMIAL;
-	}
 
 	@Override
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
-		final Number crc = calculateCRC(data, start, end);
-		return crc.byteValue();
+		return CRCHelper.calculateCRC(CRCParameters.CRC8_CCITT, data, start, end)
+			.byteValue();
 	}
 
 }
