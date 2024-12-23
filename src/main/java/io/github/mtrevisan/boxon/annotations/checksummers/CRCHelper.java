@@ -43,6 +43,7 @@ public final class CRCHelper{
 	/**
 	 * Compute a generic CRC.
 	 *
+	 * @param parameters	The parameters of the CRC algorithm.
 	 * @param data	Array of bytes to process.
 	 * @return	The computed CRC value.
 	 */
@@ -53,6 +54,7 @@ public final class CRCHelper{
 	/**
 	 * Compute a generic CRC.
 	 *
+	 * @param parameters	The parameters of the CRC algorithm.
 	 * @param data	Array of bytes to process.
 	 * @param start	Start index of the input array.
 	 * @param end	End index of the input array.

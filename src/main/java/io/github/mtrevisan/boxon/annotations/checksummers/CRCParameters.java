@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
+/**
+ * Contains the parameters that identifies the particular CRC algorithm.
+ */
 public final class CRCParameters{
 
 	/** CRC-7 parameters (x^7 + x^3 + 1) */
