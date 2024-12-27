@@ -84,7 +84,7 @@
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
-		<freemarker.freemarker.version>2.3.33</freemarker.freemarker.version>
+		<freemarker.freemarker.version>2.3.34</freemarker.freemarker.version>
 
 		<!-- Code generator -->
 		<!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
