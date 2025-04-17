@@ -42,6 +42,9 @@ import java.nio.charset.Charset;
  * <p>
  * This class provides methods to encode and decode composite configuration fields.
  * </p>
+ * <p>
+ * Note: This codec only supports encoding. The decode method throws an {@link UnsupportedOperationException}.
+ * </p>
  */
 final class CodecCompositeConfigurationField implements Codec{
 

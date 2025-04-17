@@ -42,6 +42,9 @@ import java.lang.annotation.Annotation;
  * <p>
  * It provides encoding and decoding functionalities for fields marked with the {@link ConfigurationField} annotation.
  * </p>
+ * <p>
+ * Note: This codec only supports encoding. The decode method throws an {@link UnsupportedOperationException}.
+ * </p>
  */
 final class CodecConfigurationField implements Codec{
 

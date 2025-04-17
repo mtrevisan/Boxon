@@ -36,6 +36,9 @@ import java.nio.charset.Charset;
 
 /**
  * This class provides the functionality for encoding and decoding fields annotated with {@link CompositeSubField}.
+ * <p>
+ * Note: This codec only supports encoding. The decode method throws an {@link UnsupportedOperationException}.
+ * </p>
  */
 final class CodecConfigurationSubField implements Codec{
 

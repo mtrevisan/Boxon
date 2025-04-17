@@ -34,6 +34,9 @@ import java.lang.annotation.Annotation;
 
 /**
  * Implementation of the {@link Codec} interface for handling {@link AlternativeConfigurationField} annotations.
+ * <p>
+ * Note: This codec only supports encoding. The decode method throws an {@link UnsupportedOperationException}.
+ * </p>
  */
 final class CodecAlternativeConfigurationFields implements Codec{
 

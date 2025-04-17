@@ -39,6 +39,9 @@ import java.lang.annotation.Annotation;
 
 /**
  * A final class that provides encoding and decoding functionalities for fields annotated with {@link AlternativeSubField}.
+ * <p>
+ * Note: This codec only supports encoding. The decode method throws an {@link UnsupportedOperationException}.
+ * </p>
  */
 final class CodecAlternativeConfigurationField implements Codec{
 
