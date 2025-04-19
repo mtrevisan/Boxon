@@ -80,7 +80,7 @@
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>6.2.5</springframework.spring-expression.version>
+		<springframework.spring-expression.version>6.2.6</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
