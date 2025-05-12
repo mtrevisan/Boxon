@@ -65,7 +65,7 @@ public @interface CompositeSubField{
 
 	/**
 	 * The pattern of the value, expressed as a regex.
-	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with the `enumeration` field.</p>
 	 * <p>Not compatible with non-string field.</p>
 	 *
 	 * @return	The pattern of the value, expressed as a regex.

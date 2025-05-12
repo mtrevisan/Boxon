@@ -100,9 +100,9 @@ public final class TemplateLoader{
 	/**
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @throws AnnotationException	If an annotation error occurs.
-	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
+	 * @throws TemplateException	If the template was already added (defined by the `start` parameter in the header definition).
 	 */
 	void loadTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplatesFrom(basePackageClasses);
@@ -201,7 +201,7 @@ public final class TemplateLoader{
 	 * For each valid template, add it to the map of templates indexed by starting message bytes.
 	 *
 	 * @param template	The template to add to the list of available templates.
-	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
+	 * @throws TemplateException	If the template was already added (defined by the `start` parameter in the header definition).
 	 */
 	private void addTemplateToMap(final Template<?> template) throws TemplateException{
 		try{
@@ -232,7 +232,7 @@ public final class TemplateLoader{
 	 *
 	 * @param reader	The reader from which to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
-	 * @throws TemplateException	If no template cannot be found that is able to parse the given message.
+	 * @throws TemplateException	If no template cannot be found, that is able to parse the given message.
 	 */
 	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		final int index = reader.position();

@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 16 bit BSD checksum from a sequence of bytes.
+ * Calculates a 16-bit BSD checksum from a sequence of bytes.
  *
  * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
  */
@@ -42,7 +42,7 @@ public final class BSD16 implements Checksummer{
 	public Number calculateChecksum(final byte[] data, final int start, final int end){
 		int checksum = 0;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
-			//apply circular right shift and add new value
+			//apply circular right shift and add a new value
 			checksum = ((checksum >>> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
 		return (short)checksum;
 	}

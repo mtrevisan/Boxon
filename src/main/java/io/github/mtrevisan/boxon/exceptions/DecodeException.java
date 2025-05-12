@@ -43,7 +43,7 @@ public final class DecodeException extends BoxonException{
 
 
 	/**
-	 * Constructs a new exception with the specified index of decoded message and cause.
+	 * Constructs a new exception with the specified index of a decoded message and cause.
 	 *
 	 * @param errorIndex	Index of the decoded message this error refers to.
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is

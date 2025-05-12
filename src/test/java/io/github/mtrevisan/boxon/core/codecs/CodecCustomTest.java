@@ -50,7 +50,7 @@ class CodecCustomTest{
 	@interface VarLengthEncoded{}
 
 
-	//the number of bytes to read is determined by the leading bit of each individual bytes
+	//the number of bytes to read is determined by the leading bit of each byte
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	static class VariableLengthByteArray implements Codec{
 		@Override

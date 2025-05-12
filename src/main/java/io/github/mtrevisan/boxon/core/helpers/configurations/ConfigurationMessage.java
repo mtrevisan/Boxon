@@ -73,7 +73,7 @@ public final class ConfigurationMessage<T>{
 	 * Create a configuration message for the given class.
 	 * @param type	The class of the configuration message.
 	 * @param <T>	The class type parameter.
-	 * @return	An instance of configuration message.
+	 * @return	An instance of the configuration message.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */
 	public static <T> ConfigurationMessage<T> create(final Class<T> type) throws AnnotationException{
@@ -233,7 +233,7 @@ public final class ConfigurationMessage<T>{
 	 * Validates a configuration field and return the first valid configuration annotation.
 	 *
 	 * @param field	The configuration field to validate.
-	 * @param annotations	The list of annotations on the configuration field.
+	 * @param annotations	The list of annotations in the configuration field.
 	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The first valid configuration annotation, or {@code null} if none are found.

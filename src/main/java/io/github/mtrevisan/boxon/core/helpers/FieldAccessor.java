@@ -64,7 +64,7 @@ public final class FieldAccessor{
 	 * @param obj	The object whose field should be modified.
 	 * @param field	The field.
 	 * @param value	The value for the field being modified.
-	 * @return	The (possibly new) object on witch the value was set.
+	 * @return	The (possibly new) object on which the value was set.
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	public static <T> T setFieldValue(final T obj, final Field field, final Object value) throws DataException{
@@ -97,7 +97,7 @@ public final class FieldAccessor{
 
 
 	/**
-	 * Injects the given value of given field type in the given object.
+	 * Injects the given value of a given field type in the given object.
 	 *
 	 * @param obj	The object whose field should be modified.
 	 * @param values	The value for the field being modified.
@@ -107,7 +107,7 @@ public final class FieldAccessor{
 	}
 
 	/**
-	 * Static injects the given value of given field type in the given class.
+	 * Static injects the given value of a given field type in the given class.
 	 *
 	 * @param objClass	The object class whose static field should be modified.
 	 * @param values	The value for the field being modified.

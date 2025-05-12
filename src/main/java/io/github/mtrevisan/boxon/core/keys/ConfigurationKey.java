@@ -31,7 +31,7 @@ package io.github.mtrevisan.boxon.core.keys;
 public enum ConfigurationKey{
 	/** Represents the header constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	HEADER("header"),
-	/** Represents the fields constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
+	/** Represents the fields' constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	FIELDS("fields"),
 	/**
 	 * Represents the protocol version boundaries constant used as a key in the
@@ -39,65 +39,65 @@ public enum ConfigurationKey{
 	 */
 	PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
 
-	/** Represents the alternatives constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
+	/** Represents the alternatives' constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	ALTERNATIVES("alternatives"),
 	/** Represents the field type constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	FIELD_TYPE("fieldType"),
 	/**
 	 * Represents the short description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a short description!
+	 * NOTE: MUST match the name of the method in all the annotations that define a short description!
 	 */
 	SHORT_DESCRIPTION("shortDescription"),
 	/**
 	 * Represents the long description constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a long description!
+	 * NOTE: MUST match the name of the method in all the annotations that define a long description!
 	 */
 	LONG_DESCRIPTION("longDescription"),
 	/**
 	 * Represents the unit of measure constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a unit of measure!
+	 * NOTE: MUST match the name of the method in all the annotations that define a unit of measure!
 	 */
 	UNIT_OF_MEASURE("unitOfMeasure"),
 	/**
 	 * Represents the minimum protocol constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a minimum protocol!
+	 * NOTE: MUST match the name of the method in all the annotations that define a minimum protocol!
 	 */
 	MIN_PROTOCOL("minProtocol"),
 	/**
 	 * Represents the maximum protocol constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a maximum protocol!
+	 * NOTE: MUST match the name of the method in all the annotations that define a maximum protocol!
 	 */
 	MAX_PROTOCOL("maxProtocol"),
 	/**
 	 * Represents the minimum value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a minimum value!
+	 * NOTE: MUST match the name of the method in all the annotations that define a minimum value!
 	 */
 	MIN_VALUE("minValue"),
 	/**
 	 * Represents the maximum value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a maximum value!
+	 * NOTE: MUST match the name of the method in all the annotations that define a maximum value!
 	 */
 	MAX_VALUE("maxValue"),
 	/**
 	 * Represents the default value constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a default value!
+	 * NOTE: MUST match the name of the method in all the annotations that define a default value!
 	 */
 	DEFAULT_VALUE("defaultValue"),
 	/**
 	 * Represents the pattern constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a pattern!
+	 * NOTE: MUST match the name of the method in all the annotations that define a pattern!
 	 */
 	PATTERN("pattern"),
 	/**
 	 * Represents the enumeration constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines an enumeration!
+	 * NOTE: MUST match the name of the method in all the annotations that define an enumeration!
 	 */
 	ENUMERATION("enumeration"),
 	/** Represents the mutually exclusive constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}. */
 	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
 	/**
 	 * Represents the charset constant used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a charset!
+	 * NOTE: MUST match the name of the method in all the annotations that define a charset!
 	 */
 	CHARSET("charset");
 

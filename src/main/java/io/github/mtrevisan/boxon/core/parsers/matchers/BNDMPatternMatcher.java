@@ -46,7 +46,7 @@ import java.util.Arrays;
  * @see <a href="http://johannburkard.de/software/stringsearch/">StringSearch &#8211; high-performance pattern matching algorithms in Java</a>
  * @see <a href="https://users.dcc.uchile.cl/~gnavarro/ps/cpm98.pdf">A bit-parallel approach to suffix automata: fast extended string matching</a>
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
- * @see <a href="https://www.dmi.unict.it/faro/papers/conference/faro31.pdf">A fast suffix automata based algorithm for exact online string matching</a>
+ * @see <a href="https://www.dmi.unict.it/faro/papers/conference/faro31.pdf">A fast suffix automata-based algorithm for exact online string matching</a>
  */
 public final class BNDMPatternMatcher implements PatternMatcher{
 
@@ -74,8 +74,8 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
 	 * @param wildcard	The wildcard {@code byte} character.
-	 * @throws OutOfMemoryError	If there is insufficient memory to allocate the pre-processed pattern array.
-	 * @return	An array of pre-processed pattern.
+	 * @throws OutOfMemoryError	If there is not enough memory to allocate the pre-processed pattern array.
+	 * @return	An array of pre-processed patterns.
 	 */
 	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard) throws OutOfMemoryError{
 		final int length = pattern.length;

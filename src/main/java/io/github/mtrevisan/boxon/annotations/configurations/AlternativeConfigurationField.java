@@ -72,23 +72,23 @@ public @interface AlternativeConfigurationField{
 
 
 	/**
-	 * The lowest protocol the field is in.
+	 * The lowest protocol in which the field is located.
 	 *
-	 * @return	The lowest protocol the field is in.
+	 * @return	The lowest protocol in which the field is located.
 	 */
 	String minProtocol() default "";
 
 	/**
-	 * The highest protocol the field is in.
+	 * The highest protocol in which the field is located.
 	 *
-	 * @return	The highest protocol the field is in.
+	 * @return	The highest protocol in which the field is located.
 	 */
 	String maxProtocol() default "";
 
 
 	/**
 	 * The enumeration that represents the finite possible values for this field.
-	 * <p>Not compatible with pattern field.</p>
+	 * <p>Not compatible with `pattern` field.</p>
 	 *
 	 * @return	The enumeration that represents the finite possible values for this field.
 	 */

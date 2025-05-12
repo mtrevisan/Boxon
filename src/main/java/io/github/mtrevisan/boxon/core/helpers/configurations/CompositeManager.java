@@ -61,7 +61,7 @@ import static io.github.mtrevisan.boxon.core.helpers.configurations.Configuratio
  * Responsible for managing configuration data annotated with the {@link CompositeConfigurationField} annotation.
  *
  * <p>
- * This class processes configurations for fields that combine multiple sub-fields into a composite field, providing methods to extract and
+ * This class processes configurations for fields that combine multiple subfields into a composite field, providing methods to extract and
  * manipulate such configurations.
  * </p>
  */
@@ -180,7 +180,7 @@ final class CompositeManager implements ConfigurationManager{
 
 	@Override
 	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws EncodeException{
-		//check pattern
+		//check the pattern
 		final String pattern = annotation.pattern();
 		if(!pattern.isEmpty()){
 			final Pattern formatPattern = Pattern.compile(pattern);

@@ -161,7 +161,7 @@ public final class JavaHelper{
 	 *
 	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
 	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
-	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+	 * when parsed by Integer.parseInt or Long.parseLong, e.g., if the value is outside the range
 	 * for int or long respectively.</p>
 	 *
 	 * <pre>
@@ -219,7 +219,7 @@ public final class JavaHelper{
 	}
 
 	/**
-	 * Convert a string value (decimal or hexadecimal if integer) to {@link BigDecimal}.
+	 * Convert a string value (decimal or hexadecimal if it's an integer) to {@link BigDecimal}.
 	 *
 	 * @param value	The value.
 	 * @return	The converted {@link BigDecimal}.

@@ -60,7 +60,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
-		//calculate the hash value of pattern
+		//calculate the hash value of the pattern
 		return new int[]{calculateHash(pattern, pattern.length, 0)};
 	}
 
@@ -87,18 +87,18 @@ public final class KRPatternMatcher implements PatternMatcher{
 		if(sourceLength < patternLength + offset)
 			return -1;
 
-		//calculate the hash value of first window of source
+		//calculate the hash value of the first window of the source
 		final int patternHash = hashTable[0];
 		int sourceHash = calculateHash(source, patternLength, offset);
 
 		final int maxLength = sourceLength - patternLength;
 		for(int i = offset; i <= maxLength + offset; i ++){
-			//check the hash values of current window of source and pattern
+			//check the hash values of the current window of source and pattern
 			if(patternHash == sourceHash && equals(source, i, pattern))
 				return i;
 
 			if(i < maxLength)
-				//calculate hash value for next window of text by removing leading digit add trailing digit
+				//calculate hash value for the next window of the text by removing the leading digit add trailing digit
 				sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
 		}
 

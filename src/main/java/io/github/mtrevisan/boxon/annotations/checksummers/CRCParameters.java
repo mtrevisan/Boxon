@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Contains the parameters that identifies the particular CRC algorithm.
+ * Contains the parameters that identify the particular CRC algorithm.
  */
 public final class CRCParameters{
 
@@ -59,7 +59,7 @@ public final class CRCParameters{
 	boolean reflectInput;
 	/** Whether the output should be reflected (bitwise reversed) after computation. */
 	boolean reflectOutput;
-	/** Value for final xor to be applied before returning result. */
+	/** Value for final xor to be applied before returning the result. */
 	long xorOutputValue;
 
 

@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
+ * Calculates a 16-bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
  * <p>Also known as CRC-16, CRC-16-ARC, and CRC-16-ANSI</p>
  *
  * @see <a href="https://www.source-code.biz/snippets/java/crc16/">Crc16 - Fast byte-wise 16-bit CRC calculation</a>

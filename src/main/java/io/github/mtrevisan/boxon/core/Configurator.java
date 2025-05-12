@@ -82,7 +82,7 @@ public final class Configurator{
 	/**
 	 * Retrieve all the configuration regardless the protocol version.
 	 *
-	 * @return	The configuration messages regardless the protocol version.
+	 * @return	The configuration messages regardless of the protocol version.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */

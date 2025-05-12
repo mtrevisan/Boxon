@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 
 /**
- * Convert an unsigned integer to a long.
+ * Convert an unsigned integer to long.
  */
 public final class UnsignedIntegerToLongConverter implements Converter<Integer, Long>{
 

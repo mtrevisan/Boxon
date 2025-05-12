@@ -165,7 +165,7 @@ public final class Parser{
 		final List<Response<byte[], Object>> response = new ArrayList<>(1);
 
 		while(reader.hasRemaining()){
-			//save state of the reader (restored upon a decoding error)
+			//save the state of the reader (restored upon a decoding error)
 			reader.createSavepoint();
 
 			if(parse(reader, response))
@@ -192,12 +192,12 @@ public final class Parser{
 			final Response<byte[], Object> partialResponse = Response.create(reader, de);
 			response.add(partialResponse);
 
-			//restore state of the reader
+			//restore the state of the reader
 			reader.restoreSavepoint();
 
 			final int position = templateParser.findNextMessageIndex(reader);
 			if(position < 0)
-				//cannot find any template for message
+				//cannot find any template for the message
 				return true;
 
 			reader.position(position);

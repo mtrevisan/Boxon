@@ -58,10 +58,10 @@ final class ValidationHelper{
 
 		final String defaultValue = configData.getDefaultValue();
 		if(StringHelper.isBlank(defaultValue))
-			//if `defaultValue` is not present, then field type must be an object
+			//if `defaultValue` is not present, then the field type must be an object
 			validateObjectiveType(fieldType, configData);
 		else{
-			//`defaultValue` compatible with variable type
+			//`defaultValue` compatible with the variable type
 			if(configData.hasEnumeration())
 				validateEnumerationType(fieldType, defaultValue, configData);
 			else
@@ -105,7 +105,7 @@ final class ValidationHelper{
 
 		final Pattern formatPattern = extractPattern(pattern, configData);
 
-		//`defaultValue` compatible with field type
+		//`defaultValue` compatible with the field type
 		final Class<?> fieldType = configData.getFieldType();
 		if(isInvalidDefaultValue(defaultValue, fieldType, formatPattern))
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",

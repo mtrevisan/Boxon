@@ -66,7 +66,7 @@ final class DataTypeReaderWriter{
 	}
 
 	/**
-	 * Write a specific data to the writer, using the given byte order.
+	 * Write specific data to the writer, using the given byte order.
 	 * @param writer	The writer used to write the data to.
 	 * @param value	The value to be written.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.

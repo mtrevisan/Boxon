@@ -45,7 +45,7 @@ import java.util.List;
  *    <li>Retrieve the type name of the {@link ConfigurationMessage}.</li>
  *    <li>Retrieve the header of the {@link ConfigurationMessage}.</li>
  *    <li>Retrieve the list of configuration fields from the {@link ConfigurationMessage}.</li>
- *    <li>Retrieve the configuration fields that are of enumeration type from the {@link ConfigurationMessage}.</li>
+ *    <li>Retrieve the configuration fields that are of `enumeration` type from the {@link ConfigurationMessage}.</li>
  * </ul>
  */
 public final class MessageExtractorConfiguration extends MessageExtractor<ConfigurationMessage<?>, ConfigurationHeader,

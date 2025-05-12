@@ -85,9 +85,10 @@ abstract class BitReaderData{
 	/**
 	 * Create a fallback point that can later be restored (see {@link #restoreSavepoint()}).
 	 * <p>
-	 * If a savepoint already exists, it updates the current savepoint by updating the cache, buffer position, and remaining bits in
-	 * cache.<br />
-	 * If a savepoint does not exist, it creates a new savepoint by creating a snapshot of the buffer state using createSnapshot method.
+	 * If a savepoint already exists, it updates the current savepoint by updating the cache, buffer position, and
+	 * remaining bits in the cache.<br />
+	 * If a savepoint does not exist, it creates a new savepoint by creating a snapshot of the buffer state using the
+	 * `createSnapshot` method.
 	 * </p>
 	 */
 	public final synchronized void createSavepoint(){
@@ -116,7 +117,7 @@ abstract class BitReaderData{
 	/**
 	 * Reads the next {@code length} bits and composes a long in big-endian notation.
 	 *
-	 * @param bitsToRead	The amount of bits to read.
+	 * @param bitsToRead	The number of bits to read.
 	 * @return	A long value at the {@link BitReader}'s current position.
 	 */
 	final synchronized long readNumber(final int bitsToRead){
@@ -144,7 +145,7 @@ abstract class BitReaderData{
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet} in little-endian notation.
 	 *
-	 * @param bitsToRead	The amount of bits to read.
+	 * @param bitsToRead	The number of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final synchronized BitSet readBitSet(final int bitsToRead){
@@ -160,7 +161,7 @@ abstract class BitReaderData{
 	 *
 	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a>
+	 * @param size	The number of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">MSB</a>
 	 * 	of the cache.
 	 */
 	private void readFromCache(final BitSet bitmap, int offset, final int size){
@@ -181,7 +182,7 @@ abstract class BitReaderData{
 	/**
 	 * Skips the next {@code length} bits.
 	 *
-	 * @param bitsToSkip	The amount of bits to skip.
+	 * @param bitsToSkip	The number of bits to skip.
 	 */
 	final synchronized void skipBits(final int bitsToSkip){
 		readBits(bitsToSkip, skipBufferConsumer);
@@ -200,7 +201,7 @@ abstract class BitReaderData{
 	 */
 	private void readBits(int bitsToProcess, final BitConsumer bitConsumer){
 		while(bitsToProcess > 0){
-			//if cache is empty and there are more bits to be read, fill it
+			//if the cache is empty and there are more bits to be read, fill it
 			if(remainingBitsInCache == 0){
 				cache = buffer.get();
 				remainingBitsInCache = Byte.SIZE;
@@ -259,8 +260,8 @@ abstract class BitReaderData{
 
 	private boolean hasNextByte(final byte terminator){
 		if(remainingBitsInCache > 0){
-			//if masked terminator (MSB) does not match masked cache (LSB), then a match is impossible, if there are more bytes to read then
-			// there's another byte that can be read
+			//if masked terminator (MSB) does not match masked cache (LSB), then a match is impossible, if there are more
+			// bytes to read, then there's another byte that can be read
 			final byte maskedTerminator = (byte)(terminator >>> byteComplement(remainingBitsInCache));
 			return (maskedTerminator == cache && (remainingBitsInCache < Byte.SIZE || buffer.hasRemaining()));
 		}

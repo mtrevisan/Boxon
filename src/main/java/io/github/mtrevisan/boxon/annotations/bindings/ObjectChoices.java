@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a header of a certain {@link #prefixLength() length}.
+ * Allow defining a number of choices, based on a header of a certain {@link #prefixLength() length}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

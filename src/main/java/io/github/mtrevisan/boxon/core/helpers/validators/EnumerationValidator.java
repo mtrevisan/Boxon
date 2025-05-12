@@ -85,7 +85,7 @@ final class EnumerationValidator{
 
 	private static void validateEnumerationMultipleValues(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
-		//enumeration compatible with variable type
+		//enumeration compatible with the variable type
 		final Class<?> fieldType = configData.getFieldType();
 		validateTypeCompatibility(fieldType.getComponentType(), configData);
 
@@ -112,7 +112,7 @@ final class EnumerationValidator{
 
 	private static void validateEnumerationMutuallyExclusive(final ConfigurationEnum<?>[] enumConstants, final ConfigFieldData configData)
 			throws AnnotationException{
-		//enumeration compatible with variable type
+		//enumeration compatible with the variable type
 		final Class<?> fieldType = configData.getFieldType();
 		validateTypeCompatibility(fieldType, configData);
 

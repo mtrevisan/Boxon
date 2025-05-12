@@ -18,7 +18,7 @@
 A comprehensive library designed for declarative parsing of messages at the bit level. This tool allows developers to efficiently define and interpret the structure and content of binary data streams, facilitating tasks such as network protocol analysis, embedded system communication, and data serialization. By using a high-level declarative approach, the library simplifies the process of specifying complex message formats, enabling precise and reliable extraction of information from raw binary data.
 All you have to do is write a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
-If you want to use the parser straight away, just go [here](#examples).
+If you want to use the parser straight away, go [here](#examples).
 
 <br />
 
@@ -34,26 +34,26 @@ If you want to use the parser straight away, just go [here](#examples).
 ### Notable features
 
 Boxon...
- - Is easily extensible through the use of [converters](#how-to).
- - Contains a minimal set of [annotations](#annotation-base) capable of handling "all" the primitive data (aside `char`, but this could be easily handled with a converter).
+ - Is easily extensible through the use of [converters](#how-to-extend-converters).
+ - Contains a minimal set of [annotations](#annotation-basic) capable of handling "all" the primitive data (aside `char`, but this could be easily handled with a converter).
  - Contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (defining message header properties, conditional choosing of converter, or object while reading an array, skip bits, checksum, 'constant' assignments)
- - Is capable of handle concatenation of messages, using the correct template under the hood.
- - The template is selected in a clever way, i.e. selecting the one with the longest `start` parameter that matches the message.
+ - Is capable of handling concatenation of messages, using the correct template under the hood.
+ - The template is selected in a clever way, i.e., selecting the one with the longest `start` parameter that matches the message.
  - Can handle [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) on certain fields, thus more powerful and simpler than [Limbo](http://limbo.sourceforge.net/apidocs/)<sup>[1](#footnote-1)</sup> (but less than [janino](https://github.com/janino-compiler/janino), that has other problems).
  - Can decode and encode data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
  - Supported data types are:
    - Integers: 1-, 4-, 8-, 16-, 32- and 64-bit signed and unsigned integers, little- or big-endian.
    - Floating point numbers: 32- and 64-bit floating point values.
    - Bit fields: bit fields with length from 1 to 2,147,483,647 bits.
-   - Strings: fixed-length, variable-length and zero terminated strings with various encodings.
+   - Strings: fixed-length, variable-length and zero-terminated strings with various encodings.
    - Arrays: fixed-length and variable-length arrays of built-in or user-defined element types.
    - Objects: custom-type DTOs.
    - Choices: supports integer keys.
- - User defined types (arbitrary combination of built-in types)
+ - User-defined types (arbitrary combination of built-in types)
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindObject` and a few others), no complicated chains of factories: it's just a parser that works.
  - Supports [SLF4J](http://www.slf4j.org/).
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
- - Can automatically scan and loads all the binding annotations and/or templates from a package.
+ - Can automatically scan and load all the binding annotations and/or templates from a package.
 
 ---
 
@@ -68,11 +68,11 @@ Boxon...
 
 Boxon differs from [Preon](https://github.com/preon/preon) in...
  - Does not have a generic `Bound` annotation: it uses converters instead.
- - Does not need the "native byte order" constant. This is because the bytes of the message have little chance to be generated from the very same machine that will parse them, what if a message consider 24 bits as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
-   Moreover, `@Bound boolean visible;` is 1 bit- or 1 byte-length?
- - Does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` a converter can be used.
+ - Does not need the "native byte order" constant. This is because the bytes of the message have little chance to be generated from the very same machine that will parse them, what if a message considers 24 bits as an Integer? If the code should be portable and installed and run everywhere, it should not rely on the native properties of any machine.
+   Moreover, `@Bound boolean visible;` is 1-bit- or 1-byte-length?
+ - Does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is enough. If someone wants a `List` a converter can be used.
  - Does not rely on the type of the annotated variable (because of the existence of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.<br/>
-   For this reason too, there is no need for the `Init` annotation, thus the annotated file can contain the least amount of data necessary for its decoding (moreover, this annotation has NOT the inverse operation -- so it seems to me... so it's pretty useless anyway).
+   For this reason too, there is no need for the `Init` annotation, thus the annotated file can contain the least number of data necessary for its decoding (moreover, this annotation has NOT the inverse operation — so it seems to me... so it's pretty useless anyway).
  - (By personal experience) enumerations can have different representations, or change between a version and the next of a protocol, even inside the same protocol (!), so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
  - Does read and write more than 64 bits at a time (`BitBuffer.readBits`)
 
@@ -84,7 +84,7 @@ Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Maven dependency
 
-In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 21 required</b>).
+To include Boxon in a Maven project, add the following dependency to your pom.xml (<b>Java 21 required</b>).
 
 Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
 
@@ -137,7 +137,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
 8. [Comparator](#comparator)
 9. [How to write SpEL expressions](#how-to-spel)
 10. [How to extend the functionalities](#how-to-extend)
-    1. [Converters](#how-to-converters) 
+    1. [Converters](#how-to-extend-converters)
     2. [Custom annotations](#how-to-custom-annotations)
 11. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
@@ -181,7 +181,7 @@ You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://o
 <a name="annotation-basic"></a>
 ## Basic annotations
 
-Here the build-in basic annotations are described.
+Here the built-in basic annotations are described.
 
 You can use them as a starting point to build your own customized readers.
 
@@ -424,7 +424,7 @@ private BitSet bitmap;
 
 #### description
 
-Reads a long number (primitive or not) or a BigInteger given the amount of bits.
+Reads a long number (primitive or not) or a BigInteger given the number of bits.
 
 #### annotation type
 
@@ -502,7 +502,7 @@ public String text;
 <a name="annotation-special"></a>
 ## Special annotations
 
-Here are described the build-in special annotations.
+Here are described the built-in special annotations.
 
 <a name="annotation-templateheader"></a>
 ### TemplateHeader
@@ -612,7 +612,7 @@ public Void lastUnreadPlaceholder;
 Reads a checksum.
 
 Compute the message checksum and compare it to the read variable once a message has been completely read.
-The amount of bytes read depends on the output size of the checksum algorithm.
+The number of bytes read depends on the output size of the checksum algorithm.
 
 #### annotation type
 
@@ -815,7 +815,7 @@ Configurator configurator = Configurator.create(core);
 List<String> protocolVersionBoundaries = configurator.getProtocolVersionBoundaries();
 ```
 
-Then, to retrieve all the messages for a given protocol version, simply call
+Then, to retrieve all the messages for a given protocol version, call
 
 ```java
 Configurator configurator = Configurator.create(core);
@@ -1171,9 +1171,9 @@ Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring
 
 The root object is the outermost object.
 
-In order to evaluate a variable of a parent object the complete path should be used, from the root to the desired property, as in `object1.variable1`.
+To evaluate a variable of a parent object, the complete path should be used, from the root to the desired property, as in `object1.variable1`.
 
-In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`.<br />
+To evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`.<br />
 Note that the `#` prefix is intended to refer to the context (whether it is an object or a method), and the current object is stored in the context under the name `self`.
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
@@ -1206,14 +1206,14 @@ class OtherClass{
 <a name="how-to-extend"></a>
 ## How to extend the functionalities
 
-<a name="how-to-converters"></a>
+<a name="how-to-extend-converters"></a>
 ### Converters
 
-Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
+Boxon can handle an array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
-Boxon already provides some build-in converters for your convenience: BitSetToBoolean, IntegerToFloat, LongToDouble, ShortToCharacter, StringToBigDecimal, UnsignedByteToShort, UnsignedShortToInteger, and UnsignedIntegerToLong.
+Boxon already provides some built-in converters for your convenience: BitSetToBoolean, IntegerToFloat, LongToDouble, ShortToCharacter, StringToBigDecimal, UnsignedByteToShort, UnsignedShortToInteger, and UnsignedIntegerToLong.
 
 NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they MUST BE invertible ([injective](https://en.wikipedia.org/wiki/Injective_function)), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
 
@@ -1404,7 +1404,7 @@ import io.github.mtrevisan.boxon.io.Evaluator;
 
 
 //codec
-//the number of bytes to read is determined by the leading bit of each individual bytes
+//the number of bytes to read is determined by the leading bit of each byte
 //(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements Codec{
    private static TemplateParser TEMPLATE_PARSER = TemplateParser.getInstance();
@@ -1466,7 +1466,7 @@ All the SpEL expressions are evaluated by `Evaluator.java`.
 
 All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
 
-If you want to provide your own classes you can use the appropriate `with...` method of `Parser`.
+If you want to provide your own classes, you can use the appropriate `with...` method of `Parser`.
 
 <br/>
 
@@ -1493,7 +1493,7 @@ The `Parser` is also used to encode a message.
 <a name="example-multi"></a>
 ### Multi-message parser
 
-All you have to care about, for a simple example on multi-message automatically-loaded templates, is the `Parser`.
+All you have to care about, for a simple example on multi-message automatically loaded templates, is the `Parser`.
 
 ```java
 //optionally create a context
@@ -1578,8 +1578,8 @@ Pull requests are welcomed.
 <a name="changelog-6.0.0"></a>
 ### version 6.0.0 - 20241013
 
-- Improve error messages and handling in encoding and decoding process.
-- Now it's possible to extends a codec.
+- Improve error messages and handling in the encoding and decoding process.
+- Now it's possible to extend a codec.
 - Now it's possible to annotate a custom annotation, creating a default.
 - Added `ContextParameter` annotation which assigns a constant or calculated value to a parameter that will be added to the context before processing; each context parameter is created before a field is decoded or encoded and removed as soon as the field processing completes.
 - Added `enumerations` key in template and configuration descriptions.
@@ -1622,11 +1622,11 @@ Pull requests are welcomed.
 <a name="changelog-3.5.1"></a>
 ### version 3.5.1 - 20240409
 
-- Fix error while assessing size value.
+- Fix an error while assessing size value.
 - Corrected `NullObjectChoice` and `NullObjectChoiceList` type value.
 - Fix error while putting numeric value in `NumberWriterManager`.
 - Removed the default on `Skip` size: it was intended to be mandatory.
-- Fixed bug on evaluating an expression on a deep nested object.
+- Fixed a bug on evaluating an expression on a deep nested object.
 - (minor) Fix missing field name in parser context in `TemplateParser.encode`.
 
 <a name="changelog-3.5.0"></a>
@@ -1650,7 +1650,7 @@ Pull requests are welcomed.
 - Added description of configuration.
 - Changed the key to reference a configuration (from `start` to `shortDescription`).
 - Corrected generation of parameter `MutuallyExclusive` on configuration description.
-- Corrected log text on enumeration error.
+- Corrected a log text on enumeration error.
 - Fixed a test that occasionally fails.
 
 <a name="changelog-3.2.0"></a>
@@ -1663,7 +1663,7 @@ Pull requests are welcomed.
 
 - Fixed duplicated descriptions.
 - Fixed validation on max value while composing a message.
-- Fixed number not written with the correct radix.
+- Fixed number is not written with the correct radix.
 - Made `shortDescription` mandatory in the annotation, as it should have been.
 - Added method to map a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) into a `Map<String, Object>` in `ReflectionHelper`.
 - Added method `Configurator.composeConfiguration` accepting a DTO.
@@ -1676,7 +1676,7 @@ Pull requests are welcomed.
 - Improvement on handling values inside big decimal converter.
 - Improvement on error reporting.
 - Renamed `Composer.composeMessage` into `compose`.
-- Corrected error while showing the start array of message header in the description.
+- Corrected error while showing the start array of the message header in the description.
 - Fix size validation of array and list (now it can be zero).
 
 <a name="changelog-3.1.1"></a>
@@ -1747,11 +1747,11 @@ Pull requests are welcomed.
 - Added public constructor to `Parser` to allow for extensions.
 - Changed the signature of `Checksummer.calculateChecksum` returning short instead of long.
 - Changed method `Validator.validate` into `Validator.isValid`.
-- Changed method `ParserResponse.getMessageForError` into `ParserResponse.getErrorMessageAt` to align it to other method name's conventions.
+- Changed method `ParserResponse.getMessageForError` into `ParserResponse.getErrorMessageAt` to align it to another method name's conventions.
 - Moved classes `ParserResponse` and `ComposerResponse` from `io.github.mtrevisan.boxon.external` to `io.github.mtrevisan.boxon.core` in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
 - Added `originator` variable (and its getter) to `ComposerResponse` to hold the given objects used to create the message.
-- Added/modified javadocs to better explain some classes.
+- Added/modified Javadocs to better explain some classes.
 - Removed `ComposerResponse.getErrors`, `BindInteger.unsigned` and `BitReader.getInteger(int, ByteOrder, boolean)` as they are useless.
 - Removed `BitWriter.putText(String, byte, boolean)` because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Removed useless `match()` parameter from bindings.

@@ -64,23 +64,23 @@ public @interface ConfigurationField{
 
 
 	/**
-	 * The lowest protocol the field is in.
+	 * The lowest protocol in which the field is located.
 	 *
-	 * @return	The lowest protocol the field is in.
+	 * @return	The lowest protocol in which the field is located.
 	 */
 	String minProtocol() default "";
 
 	/**
-	 * The highest protocol the field is in.
+	 * The highest protocol in which the field is located.
 	 *
-	 * @return	The highest protocol the field is in.
+	 * @return	The highest protocol in which the field is located.
 	 */
 	String maxProtocol() default "";
 
 
 	/**
 	 * The lowest value the field can have.
-	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with the `enumeration` field.</p>
 	 * <p>Compatible with numeric field.</p>
 	 *
 	 * @return	The lowest value the field can have.
@@ -89,7 +89,7 @@ public @interface ConfigurationField{
 
 	/**
 	 * The highest value the field can have.
-	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with the `enumeration` field.</p>
 	 * <p>Compatible with numeric field.</p>
 	 *
 	 * @return	The highest value the field can have.
@@ -98,7 +98,7 @@ public @interface ConfigurationField{
 
 	/**
 	 * The pattern of the value, expressed as a regex.
-	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with the `enumeration` field.</p>
 	 * <p>Not compatible with non-string field.</p>
 	 *
 	 * @return	The pattern of the value, expressed as a regex.
@@ -107,7 +107,7 @@ public @interface ConfigurationField{
 
 	/**
 	 * The enumeration that represents the finite possible values for this field.
-	 * <p>Not compatible with pattern field.</p>
+	 * <p>Not compatible with `pattern` field.</p>
 	 *
 	 * @return	The enumeration that represents the finite possible values for this field.
 	 */

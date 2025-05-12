@@ -67,7 +67,7 @@ public final class ConstructorHelper{
 	 *
 	 * @param type	The class to extract the creator for.
 	 * @param <T>	The parameter identifying the class.
-	 * @return	A method that construct the given class.
+	 * @return	A method that constructs the given class.
 	 */
 	public static <T> Supplier<T> getEmptyCreator(final Class<T> type){
 		return (Supplier<T>)EMPTY_CREATORS.apply(type);
@@ -79,7 +79,7 @@ public final class ConstructorHelper{
 	 * @param type	The class to extract the creator for.
 	 * @param parametersClass	Array of types of constructor parameters.
 	 * @param <T>	The parameter identifying the class.
-	 * @return	A method that construct the given class.
+	 * @return	A method that constructs the given class.
 	 */
 	public static <T> Function<Object[], T> getNonEmptyCreator(final Class<T> type, final Class<?>[] parametersClass){
 		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new AbstractMap.SimpleEntry<>(type, parametersClass));

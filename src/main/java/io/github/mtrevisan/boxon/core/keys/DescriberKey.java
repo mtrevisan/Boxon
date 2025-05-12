@@ -42,13 +42,13 @@ public enum DescriberKey{
 	/** Represents the header constant used as a key in the {@link Describer}. */
 	HEADER("header"),
 
-	/** Represents the fields constant used as a key in the {@link Describer}. */
+	/** Represents the fields' constant used as a key in the {@link Describer}. */
 	FIELDS("fields"),
 	/** Represents the evaluated fields constant used as a key in the {@link Describer}. */
 	EVALUATED_FIELDS("evaluatedFields"),
 	/** Represents the post-processed constant used as a key in the {@link Describer}. */
 	POST_PROCESSED_FIELDS("postProcessedFields"),
-	/** Represents the enumerations constant used as a key in the {@link Describer}. */
+	/** Represents the enumerations' constant used as a key in the {@link Describer}. */
 	ENUMERATIONS("enumerations"),
 	/** Represents the name constant used as a key in the {@link Describer}. */
 	FIELD_NAME("name"),
@@ -58,12 +58,12 @@ public enum DescriberKey{
 	ANNOTATION_TYPE("annotationType"),
 	/**
 	 * Represents the condition constant used as a key in the {@link Describer}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a condition!
+	 * NOTE: MUST match the name of the method in all the annotations that define a condition!
 	 */
 	CONDITION("condition"),
 	/**
 	 * Represents the validator constant used as a key in the {@link Describer}.
-	 * NOTE: MUST match the name of the method in all the annotations that defines a validator!
+	 * NOTE: MUST match the name of the method in all the annotations that define a validator!
 	 */
 	VALIDATOR("validator"),
 	/** Represents the collection annotation type constant used as a key in the {@link Describer}. */

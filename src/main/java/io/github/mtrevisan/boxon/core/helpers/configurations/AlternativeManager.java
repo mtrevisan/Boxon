@@ -67,7 +67,7 @@ import static io.github.mtrevisan.boxon.core.helpers.configurations.Configuratio
  *   <li>Adding protocol version boundaries to track configuration applicability.</li>
  *   <li>Validating if a configuration is mandatory based on its default value.</li>
  *   <li>Extracting specific configuration maps for either all protocols or a particular protocol.</li>
- *   <li>Managing alternative sub-fields defined within the `AlternativeConfigurationField` annotation.</li>
+ *   <li>Managing alternative subfields defined within the `AlternativeConfigurationField` annotation.</li>
  * </ul>
  * <p>
  * The class ensures that configurations are processed correctly and are usable within the specified protocol constraints, enabling the

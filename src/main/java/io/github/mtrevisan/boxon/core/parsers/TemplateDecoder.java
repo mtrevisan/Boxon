@@ -79,7 +79,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 	 * Decodes a message using the provided template and reader.
 	 *
 	 * @param template	The template used for decoding the message.
-	 * @param reader	The reader used for reading the message.
+	 * @param reader	The reader used to reading the message.
 	 * @param parentObject	The parent object of the message being decoded.
 	 * @return	The decoded object.
 	 * @throws BoxonException	If there is an error decoding a field.
@@ -119,7 +119,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 			final SkipParams[] skips = field.getSkips();
 			readSkips(skips, reader, rootObject);
 
-			//check if field has to be processed...
+			//check if the field has to be processed...
 			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
 			if(shouldProcessField)
 				//... and if so, process it
@@ -162,7 +162,7 @@ final class TemplateDecoder extends TemplateCoderBase{
 
 		final List<ContextParameter> contextParameters = field.getContextParameters();
 		try{
-			//save current object (some annotations can overwrite it)
+			//save the current object (some annotations can overwrite it)
 			final Object currentObject = parserContext.getCurrentObject();
 
 			addContextParameters(contextParameters);

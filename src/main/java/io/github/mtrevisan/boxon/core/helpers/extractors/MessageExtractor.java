@@ -93,10 +93,10 @@ public abstract class MessageExtractor<M, H, F>{
 	}
 
 	/**
-	 * Retrieves the fields with enumeration type from a given message configuration.
+	 * Retrieves the fields with an enumeration type from a given message configuration.
 	 *
 	 * @param message	The message configuration from which to retrieve the fields with enumeration type.
-	 * @return	The list of fields with enumeration type in the message configuration.
+	 * @return	The list of fields with an enumeration type in the message configuration.
 	 */
 	public Collection<F> getEnumerations(final M message){
 		return null;

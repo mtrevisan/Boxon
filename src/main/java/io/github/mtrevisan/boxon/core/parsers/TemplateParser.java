@@ -91,7 +91,7 @@ public final class TemplateParser{
 	/**
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.

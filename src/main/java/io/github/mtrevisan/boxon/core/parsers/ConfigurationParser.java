@@ -90,7 +90,7 @@ public final class ConfigurationParser{
 	/**
 	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load configuration classes.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */

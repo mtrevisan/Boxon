@@ -303,7 +303,7 @@ public final class FieldDescriber{
 	 *
 	 * @param key	The key.
 	 * @param value	The value.
-	 * @param rootDescription	The map in which to load the key-value pair.
+	 * @param rootDescription	The map on which to load the key-value pair.
 	 * @throws CodecException	If a codec is not found.
 	 */
 	private static void putIfNotEmpty(final String key, final Object value, final Map<String, Object> rootDescription) throws CodecException{
@@ -403,7 +403,7 @@ public final class FieldDescriber{
 	 *
 	 * @param key	The key.
 	 * @param value	The value.
-	 * @param map	The map in which to load the key-value pair.
+	 * @param map	The map on which to load the key-value pair.
 	 */
 	static void putIfNotEmpty(final Enum<?> key, final Object value, final Map<String, Object> map){
 		if(isValidValue(value))

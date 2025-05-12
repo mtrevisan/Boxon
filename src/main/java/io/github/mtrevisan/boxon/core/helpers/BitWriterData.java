@@ -84,7 +84,7 @@ class BitWriterData{
 	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
 	 *
 	 * @param value	The value to write.
-	 * @param bitsToWrite	The amount of bits to use when writing the {@code value}.
+	 * @param bitsToWrite	The number of bits to use when writing the {@code value}.
 	 */
 	private void writeNumber(final long value, final int bitsToWrite){
 		final CacheUpdater cacheUpdater = (bitsToProcess, length) -> writeToCache(value, bitsToProcess, length);
@@ -100,7 +100,7 @@ class BitWriterData{
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
 	 * @param bitmap	The value to write.
-	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
+	 * @param bitsToWrite	The number of bits to use when writing the {@code bitmap}.
 	 */
 	public final synchronized void writeBitSet(final BitSet bitmap, final int bitsToWrite){
 		final CacheUpdater cacheUpdater = (bitsToProcess, length) -> writeToCache(bitmap, bitsToProcess, length);
@@ -112,7 +112,7 @@ class BitWriterData{
 	 *
 	 * @param bitmap	The bit set.
 	 * @param offset	The bit offset to start the extraction.
-	 * @param size	The amount of bits to use when writing the {@code bitmap} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
+	 * @param size	The number of bits to use when writing the {@code bitmap} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 */
 	private void writeToCache(final BitSet bitmap, int offset, final int size){
 		offset += size - 1;
@@ -127,7 +127,7 @@ class BitWriterData{
 	/**
 	 * Skip {@code length} bits.
 	 *
-	 * @param bitsToSkip	The amount of bits to skip.
+	 * @param bitsToSkip	The number of bits to skip.
 	 */
 	public final synchronized void skipBits(final int bitsToSkip){
 		final CacheUpdater cacheUpdater = (bitsToProcess, length) -> {};
@@ -161,7 +161,7 @@ class BitWriterData{
 
 			consumeCache(length);
 
-			//if cache is full, write it
+			//if the cache is full, write it
 			if(remaining == 0){
 				os.write(cache);
 

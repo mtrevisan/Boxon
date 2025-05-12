@@ -243,7 +243,7 @@ public enum ConfigurationAnnotationValidator{
 	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @throws AnnotationException	If an annotation error occurs.
-	 * @throws CodecException	If an error was raised reading of interpreting the field value.
+	 * @throws CodecException	If an error was raised, reading of interpreting the field value.
 	 */
 	public abstract void validate(Field field, Annotation annotation, Version minProtocolVersion, Version maxProtocolVersion)
 		throws AnnotationException, CodecException;

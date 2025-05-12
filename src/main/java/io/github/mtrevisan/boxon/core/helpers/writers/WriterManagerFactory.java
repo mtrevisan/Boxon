@@ -47,7 +47,7 @@ public final class WriterManagerFactory{
 	 * @param writer	The writer to be injected into the resulting manager.
 	 * @param radix	The (number) radix to be injected into the resulting manager.
 	 * @param charsetName	The charset name to be injected into the resulting manager.
-	 * @return	An instance of writer manager.
+	 * @return	An instance of a writer manager.
 	 */
 	public static WriterManager buildManager(final Class<?> valueClass, final BitWriterInterface writer, final int radix,
 			final String charsetName){

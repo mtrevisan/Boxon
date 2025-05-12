@@ -86,7 +86,7 @@ public final class TimeWatch{
 	}
 
 	/**
-	 * The elapsed time.
+	 * The time elapsed.
 	 *
 	 * @return	The elapsed time [ns], or a negative number if not stopped.
 	 */
@@ -95,10 +95,10 @@ public final class TimeWatch{
 	}
 
 	/**
-	 * The elapsed time.
+	 * The time elapsed.
 	 *
 	 * @param uom	The unit of measure.
-	 * @return	The elapsed time.
+	 * @return	The time elapsed.
 	 */
 	public long time(final TimeUnit uom){
 		return uom.convert(time(), TimeUnit.NANOSECONDS);

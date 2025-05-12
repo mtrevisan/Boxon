@@ -54,7 +54,7 @@ public final class ConfigurationHelper{
 	 *
 	 * @param key	The key.
 	 * @param value	The value.
-	 * @param map	The map in which to load the key-value pair.
+	 * @param map	The map on which to load the key-value pair.
 	 * @throws ConfigurationException	If a duplicate is found.
 	 */
 	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, final Map<String, Object> map)

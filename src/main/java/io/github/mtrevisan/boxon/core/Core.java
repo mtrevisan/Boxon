@@ -87,7 +87,7 @@ public final class Core{
 	/**
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
 	 */
@@ -110,7 +110,7 @@ public final class Core{
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.
 	 */
