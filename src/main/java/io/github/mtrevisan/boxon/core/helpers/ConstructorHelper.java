@@ -77,7 +77,7 @@ public final class ConstructorHelper{
 	 * Gets the creator function for the given class.
 	 *
 	 * @param type	The class to extract the creator for.
-	 * @param parametersClass	Array of types of constructor parameters.
+	 * @param parametersClass	An array of constructor parameter types.
 	 * @param <T>	The parameter identifying the class.
 	 * @return	A method that constructs the given class.
 	 */

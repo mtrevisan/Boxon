@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates an 8-bit Cyclic Redundancy Check of a sequence of bytes using the Dallas/Maxim algorithm.
+ * Calculates an 8-bit Cyclic Redundancy Check of a byte sequence using the Dallas/Maxim algorithm.
  */
 public final class CRC8DallasMaxim implements Checksummer{
 

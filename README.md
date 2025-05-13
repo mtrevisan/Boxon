@@ -73,7 +73,7 @@ Boxon differs from [Preon](https://github.com/preon/preon) in...
  - Does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is enough. If someone wants a `List` a converter can be used.
  - Does not rely on the type of the annotated variable (because of the existence of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.<br/>
    For this reason too, there is no need for the `Init` annotation, thus the annotated file can contain the least number of data necessary for its decoding (moreover, this annotation has NOT the inverse operation — so it seems to me... so it's pretty useless anyway).
- - (By personal experience) enumerations can have different representations, or change between a version and the next of a protocol, even inside the same protocol (!), so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
+ - Based on personal experience, enumerations can have different representations or change between versions of a protocol. This can even happen within the same protocol. Therefore, having an annotation that indicates the value of a particular element in the enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
  - Does read and write more than 64 bits at a time (`BitBuffer.readBits`)
 
 <br/>
@@ -228,7 +228,7 @@ Here is a brief summary of the parameters (described in detail below) for each a
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
+ - `type`: the Class of the Object in the array's single element (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type using an `ObjectChoices` with a prefix of a predetermined length.
  - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
  - `selectFromList`: the selection from which to choose the instance type using an `ObjectChoicesList` with a prefix consisting in a terminated string.
@@ -317,7 +317,7 @@ private Position[] positions;
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of primitive of the single element of the array.
+ - `type`: the class of the primitive type of the array's single element.
  - `size`: the size of the array (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -730,7 +730,7 @@ private String value;
 
 A description of the protocol can be obtained through the methods `Describer.describeTemplates` and `Describer.describeTemplate`.
 
-These returns a [JSON](https://en.wikipedia.org/wiki/JSON) with a description of all the annotations of the loaded templates.
+These returns a [JSON](https://en.wikipedia.org/wiki/JSON) describing all the annotations of the loaded templates.
 
 Example:
 
@@ -748,7 +748,7 @@ Describer describer = Describer.create(core);
 List<Map<String, Object>> descriptions = describer.describeTemplates();
 ```
 
-gives as output the following
+outputs the following
 
 ```json
 {
@@ -992,7 +992,7 @@ public String downloadURL;
 
 #### description
 
-Defines a subfield of a composite field of the configuration message.
+Defines a subfield within a composite configuration message field.
 
 #### annotation type
 
@@ -1074,7 +1074,7 @@ private DownloadProtocol downloadProtocol;
 
 #### description
 
-Defines a subfield of an alternative field of the configuration message.
+Defines a subfield within an alternative configuration message field.
 
 #### annotation type
 

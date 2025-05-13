@@ -122,7 +122,7 @@ public final class TextStatistics{
 	}
 
 	/**
-	 * Returns the number of occurrences of the given byte.
+	 * Returns the number of times the given byte appears.
 	 *
 	 * @param b	Byte.
 	 * @return	Count of the given byte.

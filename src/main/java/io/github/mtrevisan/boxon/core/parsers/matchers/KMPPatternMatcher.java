@@ -87,7 +87,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	}
 
 	/**
-	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
+	 * Returns the index of the first match for the given pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
 	 * <p>More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
 	 * or {@code -1} if there is no such index.</p>
@@ -98,7 +98,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param failureTable	Longest Prefix Suffix array precomputed by {@link #preProcessPattern(byte[])}.
-	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
+	 * @return	Returns the index of the first match for the given pattern array within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	@Override

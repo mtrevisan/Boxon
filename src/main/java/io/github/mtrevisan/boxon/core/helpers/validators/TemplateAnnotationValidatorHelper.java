@@ -38,7 +38,7 @@ import java.nio.charset.UnsupportedCharsetException;
 
 
 /**
- * Container of all the validators of a message template.
+ * A container for all validators of a message template.
  */
 final class TemplateAnnotationValidatorHelper{
 

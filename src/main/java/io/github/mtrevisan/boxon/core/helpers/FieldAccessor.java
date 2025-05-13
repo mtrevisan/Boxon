@@ -146,7 +146,7 @@ public final class FieldAccessor{
 	 * Retrieve all declared fields in the current class AND in the parent classes.
 	 *
 	 * @param cls	The class from which to extract the declared fields.
-	 * @return	An array of all the fields of the given class.
+	 * @return	An array containing all the fields of the given class.
 	 */
 	public static List<Field> getAccessibleFields(final Class<?> cls){
 		return getAccessibleFields(cls, null);
@@ -157,7 +157,7 @@ public final class FieldAccessor{
 	 *
 	 * @param cls	The class from which to extract the declared fields.
 	 * @param fieldType	The class of the fields to be extracted (for injection purposes).
-	 * @return	An array of all the fields of the given class.
+	 * @return	An array containing all the fields of the given class.
 	 */
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
 		final List<Field> allFields = new ArrayList<>(0);

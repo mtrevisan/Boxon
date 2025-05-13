@@ -65,7 +65,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	}
 
 	/**
-	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
+	 * Returns the index of the first match for the given pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
 	 * <p>More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
 	 * or {@code -1} if there is no such index.</p>
@@ -75,7 +75,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param hashTable	Hash value of the pattern precomputed by {@link #preProcessPattern(byte[])}.
-	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
+	 * @return	Returns the index of the first match for the given pattern array within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	@Override
@@ -87,13 +87,13 @@ public final class KRPatternMatcher implements PatternMatcher{
 		if(sourceLength < patternLength + offset)
 			return -1;
 
-		//calculate the hash value of the first window of the source
+		//calculate the hash of the first window in the source
 		final int patternHash = hashTable[0];
 		int sourceHash = calculateHash(source, patternLength, offset);
 
 		final int maxLength = sourceLength - patternLength;
 		for(int i = offset; i <= maxLength + offset; i ++){
-			//check the hash values of the current window of source and pattern
+			//check the hash values of the current window in both the source and the pattern
 			if(patternHash == sourceHash && equals(source, i, pattern))
 				return i;
 

@@ -18,9 +18,9 @@ The [Project Team](#join-the-project-team) looks forward to your contributions.
    variables, exposed ports, useful file locations, and container parameters.
 3. Increase the version numbers in any example files and the README.md to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers (if there
-   are more than one), or if you do not have permission to do that, you may request the second
-   reviewer (or the only one) to merge it for you.
+4. You may merge the Pull Request once you have the sign-off from two other developers if there
+   is more than one. If you do not have permission to merge, you may ask the second reviewer (or
+   the only reviewer) to merge it for you.
 
 -----
 
@@ -126,8 +126,8 @@ We like code commits a lot! They're super handy, and they keep the project going
 
 Code contributions of just about any size are acceptable!
 
-The main difference between code contributions and documentation contributions is that contributing code requires inclusion of relevant tests for the code being added or changed.<br>
-Contributions without accompanying tests will be held off until a test is added, unless the maintainers consider the specific tests to be either impossible, or way too much of a burden for such a contribution.
+The main difference between code contributions and documentation contributions is that contributing code requires relevant tests. These tests must be included for any code being added or changed.<br>
+Contributions without accompanying tests will be held off until a test is added. This is unless the maintainers deem the specific tests impossible or too burdensome for the contribution.
 
 To contribute code:
 * [Set up the project](#project-setup).

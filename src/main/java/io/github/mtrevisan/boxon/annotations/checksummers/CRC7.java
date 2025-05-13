@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 7-bit Cyclic Redundancy Check of a sequence of bytes using the CRC algorithm.
+ * Calculates a 7-bit Cyclic Redundancy Check of a byte sequence using the CRC algorithm.
  */
 public final class CRC7 implements Checksummer{
 

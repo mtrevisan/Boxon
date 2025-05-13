@@ -54,8 +54,7 @@ public @interface BindObject{
 
 	/**
 	 * The type of object.
-	 * <p>Note that this allows you to have a field of a super type of the actual type that
-	 * you expect to inject.</p>
+	 * <p>Note that this allows you to declare a field with a supertype of the actual type you expect to inject.</p>
 	 * <p>So you might have something like this:</p>
 	 * <pre>{@code
 	 * class A { ... }

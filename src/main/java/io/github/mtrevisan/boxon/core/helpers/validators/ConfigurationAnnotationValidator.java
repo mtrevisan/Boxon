@@ -45,7 +45,7 @@ import java.nio.charset.UnsupportedCharsetException;
 
 
 /**
- * Container of all the validators of a configuration message.
+ * A container for all validators of a configuration message.
  */
 public enum ConfigurationAnnotationValidator{
 

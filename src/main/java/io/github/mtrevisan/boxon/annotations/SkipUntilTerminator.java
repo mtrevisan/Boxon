@@ -34,8 +34,8 @@ import java.lang.annotation.Target;
 
 /**
  * Manages the skipping of a certain number of bits until a given terminator is found.
- * <p>Since this annotation is bound to a field, if it is necessary to skip some numbers of bits from the end, it is necessary
- * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
+ * <p>Since this annotation is bound to a field, it is necessary to introduce a placeholder field if you need to skip
+ * some bits from the end. This placeholder field can be of any type, as it is not assigned to anything:</p>
  * <pre>{@code
  * &#x40;SkipUntilTerminator("3")
  * &#x40;SkipUntilTerminator("1")

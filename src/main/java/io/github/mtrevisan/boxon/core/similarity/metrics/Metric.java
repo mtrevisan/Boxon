@@ -48,7 +48,7 @@ public interface Metric<D extends MetricData<D>>{
 	 * Compute the distance between inputs: the minimum number of operations needed to transform one input into the other (insertion,
 	 * deletion, substitution, transposition of a single element).
 	 * <p>
-	 * It is always at least the difference of the sizes of the two inputs.
+	 * It is always at least equal to the difference in size between the two inputs.
 	 * It is at most the length of the longer input (if all the costs are 1).
 	 * It is zero if and only if the inputs are equal.
 	 * If the inputs are the same size, the Hamming distance is an upper bound on the Levenshtein distance.
