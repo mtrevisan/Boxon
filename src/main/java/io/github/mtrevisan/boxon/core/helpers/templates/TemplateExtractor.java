@@ -163,7 +163,7 @@ public final class TemplateExtractor{
 			//FIXME a cycle between packages (TemplateExtractor > CodecLoader .. CodecObject > Template)
 			? CodecLoader.getCustomCodecValidator(annotationType)
 			: TemplateAnnotationValidator.fromAnnotationType(annotationType));
-		//validate with provided validator, if any
+		//validate with the provided validator, if any
 		if(validator != null){
 			validator.validate(fieldType, annotation);
 			validAnnotation = true;
@@ -272,7 +272,7 @@ public final class TemplateExtractor{
 		populateDefaultValues(declaredValues, parentValues);
 		if(skips != null)
 			declaredValues.put(MULTIPLE_ANNOTATIONS_VALUE, skips);
-		//create annotation of type `foundAnnotation` with the defaults written in the annotation of `declaredAnnotation` and
+		//create annotation of `foundAnnotation` type with the defaults written in the annotation of `declaredAnnotation` and
 		// parameters from `declaredAnnotation`
 		return AnnotationCreator.createAnnotation(parentAnnotation.annotationType(), declaredValues);
 	}

@@ -172,7 +172,7 @@ public final class Evaluator{
 	}
 
 	/**
-	 * Remove a method to the context of this evaluator.
+	 * Remove a method from the context of this evaluator.
 	 *
 	 * @param method	The method.
 	 */

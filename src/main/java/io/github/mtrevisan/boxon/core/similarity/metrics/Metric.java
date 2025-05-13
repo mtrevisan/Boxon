@@ -1,6 +1,6 @@
-/**
+/*
  * Copyright (c) 2021 Mauro Trevisan
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -9,10 +9,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -48,7 +48,7 @@ public interface Metric<D extends MetricData<D>>{
 	 * Compute the distance between inputs: the minimum number of operations needed to transform one input into the other (insertion,
 	 * deletion, substitution, transposition of a single element).
 	 * <p>
-	 * It is always at least the difference of the sizes of the two inputs.
+	 * It is always at least equal to the difference in size between the two inputs.
 	 * It is at most the length of the longer input (if all the costs are 1).
 	 * It is zero if and only if the inputs are equal.
 	 * If the inputs are the same size, the Hamming distance is an upper bound on the Levenshtein distance.

@@ -102,7 +102,7 @@ public interface ConfigurationManager{
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
 	 * @throws AnnotationException	If an annotation error occurs.
-	 * @throws CodecException	If an error was raised reading of interpreting the field value.
+	 * @throws CodecException	If an error was raised, reading of interpreting the field value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
 	void validateValue(Field field, String dataKey, Object dataValue) throws BoxonException;

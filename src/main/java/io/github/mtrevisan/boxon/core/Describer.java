@@ -101,7 +101,7 @@ public final class Describer{
 	/**
 	 * Description of all the templates in the given package annotated with {@link TemplateHeader}.
 	 *
-	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param templateClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
@@ -136,7 +136,7 @@ public final class Describer{
 	/**
 	 * Description of all the templates in the given package annotated with {@link TemplateHeader}.
 	 *
-	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param templateClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
@@ -172,7 +172,7 @@ public final class Describer{
 	/**
 	 * Description of all the configurations in the given package annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param configurationClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param configurationClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.

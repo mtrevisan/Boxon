@@ -65,23 +65,23 @@ public @interface CompositeConfigurationField{
 
 
 	/**
-	 * The lowest protocol the field is in.
+	 * The lowest protocol in which the field is located.
 	 *
-	 * @return	The lowest protocol the field is in.
+	 * @return	The lowest protocol in which the field is located.
 	 */
 	String minProtocol() default "";
 
 	/**
-	 * The highest protocol the field is in.
+	 * The highest protocol in which the field is located.
 	 *
-	 * @return	The highest protocol the field is in.
+	 * @return	The highest protocol in which the field is located.
 	 */
 	String maxProtocol() default "";
 
 
 	/**
 	 * The pattern of the value, expressed as a regex.
-	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with the `enumeration` field.</p>
 	 * <p>Not compatible with non-string field.</p>
 	 *
 	 * @return	The pattern of the value, expressed as a regex.
@@ -90,7 +90,7 @@ public @interface CompositeConfigurationField{
 
 	/**
 	 * How the composition is made (freemarker style).
-	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
+	 * <p>Ex. There are two configuration fields, and with this field set to `{1}@{2}`, the composition of both is done appending
 	 * the second field to the first using a `@` as a separator.</p>
 	 *
 	 * @return	The composition pattern of the fields, expressed as a regex.

@@ -84,7 +84,7 @@ final class ParserWriterHelper{
 		try{
 			//encode value from current object
 			final Object value = parserContext.getFieldValue();
-			//write value to raw message
+			//write value to the raw message
 			final Object rootObject = parserContext.getRootObject();
 			codec.encode(writer, binding, collectionBinding, rootObject, value);
 

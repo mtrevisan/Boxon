@@ -60,12 +60,12 @@ public final class KRPatternMatcher implements PatternMatcher{
 
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
-		//calculate the hash value of pattern
+		//calculate the hash value of the pattern
 		return new int[]{calculateHash(pattern, pattern.length, 0)};
 	}
 
 	/**
-	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
+	 * Returns the index of the first match for the given pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
 	 * <p>More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
 	 * or {@code -1} if there is no such index.</p>
@@ -75,7 +75,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param hashTable	Hash value of the pattern precomputed by {@link #preProcessPattern(byte[])}.
-	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
+	 * @return	Returns the index of the first match for the given pattern array within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	@Override
@@ -87,18 +87,18 @@ public final class KRPatternMatcher implements PatternMatcher{
 		if(sourceLength < patternLength + offset)
 			return -1;
 
-		//calculate the hash value of first window of source
+		//calculate the hash of the first window in the source
 		final int patternHash = hashTable[0];
 		int sourceHash = calculateHash(source, patternLength, offset);
 
 		final int maxLength = sourceLength - patternLength;
 		for(int i = offset; i <= maxLength + offset; i ++){
-			//check the hash values of current window of source and pattern
+			//check the hash values of the current window in both the source and the pattern
 			if(patternHash == sourceHash && equals(source, i, pattern))
 				return i;
 
 			if(i < maxLength)
-				//calculate hash value for next window of text by removing leading digit add trailing digit
+				//calculate hash value for the next window of the text by removing the leading digit add trailing digit
 				sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
 		}
 

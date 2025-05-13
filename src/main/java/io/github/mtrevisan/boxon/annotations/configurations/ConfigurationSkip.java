@@ -33,9 +33,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages the skipping of a certain amount of bits, or until a given terminator is found.
- * <p>Since this annotation is bound to a field, if it is necessary to skip some amounts of bits from the end, it is necessary
- * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
+ * Manages the skipping of a certain number of bits, or until a given terminator is found.
+ * <p>Since this annotation is bound to a field, if it is necessary to skip some numbers of bits from the end. It is
+ * necessary to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
  * <pre>{@code
  * &#x40;Skip(size = "3")
  * &#x40;Skip(size = "1")
@@ -71,16 +71,16 @@ public @interface ConfigurationSkip{
 
 
 	/**
-	 * The lowest protocol the field is in.
+	 * The lowest protocol in which the field is located.
 	 *
-	 * @return	The lowest protocol the field is in.
+	 * @return	The lowest protocol in which the field is located.
 	 */
 	String minProtocol() default "";
 
 	/**
-	 * The highest protocol the field is in.
+	 * The highest protocol in which the field is located.
 	 *
-	 * @return	The highest protocol the field is in.
+	 * @return	The highest protocol in which the field is located.
 	 */
 	String maxProtocol() default "";
 

@@ -34,7 +34,7 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
  * }</pre>
  *
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
- * @see <a href="https://www.dmi.unict.it/faro/papers/conference/faro31.pdf">A fast suffix automata based algorithm for exact online string matching</a>
+ * @see <a href="https://www.dmi.unict.it/faro/papers/conference/faro31.pdf">A fast suffix automata-based algorithm for exact online string matching</a>
  * @see <a href="https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm">Knuth–Morris–Pratt algorithm</a>
  */
 public final class KMPPatternMatcher implements PatternMatcher{
@@ -58,7 +58,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 
 
 	/**
-	 * Returns an array that points to last valid string prefix.
+	 * Returns an array that points to the last valid string prefix.
 	 *
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @return	The array of the Longest Prefix Suffix.
@@ -75,7 +75,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 				//when both chars before `lengthPreviousLPS` and `i` are equal, link both and move both forward
 				lps[i ++] = ++ lengthPreviousLPS;
 			else if(lengthPreviousLPS > 0)
-				//if `lengthPreviousLPS` isn't at the very beginning, then send `lengthPreviousLPS` backward by following
+				//if `lengthPreviousLPS` isn't in the very beginning, then send `lengthPreviousLPS` backward by following
 				//the already set pointer to where it is pointing to
 				lengthPreviousLPS = lps[lengthPreviousLPS - 1];
 			else
@@ -87,7 +87,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	}
 
 	/**
-	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
+	 * Returns the index of the first match for the given pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
 	 * <p>More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
 	 * or {@code -1} if there is no such index.</p>
@@ -98,7 +98,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param failureTable	Longest Prefix Suffix array precomputed by {@link #preProcessPattern(byte[])}.
-	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
+	 * @return	Returns the index of the first match for the given pattern array within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	@Override
@@ -113,17 +113,17 @@ public final class KMPPatternMatcher implements PatternMatcher{
 		//no candidate matched the pattern
 		int index = -1;
 
-		//current byte index in target array
+		//current byte index in the target array
 		int targetPointer = 0;
-		//current byte index in search array
+		//current byte index in the search array
 		int searchPointer = offset;
 		//while there is more to search with, keep searching
 		while(searchPointer < sourceLength){
 			if(source[searchPointer] == pattern[targetPointer]){
-				//found current byte in `targetPointer` in search array
+				//found the current byte in `targetPointer` in the search array
 				targetPointer ++;
 				if(targetPointer == patternLength){
-					//return starting index of found target inside searched array
+					//return starting index of found target inside the searched array
 					index = searchPointer - targetPointer + 1;
 					break;
 				}
@@ -132,10 +132,10 @@ public final class KMPPatternMatcher implements PatternMatcher{
 				searchPointer ++;
 			}
 			else if(targetPointer > 0)
-				//use `failureTable` to use pointer pointed at nearest location of usable array prefix
+				//use `failureTable` to use the pointer pointed at nearest location of usable array prefix
 				targetPointer = failureTable[targetPointer - 1];
 			else
-				//`targetPointer` is pointing at state 0, so restart search with current `searchPointer` index
+				//`targetPointer` is pointing at state 0, so restart search with the current `searchPointer` index
 				searchPointer ++;
 		}
 		return index;

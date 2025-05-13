@@ -55,9 +55,9 @@ public interface BitReaderInterface{
 
 
 	/**
-	 * Skips a given amount of bits.
+	 * Skips a given number of bits.
 	 *
-	 * @param length	The amount of bits to be skipped.
+	 * @param length	The number of bits to be skipped.
 	 */
 	void skip(int length);
 
@@ -73,7 +73,7 @@ public interface BitReaderInterface{
 	/**
 	 * Reads the given type using the give byte order.
 	 *
-	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java
+	 * @param type	The type of data to read. Here, the length of the types (in bits) is those defined by java
 	 * 	(see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE},
 	 * 	and {@link Double#SIZE}).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -85,7 +85,7 @@ public interface BitReaderInterface{
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
-	 * @param length	The amount of bits to read.
+	 * @param length	The number of bits to read.
 	 * @return	A {@link BitSet} value at the {@link io.github.mtrevisan.boxon.core.helpers.BitReader BitReader}'s current position.
 	 */
 	BitSet readBitSet(int length);
@@ -98,7 +98,7 @@ public interface BitReaderInterface{
 	byte readByte();
 
 	/**
-	 * Reads the specified amount of {@code byte}s into an array of {@code byte}s.
+	 * Reads the specified number of {@code byte}s into an array of {@code byte}s.
 	 *
 	 * @param length	The number of {@code byte}s to read.
 	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read.
@@ -135,14 +135,14 @@ public interface BitReaderInterface{
 	/**
 	 * Reads the next {@code size} bits and composes a {@link BigInteger}.
 	 *
-	 * @param size	The amount of bits to read.
+	 * @param size	The number of bits to read.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the current position.
 	 */
 	BigInteger readBigInteger(int size, ByteOrder byteOrder);
 
 	/**
-	 * Reads the specified amount of {@code char}s with a given {@link Charset}.
+	 * Reads the specified number of {@code char}s with a given {@link Charset}.
 	 *
 	 * @param length	The number of {@code char}s to read.
 	 * @param charset	The charset.
@@ -151,7 +151,7 @@ public interface BitReaderInterface{
 	String readText(int length, Charset charset);
 
 	/**
-	 * Reads the specified amount of {@code char}s with an {@link StandardCharsets#UTF_8 UTF-8} charset.
+	 * Reads the specified number of {@code char}s with an {@link StandardCharsets#UTF_8 UTF-8} charset.
 	 *
 	 * @param length	The number of {@code char}s to read.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.

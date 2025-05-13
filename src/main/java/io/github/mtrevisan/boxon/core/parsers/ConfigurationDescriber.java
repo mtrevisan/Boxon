@@ -101,7 +101,7 @@ public final class ConfigurationDescriber{
 	/**
 	 * Description of all the configurations in the given package annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param configurationClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param configurationClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws ConfigurationException	If a configuration error occurs.

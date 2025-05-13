@@ -51,7 +51,7 @@ import java.util.HashSet;
 
 
 /**
- * Container of all the validators of a message template.
+ * A container for all validators of a message template.
  */
 public enum TemplateAnnotationValidator implements AnnotationValidator{
 

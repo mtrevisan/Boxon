@@ -43,7 +43,7 @@ public @interface BindAsArray{
 	 * The <a href="https://docs.spring.io/spring-framework/reference/core/expressions.html">SpEL</a> expression evaluating to the size of
 	 * the array.
 	 *
-	 * @return	The number of elements of the array.
+	 * @return	The size of the array.
 	 */
 	String size();
 

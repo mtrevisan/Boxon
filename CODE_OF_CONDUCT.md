@@ -2,11 +2,10 @@
 
 ## Our Pledge
 
-We as members, contributors, and leaders pledge to make participation in our
-project and our community a harassment-free experience for everyone, regardless
-of age, body size, disability, ethnicity, sex characteristics, sexual identity
-and orientation, gender identity and expression, level of experience, education,
-socio-economic status, nationality, personal appearance, race, or religion.
+We, as members, contributors, and leaders, pledge to make participation in our project and community a harassment-free
+experience for everyone. This applies regardless of age, body size, disability, ethnicity, sex characteristics, sexual
+identity and orientation, gender identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, or religion.
 
 We pledge to act and interact in ways that contribute to an open, welcoming,
 diverse, inclusive, and healthy community.
@@ -33,7 +32,7 @@ Examples of unacceptable behavior include:
 * Public or private harassment
 * Publishing others' private information, such as a physical or email
   address, without their explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
+* Other conduct, which could reasonably be considered inappropriate in a
   professional setting
 
 ## Enforcement Responsibilities
@@ -50,7 +49,7 @@ decisions when appropriate.
 
 ## Scope
 
-This Code of Conduct applies within all community spaces, and also applies when
+This Code of Conduct applies within all community spaces and also applies when
 an individual is officially representing the community in public spaces.
 Examples of representing our community include using an official e-mail address,
 posting via an official social media account, or acting as an appointed
@@ -62,8 +61,8 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported by contacting the project team at [mtrevisan](mailto:851903+mtrevisan@users.noreply.github.com?subject=[Boxon]%20inquiry).
 All complaints will be reviewed and investigated promptly and fairly.
 
-All community leaders are obligated to respect the privacy and security of the
-reporter of any incident.
+All community leaders are required to respect the privacy and security of
+anyone reporting an incident.
 
 ## Enforcement Guidelines
 
@@ -104,9 +103,9 @@ Violating these terms may lead to a permanent ban.
 
 ### 4. Permanent Ban
 
-**Community Impact**: Demonstrating a pattern of violation of community
-standards, including sustained inappropriate behavior, harassment of an
-individual, or aggression toward or disparagement of classes of individuals.
+**Community Impact**: Demonstrating a pattern of violating community standards.
+This includes sustained inappropriate behavior, harassment of an individual, or
+aggression toward, or disparagement of, classes of individuals.
 
 **Consequence**: A permanent ban from any sort of public interaction within
 the community.

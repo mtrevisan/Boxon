@@ -28,7 +28,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 /**
  * An abstract class for calculating Cyclic Redundancy Checks (CRC).
  * <p>
- * This class provides a framework for implementing various CRC algorithms by defining necessary methods and utilities for CRC computation.
+ * This class provides a framework for implementing various CRC algorithms by defining the necessary methods and utilities for CRC computation.
  * </p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
@@ -56,8 +56,8 @@ public final class CRCHelper{
 	 *
 	 * @param parameters	The parameters of the CRC algorithm.
 	 * @param data	Array of bytes to process.
-	 * @param start	Start index of the input array.
-	 * @param end	End index of the input array.
+	 * @param start	The start index of the input array.
+	 * @param end	The end index of the input array.
 	 * @return	The computed CRC value.
 	 */
 	public static Number calculateCRC(final CRCParameters parameters, final byte[] data, final int start, final int end){

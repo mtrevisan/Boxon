@@ -47,7 +47,7 @@ public final class TextStatistics{
 	 *
 	 * @param buffer	The byte array buffer.
 	 * @return	The created TextStatistics instance.
-	 * @throws OutOfMemoryError	If there is insufficient memory to allocate the count array.
+	 * @throws OutOfMemoryError	If there is not enough memory to allocate the count array.
 	 */
 	public static TextStatistics create(final byte[] buffer) throws OutOfMemoryError{
 		return new TextStatistics(buffer, 0, buffer.length);
@@ -60,7 +60,7 @@ public final class TextStatistics{
 	 * @param offset	The offset in the byte array.
 	 * @param length	The length of the bytes to be considered.
 	 * @return	The created TextStatistics instance.
-	 * @throws OutOfMemoryError	If there is insufficient memory to allocate the count array.
+	 * @throws OutOfMemoryError	If there is not enough memory to allocate the count array.
 	 */
 	public static TextStatistics create(final byte[] buffer, final int offset, final int length) throws OutOfMemoryError{
 		return new TextStatistics(buffer, offset, length);
@@ -76,7 +76,7 @@ public final class TextStatistics{
 
 
 	/**
-	 * Checks whether at least one byte was seen and that the bytes that were seen were mostly plain text (i.e. &lt; 2% control, &gt; 90%
+	 * Checks whether at least one byte was seen and that the bytes that were seen were mostly plain text (i.e., &lt; 2% control, &gt; 90%
 	 * ASCII range).
 	 *
 	 * @return	Whether the seen bytes were mostly safe ASCII.
@@ -122,7 +122,7 @@ public final class TextStatistics{
 	}
 
 	/**
-	 * Returns the number of occurrences of the given byte.
+	 * Returns the number of times the given byte appears.
 	 *
 	 * @param b	Byte.
 	 * @return	Count of the given byte.
@@ -132,7 +132,7 @@ public final class TextStatistics{
 	}
 
 	/**
-	 * Counts control characters (i.e. &lt; 0x20, excluding tab, CR, LF, page feed and escape).
+	 * Counts control characters (i.e., &lt; 0x20, excluding tab, CR, LF, page feed, and escape).
 	 * <p>
 	 * This definition of control characters is based on section 4 of the "Content-Type Processing Model" Internet-draft
 	 * (<a href="http://webblaze.cs.berkeley.edu/2009/mime-sniff/mime-sniff.txt">draft-abarth-mime-sniff-01</a>).
@@ -156,7 +156,7 @@ public final class TextStatistics{
 	}
 
 	/**
-	 * Counts "safe" (i.e. seven-bit non-control) ASCII characters.
+	 * Counts "safe" (i.e., seven-bit non-control) ASCII characters.
 	 *
 	 * @return	Count of safe ASCII characters.
 	 * @see #countControl()
@@ -166,9 +166,9 @@ public final class TextStatistics{
 	}
 
 	/**
-	 * Counts eight bit characters, i.e. bytes with their highest bit set.
+	 * Counts 8-bit characters, i.e., bytes with their highest bit set.
 	 *
-	 * @return	Count of eight bit characters.
+	 * @return	Count of 8-bit characters.
 	 */
 	public int countEightBit(){
 		return count(ASCII_END, 256);

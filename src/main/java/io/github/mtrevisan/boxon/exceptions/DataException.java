@@ -30,7 +30,7 @@ import java.io.Serial;
 
 
 /**
- * Thrown if an invalid data is found.
+ * Thrown if invalid data is found.
  */
 public final class DataException extends IllegalArgumentException{
 

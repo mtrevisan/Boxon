@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices on the type of converter to use, based on a condition.
+ * Allow defining a number of choices on the type of converter to use, based on a condition.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

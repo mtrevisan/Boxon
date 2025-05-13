@@ -12,15 +12,15 @@ The [Project Team](#join-the-project-team) looks forward to your contributions.
 
 ## Pull Request Process
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a
+1. Ensure any installed or build dependencies are removed before the end of the layer when doing a
    build.
-2. Update the README.md with details of changes to the interface, this includes new environment
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
+2. Update the README.md with details of changes to the interface; this includes new environment
+   variables, exposed ports, useful file locations, and container parameters.
+3. Increase the version numbers in any example files and the README.md to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers (if there
-   are more than one), or if you do not have permission to do that, you may request the second
-   reviewer (or the only one) to merge it for you.
+4. You may merge the Pull Request once you have the sign-off from two other developers if there
+   is more than one. If you do not have permission to merge, you may ask the second reviewer (or
+   the only reviewer) to merge it for you.
 
 -----
 
@@ -51,20 +51,20 @@ The [Project Team](#join-the-project-team) looks forward to your contributions.
 If you have a question about this project, how to use it, or just need clarification about something:
 * Open an Issue at https://github.com/mtrevisan/Boxon/issues
 * Provide as much context as you can about what you're running into.
-* Provide OS version, processor speed, RAM amount, etc., depending on what seems relevant. If not, please be ready to provide these information if maintainers ask for them.
+* Provide OS version, processor speed, RAM amount, etc., depending on what seems relevant. If not, please be ready to provide this information if maintainers ask for them.
 
 Once it's filed:
 * The project team will [label the issue](#label-issues).
 * Someone will try to have a response soon.
 * If you or the maintainers don't respond to an issue for 30 days, the [issue will be closed](#clean-up-issues-and-prs).<br>
-  If you want to come back to it, reply (once, please), and we'll reopen the existing issue. Please avoid filing new issues as extensions of one you already made.
+  If you want to come back to it, reply (once, please), and we'll reopen the existing issue. Please avoid filing new issues as extensions of the one you already made.
 
 <a name="report-an-error-or-bug"></a>
 ## Report an error or bug
 If you run into an error or bug with the project:
 * Open an Issue at https://github.com/mtrevisan/Boxon/issues
 * Include *reproduction steps* that someone else can follow to recreate the bug or error on their own.
-* Provide OS version, processor speed, RAM amount, etc., depending on what seems relevant. If not, please be ready to provide these information if maintainers ask for them.
+* Provide OS version, processor speed, RAM amount, etc., depending on what seems relevant. If not, please be ready to provide this information if maintainers ask for them.
 
 Once it's filed:
 * The project team will [label the issue](#label-issues).
@@ -73,8 +73,8 @@ Once it's filed:
   Bugs with the `needs-steps` tag will not be addressed until they are reproduced.
 * If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be [implemented by someone](#contribute-code).
 * If you or the maintainers don't respond to an issue for 30 days, the [issue will be closed](#clean-up-issues-and-prs).<br>
-  If you want to come back to it, reply (once, please), and we'll reopen the existing issue. Please avoid filing new issues as extensions of one you already made.
-* `critical` issues may be left open, depending on perceived immediacy and severity, even past the 30 days deadline.
+  If you want to come back to it, reply (once, please), and we'll reopen the existing issue. Please avoid filing new issues as extensions of the one you already made.
+* `critical` issues may be left open, depending on perceived immediacy and severity, even past the 30-day deadline.
 
 <a name="request-a-feature"></a>
 ## Request a feature
@@ -101,16 +101,16 @@ If you want to go the usual route and run the project locally, [fork the project
 
 <a name="contribute-documentation"></a>
 ## Contribute documentation
-Documentation is a super important, critical part of this project. Docs are how we keep track of what we're doing, how, and why. It's how we stay on the same page about our policies. And it's how we tell others everything they need in order to be able to use this project -- or contribute to it. So thank you in advance.
+Documentation is a super important, critical part of this project. Docs are how we keep track of what we're doing, how, and why. It's how we stay on the same page about our policies. And it's how we tell others everything they need to be able to use this project — or contribute to it. So thank you in advance.
 
-Documentation contributions of any size are welcome! Feel free to file a PR even if you're just rewording a sentence to be more clear, or fixing a spelling mistake!
+Documentation contributions of any size are welcome! Feel free to file a PR even if you're just rewording a sentence to be more clear or fixing a spelling mistake!
 
 To contribute documentation:
 * [Set up the project](#project-setup).
 * Edit or add any relevant documentation.
 * Make sure your changes are formatted correctly and consistently with the rest of the documentation.
-* Re-read what you wrote, and run a spellchecker on it to make sure you didn't miss anything.
-* Write clear, concise commit message(s). Documentation commits should use `docs(<component>): <message>`.
+* Re-read what you wrote and run a spellchecker on it to make sure you didn't miss anything.
+* Write a clear, concise commit message(s). Documentation commits should use `docs(<component>): <message>`.
 * Go to https://github.com/mtrevisan/Boxon/pulls and open a new pull request with your changes.
 * If your PR is connected to an open issue, add a line in your PR's description that says `Fixes: #123`, where `#123` is the number of the issue you're fixing.
 
@@ -126,15 +126,15 @@ We like code commits a lot! They're super handy, and they keep the project going
 
 Code contributions of just about any size are acceptable!
 
-The main difference between code contributions and documentation contributions is that contributing code requires inclusion of relevant tests for the code being added or changed.<br>
-Contributions without accompanying tests will be held off until a test is added, unless the maintainers consider the specific tests to be either impossible, or way too much of a burden for such a contribution.
+The main difference between code contributions and documentation contributions is that contributing code requires relevant tests. These tests must be included for any code being added or changed.<br>
+Contributions without accompanying tests will be held off until a test is added. This is unless the maintainers deem the specific tests impossible or too burdensome for the contribution.
 
 To contribute code:
 * [Set up the project](#project-setup).
 * Make any necessary changes to the source code.
 * Include any [additional documentation](#contribute-documentation) the changes might need.
 * Write tests that verify that your contribution works as expected.
-* Write clear, concise commit message(s).
+* Write a clear, concise commit message(s).
 * Dependency updates, additions, or removals must be in individual commits, and the message must declare them.
 * Go to https://github.com/mtrevisan/Boxon/pulls and open a new pull request with your changes.
 * If your PR is connected to an open issue, add a line in your PR's description that says `Fixes: #123`, where `#123` is the number of the issue you're fixing.

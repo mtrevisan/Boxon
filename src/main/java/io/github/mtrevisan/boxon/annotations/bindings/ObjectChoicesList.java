@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a prefix.
+ * Allow defining a number of choices, based on a prefix.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

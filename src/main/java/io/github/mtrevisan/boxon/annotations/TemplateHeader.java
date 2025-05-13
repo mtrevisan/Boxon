@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
 public @interface TemplateHeader{
 
 	/**
-	 * The initial bytes that determines the type of message.
+	 * The initial bytes that determine the type of message.
 	 * <p>This SHOULD be read by the parser of the template.</p>
 	 *
 	 * @return	The header bytes of this message.
@@ -49,7 +49,7 @@ public @interface TemplateHeader{
 	String[] start();
 
 	/**
-	 * The final bytes that closes the message.
+	 * The final bytes that close the message.
 	 * <p>This SHOULD NOT be read by the parser of the template.</p>
 	 *
 	 * @return	The tail bytes of this message (defaults to empty string).

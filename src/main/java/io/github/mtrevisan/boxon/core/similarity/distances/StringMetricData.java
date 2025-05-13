@@ -28,7 +28,7 @@ package io.github.mtrevisan.boxon.core.similarity.distances;
 /**
  * Implements the {@link MetricData} interface for strings.
  * <p>>
- * This class provides methods to obtain the length of the string, get an element at a specified index, compare equality of the entire
+ * This class provides methods to get the length of the string, get an element at a specified index, compare equality of the entire
  * string with another string, and compare equality of characters at specified indexes between two strings.
  * </p>
  */

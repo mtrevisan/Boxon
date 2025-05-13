@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 
 /**
- * Null converter, the input is equals to the output.
+ * Null converter, the input is equal to the output.
  */
 public final class NullConverter implements Converter<Object, Object>{
 

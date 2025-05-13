@@ -33,9 +33,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages the skipping of a certain amount of bits.
- * <p>Since this annotation is bound to a field, if it is necessary to skip some amounts of bits from the end, it is necessary
- * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
+ * Manages the skipping of a certain number of bits.
+ * <p>Since this annotation is bound to a field, if it is necessary to skip some numbers of bits from the end. It is
+ * necessary to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
  * <pre>{@code
  * &#x40;SkipBits("3")
  * &#x40;SkipBits("1")

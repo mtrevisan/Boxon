@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a header of a certain {@link #prefixLength() length}.
+ * Allow defining a number of choices, based on a header of a certain {@link #prefixLength() length}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -48,9 +48,9 @@ public @interface ObjectChoices{
 	byte prefixLength() default 0;
 
 	/**
-	 * The type of endianness of the prefix: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * The endianness type of the prefix: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
-	 * @return	The type of endianness of the prefix (defaults to {@link ByteOrder#BIG_ENDIAN}).
+	 * @return	TThe endianness type of the prefix (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 

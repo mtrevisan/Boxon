@@ -91,7 +91,7 @@ public final class CodecLoader{
 	/**
 	 * Loads all the codecs that extends {@link Codec}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load codecs.
 	 * @throws CodecException	If a codec was already loaded.
 	 */
 	public static void loadCodecsFrom(final Class<?>... basePackageClasses) throws CodecException{
@@ -127,7 +127,7 @@ public final class CodecLoader{
 
 	/**
 	 * Loads the given codec.
-	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
+	 * <p>NOTE: If the loader previously contains a codec for a given key, the new one replaces the old codec.</p>
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @throws CodecException	If the codec was already loaded.
@@ -144,7 +144,7 @@ public final class CodecLoader{
 
 	/**
 	 * Loads the given codec.
-	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
+	 * <p>NOTE: If the loader previously contains a codec for a given key, the new one replaces the old codec.</p>
 	 *
 	 * @param codec	The codec to be loaded.
 	 * @param validator	The codec validator.
@@ -162,7 +162,7 @@ public final class CodecLoader{
 
 	/**
 	 * Loads all the given codecs.
-	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
+	 * <p>NOTE: If the loader previously contains a codec for a given key, the new one replaces the old codec.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 * @throws CodecException	If a codec was already loaded.

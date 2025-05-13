@@ -257,7 +257,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	/**
-	 * Checks if this version is a patch of the another version, that is, the major and minor identifiers are the same and
+	 * Checks if this version is a patch of another version, that is, the major and minor identifiers are the same and
 	 * the patch identifier is greater.
 	 *
 	 * @param other	The other version to compare to.
@@ -379,7 +379,7 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Compares two {@code Version} instances taking into account their build metadata.
 	 * <p>
-	 * When compared build metadata is divided into identifiers. The numeric identifiers are compared numerically, and the alphanumeric
+	 * When compared, build metadata is divided into identifiers. The numeric identifiers are compared numerically, and the alphanumeric
 	 * identifiers are compared in the ASCII sort order.</p>
 	 * <p>
 	 * If one of the compared versions has no defined build metadata, this version is considered to have a lower
@@ -416,7 +416,7 @@ public final class Version implements Comparable<Version>{
 
 	private static int compareToIdentifiers(final String[] preRelease, final String[] otherPreRelease){
 		final int result = compareIdentifierArrays(preRelease, otherPreRelease);
-		//a larger set of pre-release fields has a higher precedence than a smaller set, if all the preceding identifiers are equal
+		//a larger set of pre-release fields has a higher precedence than a smaller set if all the preceding identifiers are equal
 		return (result != 0? result: preRelease.length - otherPreRelease.length);
 	}
 

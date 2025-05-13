@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * Provides methods to describe templates and their associated messages.
  * <p>
- * It utilizes a {@link TemplateParser} to parse the templates and a {@link MessageDescriber} to describe them.
+ * It uses a {@link TemplateParser} to parse the templates and a {@link MessageDescriber} to describe them.
  * </p>
  */
 public final class TemplateDescriber{
@@ -93,7 +93,7 @@ public final class TemplateDescriber{
 	/**
 	 * Description of all the templates in the given package annotated with {@link TemplateHeader}.
 	 *
-	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param templateClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.
@@ -129,7 +129,7 @@ public final class TemplateDescriber{
 	/**
 	 * Description of all the templates in the given package annotated with {@link TemplateHeader}.
 	 *
-	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param templateClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation error occurs.
 	 * @throws TemplateException	If a template error occurs.

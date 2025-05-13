@@ -70,7 +70,7 @@ public @interface ConfigurationHeader{
 
 
 	/**
-	 * The initial bytes that determines the type of message.
+	 * The initial bytes that determine the type of message.
 	 * <p>This SHOULD be written by the composer.</p>
 	 *
 	 * @return	The header bytes of this message.
@@ -78,7 +78,7 @@ public @interface ConfigurationHeader{
 	String start();
 
 	/**
-	 * The final bytes that determines the type of message.
+	 * The final bytes that determine the type of message.
 	 * <p>This SHOULD NOT be written by the composer.</p>
 	 *
 	 * @return	The tail bytes of this message (defaults to empty string).

@@ -57,7 +57,7 @@ public final class Extractor{
 
 
 	/**
-	 * Extract the value corresponding to the given path, if the path is not found return the given default value.
+	 * Extract the value corresponding to the given path, if the path is not found, return the given default value.
 	 *
 	 * @param path	The path used to extract the corresponding value (following
 	 * 	<a href="https://tools.ietf.org/html/rfc6901">RFC6901 - JavaScript Object Notation (JSON) Pointer</a> notation).
@@ -71,7 +71,7 @@ public final class Extractor{
 	}
 
 	/**
-	 * Extract the value corresponding to the given path, if the path is not found return the given default value.
+	 * Extract the value corresponding to the given path, if the path is not found, return the given default value.
 	 *
 	 * @param path	The path used to extract the corresponding value (following
 	 * 	<a href="https://tools.ietf.org/html/rfc6901">RFC6901 - JavaScript Object Notation (JSON) Pointer</a> notation).

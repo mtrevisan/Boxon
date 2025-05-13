@@ -69,7 +69,7 @@ public final class DataTypeCaster{
 
 
 	/**
-	 * Casts the given {@code value} to the specified {@code inputType}.
+	 * Casts given {@code value} to the specified {@code inputType}.
 	 *
 	 * @param value	The value to be cast.
 	 * @param targetType	The target data type to cast the value to.
@@ -97,7 +97,7 @@ public final class DataTypeCaster{
 	}
 
 	/**
-	 * Returns the method that perform the cast to the specified {@code inputType}.
+	 * Returns the method that performs the cast to the specified {@code inputType}.
 	 *
 	 * @param targetType	The target data type to cast the value to.
 	 * @return The cast value if successful, otherwise the original value.
@@ -146,7 +146,7 @@ public final class DataTypeCaster{
 	}
 
 	private static Object convertStringValue(final String value, final Class<?> objectiveType) throws CodecException{
-		//try convert to a number...
+		//try to convert to a number...
 		final Object valueAsNumber = toNumber(value, objectiveType);
 		//... otherwise convert it to an object
 		return (valueAsNumber == null

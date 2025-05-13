@@ -40,7 +40,7 @@ public interface BitWriterInterface{
 	/**
 	 * Writes the given value using the give byte order.
 	 *
-	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE},
+	 * @param value	The data to written. Here, the length of the types (in bits) is those defined by java (see {@link Byte#SIZE},
 	 * 	{@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @throws AnnotationException	If an annotation error occurs.
@@ -50,7 +50,7 @@ public interface BitWriterInterface{
 	/**
 	 * Skip {@code length} bits.
 	 *
-	 * @param length	The amount of bits to skip.
+	 * @param length	The number of bits to skip.
 	 */
 	void skipBits(int length);
 
@@ -58,7 +58,7 @@ public interface BitWriterInterface{
 	 * Writes {@code value} to this {@link io.github.mtrevisan.boxon.core.helpers.BitWriter BitWriter} using {@code length} bits.
 	 *
 	 * @param bitmap	The value to write.
-	 * @param length	The amount of bits to use when writing the {@code bitmap}.
+	 * @param length	The number of bits to use when writing the {@code bitmap}.
 	 */
 	void writeBitSet(BitSet bitmap, int length);
 

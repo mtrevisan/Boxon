@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Responsible for encoding messages based on provided templates.
  * <p>
- * It extends the {@link TemplateCoderBase} class and utilizes an evaluator for context-based encoding.
+ * It extends the {@link TemplateCoderBase} class and uses an evaluator for context-based encoding.
  * </p>
  */
 final class TemplateEncoder extends TemplateCoderBase{
@@ -98,7 +98,7 @@ final class TemplateEncoder extends TemplateCoderBase{
 			final SkipParams[] skips = field.getSkips();
 			writeSkips(skips, writer, rootObject);
 
-			//check if field has to be processed...
+			//check if the field has to be processed...
 			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
 			if(shouldProcessField)
 				//... and if so, process it

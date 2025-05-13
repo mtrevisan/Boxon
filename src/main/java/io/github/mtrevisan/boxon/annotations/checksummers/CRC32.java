@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 32 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
+ * Calculates a 32-bit Cyclic Redundancy Check of a byte sequence using the CRC-IBM algorithm.
  */
 public final class CRC32 implements Checksummer{
 

@@ -68,7 +68,7 @@ public final class GenericHelper{
 	 *
 	 * @param offspring	The class or interface subclassing or extending the base type.
 	 * @param <T>	The base type.
-	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
+	 * @return	The actual generic type arguments must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
@@ -85,13 +85,13 @@ public final class GenericHelper{
 	 * @param argumentsType	The actual type arguments passed to the offspring class.
 	 * 	If no arguments are given, then the type parameters of the offspring will be used.
 	 * @param <T>	The base type.
-	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
+	 * @return	The actual generic type arguments must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
 	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... argumentsType){
-		//initialize list to store resolved types
+		//initialize a list to store resolved types
 		final List<Type> types = new ArrayList<>(4);
 
 		final Queue<Class<?>> classStack = new ArrayDeque<>(5);

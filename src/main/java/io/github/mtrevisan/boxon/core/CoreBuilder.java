@@ -195,7 +195,7 @@ public final class CoreBuilder{
 	/**
 	 * Loads all the codecs that extends {@link Codec}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
@@ -245,7 +245,7 @@ public final class CoreBuilder{
 	/**
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withTemplatesFrom(final Class<?>... basePackageClasses){
@@ -270,7 +270,7 @@ public final class CoreBuilder{
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @param basePackageClasses	Classes to be used as a starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withConfigurationsFrom(final Class<?>... basePackageClasses){

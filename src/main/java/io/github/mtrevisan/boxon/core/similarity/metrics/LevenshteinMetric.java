@@ -113,11 +113,11 @@ public final class LevenshteinMetric<D extends MetricData<D>> implements Metric<
 			return length1;
 
 		final int length = Math.min(length1, length2);
-		//remove prefix from both inputs
+		//remove the prefix from both inputs
 		int startIndex = 0;
 		while(startIndex < length && input1.equalsAtIndex(startIndex, input2, startIndex))
 			startIndex ++;
-		//remove suffix from both inputs
+		//remove the suffix from both inputs
 		int endIndex = 0;
 		while(endIndex < length && input1.equalsAtIndex(length1 - endIndex - 1, input2, length2 - endIndex - 1))
 			endIndex ++;

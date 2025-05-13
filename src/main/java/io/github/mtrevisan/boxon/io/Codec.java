@@ -30,7 +30,7 @@ import java.lang.annotation.Annotation;
 
 
 /**
- * The interface every codec have to implement.
+ * The interface every codec has to implement.
  */
 public interface Codec{
 
@@ -65,7 +65,7 @@ public interface Codec{
 	 * 	<a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
 	 * @param collectionBinding	The collection annotation.
 	 * @param rootObject	The parent object that holds what have been read so far.
-	 * @param value	The value that have to be encoded.
+	 * @param value	The value that has to be encoded.
 	 * @throws BoxonException	If something bad happened while converting, validating, or writing the value.
 	 */
 	void encode(BitWriterInterface writer, Annotation annotation, Annotation collectionBinding, Object rootObject, Object value)

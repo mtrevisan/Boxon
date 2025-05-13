@@ -128,7 +128,7 @@ public final class DataTypeHelper{
 	 * Tests whether a class represents a float or double type.
 	 *
 	 * @param type	The class to test.
-	 * @return	Whether is a float type.
+	 * @return	Whether it's a float type.
 	 */
 	public static boolean isFloatType(final Class<?> type){
 		return (type == float.class || type == Float.class
