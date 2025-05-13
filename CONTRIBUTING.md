@@ -110,7 +110,7 @@ To contribute documentation:
 * Edit or add any relevant documentation.
 * Make sure your changes are formatted correctly and consistently with the rest of the documentation.
 * Re-read what you wrote and run a spellchecker on it to make sure you didn't miss anything.
-* Write a clear, concise commit message (s). Documentation commits should use `docs(<component>): <message>`.
+* Write a clear, concise commit message(s). Documentation commits should use `docs(<component>): <message>`.
 * Go to https://github.com/mtrevisan/Boxon/pulls and open a new pull request with your changes.
 * If your PR is connected to an open issue, add a line in your PR's description that says `Fixes: #123`, where `#123` is the number of the issue you're fixing.
 
@@ -134,7 +134,7 @@ To contribute code:
 * Make any necessary changes to the source code.
 * Include any [additional documentation](#contribute-documentation) the changes might need.
 * Write tests that verify that your contribution works as expected.
-* Write a clear, concise commit message (s).
+* Write a clear, concise commit message(s).
 * Dependency updates, additions, or removals must be in individual commits, and the message must declare them.
 * Go to https://github.com/mtrevisan/Boxon/pulls and open a new pull request with your changes.
 * If your PR is connected to an open issue, add a line in your PR's description that says `Fixes: #123`, where `#123` is the number of the issue you're fixing.
