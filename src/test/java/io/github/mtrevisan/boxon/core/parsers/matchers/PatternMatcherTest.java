@@ -104,12 +104,13 @@ class PatternMatcherTest{
 			PatternMatcher m = entry.getValue();
 
 			//warm-up
+			int[] processedPattern = m.preProcessPattern(pattern);
 			for(int i = 0; i < 2_000; i ++)
-				m.indexOf(source, 0, pattern, m.preProcessPattern(pattern));
+				m.indexOf(source, 0, pattern, processedPattern);
 
 			watch.reset();
 			for(int i = 0; i < 20_000; i ++)
-				m.indexOf(source, 0, pattern, m.preProcessPattern(pattern));
+				m.indexOf(source, 0, pattern, processedPattern);
 			watch.stop();
 
 			System.out.println(key + ": " + watch.toString(20_000));

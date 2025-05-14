@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
+import io.github.mtrevisan.boxon.core.parsers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -53,7 +53,7 @@ import java.util.function.Function;
  */
 public final class TemplateLoader{
 
-	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
+	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static Function<byte[], int[]> PRE_PROCESSED_PATTERNS;
 	static{
 		initialize(Memoizer.UNBOUNDED_SIZE);
