@@ -47,7 +47,7 @@ Boxon...
    - Bit fields: bit fields with length from 1 to 2,147,483,647 bits.
    - Strings: fixed-length, variable-length and zero-terminated strings with various encodings.
    - Arrays: fixed-length and variable-length arrays of built-in or user-defined element types.
-   - Objects: custom-type DTOs.
+   - Objects: custom-type [DTOs](https://en.wikipedia.org/wiki/Data_transfer_object).
    - Choices: supports integer keys.
  - User-defined types (arbitrary combination of built-in types)
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindObject` and a few others), no complicated chains of factories: it's just a parser that works.
@@ -227,7 +227,7 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
  - `type`: the Class of the Object in the array's single element (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type using an `ObjectChoices` with a prefix of a predetermined length.
  - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
@@ -267,7 +267,7 @@ private Version version;
 
 #### parameters
 
- - `size`: the size of the array (can be a SpEL expression).
+ - `size`: the size of the array (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
 
 #### description
 
@@ -316,9 +316,9 @@ private Position[] positions;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
  - `type`: the class of the primitive type of the array's single element.
- - `size`: the size of the array (can be a SpEL expression).
+ - `size`: the size of the array (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -388,8 +388,8 @@ private List<TestType3> value;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `size`: the number of bits to read (can be a SpEL expression).
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
+ - `size`: the number of bits to read (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -415,8 +415,8 @@ private BitSet bitmap;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `size`: the number of bits to read (can be a SpEL expression).
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
+ - `size`: the number of bits to read (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -446,9 +446,9 @@ private BigInteger number;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
- - `size`: the size of the string (can be a SpEL expression).
+ - `size`: the size of the string (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -474,7 +474,7 @@ public String text;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
@@ -536,8 +536,8 @@ private class Message{
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `value`: the number of bits to be skipped (can be a SpEL expression).
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
+ - `value`: the number of bits to be skipped (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
 
 #### description
 
@@ -568,7 +568,7 @@ public Void lastUnreadPlaceholder;
 
 #### parameters
 
-- `condition`: The SpEL expression that determines if this field has to be read.
+- `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
 - `value`: the byte that terminates the skip.
 - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
 
@@ -600,7 +600,7 @@ public Void lastUnreadPlaceholder;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
@@ -631,8 +631,8 @@ private short checksum;
 
 #### parameters
 
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `value`: The value to be assigned, or calculated (can be a SpEL expression).
+ - `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be read.
+ - `value`: The value to be assigned, or calculated (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
 
 #### description
 
@@ -670,9 +670,9 @@ private String deviceTypeName;
 
 #### parameters
 
-- `condition`: The SpEL expression that determines if this field has to be processed (both in the decode and encode phases).
-- `valueDecode`: The value to be assigned, or calculated, at the decode phase (can be a SpEL expression).
-- `valueEncode`: The value to be assigned, or calculated, at the encode phase (can be a SpEL expression).
+- `condition`: The [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html) that determines if this field has to be processed (both in the decode and encode phases).
+- `valueDecode`: The value to be assigned, or calculated, at the decode phase (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)3).
+- `valueEncode`: The value to be assigned, or calculated, at the encode phase (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
 
 #### description
 
@@ -701,7 +701,7 @@ private String messageHeader;
 #### parameters
 
 - `name`: The name of the parameter that will be inserted into the context (both in the decode and encode phases).
-- `value`: The value to be assigned, or calculated, to the parameter with the given name (can be a SpEL expression).
+- `value`: The value to be assigned, or calculated, to the parameter with the given name (can be a [SpEL expression](https://docs.spring.io/spring-framework/reference/core/expressions.html)).
 
 #### description
 
@@ -1176,8 +1176,6 @@ To evaluate a variable of a parent object, the complete path should be used, fro
 To evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`.<br />
 Note that the `#` prefix is intended to refer to the context (whether it is an object or a method), and the current object is stored in the context under the name `self`.
 
-See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
-
 ### Example:
 
 ```java
@@ -1460,7 +1458,7 @@ Messages can be concatenated, and the `Parser.java` class manages them, returnin
 Each annotated class is processed by `Template.class`, that is later retrieved by `Parser.java` depending on the starting header.
 For that reason each starting header defined into `TemplateHeader` annotation MUST BE unique. This class can also accept a context.
 
-All the SpEL expressions are evaluated by `Evaluator.java`.
+All the [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) are evaluated by `Evaluator.java`.
 
 <br/>
 
@@ -1666,7 +1664,7 @@ Pull requests are welcomed.
 - Fixed number is not written with the correct radix.
 - Made `shortDescription` mandatory in the annotation, as it should have been.
 - Added method to map a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) into a `Map<String, Object>` in `ReflectionHelper`.
-- Added method `Configurator.composeConfiguration` accepting a DTO.
+- Added method `Configurator.composeConfiguration` accepting a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object).
 - Corrected errors in the documentation.
 - Migrated from java 11 to java 21 for performance.
 
@@ -1682,7 +1680,7 @@ Pull requests are welcomed.
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- Fixed an error if annotating with `@Skip` as the last annotation of the DTO.
+- Fixed an error if annotating with `@Skip` as the last annotation of the [DTO](https://en.wikipedia.org/wiki/Data_transfer_object).
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
@@ -1705,7 +1703,7 @@ Pull requests are welcomed.
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `@BindBitSet` binding for java `@BitSet`.
-- Added `Extractor`, used to programmatically extract values from a DTO.
+- Added `Extractor`, used to programmatically extract values from a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object).
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.
