@@ -76,11 +76,11 @@
 
 		<!-- ClassGraph -->
 		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-		<github.classgraph.version>4.8.179</github.classgraph.version>
+		<github.classgraph.version>4.8.180</github.classgraph.version>
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>6.2.7</springframework.spring-expression.version>
+		<springframework.spring-expression.version>6.2.8</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
@@ -88,7 +88,7 @@
 
 		<!-- Code generator -->
 		<!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-		<bytebuddy.version>1.17.5</bytebuddy.version>
+		<bytebuddy.version>1.17.6</bytebuddy.version>
 
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
@@ -98,7 +98,7 @@
 
 		<!-- JUnit -->
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-		<junit.junit-jupiter-engine.version>5.13.0</junit.junit-jupiter-engine.version>
+		<junit.junit-jupiter-engine.version>5.13.2</junit.junit-jupiter-engine.version>
 	</properties>
 
 	<repositories>
